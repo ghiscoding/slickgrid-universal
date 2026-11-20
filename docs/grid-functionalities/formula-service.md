@@ -250,6 +250,8 @@ Evaluation supports:
 - arithmetic/comparison operators
 - built-in and custom functions
 
+Comparisons between text values ignore letter case, including comparisons used in `IF` conditions.
+
 Export supports:
 - conversion of formula-enabled cells to native Excel formulas
 - workbook metadata hooks for defined names and custom functions

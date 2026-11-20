@@ -134,6 +134,16 @@ describe('Example 48 - Formula Service', () => {
     cy.get(cell(0, 4)).should('contain', '$8.88');
   });
 
+  it('should compare text without case sensitivity in IF formulas', () => {
+    cy.get(cell(0, 4)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=IF(B1="ORANGES",3,0){enter}', { force: true });
+    cy.get(cell(0, 4)).should('contain', '$3.00');
+    cy.get('[data-test="reload-formulas-btn"]').click();
+    cy.get(cell(0, 4)).dblclick();
+    cy.get('.formula-editor-input').type('{enter}', { force: true });
+    cy.get(cell(0, 4)).should('contain', '$8.88');
+  });
+
   it('should accept stable row and column references and reopen them as A1 references', () => {
     cy.reload();
     cy.get(cell(0, 4)).dblclick();
@@ -147,6 +157,7 @@ describe('Example 48 - Formula Service', () => {
     cy.get('[data-test="export-excel-btn"]').click();
     cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000, maxDataRows: 2 }).then((xlsx: any) => {
       expect(xlsx.formulaRows[1][3]).to.equal('B3*C3');
+      expect(xlsx.definedNames).to.deep.include({ name: 'CUSTOMSUM', formula: '_xlfn.LAMBDA(_xlpm.values,SUM(_xlpm.values))' });
     });
   });
 
@@ -264,6 +275,33 @@ describe('Example 48 - Formula Service', () => {
     // Cancel this transient edit to avoid affecting subsequent tests.
     cy.get('.formula-editor-input').type('{esc}', { force: true });
     cy.get(cell(0, 4)).contains('$8.88');
+  });
+
+  it('should clip range highlights, resolve overlaps and clear them on cancel', () => {
+    cy.get(cell(0, 4)).dblclick();
+    cy.get('.formula-editor-input').should('be.visible').click().type('{selectall}=SUM(C1:D20)+SUM(D2:D3)', { force: true });
+
+    cy.get(cell(0, 2)).should('have.class', 'formula-cell-color-1').and('have.class', 'formula-ref-top');
+    cy.get(cell(10, 2)).should('have.class', 'formula-cell-color-1').and('have.class', 'formula-ref-bottom');
+    cy.get(cell(1, 3)).should('have.class', 'formula-cell-color-2').and('have.class', 'formula-ref-top');
+    cy.get(cell(2, 3)).should('have.class', 'formula-cell-color-2').and('have.class', 'formula-ref-bottom');
+    cy.get(cell(3, 3)).should('have.class', 'formula-cell-color-1');
+
+    cy.get('.formula-editor-input').type('{esc}', { force: true });
+    cy.get('.grid48 [class*="formula-cell-color-"]').should('not.exist');
+    cy.get(cell(0, 4)).should('contain', '$8.88');
+  });
+
+  it('should move an existing range endpoint while editing', () => {
+    cy.get(cell(0, 4)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=SUM(C1:C2)', { force: true });
+    cy.get(cell(1, 2)).trigger('mousedown', { button: 0, which: 1, force: true });
+    cy.get(cell(2, 3)).trigger('mousemove', { button: 0, which: 1, force: true }).trigger('mouseup', { button: 0, which: 1, force: true });
+    cy.get('.formula-editor-input').should('have.text', '=SUM(C1:D3)');
+    cy.get(cell(2, 3)).should('have.class', 'formula-cell-color-1').and('have.class', 'formula-ref-bottom');
+    cy.get('.formula-editor-input').type('{esc}', { force: true });
+    cy.get('.grid48 [class*="formula-cell-color-"]').should('not.exist');
+    cy.get(cell(0, 4)).should('contain', '$8.88');
   });
 
   it('should keep formula-token colors aligned with matching grid cell colors', () => {

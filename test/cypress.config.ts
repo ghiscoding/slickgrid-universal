@@ -19,6 +19,7 @@ interface ParsedXlsxExport {
   dataRows: string[][];
   formulaRows: string[][];
   additionalSheetFormulaRows: string[][][];
+  definedNames: Array<{ name: string; formula: string }>;
 }
 
 function isExcelExportFile(fileName: string): boolean {
@@ -219,6 +220,10 @@ function parseXlsxExport(filePath: string, maxDataRows = 10): ParsedXlsxExport {
     firstDataRow,
     dataRows,
     formulaRows,
+    definedNames: [...workbookXml.matchAll(/<definedName\b([^>]*)>([\s\S]*?)<\/definedName>/g)].flatMap((match) => {
+      const name = match[1].match(/\bname="([^"]+)"/);
+      return name ? [{ name: decodeXmlEntities(name[1]), formula: decodeXmlEntities(match[2]) }] : [];
+    }),
     additionalSheetFormulaRows: [...entries.entries()]
       .filter(([name]) => /^xl\/worksheets\/sheet\d+\.xml$/.test(name) && name !== 'xl/worksheets/sheet1.xml')
       .map(([, content]) =>

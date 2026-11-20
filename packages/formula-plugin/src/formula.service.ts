@@ -1315,6 +1315,10 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         if (isFormulaErrorCode(right)) {
           return right;
         }
+        if (typeof left === 'string' && typeof right === 'string') {
+          left = left.toUpperCase();
+          right = right.toUpperCase();
+        }
         switch (op) {
           case '==':
             left = (left as any) == (right as any);

@@ -49,6 +49,26 @@ describe('FormulaService', () => {
     );
   });
 
+  it('compares text without case sensitivity, including references and IF conditions', () => {
+    const items = [{ id: 'a', value: 'Apple', total: '' }];
+    const columns: Column[] = [
+      { id: 'value', field: 'value' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
+    expect(evaluate('="Apple"="APPLE"')).toBe(true);
+    expect(evaluate('="Apple"<>"APPLE"')).toBe(false);
+    expect(evaluate('="apple"<"BANANA"')).toBe(true);
+    expect(evaluate('="BANANA">="banana"')).toBe(true);
+    service.setFormula('a', 'total', '=IF(A1="APPLE",1,2)');
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe(1);
+    expect(service.getExcelFormula({ rowId: 'a', columnId: 'total', columnIds: ['value', 'total'], rowIds: ['a'], excelRowOffset: 2 } as any)).toBe(
+      'IF(A2="APPLE",1,2)'
+    );
+  });
+
   it('resolves escaped row and column IDs and propagates errors from references', () => {
     const id = 'r"\\1';
     const columnId = 'value"\\x';
