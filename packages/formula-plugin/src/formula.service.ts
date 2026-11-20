@@ -466,7 +466,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     }
 
     if (typeof evaluated === 'number' && !Number.isFinite(evaluated)) {
-      const errorValue = FORMULA_ERROR.DIV0;
+      const errorValue = FORMULA_ERROR.NUM;
       evalMemo.set(memoKey, errorValue);
       return errorValue;
     }
@@ -1383,8 +1383,8 @@ export class FormulaService implements ExternalResource, FormulaProvider {
           : op === '+'
             ? FormulaService.addFormulaValues(left, right)
             : FormulaService.subtractFormulaValues(left, right);
-        if (typeof left === 'number' && Number.isNaN(left)) {
-          return FORMULA_ERROR.VALUE;
+        if (typeof left === 'number' && !Number.isFinite(left)) {
+          return Number.isNaN(left) ? FORMULA_ERROR.VALUE : FORMULA_ERROR.NUM;
         }
       }
       return left;
@@ -1410,8 +1410,8 @@ export class FormulaService implements ExternalResource, FormulaProvider {
           return FORMULA_ERROR.DIV0;
         }
         left = op === '*' ? (left as any) * (right as any) : (left as any) / (right as any);
-        if (typeof left === 'number' && Number.isNaN(left)) {
-          return FORMULA_ERROR.VALUE;
+        if (typeof left === 'number' && !Number.isFinite(left)) {
+          return Number.isNaN(left) ? FORMULA_ERROR.VALUE : FORMULA_ERROR.NUM;
         }
       }
       return left;
@@ -1526,14 +1526,21 @@ export class FormulaService implements ExternalResource, FormulaProvider {
           }
           const unwrapCustomArgument = (value: unknown): unknown =>
             Array.isArray(value) ? value.map(unwrapCustomArgument) : unwrapFormulaReference(value);
+          let result: unknown;
           if (this._customFunctions.has(upperIdent)) {
             try {
-              return fn(...args.map(unwrapCustomArgument));
+              result = fn(...args.map(unwrapCustomArgument));
             } catch {
               return FORMULA_ERROR.ERROR;
             }
+          } else {
+            result = fn(...args);
           }
-          return fn(...args);
+          return typeof result === 'number' && !Number.isFinite(result)
+            ? Number.isNaN(result)
+              ? FORMULA_ERROR.VALUE
+              : FORMULA_ERROR.NUM
+            : result;
         }
 
         if (upperIdent === 'TRUE') {

@@ -252,6 +252,8 @@ Evaluation supports:
 
 Comparisons between text values ignore letter case, including comparisons used in `IF` conditions. Comparisons between numbers and text treat them as different types, with text ordered after numbers. The `&` operator renders logical values as `TRUE` or `FALSE`.
 
+Arithmetic or function results that overflow return `#NUM!`; division by zero returns `#DIV/0!`.
+
 Export supports:
 - conversion of formula-enabled cells to native Excel formulas
 - workbook metadata hooks for defined names and custom functions

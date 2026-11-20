@@ -97,6 +97,7 @@ describe('createFormulaFunctionRegistry', () => {
     expect(registry.get('IF')?.(true, 'yes', 'no')).toBe('yes');
     expect(registry.get('IF')?.(false, 'yes', 'no')).toBe('no');
     expect(registry.get('CONCAT')?.('a', ['b', 'c'], null, undefined, 1)).toBe('abc1');
+    expect(registry.get('CONCAT')?.(true, formulaReference(false), [true, null])).toBe('TRUEFALSETRUE');
   });
 
   it('should evaluate count functions with numeric and blank semantics', () => {

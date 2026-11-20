@@ -187,7 +187,10 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
   };
   const CONCAT = (...args: unknown[]) =>
     flattenFormulaFunctionArgs(args)
-      .map((arg) => String(unwrapFormulaReference(arg) ?? ''))
+      .map((arg) => {
+        const value = unwrapFormulaReference(arg);
+        return typeof value === 'boolean' ? (value ? 'TRUE' : 'FALSE') : String(value ?? '');
+      })
       .join('');
   const COUNT = (...args: unknown[]) =>
     args.reduce<number>(

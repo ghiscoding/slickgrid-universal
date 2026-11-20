@@ -91,6 +91,31 @@ describe('FormulaService', () => {
     );
   });
 
+  it('reports arithmetic and function overflow without masking division errors or lazy branches', () => {
+    const items = [{ id: 'a', large: 1e308, tiny: 1e-308, total: '' }];
+    const columns: Column[] = [
+      { id: 'large', field: 'large' },
+      { id: 'tiny', field: 'tiny' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const service = new FormulaService({ autoAssignEditor: false, customFunctions: { OVERFLOW: () => Infinity, INVALID: () => NaN } });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
+    expect(evaluate('=A1+A1')).toBe('#NUM!');
+    expect(evaluate('=-A1-A1')).toBe('#NUM!');
+    expect(evaluate('=A1*2')).toBe('#NUM!');
+    expect(evaluate('=A1/B1')).toBe('#NUM!');
+    expect(evaluate('=SUM(A1,A1)')).toBe('#NUM!');
+    expect(evaluate('=1/(A1*2)')).toBe('#NUM!');
+    expect(evaluate('=OVERFLOW()')).toBe('#NUM!');
+    expect(evaluate('=INVALID()')).toBe('#VALUE!');
+    expect(evaluate('=1/0')).toBe('#DIV/0!');
+    expect(evaluate('=IF(FALSE,A1*2,7)')).toBe(7);
+    expect(evaluate('=CONCAT(TRUE,FALSE)')).toBe('TRUEFALSE');
+    service.setFormula('a', 'total', '=SUM(A1,A1)');
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe('#NUM!');
+  });
+
   it('resolves escaped row and column IDs and propagates errors from references', () => {
     const id = 'r"\\1';
     const columnId = 'value"\\x';
@@ -552,7 +577,7 @@ describe('FormulaService', () => {
     vi.spyOn(flagService as any, 'evaluateFormulaExpression')
       .mockReturnValueOnce(Number.POSITIVE_INFINITY)
       .mockReturnValueOnce(Number.NaN);
-    expect(flagService.getEvaluatedCellValue('r', 'value', '=1', 0)).toBe(FORMULA_ERROR.DIV0);
+    expect(flagService.getEvaluatedCellValue('r', 'value', '=1', 0)).toBe(FORMULA_ERROR.NUM);
     flagService.registerCustomFunction('NAN', () => Number.NaN);
     flagService.setFormula('r', 'value', '=2');
     expect(flagService.getEvaluatedCellValue('r', 'value', '=2', 0)).toBe(FORMULA_ERROR.VALUE);
