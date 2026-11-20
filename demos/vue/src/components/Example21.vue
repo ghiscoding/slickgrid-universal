@@ -2,7 +2,7 @@
 import { Formatters, SlickgridVue, type Column, type GridOption, type OperatorType, type SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 
-const NB_ITEMS = 25;
+const NB_ITEMS = 100;
 const gridOptions = ref<GridOption>();
 const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
@@ -82,7 +82,7 @@ function defineGrid() {
     // enableAutoResize: false,
     // autoFitColumnsOnFirstLoad: false,
 
-    autoHeight: true,
+    autoHeight: { stickyHeader: true }, // or `autoHeight: true` without sticky headers
     autoResize: {
       container: '#demo-container',
       rightPadding: 10,
@@ -175,9 +175,10 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <li>You define a fixed grid width via "gridWidth" in the View</li>
       <li>You can still use the "autoResize" for the width to be resized automatically (the height will never change in this case)</li>
       <li>
-        This dataset has 25 rows, if you scroll down the page you can see the entire set is shown without any grid scrolling (though you
+        This dataset has 100 rows, if you scroll down the page you can see the entire set is shown without any grid scrolling (though you
         might have browser scrolling)
       </li>
+      <li>The "autoHeight.stickyHeader" option keeps the column headers visible at the top of the page while scrolling the page.</li>
     </ul>
   </div>
 

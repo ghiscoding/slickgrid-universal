@@ -15,6 +15,14 @@ describe('Example 24 - Footer Totals Row', () => {
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
+  it('should keep odd rows readable when switching between light and dark themes', () => {
+    cy.get('.grid24 .slick-row.odd').first().should('have.css', 'background-color', 'rgb(251, 251, 251)');
+    cy.get('[data-test="toggle-dark-mode"]').click();
+    cy.get('.grid24 .slick-row.odd').first().should('have.css', 'background-color', 'rgb(44, 48, 52)');
+    cy.get('[data-test="toggle-dark-mode"]').click();
+    cy.get('.grid24 .slick-row.odd').first().should('have.css', 'background-color', 'rgb(251, 251, 251)');
+  });
+
   it('should have a total sum displayed in the footer for each column', () => {
     for (let i = 0; i < 10; i++) {
       cy.get(`.slick-footerrow-columns .slick-footerrow-column:nth(${i})`).should(($span) => {

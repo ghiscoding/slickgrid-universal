@@ -13,7 +13,7 @@ Replace removed `columnSort` callbacks in Column Picker and Grid Menu with `colu
 
 ## Optional i18next v27 upgrade
 
-The demos use i18next v26; v27 is optional. If a v27 instance fails assignment to Slickgrid's `I18Next` type, consult the [migration note](../migration-to-11.x.md#optional-i18next-v27-upgrade-for-react-and-vue). Explain that `strictInterpolationChecks: false` restores v26 type checks application-wide; review runtime changes separately.
+The demos use i18next v26; v27 is optional. If a v27 instance fails assignment to Slickgrid's `I18Next` type, consult the [migration note](https://ghiscoding.gitbook.io/slickgrid-vue/migrations/migration-to-11.x#optional-i18next-v27-upgrade-for-react-and-vue). Explain that `strictInterpolationChecks: false` restores v26 type checks application-wide; review runtime changes separately.
 
 ## External resource reset
 
@@ -25,7 +25,7 @@ v11 improves virtual scrolling, tree-data lookups and dataset sorting, sort comp
 
 ## Migration workflow
 
-Read the [v11 migration guide](../migration-to-11.x.md) before editing. It is the source of truth for option mappings and examples. If the application is older than v10, apply the earlier migration guides in order first.
+Read the [v11 migration guide](https://ghiscoding.gitbook.io/slickgrid-vue/migrations/migration-to-11.x) before editing. It is the source of truth for option mappings and examples. If the application is older than v10, apply the earlier migration guides in order first.
 
 Inspect dependencies, grid and column options, saved grid state and presets, menu callbacks, translations, styles, and tests. Apply only changes relevant to features the application uses. Preserve existing behavior when translating options; do not enable Sticky docking merely because frozen panes were used.
 
@@ -37,11 +37,11 @@ Inspect dependencies, grid and column options, saved grid state and presets, men
 - Merge `invalidColumnFreezePickerCallback` and `invalidColumnFreezeWidthCallback` into `errorCallback`, preserving relevant handling. Rename `skipFreezeColumnValidation` and `invalidColumnFreezeWidthMessage` to their pinning equivalents from the guide.
 - Update frozen menu icons, command labels, translation keys, and `locales` keys (including their `TEXT_` prefix). Pinning commands are shown by default; hide the Header Menu root with `hideCommands: ['pinning-commands']` if needed.
 
-For accepted references and configuration, read [Pinning](../../grid-functionalities/pinning.md) and [Grid State and Presets](../../grid-functionalities/grid-state-preset.md). Consult [Sticky Docking](../../grid-functionalities/sticky.md) only when scroll-activated docking is wanted.
+For accepted references and configuration, read [Pinning](https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/pinning) and [Grid State and Presets](https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/grid-state-preset). Consult [Sticky Docking](https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/sticky) only when scroll-activated docking is wanted.
 
 ## Menus
 
-Use the [menu visibility mapping](../migration-to-11.x.md#menu-command-visibility) rather than mechanically converting every `hide...` property:
+Use the [menu visibility mapping](https://ghiscoding.gitbook.io/slickgrid-vue/migrations/migration-to-11.x#menu-command-visibility) rather than mechanically converting every `hide...` property:
 
 - For removed ordinary command flags, `true` adds the mapped command ID to `hideCommands`; `false` removes it. Preserve unrelated hidden commands.
 - Invert `hideToggleDarkModeCommand` into `gridMenu.showToggleDarkModeCommand`. Dark mode remains opt-in.
@@ -64,14 +64,14 @@ Use the [menu visibility mapping](../migration-to-11.x.md#menu-command-visibilit
 
 ## Styles, DOM selectors, and optional packages
 
-Use the guide's [DOM and CSS mapping](../migration-to-11.x.md#single-viewport-dom-and-css) for custom styles and browser tests. The renderer now has one viewport; remove manual pane scroll synchronization and the legacy header offset workaround. Update frozen/pane Sass and CSS variables using the documented replacements.
+Use the guide's [DOM and CSS mapping](https://ghiscoding.gitbook.io/slickgrid-vue/migrations/migration-to-11.x#single-viewport-dom-and-css) for custom styles and browser tests. The renderer now has one viewport; remove manual pane scroll synchronization and the legacy header offset workaround. Update frozen/pane Sass and CSS variables using the documented replacements.
 
 - Replace old Row Detail wrappers with `.slick-row-detail-container` and `.row-detail-{id}` selectors.
 - Use `.slick-tree-toggle` for tree styling instead of `.slick-group-toggle`.
 - Excluded Column Picker and Grid Menu columns are absent from the DOM. Update counts and assertions to check absence, and account for builders receiving only eligible columns.
 - Prefer Header Menu text or command selectors over positional selectors because built-in ordering changed.
 - Rename the base package `@slickgrid-universal/row-detail-view-plugin` to `@slickgrid-universal/row-detail-plugin`, including imports and stylesheet paths (`slick-row-detail-view` becomes `slick-row-detail`). Framework Row Detail adapter package names stay unchanged.
-- Add used Composite Editor, Custom Tooltip, and Row Detail style packages as direct dependencies and import their styles after the common theme. Match CSS to the application's theme; for Sass, load the common theme first in the same compilation so configured variables apply. Read [Required Styles for Extra Packages](../../styling/styling.md#required-styles-for-extra-packages) for exact paths.
+- Add used Composite Editor, Custom Tooltip, and Row Detail style packages as direct dependencies and import their styles after the common theme. Match CSS to the application's theme; for Sass, load the common theme first in the same compilation so configured variables apply. Read [Required Styles for Extra Packages](https://ghiscoding.gitbook.io/slickgrid-vue/styling/styling#required-styles-for-extra-packages) for exact paths.
 - For Fluent styling, `iconSet: 'fluent'` can replace default icon mappings. Retain intentional explicit overrides, which take precedence.
 
 ## Container service lookups

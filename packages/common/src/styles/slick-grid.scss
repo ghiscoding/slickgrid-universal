@@ -153,6 +153,31 @@
     }
   }
 
+  // `autoHeight: { stickyHeader: true }`: the page scrolls the grid, so stack its header layers at the top of the nearest
+  // scrolling ancestor, using the layer heights measured by the grid.
+  &.slick-auto-height-sticky-header {
+    > .slick-topheader-panel,
+    > .slick-header-root,
+    > .slick-content-root > .slick-headerrow {
+      position: sticky !important; // overrides the top-header panel's inline position
+      z-index: var(--slick-sticky-header-z-index, 7); // above docked rows (5) and the docking scrollbar (6)
+    }
+    > .slick-topheader-panel {
+      top: var(--slick-sticky-header-top, 0px);
+      background-color: var(--slick-header-background-color, v.$slick-header-background-color);
+    }
+    > .slick-header-root {
+      top: calc(var(--slick-sticky-header-top, 0px) + var(--slick-sticky-topheader-height));
+    }
+    > .slick-content-root {
+      overflow: clip; // unlike `hidden`, it does not become the filter row's sticky container
+    }
+    > .slick-content-root > .slick-headerrow {
+      top: calc(var(--slick-sticky-header-top, 0px) + var(--slick-sticky-topheader-height) + var(--slick-sticky-header-height));
+      background-color: var(--slick-header-row-background-color, v.$slick-header-row-background-color);
+    }
+  }
+
   &.slick-docking-horizontal-scroll-proxy {
     :is(.slick-header, .slick-headerrow, .slick-footerrow, .slick-preheader-panel, .slick-topheader-panel) {
       // Header chrome spans the outer grid width while the body owns the scrollbar.
