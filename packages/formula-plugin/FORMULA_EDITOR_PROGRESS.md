@@ -1,6 +1,7 @@
 # Formula Editor Plugin Progress
 
 ## Handoff update (2026-11-20)
+- Vanilla Example 48 passed all 45 Cypress tests against the watch server, including CSV, text comparisons, reference highlights and grouped workbook exports. LibreOffice recalculated the grouped `SUMPRODUCT` workbook to 57.0334 and returned `#VALUE!` for mismatched ranges.
 - Formula Editor now calls the configured editor or column validator with the displayed formula text. Automatic syntax rejection remains disabled; calculation errors remain visible in cells.
 - `COUNT` now counts valid JavaScript dates from direct values, cells, ranges, `NOW()` and `TODAY()`; invalid dates and referenced date strings remain excluded.
 - Validated count-function argument counts: `COUNT` and `COUNTA` require an argument, and `COUNTBLANK` requires exactly one. All 160 Formula Plugin tests pass with full statement and line coverage for the changed function file.
@@ -191,11 +192,11 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Evaluate double-clicking the fill handle to fill down to an adjacent data boundary. Defer this optional enhancement: the current grid exposes drag replacement but no double-click fill event, and adjacent-boundary rules across groups and filters need a separate design. A future implementation should stop at the first blank in a chosen adjacent visible data column, stop at structural rows, respect filtering, and cap the number of filled cells; multiple adjacent columns and overwrite behavior require an explicit product decision.
 - [x] Evaluate the existing autocompleter: retain the current contenteditable implementation because an adapter has no demonstrated LOC or bundle-size benefit.
 - [ ] Add and validate browser coverage for selection-model CSS fallback and prerequisite warnings using a suitable demo configuration.
-- [ ] Run and fix the new Example 48 assertions for case-insensitive text comparisons, range-endpoint dragging, clipped and overlapping highlights, cancel cleanup and exported custom-function metadata. The tests are written but have not yet been run.
-- [ ] Run the grouped `SUMPRODUCT` Example 48 browser/workbook regression against a running watch server; verify its exported workbook calculation where practical.
+- [x] Run Example 48 assertions for case-insensitive text comparisons, range-endpoint dragging, clipped and overlapping highlights, cancel cleanup and exported custom-function metadata.
+- [x] Run the grouped `SUMPRODUCT` Example 48 browser/workbook regression and verify its exported workbook calculation in LibreOffice.
 - [x] Verify CSV/text export of evaluated formula values with grouped and ungrouped integration tests. With formatters disabled, export retains the raw dataset value.
 - [x] Add a CSV export control to Example 48 and document the formatter requirement.
-- [ ] Run the new Example 48 grouped and ungrouped CSV browser assertions against the Vanilla demo server.
+- [x] Run the Example 48 grouped and ungrouped CSV browser assertions against the Vanilla demo server.
 - [ ] Validate reference highlight behavior during scrolling and row virtualization, including cleanup; Example 48's 11 rows do not exercise row virtualization, so provide a suitable test setup.
 - [x] Audit and align operator precedence and negative powers with Excel.
 - [x] Fix arithmetic addition of numeric and nonnumeric text; retain `&` for concatenation.
