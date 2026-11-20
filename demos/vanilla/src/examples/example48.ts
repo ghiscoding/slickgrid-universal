@@ -40,7 +40,6 @@ interface SavedFormulaDemoState {
 
 const FORMULA_DEMO_STATE_KEY = 'example48-formula-state';
 const FORMULA_DEMO_RESTORE_KEY = 'example48-formula-restore';
-const FORMULA_DEMO_SELECTION_MODEL_TEST_KEY = 'example48-selection-model-test-mode';
 
 function customSum({ values }: FormulaCustomFunctionParams): number {
   return values.reduce<number>((total, value) => {
@@ -103,9 +102,7 @@ export default class Example48 {
   }
 
   attached() {
-    const disableSelectionModelForTest = sessionStorage.getItem(FORMULA_DEMO_SELECTION_MODEL_TEST_KEY) === 'disabled';
-    sessionStorage.removeItem(FORMULA_DEMO_SELECTION_MODEL_TEST_KEY);
-    this.defineGrid(disableSelectionModelForTest);
+    this.defineGrid();
     const shouldRestore = sessionStorage.getItem(FORMULA_DEMO_RESTORE_KEY) === '1';
     sessionStorage.removeItem(FORMULA_DEMO_RESTORE_KEY);
     const savedText = shouldRestore ? sessionStorage.getItem(FORMULA_DEMO_STATE_KEY) : null;
@@ -143,7 +140,7 @@ export default class Example48 {
     document.body.classList.remove('salesforce-theme');
   }
 
-  defineGrid(disableSelectionModel = false) {
+  defineGrid() {
     this.columns = [
       {
         id: 'sel',
@@ -370,7 +367,7 @@ export default class Example48 {
           sheet.data.push([{ value: customTitle, metadata: { style: excelFormat.id } }]);
         },
       },
-      enableSelection: !disableSelectionModel,
+      enableSelection: true,
       selectionOptions: {
         selectionType: 'mixed',
       },

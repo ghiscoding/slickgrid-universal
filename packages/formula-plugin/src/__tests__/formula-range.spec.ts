@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { compactFormulaRange, expandFormulaRanges, getFormulaRangeWidth, mapFormulaRanges, rewriteExcelHelperCounta } from '../formula-range.js';
+import {
+  compactFormulaRange,
+  expandFormulaRanges,
+  getFormulaRangeWidth,
+  mapFormulaRanges,
+  normalizeSumIfRangeDimensions,
+  rewriteExcelHelperCounta,
+} from '../formula-range.js';
 
 describe('stable formula ranges', () => {
   it('captures rectangles in row-major order with absolute flags and skips structural rows', () => {
@@ -10,6 +17,23 @@ describe('stable formula ranges', () => {
     expect(expandFormulaRanges('=SUM(A1:ZZZ1000000)')).toBe('=SUM(#REF!)');
     expect(expandFormulaRanges('=SUM(A0:A1)')).toBe('=SUM(A0:A1)');
     expect(expandFormulaRanges('="A1:A3"')).toBe('="A1:A3"');
+  });
+
+  it('sizes SUMIF sum ranges to the criteria range dimensions', () => {
+    expect(normalizeSumIfRangeDimensions('=SUMIF(A1:A3,">0",B1:B2)')).toBe('=SUMIF(A1:A3,">0",B1:B3)');
+    expect(normalizeSumIfRangeDimensions('=SUMIF(A1:A2,">0",B1:B4)')).toBe('=SUMIF(A1:A2,">0",B1:B2)');
+    expect(normalizeSumIfRangeDimensions('=SUMIF(A1:B2,IF(C1=1,",",">0"),$D$1:$D$4)')).toBe('=SUMIF(A1:B2,IF(C1=1,",",">0"),$D$1:$E$2)');
+    expect(normalizeSumIfRangeDimensions('=SUMIF(A1,">0",B1:B2)')).toBe('=SUMIF(A1,">0",B1)');
+    expect(normalizeSumIfRangeDimensions('=SUMIF(A1:A2,">0", B1:B2)')).toBe('=SUMIF(A1:A2,">0", B1:B2)');
+    expect(normalizeSumIfRangeDimensions('=SUMIF(A1:A3,">0")')).toBe('=SUMIF(A1:A3,">0")');
+    expect(normalizeSumIfRangeDimensions('=SUMIF(A1:A3,">0",OFFSET(B1,0,0))')).toBe('=SUMIF(A1:A3,">0",OFFSET(B1,0,0))');
+    expect(normalizeSumIfRangeDimensions('=SUM(SUMIF(A1:A2,">0",B1),SUMIF(A3:A5,">0",B3:B4))')).toBe('=SUM(SUMIF(A1:A2,">0",B1:B2),SUMIF(A3:A5,">0",B3:B5))');
+    const escapedQuote = '=SUMIF (A1:A2,"a\\"(,)",B1)';
+    const doubledQuote = '=SUMIF(A1:A2,"a""(,)",B1)';
+    expect(normalizeSumIfRangeDimensions(escapedQuote)).toBe('=SUMIF (A1:A2,"a\\"(,)",B1:B2)');
+    expect(normalizeSumIfRangeDimensions(doubledQuote)).toBe('=SUMIF(A1:A2,"a""(,)",B1:B2)');
+    expect(normalizeSumIfRangeDimensions('="SUMIF(A1:A3,1,B1)"+SUMIF(A0:A2,1,B1)')).toBe('="SUMIF(A1:A3,1,B1)"+SUMIF(A0:A2,1,B1)');
+    expect(normalizeSumIfRangeDimensions('=SUMIF(A1:A3,1,B1')).toBe('=SUMIF(A1:A3,1,B1');
   });
 
   it('maps explicit members while preserving quoted strings and escaped IDs', () => {

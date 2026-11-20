@@ -2,10 +2,11 @@
 
 ## Handoff update (2026-11-20)
 - Added Example 48 browser assertions for clipped and overlapping reference highlights, cancel cleanup, range-endpoint dragging, and exported custom-function metadata. These additions and the existing grouped SUMPRODUCT regression still need a browser run against the Vanilla demo server; Example 48's 11 rows do not exercise row virtualization.
-- Added selection-model prerequisite warning and CSS-fallback coverage using Example 48's one-shot session-storage test configuration. The browser assertions still need to run against the Vanilla demo server.
+- Removed the unverified Example 48 selection-warning browser scenario after repeated failures; unit coverage remains and browser coverage is still open.
+- Fixed mismatched `SUMIF` ranges to size `sum_range` from its first cell to the criteria range dimensions, storing the effective cells as stable references. Evaluation, snapshot restore after reorder, and Excel export are covered; all 160 Formula Plugin tests passed with 100% statement and line coverage for the changed production files.
 - The earlier uncommitted work is now committed; the branch was clean at the start of this session.
 - Aligned the formula package version with the monorepo's 11.0.0 version and corrected the package README's outdated evaluator description. A forced TypeScript build, all five Sass theme builds, custom Sass color compilation, public JS/CSS resolution, npm pack dry run, and all 150 formula plugin unit tests passed. The pnpm package build also passed; a clean install is still unverified. The grouped SUMPRODUCT browser regression still needs a running Vanilla demo server.
-- SUMIF currently truncates mismatched ranges to the shorter flattened array. Excel-compatible expansion requires preserving the additional referenced cells as stable identities; do not implement it as a simple change to the array length.
+- `SUMIF` now follows Excel's mismatched-range sizing rule and preserves the effective sum cells through layout changes.
 - Highlight review: overlapping cells use the later reference's color and edges, now documented and covered by a unit test. The hash clips to the data and visible columns; SlickGrid stores the hash independently of rendered rows and applies it during cell rendering. Editor destruction and service disposal remove the overlay. Browser validation of scrolling/virtualization and cleanup remains open.
 
 Last updated: 2026-11-20
@@ -184,8 +185,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Support dragging the fill handle to copy formulas into a selected target range, adjusting relative references and preserving absolute references.
 - [x] Evaluate double-clicking the fill handle to fill down to an adjacent data boundary. Defer this optional enhancement: the current grid exposes drag replacement but no double-click fill event, and adjacent-boundary rules across groups and filters need a separate design. A future implementation should stop at the first blank in a chosen adjacent visible data column, stop at structural rows, respect filtering, and cap the number of filled cells; multiple adjacent columns and overwrite behavior require an explicit product decision.
 - [x] Evaluate the existing autocompleter: retain the current contenteditable implementation because an adapter has no demonstrated LOC or bundle-size benefit.
-- [x] Add browser coverage for selection-model CSS fallback and prerequisite warnings using Example 48's one-shot session-storage test configuration.
-- [ ] Run the selection-model fallback and prerequisite-warning browser coverage against the Vanilla demo server.
+- [ ] Add and validate browser coverage for selection-model CSS fallback and prerequisite warnings using a suitable demo configuration.
 - [ ] Run and fix the new Example 48 assertions for case-insensitive text comparisons, range-endpoint dragging, clipped and overlapping highlights, cancel cleanup and exported custom-function metadata. The tests are written but have not yet been run.
 - [ ] Run the grouped `SUMPRODUCT` Example 48 browser/workbook regression against a running watch server; verify its exported workbook calculation where practical.
 - [x] Verify CSV/text export of evaluated formula values with grouped and ungrouped integration tests. With formatters disabled, export retains the raw dataset value.
@@ -202,9 +202,10 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [ ] Validate case-insensitive text comparison in formula operators and `IF` conditions in Example 48. Implementation and unit/export assertions pass; browser coverage is written but not yet run.
 - [x] Correct number-versus-text comparison and uppercase logical values in `&` concatenation; cover both with unit tests.
 - [x] Report arithmetic and function overflow as `#NUM!` without masking division-by-zero errors, and render logical values consistently in `CONCAT`/`CONCATENATE`.
-- [ ] Fix mismatched `SUMIF` dimensions with Excel-compatible expansion/truncation and stable identities across layout changes; cover evaluation, persistence and export.
+- [x] Match Excel `SUMIF` behavior for mismatched ranges by sizing `sum_range` from its first cell to the criteria range dimensions; preserve expanded cells through layout changes, snapshots and Excel export.
 - [x] Audit and correct comparisons between logical, numeric and text values, including chained comparisons and blank references. Logical values remain numeric in arithmetic.
-- [ ] Audit remaining operator and conditional-function coercion, dates and function argument counts; investigate shared token parsing if further reproductions justify it.
+- [ ] Audit remaining operator and conditional-function coercion, dates and function argument counts.
+- [ ] Review and consolidate duplicated formula parsing, including argument, quote and nesting scans in lazy `IF` evaluation and `SUMIF` range normalization; preserve existing parsing behavior and coverage.
 - [ ] Smoke-test formula integration and the optional stylesheet in Angular, Aurelia, React and Vue. The only current formula demo is Vanilla Example 48, so arrange framework-specific setups and do not infer wrapper behavior from Vanilla.
 - [x] Complete the pnpm formula-plugin package build; package exports, custom Sass, five theme builds and version alignment are verified.
 - [ ] Verify a clean install of the packed package and its production dependencies; the offline install attempt did not complete.

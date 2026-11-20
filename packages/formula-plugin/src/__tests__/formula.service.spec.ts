@@ -460,6 +460,87 @@ describe('FormulaService', () => {
     ).toBe('SUMIF(A2:A7,"a?ple",B2:B7)');
   });
 
+  it('expands a short SUMIF sum range and preserves its stable cells through snapshots and export', () => {
+    const items = [
+      { id: 'a', name: 'match', amount: 10, total: '' },
+      { id: 'b', name: 'skip', amount: 20, total: '' },
+      { id: 'c', name: 'match', amount: 30, total: '' },
+      { id: 'd', name: 'total', amount: 40, total: '' },
+    ];
+    const columns: Column[] = [
+      { id: 'name', field: 'name' },
+      { id: 'amount', field: 'amount' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+
+    service.setFormula('d', 'total', '=SUMIF(A1:A3,"match",B1:B1)');
+    expect(service.getEvaluatedCellValue('d', 'total')).toBe(40);
+    expect(service.getFormula('d', 'total')?.match(/ROW\("c"\)/g)).toHaveLength(2);
+    expect(
+      service.getExcelFormula({ rowId: 'd', columnId: 'total', columnIds: ['name', 'amount', 'total'], rowIds: ['a', 'b', 'c', 'd'], excelRowOffset: 2 } as any)
+    ).toBe('SUMIF(A2:A4,"match",B2:B4)');
+
+    const snapshot = service.getFormulaStoreSnapshot();
+    items.reverse();
+    service.setFormulaStoreSnapshot(snapshot);
+    expect(service.getEvaluatedCellValue('d', 'total')).toBe(40);
+
+    const registerFormulaRange = vi.fn().mockReturnValueOnce("'Formula References'!$A$1:$A$3").mockReturnValueOnce("'Formula References'!$A$4:$A$6");
+    expect(
+      service.getExcelFormula({
+        rowId: 'd',
+        columnId: 'total',
+        columnIds: ['name', 'amount', 'total'],
+        rowIds: items.map((item) => item.id),
+        excelRowOffset: 2,
+        registerFormulaRange,
+      } as any)
+    ).toBe("SUMIF('Formula References'!$A$1:$A$3,\"match\",'Formula References'!$A$4:$A$6)");
+    expect(registerFormulaRange.mock.calls).toEqual([[['A5', 'A4', 'A3']], [['B5', 'B4', 'B3']]]);
+  });
+
+  it('truncates an oversized SUMIF sum range from its first cell', () => {
+    const items = [
+      { id: 'a', criteria: 1, amount: 10, total: '' },
+      { id: 'b', criteria: 0, amount: 20, total: '' },
+      { id: 'c', criteria: 1, amount: 30, total: '' },
+    ];
+    const columns: Column[] = [
+      { id: 'criteria', field: 'criteria' },
+      { id: 'amount', field: 'amount' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+
+    service.setFormula('c', 'total', '=SUMIF(A1:A2,1,B1:B3)');
+    expect(service.getEvaluatedCellValue('c', 'total')).toBe(10);
+    expect(
+      service.getExcelFormula({ rowId: 'c', columnId: 'total', columnIds: ['criteria', 'amount', 'total'], rowIds: ['a', 'b', 'c'], excelRowOffset: 2 } as any)
+    ).toBe('SUMIF(A2:A3,1,B2:B3)');
+  });
+
+  it('does not normalize ranges when a custom SUMIF function overrides the built-in', () => {
+    const items = [
+      { id: 'a', criteria: 1, amount: 10, total: '' },
+      { id: 'b', criteria: 0, amount: 20, total: '' },
+      { id: 'c', criteria: 1, amount: 30, total: '' },
+    ];
+    const columns: Column[] = [
+      { id: 'criteria', field: 'criteria' },
+      { id: 'amount', field: 'amount' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const service = new FormulaService({ autoAssignEditor: false, customFunctions: { SUMIF: () => 99 } });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+
+    service.setFormula('c', 'total', '=SUMIF(A1:A2,1,B1:B3)');
+    expect(service.getEvaluatedCellValue('c', 'total')).toBe(99);
+    expect(service.getFormula('c', 'total')?.match(/COLUMN\("amount"\)/g)).toHaveLength(3);
+  });
+
   it('should expose and merge service options', () => {
     const service = new FormulaService({ autoAssignEditor: false });
 

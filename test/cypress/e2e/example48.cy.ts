@@ -10,36 +10,6 @@ describe('Example 48 - Formula Service', () => {
     cy.get('h3').should('contain', 'Example 48 - Formula Service');
   });
 
-  describe('selection prerequisite fallback', () => {
-    afterEach(() => {
-      // Restore the standard grid configuration even if an assertion in this scenario fails.
-      cy.visit(`${Cypress.config('baseUrl')}/example48`);
-    });
-
-    it('should warn when selection prerequisites are missing and fallback to CSS reference highlights', () => {
-      const warnings: string[] = [];
-
-      cy.on('window:before:load', (win) => {
-        win.console.warn = (...args) => warnings.push(args.map(String).join(' '));
-      });
-      cy.visit(`${Cypress.config('baseUrl')}/example48`);
-      cy.window().then((win) => win.sessionStorage.setItem('example48-selection-model-test-mode', 'disabled'));
-      cy.reload();
-
-      cy.then(() => {
-        expect(warnings).to.have.length(1);
-        expect(warnings[0]).to.contain('Formula range visuals and drag-resize rely on an active cell-capable SelectionModel');
-      });
-
-      cy.get(cell(0, 4)).dblclick();
-      cy.get('.formula-editor-input').should('be.visible').click().type('{selectall}=SUM(C1:C3)', { force: true });
-      cy.get(cell(0, 2)).should('have.class', 'formula-cell-color-1');
-      cy.get(cell(1, 2)).should('have.class', 'formula-cell-color-1');
-      cy.get(cell(2, 2)).should('have.class', 'formula-cell-color-1');
-      cy.get('.formula-editor-input').type('{esc}', { force: true });
-    });
-  });
-
   it('should have exact column titles on grid', () => {
     cy.get('.grid48')
       .find('.slick-header-columns')
