@@ -359,6 +359,10 @@ describe('FormulaService', () => {
     expect(evaluate('=COUNT(A1:A6)')).toBe(3);
     expect(evaluate('=COUNTA(A1:A6)')).toBe(3);
     expect(evaluate('=COUNTBLANK(A1:A6)')).toBe(3);
+    expect(evaluate('=COUNT()')).toBe('#VALUE!');
+    expect(evaluate('=COUNTA()')).toBe('#VALUE!');
+    expect(evaluate('=COUNTBLANK()')).toBe('#VALUE!');
+    expect(evaluate('=COUNTBLANK(A1,A2)')).toBe('#VALUE!');
     expect(evaluate('=AVERAGE(A2:A2)')).toBe('#DIV/0!');
     expect(evaluate('=INSPECT(A1:A6)')).toBe(6);
     expect(inspect).toHaveBeenLastCalledWith([2, null, 0, null, 4, null]);

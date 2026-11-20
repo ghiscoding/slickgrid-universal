@@ -1,6 +1,8 @@
 # Formula Editor Plugin Progress
 
 ## Handoff update (2026-11-20)
+- Validated count-function argument counts: `COUNT` and `COUNTA` require an argument, and `COUNTBLANK` requires exactly one. All 160 Formula Plugin tests pass with full statement and line coverage for the changed function file.
+- Packed the Formula Plugin and installed its tarball in an isolated offline consumer using local workspace overrides for its 11.0.0 dependencies; `FormulaService` and the default CSS export resolve. A registry-only clean install remains unverified.
 - Consolidated lazy `IF` and `SUMIF` function-argument scanning in one parser, preserving quoted text and nested expressions.
 - Added Example 48 browser assertions for clipped and overlapping reference highlights, cancel cleanup, range-endpoint dragging, and exported custom-function metadata. These additions and the existing grouped SUMPRODUCT regression still need a browser run against the Vanilla demo server; Example 48's 11 rows do not exercise row virtualization.
 - Removed the unverified Example 48 selection-warning browser scenario after repeated failures; unit coverage remains and browser coverage is still open.
@@ -205,11 +207,13 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Report arithmetic and function overflow as `#NUM!` without masking division-by-zero errors, and render logical values consistently in `CONCAT`/`CONCATENATE`.
 - [x] Match Excel `SUMIF` behavior for mismatched ranges by sizing `sum_range` from its first cell to the criteria range dimensions; preserve expanded cells through layout changes, snapshots and Excel export.
 - [x] Audit and correct comparisons between logical, numeric and text values, including chained comparisons and blank references. Logical values remain numeric in arithmetic.
-- [ ] Audit remaining operator and conditional-function coercion, dates and function argument counts.
+- [x] Validate required argument counts for `COUNT`, `COUNTA` and `COUNTBLANK`.
+- [ ] Audit remaining operator and conditional-function coercion, dates and other function argument counts.
 - [x] Consolidate argument, quote and nesting scans shared by lazy `IF` evaluation and `SUMIF` range normalization; preserve existing parsing behavior and coverage.
 - [ ] Smoke-test formula integration and the optional stylesheet in Angular, Aurelia, React and Vue. The only current formula demo is Vanilla Example 48, so arrange framework-specific setups and do not infer wrapper behavior from Vanilla.
 - [x] Complete the pnpm formula-plugin package build; package exports, custom Sass, five theme builds and version alignment are verified.
-- [ ] Verify a clean install of the packed package and its production dependencies; the offline install attempt did not complete.
+- [x] Install the packed Formula Plugin in an isolated offline consumer with local workspace overrides; verify JavaScript and CSS exports resolve.
+- [ ] Verify a registry-only clean install of the packed Formula Plugin and its production dependencies.
 - [x] Review current-facing documentation for stale MVP claims and demo references; update the formula guides and all four framework export guides to point to Vanilla Example 48.
 - [ ] Complete final validation for changed files: relevant tests, lint, formatting and TypeScript; verify 100% statement and line coverage per changed production file, and dependency/circular checks when imports change. Include browser and workbook checks where applicable.
 - [ ] Evaluate editor validation and detailed error messages if needed; the editor currently accepts input without validation.

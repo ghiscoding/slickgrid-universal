@@ -109,7 +109,11 @@ describe('createFormulaFunctionRegistry', () => {
       2
     );
     expect(registry.get('COUNTA')?.(1, '2', '', null, undefined, false)).toBe(3);
-    expect(registry.get('COUNTBLANK')?.(1, '', null, undefined, 'x')).toBe(3);
+    expect(registry.get('COUNTBLANK')?.([1, '', null, undefined, 'x'])).toBe(3);
+    expect(registry.get('COUNT')?.()).toBe(FORMULA_ERROR.VALUE);
+    expect(registry.get('COUNTA')?.()).toBe(FORMULA_ERROR.VALUE);
+    expect(registry.get('COUNTBLANK')?.()).toBe(FORMULA_ERROR.VALUE);
+    expect(registry.get('COUNTBLANK')?.([null], [null])).toBe(FORMULA_ERROR.VALUE);
   });
 
   it('should evaluate COUNTIF and SUMIF criteria operators', () => {

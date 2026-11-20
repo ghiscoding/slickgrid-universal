@@ -193,31 +193,39 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
       })
       .join('');
   const COUNT = (...args: unknown[]) =>
-    args.reduce<number>(
-      (count, arg) =>
-        count +
-        (Array.isArray(arg)
-          ? flattenFormulaFunctionArgs(arg).filter(
-              (value) => typeof unwrapFormulaReference(value) === 'number' && Number.isFinite(unwrapFormulaReference(value))
-            ).length
-          : isFormulaReference(arg)
-            ? typeof arg.value === 'number' && Number.isFinite(arg.value)
-              ? 1
-              : 0
-            : typeof arg === 'boolean' || isNumericFormulaValue(arg)
-              ? 1
-              : 0),
-      0
-    );
+    !args.length
+      ? FORMULA_ERROR.VALUE
+      : args.reduce<number>(
+          (count, arg) =>
+            count +
+            (Array.isArray(arg)
+              ? flattenFormulaFunctionArgs(arg).filter(
+                  (value) => typeof unwrapFormulaReference(value) === 'number' && Number.isFinite(unwrapFormulaReference(value))
+                ).length
+              : isFormulaReference(arg)
+                ? typeof arg.value === 'number' && Number.isFinite(arg.value)
+                  ? 1
+                  : 0
+                : typeof arg === 'boolean' || isNumericFormulaValue(arg)
+                  ? 1
+                  : 0),
+          0
+        );
   const COUNTA = (...args: unknown[]) =>
-    flattenFormulaFunctionArgs(args).filter((value) =>
-      isFormulaReference(value) ? value.value !== null && value.value !== undefined : value !== null && value !== undefined && value !== ''
-    ).length;
+    !args.length
+      ? FORMULA_ERROR.VALUE
+      : flattenFormulaFunctionArgs(args).filter((value) =>
+          isFormulaReference(value)
+            ? value.value !== null && value.value !== undefined
+            : value !== null && value !== undefined && value !== ''
+        ).length;
   const COUNTBLANK = (...args: unknown[]) =>
-    flattenFormulaFunctionArgs(args).filter((value) => {
-      const unwrapped = unwrapFormulaReference(value);
-      return unwrapped === null || unwrapped === undefined || unwrapped === '';
-    }).length;
+    args.length !== 1
+      ? FORMULA_ERROR.VALUE
+      : flattenFormulaFunctionArgs(args).filter((value) => {
+          const unwrapped = unwrapFormulaReference(value);
+          return unwrapped === null || unwrapped === undefined || unwrapped === '';
+        }).length;
   const COUNTIF = (...args: unknown[]) => {
     if (args.length !== 2) {
       return FORMULA_ERROR.VALUE;
