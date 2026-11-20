@@ -90,6 +90,10 @@
 - [ ] Consider inheriting appropriate host presentation settings with explicit details options taking precedence. Avoid importing the Vanilla bundle into Pivot merely to construct this grid, which would add dependencies for framework users.
 - [ ] Review row limits, formatting, custom columns, accessibility, RTL recreation, close/disposal, provider drill-down, and empty results.
 
+### 11. Feature size is large
+
+The new Pivot feature is also very large, it's understandable that this is a complex feature but perhaps there ways to decrease this feature size? For example do we need all these buttons in the header? Can we reuse some code? For example, the "slick-pivot-menu" look similar to existing Menu plugins or are we making sure that we have the simplest implementation for menu creation. In Slickgrid-Universal the Menu plugins are part of the common package (always loaded), so perhaps we could reuse the menu logic?
+
 ## UI review to do with the user
 
 Do not assume the current controls are all necessary, correctly named, or in their final locations. For each, explain its behavior and decide whether it belongs to the resource, example, or host application. Review defaults, discoverability, accessibility, localization, responsiveness, disabled states, persistence, and overlap with existing grid UI. Preserve the preferred separate sidebar.
