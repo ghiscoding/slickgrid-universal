@@ -29,6 +29,7 @@ import {
   getFormulaRangeWidth,
   mapFormulaRanges,
   normalizeSumIfRangeDimensions,
+  parseFormulaFunctionArguments,
   rewriteExcelHelperCounta,
 } from './formula-range.js';
 import {
@@ -1097,40 +1098,11 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       if (/^["']/.test(match[0])) {
         continue;
       }
-      const args: string[] = [];
-      let start = token.lastIndex;
-      let depth = 0;
-      let quote = '';
-      let end = start;
-      for (; end < expression.length; end++) {
-        const char = expression[end];
-        if (quote) {
-          if (char === '\\') {
-            end++;
-          } else if (char === quote) {
-            if (expression[end + 1] === quote) {
-              end++;
-            } else {
-              quote = '';
-            }
-          }
-        } else if (char === '"' || char === "'") {
-          quote = char;
-        } else if (char === '(' || char === '[') {
-          depth++;
-        } else if (char === ')' && depth === 0) {
-          args.push(expression.slice(start, end));
-          break;
-        } else if (char === ')' || char === ']') {
-          depth--;
-        } else if (char === ',' && depth === 0) {
-          args.push(expression.slice(start, end));
-          start = end + 1;
-        }
-      }
-      if (end >= expression.length || args.length < 2 || args.length > 3 || args.some((arg) => !arg.trim())) {
+      const parsed = parseFormulaFunctionArguments(expression, token.lastIndex - 1);
+      if (!parsed || parsed.args.length < 2 || parsed.args.length > 3 || parsed.args.some((arg) => !arg.trim())) {
         continue;
       }
+      const { args, end } = parsed;
       let name = `__FORMULA_LAZY_IF_${sequence++}`;
       while (functions.has(name) || expression.toUpperCase().includes(name)) {
         name = `__FORMULA_LAZY_IF_${sequence++}`;

@@ -1,6 +1,7 @@
 # Formula Editor Plugin Progress
 
 ## Handoff update (2026-11-20)
+- Consolidated lazy `IF` and `SUMIF` function-argument scanning in one parser, preserving quoted text and nested expressions.
 - Added Example 48 browser assertions for clipped and overlapping reference highlights, cancel cleanup, range-endpoint dragging, and exported custom-function metadata. These additions and the existing grouped SUMPRODUCT regression still need a browser run against the Vanilla demo server; Example 48's 11 rows do not exercise row virtualization.
 - Removed the unverified Example 48 selection-warning browser scenario after repeated failures; unit coverage remains and browser coverage is still open.
 - Fixed mismatched `SUMIF` ranges to size `sum_range` from its first cell to the criteria range dimensions, storing the effective cells as stable references. Evaluation, snapshot restore after reorder, and Excel export are covered; all 160 Formula Plugin tests passed with 100% statement and line coverage for the changed production files.
@@ -205,7 +206,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Match Excel `SUMIF` behavior for mismatched ranges by sizing `sum_range` from its first cell to the criteria range dimensions; preserve expanded cells through layout changes, snapshots and Excel export.
 - [x] Audit and correct comparisons between logical, numeric and text values, including chained comparisons and blank references. Logical values remain numeric in arithmetic.
 - [ ] Audit remaining operator and conditional-function coercion, dates and function argument counts.
-- [ ] Review and consolidate duplicated formula parsing, including argument, quote and nesting scans in lazy `IF` evaluation and `SUMIF` range normalization; preserve existing parsing behavior and coverage.
+- [x] Consolidate argument, quote and nesting scans shared by lazy `IF` evaluation and `SUMIF` range normalization; preserve existing parsing behavior and coverage.
 - [ ] Smoke-test formula integration and the optional stylesheet in Angular, Aurelia, React and Vue. The only current formula demo is Vanilla Example 48, so arrange framework-specific setups and do not infer wrapper behavior from Vanilla.
 - [x] Complete the pnpm formula-plugin package build; package exports, custom Sass, five theme builds and version alignment are verified.
 - [ ] Verify a clean install of the packed package and its production dependencies; the offline install attempt did not complete.

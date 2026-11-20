@@ -115,7 +115,7 @@ export function normalizeSumIfRangeDimensions(formula: string): string {
   return output;
 }
 
-function parseFormulaFunctionArguments(formula: string, openIndex: number): { args: string[]; end: number } | undefined {
+export function parseFormulaFunctionArguments(formula: string, openIndex: number): { args: string[]; end: number } | undefined {
   const args: string[] = [];
   let start = openIndex + 1;
   let depth = 0;
