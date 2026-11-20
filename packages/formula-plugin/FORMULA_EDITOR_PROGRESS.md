@@ -186,7 +186,9 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [ ] Add browser coverage for selection-model CSS fallback and prerequisite warnings using a suitable demo configuration.
 - [ ] Run and fix the new Example 48 assertions for case-insensitive text comparisons, range-endpoint dragging, clipped and overlapping highlights, cancel cleanup and exported custom-function metadata. The tests are written but have not yet been run.
 - [ ] Run the grouped `SUMPRODUCT` Example 48 browser/workbook regression against a running watch server; verify its exported workbook calculation where practical.
-- [ ] Verify CSV/text export of evaluated formula values, including grouped data where supported; the original export audit called for a separate check.
+- [x] Verify CSV/text export of evaluated formula values with grouped and ungrouped integration tests. With formatters disabled, export retains the raw dataset value.
+- [x] Add a CSV export control to Example 48 and document the formatter requirement.
+- [ ] Run the new Example 48 grouped and ungrouped CSV browser assertions against the Vanilla demo server.
 - [ ] Validate reference highlight behavior during scrolling and row virtualization, including cleanup; Example 48's 11 rows do not exercise row virtualization, so provide a suitable test setup.
 - [x] Audit and align operator precedence and negative powers with Excel.
 - [x] Fix arithmetic addition of numeric and nonnumeric text; retain `&` for concatenation.

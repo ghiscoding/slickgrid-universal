@@ -256,6 +256,8 @@ Export supports:
 - conversion of formula-enabled cells to native Excel formulas
 - workbook metadata hooks for defined names and custom functions
 
+For CSV or text export, enable `exportWithFormatter: true` in `TextExportService` options to export the displayed formula results. Column-level `exportWithFormatter` and `exportCustomFormatter` settings take precedence; with formatters disabled, export reads the raw dataset value instead.
+
 ### Troubleshooting
 1. Formula cell shows raw formula string
 - Verify the column has `allowFormula: true`.

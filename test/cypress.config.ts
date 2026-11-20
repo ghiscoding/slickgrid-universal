@@ -288,6 +288,13 @@ export default defineConfig({
     testIsolation: false,
     setupNodeEvents(on) {
       on('task', {
+        clearFormulaCsvDownload({ downloadsFolder }: { downloadsFolder: string }) {
+          const filename = path.join(downloadsFolder, 'grocery-formula-values.csv');
+          if (fs.existsSync(filename)) {
+            fs.unlinkSync(filename);
+          }
+          return null;
+        },
         clearXlsxDownloads({ downloadsFolder }: { downloadsFolder: string }) {
           if (!fs.existsSync(downloadsFolder)) {
             return 0;

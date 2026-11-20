@@ -17,6 +17,25 @@ describe('Example 48 - Formula Service', () => {
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
+  it('should export calculated CSV values before and after grouping', () => {
+    const downloadsFolder = Cypress.config('downloadsFolder');
+    const csvPath = `${downloadsFolder}/grocery-formula-values.csv`;
+    const checkExport = () => {
+      cy.task('clearFormulaCsvDownload', { downloadsFolder });
+      cy.get('[data-test="export-csv-btn"]').click();
+      cy.readFile(csvPath, 'utf8', { timeout: 15000 }).should((csv) => {
+        expect(csv).to.contain('Oranges');
+        expect(csv).to.contain('$8.88');
+        expect(csv).not.to.contain('REF(COLUMN');
+      });
+    };
+    checkExport();
+    cy.get('[data-test="group-by-btn"]').click();
+    checkExport();
+    cy.get('[data-test="clear-grouping-btn"]').click();
+    cy.reload();
+  });
+
   it('should check first 3 rows with calculated values (including Custom Sum)', () => {
     // 1st row
     cy.get(cell(0, 0)).contains('1');

@@ -15,6 +15,7 @@ import {
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { FormulaService, type FormulaCustomFunctionParams, type FormulaStoreSnapshot } from '@slickgrid-universal/formula-plugin';
+import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example48.scss';
@@ -82,6 +83,7 @@ export default class Example48 {
   gridContainerElm!: HTMLDivElement;
   sgb!: SlickVanillaGridBundle;
   excelExportService: ExcelExportService;
+  textExportService: TextExportService;
   formulaService: FormulaService;
   isDataGrouped = false;
   taxRate = 7.5;
@@ -89,6 +91,7 @@ export default class Example48 {
 
   constructor() {
     this.excelExportService = new ExcelExportService();
+    this.textExportService = new TextExportService();
     this.formulaService = new FormulaService({
       excelCustomFunctions: [{ name: 'CUSTOMSUM', args: ['values'], body: 'SUM(values)' }],
       customFunctions: {
@@ -340,7 +343,8 @@ export default class Example48 {
       enableGrouping: true,
       enableFormulas: true,
       enableExcelExport: true,
-      externalResources: [this.excelExportService, this.formulaService],
+      enableTextExport: true,
+      externalResources: [this.excelExportService, this.textExportService, this.formulaService],
       excelExportOptions: {
         filename: 'grocery-list-formula-service',
         sanitizeDataExport: true,
@@ -476,6 +480,15 @@ export default class Example48 {
 
   exportToExcelWithHidden() {
     this.excelExportService.exportToExcel({ includeHidden: true });
+  }
+
+  exportToCsv() {
+    this.textExportService.exportToFile({
+      filename: 'grocery-formula-values',
+      format: 'csv',
+      exportWithFormatter: true,
+      sanitizeDataExport: true,
+    });
   }
 
   registerCustomSum() {
