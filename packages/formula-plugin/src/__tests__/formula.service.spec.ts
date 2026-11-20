@@ -69,6 +69,28 @@ describe('FormulaService', () => {
     );
   });
 
+  it('compares numbers and text by type rather than coercing numeric text', () => {
+    const items = [{ id: 'a', value: '3', total: '' }];
+    const columns: Column[] = [
+      { id: 'value', field: 'value' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
+    expect(evaluate('=3="3"')).toBe(false);
+    expect(evaluate('=3<>"3"')).toBe(true);
+    expect(evaluate('=3<"0"')).toBe(true);
+    expect(evaluate('="0">3')).toBe(true);
+    expect(evaluate('=3>="0"')).toBe(false);
+    expect(evaluate('="0"<=3')).toBe(false);
+    service.setFormula('a', 'total', '=IF(A1>100,1,0)');
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe(1);
+    expect(service.getExcelFormula({ rowId: 'a', columnId: 'total', columnIds: ['value', 'total'], rowIds: ['a'], excelRowOffset: 2 } as any)).toBe(
+      'IF(A2>100,1,0)'
+    );
+  });
+
   it('resolves escaped row and column IDs and propagates errors from references', () => {
     const id = 'r"\\1';
     const columnId = 'value"\\x';
@@ -254,6 +276,8 @@ describe('FormulaService', () => {
     expect(evaluate('=""+1')).toBe('#VALUE!');
     expect(evaluate('=1+" "')).toBe('#VALUE!');
     expect(evaluate('="1"&"2"')).toBe('12');
+    expect(evaluate('="A"&TRUE&FALSE')).toBe('ATRUEFALSE');
+    expect(evaluate('=TRUE&"-"&FALSE')).toBe('TRUE-FALSE');
     service.setFormula('a', 'total', '=A1+"2"');
     expect(service.getEvaluatedCellValue('a', 'total')).toBe(14.5);
     expect(service.getExcelFormula({ rowId: 'a', columnId: 'total', columnIds: ['value', 'total'], rowIds: ['a', 'b', 'c'], excelRowOffset: 2 } as any)).toBe(
@@ -293,6 +317,7 @@ describe('FormulaService', () => {
     expect(evaluate(service.getFormula('a', 'total')!)).toBe(1);
     expect(evaluate('=AVERAGE(REFRANGE(A1,A3,A4))')).toBe(1);
     expect(evaluate('=AVERAGE(REFRANGE(A1,A99))')).toBe('#REF!');
+    expect(evaluate('=AVERAGE(REFRANGE(A1,A0))')).toBe('#REF!');
   });
 
   it('distinguishes reference values from literal arguments in aggregates', () => {

@@ -1318,6 +1318,11 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         if (typeof left === 'string' && typeof right === 'string') {
           left = left.toUpperCase();
           right = right.toUpperCase();
+        } else if ((typeof left === 'number' && typeof right === 'string') || (typeof left === 'string' && typeof right === 'number')) {
+          // Spreadsheet comparisons order text after numbers without converting numeric text.
+          const leftIsText = typeof left === 'string';
+          left = leftIsText ? 1 : 0;
+          right = leftIsText ? 0 : 1;
         }
         switch (op) {
           case '==':
@@ -1355,7 +1360,8 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         if (isFormulaErrorCode(right)) {
           return right;
         }
-        left = `${left ?? ''}${right ?? ''}`;
+        const textValue = (value: unknown) => (typeof value === 'boolean' ? (value ? 'TRUE' : 'FALSE') : String(value ?? ''));
+        left = `${textValue(left)}${textValue(right)}`;
       }
       return left;
     };

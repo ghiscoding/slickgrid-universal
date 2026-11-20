@@ -103,6 +103,10 @@ describe('createFormulaFunctionRegistry', () => {
     const registry = createFormulaFunctionRegistry(new Map());
 
     expect(registry.get('COUNT')?.(1, '2', 'x', '', null, undefined, Infinity)).toBe(2);
+    expect(registry.get('COUNT')?.([formulaReference(4), formulaReference('4'), null])).toBe(1);
+    expect(registry.get('COUNT')?.(formulaReference(4), formulaReference(0), formulaReference('4'), formulaReference(null), formulaReference(Infinity))).toBe(
+      2
+    );
     expect(registry.get('COUNTA')?.(1, '2', '', null, undefined, false)).toBe(3);
     expect(registry.get('COUNTBLANK')?.(1, '', null, undefined, 'x')).toBe(3);
   });

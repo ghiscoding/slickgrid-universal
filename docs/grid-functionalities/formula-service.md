@@ -250,7 +250,7 @@ Evaluation supports:
 - arithmetic/comparison operators
 - built-in and custom functions
 
-Comparisons between text values ignore letter case, including comparisons used in `IF` conditions.
+Comparisons between text values ignore letter case, including comparisons used in `IF` conditions. Comparisons between numbers and text treat them as different types, with text ordered after numbers. The `&` operator renders logical values as `TRUE` or `FALSE`.
 
 Export supports:
 - conversion of formula-enabled cells to native Excel formulas
