@@ -110,4 +110,12 @@ describe('formula reference utilities', () => {
     expect(hash[2].a).toBe('formula-cell-color-1 formula-ref-range formula-ref-bottom formula-ref-left');
     expect(hash[2].c).toBe('formula-cell-color-1 formula-ref-range formula-ref-bottom formula-ref-right');
   });
+
+  it('uses the later reference color and edges for overlapping cells', () => {
+    const columns = [{ id: 'a' }, { id: 'b' }, { id: 'c' }];
+    const hash = buildFormulaReferenceCssHash(buildFormulaReferenceColorInfos('=SUM(A1:B2)+SUM(B2:C3)'), columns, 3);
+    expect(hash[0].a).toContain('formula-cell-color-1');
+    expect(hash[1].b).toBe('formula-cell-color-2 formula-ref-range formula-ref-top formula-ref-left');
+    expect(hash[2].c).toBe('formula-cell-color-2 formula-ref-range formula-ref-bottom formula-ref-right');
+  });
 });

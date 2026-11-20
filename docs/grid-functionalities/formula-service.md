@@ -128,6 +128,8 @@ Highlight behavior:
 - existing cell/row selection ranges are restored when the temporary active-reference highlight is cleared
 - all formula references use one CSS overlay through `setCellCssStyles(...)`, with a distinct color matching each formula token
 
+When references overlap, the later reference in the formula supplies the overlapping cell's color and outline. The individual reference tokens retain their own colors.
+
 Formula reference storage:
 - the editor displays familiar Excel A1 references such as `C1` and `D1:D3`
 - committed formulas are stored with stable column and row identities, for example `REF(COLUMN("price"),ROW("a_01"))`

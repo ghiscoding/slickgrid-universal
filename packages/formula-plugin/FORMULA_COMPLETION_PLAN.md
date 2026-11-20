@@ -96,7 +96,7 @@ The registry contains the built-in names in the supplied AG Grid reference, plus
 - Hidden-column logical letters, selection and export have targeted coverage; investigate further only if a new regression is found.
 - Test overlapping references, clipped ranges, virtualization and cleanup. The current range CSS hash lets a later reference overwrite an earlier color on the same cell; document or improve that policy.
 - Smoke-test Angular, React, Vue and Aurelia integration with the optional stylesheet. Current formula demo coverage is Vanilla; do not imply framework validation from that alone.
-- Verify package exports, Sass customization, all five CSS builds, clean install/build and release-version alignment (`formula-plugin/package.json` currently says 10.9.0). Remove stale MVP claims and old example numbers from current-facing docs; retain historical audit entries as history.
+- Verify package exports, Sass customization, all five CSS builds and clean install/build. The formula package version now matches the 11.0.0 monorepo version. Remove stale MVP claims and old example numbers from current-facing docs; retain historical audit entries as history.
 - For every changed production TypeScript file, run all relevant focused specs with per-file 100% statement and line coverage. Run formatting, lint, TypeScript and dependency/circular checks when imports change. Browser and workbook assertions are necessary in addition to coverage.
 
 ## Deferred enhancements

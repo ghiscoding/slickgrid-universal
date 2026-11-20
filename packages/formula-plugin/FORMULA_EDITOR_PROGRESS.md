@@ -1,5 +1,11 @@
 # Formula Editor Plugin Progress
 
+## Handoff update (2026-11-19)
+- The earlier uncommitted work is now committed; the branch was clean at the start of this session.
+- Aligned the formula package version with the monorepo's 11.0.0 version and corrected the package README's outdated evaluator description. A forced TypeScript build, all five Sass theme builds, custom Sass color compilation, public JS/CSS resolution, npm pack dry run, and all 150 formula plugin unit tests passed. The pnpm package build itself produced no output and was stopped; a clean install is still unverified. The grouped SUMPRODUCT browser regression still needs a running Vanilla demo server.
+- SUMIF currently truncates mismatched ranges to the shorter flattened array. Excel-compatible expansion requires preserving the additional referenced cells as stable identities; do not implement it as a simple change to the array length.
+- Highlight review: overlapping cells use the later reference's color and edges, now documented and covered by a unit test. The hash clips to the data and visible columns; SlickGrid stores the hash independently of rendered rows and applies it during cell rendering. Editor destruction and service disposal remove the overlay. Browser validation of scrolling/virtualization and cleanup remains open.
+
 Last updated: 2026-11-17
 Branch context: feat/cell-formula-plugin
 
@@ -174,7 +180,7 @@ This checklist tracks outstanding work from the PR description and the audits be
 - [x] Evaluate only the selected built-in `IF` branch and propagate errors from evaluated function arguments; validate both branches without executing the unused one.
 - [x] Resolve the conflicting scalar-times-range expectations: both `*` and `×` now return `#VALUE!`.
 - [x] Support dragging the fill handle to copy formulas into a selected target range, adjusting relative references and preserving absolute references.
-- [ ] Evaluate double-clicking the fill handle to fill down to an adjacent data boundary. Define which adjacent cells determine the stopping point and how gaps, grouping, filtering and large datasets should behave; this enhancement may be skipped.
+- [x] Evaluate double-clicking the fill handle to fill down to an adjacent data boundary. Defer this optional enhancement: the current grid exposes drag replacement but no double-click fill event, and adjacent-boundary rules across groups and filters need a separate design. A future implementation should stop at the first blank in a chosen adjacent visible data column, stop at structural rows, respect filtering, and cap the number of filled cells; multiple adjacent columns and overwrite behavior require an explicit product decision.
 - [x] Evaluate the existing autocompleter: retain the current contenteditable implementation because an adapter has no demonstrated LOC or bundle-size benefit.
 - [ ] Complete direct browser coverage for selection-model CSS fallback, prerequisite warnings, range-endpoint dragging and workbook custom-function metadata. Raw stable-reference entry, drag-fill, hidden-column export and grouping are covered in Example 48.
 - [ ] Run the newly added grouped `SUMPRODUCT` Example 48 browser/workbook regression against a running watch server; verify its exported workbook calculation where practical.
