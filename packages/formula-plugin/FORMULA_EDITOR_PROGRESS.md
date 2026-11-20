@@ -1,6 +1,7 @@
 # Formula Editor Plugin Progress
 
 ## Handoff update (2026-11-20)
+- Formula autocomplete now ignores quoted text and replaces the complete function name when selecting a suggestion from its middle. All 47 Example 48 Cypress tests and 163 Formula Plugin unit tests passed.
 - Installed the packed Formula Plugin in a fresh consumer with production dependencies from npm and no workspace overrides. The JavaScript, five CSS themes and Sass exports resolved successfully.
 - Example 48 now tests reference highlighting across 80 restored rows: colors appear on virtualized rows and clear after cancel, including when those rows are rendered again. All 46 Cypress tests passed.
 - Vanilla Example 48 passed all 45 Cypress tests against the watch server, including CSV, text comparisons, reference highlights and grouped workbook exports. LibreOffice recalculated the grouped `SUMPRODUCT` workbook to 57.0334 and returned `#VALUE!` for mismatched ranges.
@@ -223,14 +224,14 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [ ] Complete final validation for changed files: relevant tests, lint, formatting and TypeScript; verify 100% statement and line coverage per changed production file, and dependency/circular checks when imports change. Include browser and workbook checks where applicable.
 - [x] Evaluate editor validation: support editor and column validators and their messages; retain calculation errors in cells instead of automatically blocking formula input.
 - [ ] Deferred: evaluate whole-row reference picking, whole-column drag-handle expansion, colored reference handles and an external formula data-source adapter as separate enhancements.
-- [ ] Deferred: evaluate autocomplete behavior inside quoted strings and replacement from the middle of a function name if a concrete need arises.
+- [x] Prevent autocomplete inside quoted strings and replace the complete function name when selecting from its middle.
 - [ ] Deferred: revisit double-click fill only if requested; the boundary, grouping, filtering and overwrite policy needs a separate design.
 - [x] Compare Syncfusion's formula reference and add `ABS`, `ROUND`, `MOD`, `SQRT`, and the `RANDOM`, `RAN`, and `CONCATENATE` aliases, with Excel export translation.
 - [x] Distinguish `#CIRCREF!`, `#PARSE!`, missing references and custom-function failures; document Excel export behavior.
 - [x] Validate fixed argument counts for `IF`, `POWER`, random/date functions and `NA`; align `POWER` and `^` error results.
 - [x] Support custom and read-only formula columns independently of Formula Editor; document and test `onBeforeEditCell` cancellation.
 - [x] Decide whether an optional strict selection-prerequisite mode is needed: retain warning-only behavior and CSS fallback.
-- [ ] Replicate vanilla example 48 to all framework wrappers as next available example number. All wrappers have an exact copy of the Cypress E2E test.
+- [ ] Replicate vanilla example 48 to all framework wrappers as next available example number. All wrappers have an exact copy of the Cypress E2E test. Also replicate docs in all framework wrappers.
 - [ ] **Last task:** Evaluate a separate calculated-columns package and identify utilities that could be shared with the formula plugin. Inform the user when this task is reached.
 
 ## Latest Update: Optional Package Styling (2026-11-14)

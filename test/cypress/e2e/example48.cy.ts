@@ -90,6 +90,20 @@ describe('Example 48 - Formula Service', () => {
     cy.get(cell(0, 4)).should('contain', '$8.88');
   });
 
+  it('should avoid suggestions inside strings and replace complete function names', () => {
+    cy.reload();
+    cy.get(cell(0, 4)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=SU', { force: true });
+    cy.contains('.formula-autocomplete div', /^SUM$/).should('be.visible');
+    cy.get('.formula-editor-input').type('{selectall}=CONCAT("SU', { force: true });
+    cy.get('.formula-autocomplete').should('not.be.visible');
+    cy.get('.formula-editor-input').type('{selectall}=SMIF(C1:C3)', { force: true });
+    cy.get('.formula-editor-input').type('{home}{rightarrow}{rightarrow}U', { force: true });
+    cy.contains('.formula-autocomplete div', /^SUM$/).click({ force: true });
+    cy.get('.formula-editor-input').should('have.text', '=SUM(C1:C3)');
+    cy.get('.formula-editor-input').type('{esc}', { force: true });
+  });
+
   it('should calculate with a custom editor and update dependent cells after edits', () => {
     cy.reload();
     cy.get(cell(0, 4)).should('contain', '$8.88');

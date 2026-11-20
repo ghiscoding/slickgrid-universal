@@ -909,7 +909,7 @@ export class FormulaCellEditor implements Editor {
     const caretOffset = this.getCaretOffset();
     const textBeforeCaret = text.slice(0, caretOffset);
     const allFunctions = this.getFormulaFunctionList();
-    if (!textBeforeCaret.startsWith('=') || allFunctions.length === 0) {
+    if (!textBeforeCaret.startsWith('=') || allFunctions.length === 0 || this.isInsideQuotedText(textBeforeCaret)) {
       this.hideAutocomplete();
       return;
     }
@@ -937,6 +937,25 @@ export class FormulaCellEditor implements Editor {
     this.renderAutocompleteItems();
     this.positionAutocomplete();
     this._autocompleteElm!.style.display = 'block';
+  }
+
+  protected isInsideQuotedText(text: string): boolean {
+    let quote = '';
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      if (quote && char === '\\') {
+        i++;
+      } else if (quote && char === quote) {
+        if (text[i + 1] === quote) {
+          i++;
+        } else {
+          quote = '';
+        }
+      } else if (!quote && (char === '"' || char === "'")) {
+        quote = char;
+      }
+    }
+    return !!quote;
   }
 
   protected ensureAutocompleteElement(): void {
@@ -1005,9 +1024,9 @@ export class FormulaCellEditor implements Editor {
     const text = (this._editorElm.textContent || '').replace(/\u00a0/g, ' ');
     const caretOffset = this.getCaretOffset();
     const textBeforeCaret = text.slice(0, caretOffset);
-    const textAfterCaret = text.slice(caretOffset);
+    const textAfterCaret = text.slice(caretOffset).replace(/^[A-Za-z0-9_]*/, '');
     const match = textBeforeCaret.match(/(?:^|[^A-Za-z0-9_]\s*)([A-Za-z_][A-Za-z0-9_]*)?$/);
-    if (!match) {
+    if (!match || this.isInsideQuotedText(textBeforeCaret)) {
       return;
     }
 

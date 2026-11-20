@@ -4,6 +4,42 @@ import { FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY } from '../formula-reference.js';
 import { FormulaCellEditor } from '../formula.cellEditor.js';
 
 describe('FormulaCellEditor', () => {
+  it('ignores quoted text and replaces the entire function name at the caret', () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    const editor = new FormulaCellEditor({
+      column: { field: 'total', editor: { params: { formulaFunctionList: ['SUM', 'SUMIF'] } } },
+      container,
+      item: { total: '' },
+      grid: { getContainerNode: () => container, getColumns: () => [], getDataLength: () => 0 },
+    } as any);
+    const input = (editor as any)._editorElm as HTMLElement;
+    const update = (text: string, caret: number) => {
+      input.textContent = text;
+      (editor as any).restoreCaretOffset(caret);
+      (editor as any).handleInput();
+    };
+
+    update('=CONCAT("SU', 11);
+    expect((editor as any)._autocompleteItems).toEqual([]);
+    update('=CONCAT("a""SU', 14);
+    expect((editor as any)._autocompleteItems).toEqual([]);
+    update('=CONCAT("a\\"SU', 14);
+    expect((editor as any)._autocompleteItems).toEqual([]);
+    update('="ok"&SU', 8);
+    expect((editor as any)._autocompleteItems).toEqual(['SUM', 'SUMIF']);
+    update('=SUMIF(A1:A3)', 3);
+    expect((editor as any)._autocompleteItems).toEqual(['SUM', 'SUMIF']);
+    (editor as any).selectAutocompleteItem('SUM');
+    expect(editor.serializeValue()).toBe('=SUM(A1:A3)');
+    update('=SUFFIX+1', 3);
+    (editor as any).selectAutocompleteItem('SUM');
+    expect(editor.serializeValue()).toBe('=SUM(+1');
+    editor.destroy();
+    container.remove();
+    window.getSelection()?.removeAllRanges();
+  });
+
   it('validates displayed formula text using editor or column validators', () => {
     const container = document.createElement('div');
     const item = { total: '=A1' };
