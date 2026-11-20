@@ -1,6 +1,7 @@
 # Formula Editor Plugin Progress
 
 ## Handoff update (2026-11-20)
+- Installed the packed Formula Plugin in a fresh consumer with production dependencies from npm and no workspace overrides. The JavaScript, five CSS themes and Sass exports resolved successfully.
 - Example 48 now tests reference highlighting across 80 restored rows: colors appear on virtualized rows and clear after cancel, including when those rows are rendered again. All 46 Cypress tests passed.
 - Vanilla Example 48 passed all 45 Cypress tests against the watch server, including CSV, text comparisons, reference highlights and grouped workbook exports. LibreOffice recalculated the grouped `SUMPRODUCT` workbook to 57.0334 and returned `#VALUE!` for mismatched ranges.
 - Formula Editor now calls the configured editor or column validator with the displayed formula text. Automatic syntax rejection remains disabled; calculation errors remain visible in cells.
@@ -217,7 +218,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [ ] Smoke-test formula integration and the optional stylesheet in Angular, Aurelia, React and Vue. The only current formula demo is Vanilla Example 48, so arrange framework-specific setups and do not infer wrapper behavior from Vanilla.
 - [x] Complete the pnpm formula-plugin package build; package exports, custom Sass, five theme builds and version alignment are verified.
 - [x] Install the packed Formula Plugin in an isolated offline consumer with local workspace overrides; verify JavaScript and CSS exports resolve.
-- [ ] Verify a registry-only clean install of the packed Formula Plugin and its production dependencies.
+- [x] Verify a clean install of the packed Formula Plugin with production dependencies from npm and no workspace overrides; resolve JavaScript, CSS and Sass exports.
 - [x] Review current-facing documentation for stale MVP claims and demo references; update the formula guides and all four framework export guides to point to Vanilla Example 48.
 - [ ] Complete final validation for changed files: relevant tests, lint, formatting and TypeScript; verify 100% statement and line coverage per changed production file, and dependency/circular checks when imports change. Include browser and workbook checks where applicable.
 - [x] Evaluate editor validation: support editor and column validators and their messages; retain calculation errors in cells instead of automatically blocking formula input.
