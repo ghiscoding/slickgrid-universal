@@ -143,7 +143,8 @@ export class FormulaCellEditor implements Editor {
   }
 
   validate(): EditorValidationResult {
-    return { valid: true, msg: '' };
+    const validator = this.args.column.editor?.validator ?? this.args.column.validator;
+    return validator ? validator(this.getPlainTextValue(), this.args) : { valid: true, msg: '' };
   }
 
   protected handleInput(): void {

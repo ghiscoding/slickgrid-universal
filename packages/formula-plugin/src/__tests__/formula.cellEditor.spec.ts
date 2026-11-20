@@ -4,6 +4,29 @@ import { FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY } from '../formula-reference.js';
 import { FormulaCellEditor } from '../formula.cellEditor.js';
 
 describe('FormulaCellEditor', () => {
+  it('validates displayed formula text using editor or column validators', () => {
+    const container = document.createElement('div');
+    const item = { total: '=A1' };
+    const columnValidator = vi.fn().mockReturnValue({ valid: false, msg: 'Column rejected formula' });
+    const editorValidator = vi.fn().mockReturnValue({ valid: false, msg: 'Editor rejected formula' });
+    const args = {
+      column: { field: 'total', validator: columnValidator, editor: { validator: editorValidator } },
+      container,
+      item,
+      grid: { getContainerNode: () => container },
+    } as unknown as EditorArguments;
+    const editor = new FormulaCellEditor(args);
+    editor.loadValue(item);
+
+    expect(editor.validate()).toEqual({ valid: false, msg: 'Editor rejected formula' });
+    expect(editorValidator).toHaveBeenCalledWith('=A1', args);
+    expect(columnValidator).not.toHaveBeenCalled();
+    args.column.editor!.validator = undefined;
+    expect(editor.validate()).toEqual({ valid: false, msg: 'Column rejected formula' });
+    expect(columnValidator).toHaveBeenCalledWith('=A1', args);
+    editor.destroy();
+  });
+
   it('should move Home and End across token spans', () => {
     const hostContainer = document.createElement('div');
     const gridContainer = document.createElement('div');

@@ -1,6 +1,7 @@
 # Formula Editor Plugin Progress
 
 ## Handoff update (2026-11-20)
+- Formula Editor now calls the configured editor or column validator with the displayed formula text. Automatic syntax rejection remains disabled; calculation errors remain visible in cells.
 - `COUNT` now counts valid JavaScript dates from direct values, cells, ranges, `NOW()` and `TODAY()`; invalid dates and referenced date strings remain excluded.
 - Validated count-function argument counts: `COUNT` and `COUNTA` require an argument, and `COUNTBLANK` requires exactly one. All 160 Formula Plugin tests pass with full statement and line coverage for the changed function file.
 - Packed the Formula Plugin and installed its tarball in an isolated offline consumer using local workspace overrides for its 11.0.0 dependencies; `FormulaService` and the default CSS export resolve. A registry-only clean install remains unverified.
@@ -203,7 +204,6 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Fix grouped disjoint Excel `COUNTA` export for formulas returning empty text while still excluding truly blank source cells.
 - [x] Add wildcard, escape, case-insensitive and blank criteria handling to `COUNTIF` and `SUMIF`; ignore nonnumeric sum-range values and validate their argument counts.
 - [x] Validate `SUMPRODUCT` range dimensions and preserve two-dimensional grouped Excel helper ranges.
-- [ ] Validate case-insensitive text comparison in formula operators and `IF` conditions in Example 48. Implementation and unit/export assertions pass; browser coverage is written but not yet run.
 - [x] Correct number-versus-text comparison and uppercase logical values in `&` concatenation; cover both with unit tests.
 - [x] Report arithmetic and function overflow as `#NUM!` without masking division-by-zero errors, and render logical values consistently in `CONCAT`/`CONCATENATE`.
 - [x] Match Excel `SUMIF` behavior for mismatched ranges by sizing `sum_range` from its first cell to the criteria range dimensions; preserve expanded cells through layout changes, snapshots and Excel export.
@@ -218,7 +218,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [ ] Verify a registry-only clean install of the packed Formula Plugin and its production dependencies.
 - [x] Review current-facing documentation for stale MVP claims and demo references; update the formula guides and all four framework export guides to point to Vanilla Example 48.
 - [ ] Complete final validation for changed files: relevant tests, lint, formatting and TypeScript; verify 100% statement and line coverage per changed production file, and dependency/circular checks when imports change. Include browser and workbook checks where applicable.
-- [ ] Evaluate editor validation and detailed error messages if needed; the editor currently accepts input without validation.
+- [x] Evaluate editor validation: support editor and column validators and their messages; retain calculation errors in cells instead of automatically blocking formula input.
 - [ ] Deferred: evaluate whole-row reference picking, whole-column drag-handle expansion, colored reference handles and an external formula data-source adapter as separate enhancements.
 - [ ] Deferred: evaluate autocomplete behavior inside quoted strings and replacement from the middle of a function name if a concrete need arises.
 - [ ] Deferred: revisit double-click fill only if requested; the boundary, grouping, filtering and overwrite policy needs a separate design.
