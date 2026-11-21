@@ -79,7 +79,8 @@ Common `FormulaServiceOption` settings:
 |---|---|---|
 | `autoAssignEditor` | `true` | Auto-attach Formula Editor when the column has no editor. Formula values are formatted regardless of this setting. |
 | `editorParams` | `undefined` | Default editor params merged with column-level params. |
-| `autoSyncFormulasFromDataset` | `true` | Sync initial formula strings from dataset on init. |
+| `autoSyncFormulasFromDataset` | `true` | Sync initial formula strings from dataset on init. Ignored when `formulaDataSource` is set. |
+| `formulaDataSource` | `undefined` | External formula storage with `getFormula`/`setFormula` callbacks. |
 | `customFunctions` | `{}` | Register runtime custom functions. |
 | `excelDefinedNames` | `[]` | Export helper for workbook defined names. |
 | `excelCustomFunctions` | `[]` | Export helper for workbook custom functions. |
@@ -205,6 +206,25 @@ The snapshot replaces the service's entire formula store, including absolute-ref
 
 Formulas for row or column IDs that are not currently present remain in the store. Missing referenced IDs evaluate to `#REF!` until the corresponding data or columns return. Ordinary grouping configuration is not included in Grid State; restore it separately. For dynamic layout restoration use `gridStateService.applyColumnLayout(saved.gridState.columns)` before restoring formulas, and restore other state through the appropriate services.
 
+### Formula Data Source
+
+Use `formulaDataSource` to keep formulas in external storage, similar to AG Grid's `formulaDataSource`. FormulaService calls `getFormula(rowId, columnId)` for every row and formula-enabled column on init, instead of reading formula strings from the dataset. It then calls `setFormula(rowId, columnId, formula)` whenever a formula is set, edited, drag-filled or removed; `formula` is `undefined` for a removal.
+
+```ts
+const formulaStore = new Map<string, string>();
+const formulaKey = (rowId: number | string, columnId: number | string) => `${rowId}|${columnId}`;
+
+const formulaService = new FormulaService({
+  formulaDataSource: {
+    getFormula: (rowId, columnId) => formulaStore.get(formulaKey(rowId, columnId)),
+    setFormula: (rowId, columnId, formula) => {
+      formula === undefined ? formulaStore.delete(formulaKey(rowId, columnId)) : formulaStore.set(formulaKey(rowId, columnId), formula);
+    },
+  },
+});
+```
+
+Formulas are exchanged in the stable `REF(COLUMN(...),ROW(...))` form. Absolute-reference (`$`) markers are not part of that form; use formula snapshots when they must be persisted. `setFormulaStoreSnapshot()` and `clearFormulas()` do not notify the data source.
 ### Formula Drag-Fill
 
 With cell-capable selection enabled, Formula Editor handles the `.slick-drag-replace-handle` automatically for formula-enabled columns.

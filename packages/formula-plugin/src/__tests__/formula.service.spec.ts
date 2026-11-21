@@ -992,6 +992,44 @@ describe('FormulaService', () => {
     expect(service.getFormula('id_1', 'total')).toBe('=REF(COLUMN("price"),ROW("id_1"))*2');
   });
 
+  it('loads formulas from a formula data source and mirrors store changes to it', () => {
+    const items: any[] = [
+      { id: 'a', price: 2, total: 2 },
+      { id: 'b', price: 5, total: 5 },
+      { price: 9, total: 9 },
+    ];
+    const columns: Column[] = [
+      { id: 'price', field: 'price' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const store = new Map<string, string>([['a|total', '=REF(COLUMN("price"),ROW("a"))*3']]);
+    const setFormula = vi.fn((rowId: number | string, columnId: number | string, formula: string | undefined) => {
+      if (formula === undefined) {
+        store.delete(`${rowId}|${columnId}`);
+      } else {
+        store.set(`${rowId}|${columnId}`, formula);
+      }
+    });
+    const service = new FormulaService({
+      autoAssignEditor: false,
+      formulaDataSource: { getFormula: (rowId, columnId) => store.get(`${rowId}|${columnId}`), setFormula },
+    });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+
+    expect(setFormula).not.toHaveBeenCalled();
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe(6);
+    expect(service.hasFormula('b', 'total')).toBe(false);
+
+    service.setFormula('b', 'total', '=A2+1');
+    expect(store.get('b|total')).toBe('=REF(COLUMN("price"),ROW("b"))+1');
+    expect(service.removeFormula('a', 'total')).toBe(true);
+    expect(store.has('a|total')).toBe(false);
+    service.setFormula('b', 'total', null);
+    expect(store.has('b|total')).toBe(false);
+    service.setFormula('b', 'total', null);
+    expect(setFormula).toHaveBeenCalledTimes(3);
+  });
+
   it('reconciles stored formulas when dataset synchronization receives plain values', () => {
     const items = [{ id: 'a', value: '=A1*2' }];
     const columns: Column[] = [{ id: 'value', field: 'value', allowFormula: true }];

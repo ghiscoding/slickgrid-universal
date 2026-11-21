@@ -277,7 +277,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
   - [x] Rejected: whole-row reference picking. AG Grid implements it through its Row Numbers column; SlickGrid has no row-number column, so this would require a separate grid feature first.
   - [x] Rejected: whole-column drag-handle expansion. Neither AG Grid's fill handle nor Excel drag-fill does this; double-click fill remains rejected.
   - [x] Rejected: colored handles for resizing reference outlines. Range-endpoint dragging already resizes references; handles would only add a virtualization-aware overlay for visual affordance.
-  - [ ] Add an AG Grid-style `formulaDataSource` (`getFormula`/`setFormula`) adapter that loads formulas at init and mirrors formula store changes.
+  - [x] Add an AG Grid-style `formulaDataSource` (`getFormula`/`setFormula`) adapter that loads formulas at init and mirrors formula store changes.
 - [x] Prevent autocomplete inside quoted strings and replace the complete function name when selecting from its middle.
 - [x] Compare Syncfusion's formula reference and add `ABS`, `ROUND`, `MOD`, `SQRT`, and the `RANDOM`, `RAN`, and `CONCATENATE` aliases, with Excel export translation.
 - [x] Distinguish `#CIRCREF!`, `#PARSE!`, missing references and custom-function failures; document Excel export behavior.

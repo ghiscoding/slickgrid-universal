@@ -84,8 +84,17 @@ export interface FormulaServiceOption {
   /** Optional Excel workbook-level custom function definitions for export. */
   excelCustomFunctions?: FormulaExcelCustomFunctionExport[];
 
-  /** Defaults to true, sync initial formulas from dataset rows into internal formula store. */
+  /** Defaults to true, sync initial formulas from dataset rows into internal formula store. Ignored when `formulaDataSource` is provided. */
   autoSyncFormulasFromDataset?: boolean;
+
+  /** Optional external formula storage, loaded at init and notified when a formula is set or removed. */
+  formulaDataSource?: FormulaDataSource;
+}
+
+/** External formula storage; formulas are exchanged in the stable `REF(COLUMN(),ROW())` form. */
+export interface FormulaDataSource {
+  getFormula: (rowId: number | string, columnId: number | string) => string | undefined;
+  setFormula: (rowId: number | string, columnId: number | string, formula: string | undefined) => void;
 }
 
 interface FormulaEvaluationContext {
@@ -139,6 +148,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   protected _dataItemsCache?: any[];
   protected _columnById: Map<string, Column> = new Map<string, Column>();
   protected _formulaFunctionRegistry?: Map<string, FormulaCallback>;
+  protected _isLoadingFormulaDataSource = false;
   protected _formulaRefreshGeneration = 0;
   protected _formulaRefreshScheduled = false;
   protected _eventHandler: SlickEventHandler = new SlickEventHandler();
@@ -184,7 +194,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       this.registerCustomFunctions(this._options.customFunctions);
     }
 
-    if (this._options.autoSyncFormulasFromDataset !== false) {
+    if (this._options.formulaDataSource) {
+      this.loadFormulasFromDataSource();
+    } else if (this._options.autoSyncFormulasFromDataset !== false) {
       this.syncFormulasFromDataset();
     }
     this.canonicalizeStoredFormulas();
@@ -507,6 +519,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       this._formulaReferenceAbsoluteFlagsByKey.delete(key);
       this._restoredFormulaKeys.delete(key);
       this.resetEvaluationMemo();
+      this.notifyFormulaDataSource(rowId, columnId, undefined);
     }
     return wasDeleted;
   }
@@ -596,10 +609,13 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     const key = this.buildStoreKey(rowId, columnId);
     this._restoredFormulaKeys.delete(key);
     if (formula == null || formula === '') {
-      this._formulaStore.delete(key);
+      const existed = this._formulaStore.delete(key);
       this._formulaCoordinatesByKey.delete(key);
       this._formulaReferenceAbsoluteFlagsByKey.delete(key);
       this.resetEvaluationMemo();
+      if (existed) {
+        this.notifyFormulaDataSource(rowId, columnId, undefined);
+      }
       return;
     }
 
@@ -609,6 +625,37 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     this._formulaCoordinatesByKey.set(key, { rowId, columnId });
     this._formulaStore.set(key, this.toStoredFormula(formula));
     this.resetEvaluationMemo();
+    this.notifyFormulaDataSource(rowId, columnId, this._formulaStore.get(key));
+  }
+
+  /** Load formulas from the external data source for every row and formula-enabled column. */
+  protected loadFormulasFromDataSource(): void {
+    const dataSource = this._options.formulaDataSource!;
+    const formulaColumns = ((this._grid?.getColumns?.() || []) as Column[]).filter((column) => column.allowFormula);
+    const idProperty = this.getDatasetIdPropertyName();
+    this._isLoadingFormulaDataSource = true;
+    try {
+      for (const item of this.getDataItems()) {
+        const rowId = item?.[idProperty] as number | string | undefined;
+        if (rowId === undefined || rowId === null) {
+          continue;
+        }
+        for (const column of formulaColumns) {
+          const formula = dataSource.getFormula(rowId, column.id);
+          if (typeof formula === 'string' && formula.trim().startsWith('=')) {
+            this.setFormula(rowId, column.id, formula.trim());
+          }
+        }
+      }
+    } finally {
+      this._isLoadingFormulaDataSource = false;
+    }
+  }
+
+  protected notifyFormulaDataSource(rowId: number | string, columnId: number | string, formula: string | undefined): void {
+    if (!this._isLoadingFormulaDataSource) {
+      this._options.formulaDataSource?.setFormula(rowId, columnId, formula);
+    }
   }
 
   /**
