@@ -1,6 +1,7 @@
 # Formula Editor Plugin Progress
 
 ## Handoff update (2026-11-20)
+- Formula evaluations now memoize dependencies within each evaluation rather than across separate calls, so synchronous external changes and grouped recalculation see current data. Regression tests cover DataView updates and grouped totals; unit tests and line coverage remain to be verified.
 - Implemented the first independent-audit fix: date arithmetic now coerces numeric text, booleans and blank references as spreadsheet-day offsets; numeric values minus dates use date serials. Added focused regressions, but unit tests and line coverage still need verification.
 - Reviewed nested error expressions and date exports, corrected parenthesis handling in error-counting formulas and local-date addition across daylight-saving changes, and added regressions. Unit tests and production-source line coverage remain to be verified.
 - Implemented corrections for referenced error cells in `COUNT`/`COUNTA`, arithmetic and `IF` coercion, numeric date serial conversion, and argument limits. Added regressions, including error expressions in `COUNT`/`COUNTA`; tests and coverage still need to be run, and date/export edge cases need review.
@@ -235,7 +236,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Complete an independent audit of the Formula Editor feature and review its findings.
 - [ ] Fix the independent audit findings and validate each fix and its coverage:
   - [x] Implement date arithmetic coercion for numeric text, booleans and blank references; add regressions. Unit tests and line coverage remain to be verified under the parent task.
-  - [ ] Synchronous external data updates can leave memoized formula results stale.
+  - [x] Prevent stale memoized results after synchronous external data updates; add DataView and grouped-total regressions. Unit tests and line coverage remain to be verified under the parent task.
   - [ ] Row and column IDs containing `::` can collide in the formula store and overwrite formulas.
   - [ ] Dataset synchronization can retain formulas after their source cells become plain values.
   - [ ] Literal text resembling a formula error is treated as an error.

@@ -107,7 +107,7 @@ Useful runtime methods:
 - `unregisterCustomFunction(name)`
 - `getCustomFunction(name)`
 
-This allows dynamic enable/disable of custom function packs. Registering, replacing, or removing a function invalidates cached formula results and refreshes the grid. The default Formula Editor suggestions use the current registry as you type, including when the editor is already open. A non-empty `formulaFunctionList` in editor parameters remains under application control. Alternatively, provide `getFormulaFunctionList: () => string[]` for a custom dynamic suggestion source; a non-empty explicit list takes precedence.
+This allows dynamic enable/disable of custom function packs. Registering, replacing, or removing a function refreshes formula results in the grid. The default Formula Editor suggestions use the current registry as you type, including when the editor is already open. A non-empty `formulaFunctionList` in editor parameters remains under application control. Alternatively, provide `getFormulaFunctionList: () => string[]` for a custom dynamic suggestion source; a non-empty explicit list takes precedence.
 
 For cell references passed to a custom function, blank dataset values (`null`, `undefined`, or an empty string) are represented as `null`; a formula that evaluates to an empty string remains `''`. Numeric strings and booleans retain their original types. Grouped Excel exports use empty strings for blank helper cells, so custom functions exported to Excel should handle both blank representations.
 

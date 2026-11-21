@@ -1,4 +1,4 @@
-import { Aggregators, Formatters, SlickEvent, SlickRange } from '@slickgrid-universal/common';
+import { Aggregators, Formatters, SlickDataView, SlickEvent, SlickRange } from '@slickgrid-universal/common';
 import type { Column, FormulaExcelExportContext } from '@slickgrid-universal/common';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { FORMULA_ERROR } from '../formula-errors.js';
@@ -2331,7 +2331,7 @@ describe('FormulaService', () => {
     expect(service.getEvaluatedCellValue(1, 'total', items[0].total, 0)).toBe(13);
   });
 
-  it('should memoize nested referenced formulas across sibling evaluations in the same tick', () => {
+  it('evaluates sibling formulas independently while memoizing repeated dependencies within each formula', () => {
     const trackSpy = vi.fn((value: number) => value);
     const service = new FormulaService({
       customFunctions: {
@@ -2345,7 +2345,7 @@ describe('FormulaService', () => {
       { id: 'taxes', field: 'taxes', allowFormula: true },
       { id: 'total', field: 'total', allowFormula: true },
     ];
-    const items = [{ id: 1, price: 10, qty: 3, subTotal: '=TRACK(A1*B1)', taxes: '=C1*0.1', total: '=C1+1' }];
+    const items = [{ id: 1, price: 10, qty: 3, subTotal: '=TRACK(A1*B1)', taxes: '=C1*0.1', total: '=C1+C1' }];
 
     const gridStub = {
       getColumns: () => columns,
@@ -2360,11 +2360,11 @@ describe('FormulaService', () => {
     service.init(gridStub);
     service.setFormula(1, 'subTotal', '=TRACK(A1*B1)');
     service.setFormula(1, 'taxes', '=C1*0.1');
-    service.setFormula(1, 'total', '=C1+1');
+    service.setFormula(1, 'total', '=C1+C1');
 
     expect(service.getEvaluatedCellValue(1, 'taxes', items[0].taxes, 0)).toBe(3);
-    expect(service.getEvaluatedCellValue(1, 'total', items[0].total, 0)).toBe(31);
-    expect(trackSpy).toHaveBeenCalledTimes(1);
+    expect(service.getEvaluatedCellValue(1, 'total', items[0].total, 0)).toBe(60);
+    expect(trackSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should return #VALUE! for unicode multiply with scalar-times-range shorthand', () => {
@@ -2789,7 +2789,7 @@ describe('FormulaService', () => {
     expect(fallbackFormatter(0, 0, items[0].total, columns[0])).toBe(3);
   });
 
-  it('should reuse memoized value when evaluating same formula cell repeatedly in one tick', () => {
+  it('reevaluates a formula cell when it is requested again in the same tick', () => {
     const trackSpy = vi.fn((value: number) => value);
     const service = new FormulaService({
       customFunctions: {
@@ -2818,7 +2818,45 @@ describe('FormulaService', () => {
 
     expect(service.getEvaluatedCellValue(1, 'total', items[0].total, 0)).toBe(6);
     expect(service.getEvaluatedCellValue(1, 'total', items[0].total, 0)).toBe(6);
-    expect(trackSpy).toHaveBeenCalledTimes(1);
+    expect(trackSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('uses current data during synchronous DataView updates and row-change callbacks', () => {
+    const dataView = new SlickDataView();
+    const columns: Column[] = [
+      { id: 'value', field: 'value' },
+      { id: 'subtotal', field: 'subtotal', allowFormula: true },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    dataView.setItems([{ id: 1, value: 2, subtotal: '=A1*2', total: '=B1+1' }]);
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => dataView, getOptions: () => ({}) } as any);
+    const renderedValues: unknown[] = [];
+    dataView.onRowsChanged.subscribe(() => renderedValues.push(service.getEvaluatedCellValue(1, 'total')));
+    expect(service.getEvaluatedCellValue(1, 'total')).toBe(5);
+    dataView.updateItem(1, { id: 1, value: 5, subtotal: '=A1*2', total: '=B1+1' });
+    expect(service.getEvaluatedCellValue(1, 'total')).toBe(11);
+    dataView.updateItems([1], [{ id: 1, value: 7, subtotal: '=A1*2', total: '=B1+1' }]);
+    expect(service.getEvaluatedCellValue(1, 'total')).toBe(15);
+    expect(renderedValues).toEqual([11, 15]);
+    service.dispose();
+  });
+
+  it('recalculates grouped formula totals during a synchronous DataView update', () => {
+    const dataView = new SlickDataView();
+    const columns: Column[] = [
+      { id: 'value', field: 'value' },
+      { id: 'subtotal', field: 'subtotal', allowFormula: true },
+    ];
+    dataView.setItems([{ id: 1, group: 'g', value: 2, subtotal: '=A1*2' }]);
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => dataView, getOptions: () => ({}) } as any);
+    dataView.setGrouping({ getter: 'group', aggregators: [service.createGroupingAggregator(new Aggregators.Sum('subtotal'))] });
+    expect((dataView.getGroups()[0].totals as any)?.sum?.subtotal).toBe(4);
+    expect(service.getEvaluatedCellValue(1, 'subtotal')).toBe(4);
+    dataView.updateItem(1, { id: 1, group: 'g', value: 5, subtotal: '=A1*2' });
+    expect((dataView.getGroups()[0].totals as any)?.sum?.subtotal).toBe(10);
+    service.dispose();
   });
 
   it('should return false when removing a non-existing formula', () => {

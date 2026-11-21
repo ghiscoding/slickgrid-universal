@@ -932,16 +932,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     return `${this.buildStoreKey(rowId, columnId)}::${formula.trim()}`;
   }
 
+  /** Share dependency results only within one evaluation; DataView data can change synchronously. */
   protected getOrCreateEvaluationMemo(): Map<string, unknown> {
-    if (!this._isEvaluationMemoFlushScheduled) {
-      this._isEvaluationMemoFlushScheduled = true;
-      Promise.resolve().then(() => {
-        this._evaluationMemo.clear();
-        this._isEvaluationMemoFlushScheduled = false;
-      });
-    }
-
-    return this._evaluationMemo;
+    return new Map();
   }
 
   protected resetEvaluationMemo(): void {
