@@ -946,6 +946,23 @@ describe('FormulaService', () => {
     expect(service.getFormula('id_1', 'total')).toBe('=REF(COLUMN("price"),ROW("id_1"))*2');
   });
 
+  it('reconciles stored formulas when dataset synchronization receives plain values', () => {
+    const items = [{ id: 'a', value: '=A1*2' }];
+    const columns: Column[] = [{ id: 'value', field: 'value', allowFormula: true }];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    expect(service.hasFormula('a', 'value')).toBe(true);
+
+    items[0].value = 7;
+    service.syncFormulasFromDataset();
+    expect(service.hasFormula('a', 'value')).toBe(false);
+    expect(service.getEvaluatedCellValue('a', 'value', 7, 7)).toBe(7);
+
+    service.setFormula('missing', 'value', '=1+1');
+    service.syncFormulasFromDataset();
+    expect(service.hasFormula('missing', 'value')).toBe(true);
+  });
+
   it('should map grouped single-cell references to displayed rows without losing collapsed identities', () => {
     const items = [
       { id: 'a', price: 2, total: '=A1*2' },

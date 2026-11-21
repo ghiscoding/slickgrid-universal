@@ -250,7 +250,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
   - [x] Implement date arithmetic coercion for numeric text, booleans and blank references; add regressions.
   - [x] Prevent stale memoized results after synchronous external data updates; add DataView and grouped-total regressions.
   - [x] Prevent formula-store key collisions for row and column IDs containing `::`; add snapshot and evaluation regressions.
-  - [ ] Dataset synchronization can retain formulas after their source cells become plain values.
+  - [x] Dataset synchronization can retain formulas after their source cells become plain values.
   - [ ] Literal text resembling a formula error is treated as an error.
   - [ ] `COUNT` and `COUNTA` can swallow structurally missing A1 references.
   - [ ] `MIN` and `MAX` can overflow the call stack for multiple large ranges.

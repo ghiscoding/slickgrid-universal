@@ -418,6 +418,8 @@ export class FormulaService implements ExternalResource, FormulaProvider {
 
         if (typeof rawValue === 'string' && rawValue.trim().startsWith('=')) {
           this.setFormula(rowId, columnId, rawValue.trim());
+        } else {
+          this.removeFormula(rowId, columnId);
         }
       }
     }
