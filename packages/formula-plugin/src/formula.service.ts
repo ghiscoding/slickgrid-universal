@@ -42,6 +42,7 @@ import {
 import {
   createFormulaA1RangeRegex,
   createFormulaA1ReferenceRegex,
+  findFormulaReferenceTokens,
   FORMULA_MAX_REFERENCE_CELLS,
   FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY,
   getExcelColumnIndexByName,
@@ -2131,7 +2132,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         return cached === '' ? FORMULA_EMPTY_RESULT : cached;
       }
 
-      const chainResult = this.evaluateArithmeticDependencyChain(rowId, columnId, nestedFormula, context);
+      const chainResult = this.evaluateSingleReferenceDependencyChain(rowId, columnId, nestedFormula, context);
       if (chainResult.handled) {
         return chainResult.value === '' ? FORMULA_EMPTY_RESULT : chainResult.value;
       }
@@ -2146,13 +2147,16 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     return rawValue;
   }
 
-  /** Evaluate simple arithmetic chains from their deepest dependency to avoid recursive cell traversal. */
-  protected evaluateArithmeticDependencyChain(
+  /** Evaluate chains with one eagerly resolved reference without recursive cell traversal. */
+  protected evaluateSingleReferenceDependencyChain(
     rowId: number | string,
     columnId: number | string,
     formula: string,
     context: FormulaEvaluationContext
   ): { handled: boolean; value?: unknown } {
+    if (this._customFunctions.size) {
+      return { handled: false };
+    }
     const columns = (this._grid?.getColumns?.() || []) as Column[];
     const columnIds = columns.map((column) => String(column.id));
     const items = this.getDataItems();
@@ -2165,8 +2169,13 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     try {
       while (true) {
         const expression = this.replaceRefFunctionsWithA1Refs(currentFormula, columnIds, rowIds);
-        const match = /^=\s*(\$?[A-Z]{1,3}\$?\d+)\s*[+*/-]\s*(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?\s*$/i.exec(expression);
-        if (!match) {
+        const references = findFormulaReferenceTokens(expression);
+        if (
+          this.hasUnsafeFormulaSyntax(expression) ||
+          this.matchesOutsideQuotedStrings(expression, /\b(?:IF|REFRANGE)\s*\(|#REF!/i) ||
+          references.length !== 1 ||
+          references[0].ref.includes(':')
+        ) {
           break;
         }
         const key = this.buildStoreKey(currentRowId, currentColumnId);
@@ -2179,7 +2188,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         }
         frames.push({ key, memoKey, formula: currentFormula });
         context.visited.add(key);
-        const reference = parseExcelReferenceCell(match[1]);
+        const reference = parseExcelReferenceCell(references[0].ref);
         if (!reference) {
           break;
         }

@@ -38,6 +38,15 @@ describe('FormulaService', () => {
     service.dispose();
   });
 
+  it('evaluates deep single-reference function chains without overflowing the stack', () => {
+    const items = Array.from({ length: 2000 }, (_, index) => ({ id: index + 1, value: index ? `=ABS(A${index})+1` : 1 }));
+    const columns: Column[] = [{ id: 'value', field: 'value', allowFormula: true }];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    expect(service.getEvaluatedCellValue(2000, 'value')).toBe(2000);
+    service.dispose();
+  });
+
   it('preserves circular references and lazy custom calls at the end of an arithmetic chain', () => {
     const items = [
       { id: 1, value: '=A2+1' },
@@ -55,6 +64,22 @@ describe('FormulaService', () => {
     service.dispose();
   });
 
+  it('preserves function registry timing when a dependency registers a custom function', () => {
+    const items = [
+      { id: 1, value: '=LATER(A2)' },
+      { id: 2, value: '=REGISTER()' },
+    ];
+    const columns: Column[] = [{ id: 'value', field: 'value', allowFormula: true }];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.registerCustomFunction('REGISTER', () => {
+      service.registerCustomFunction('LATER', (value: number) => value);
+      return 5;
+    });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    expect(service.getEvaluatedCellValue(1, 'value')).toBe(FORMULA_ERROR.NAME);
+    service.dispose();
+  });
+
   it('uses cached dependencies and reports missing references in arithmetic chains', () => {
     const items = [
       { id: 1, value: '=A2+1' },
@@ -67,13 +92,15 @@ describe('FormulaService', () => {
     service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
     (service as any).clearDataCaches();
     const context = { visited: new Set<string>(), memo: new Map<string, unknown>() };
-    expect((service as any).evaluateArithmeticDependencyChain(1, 'value', service.getFormula(1, 'value'), context).value).toBe(4);
+    expect((service as any).evaluateSingleReferenceDependencyChain(1, 'value', service.getFormula(1, 'value'), context).value).toBe(4);
     expect(service.getEvaluatedCellValue(3, 'value')).toBe(2);
     expect(service.getEvaluatedCellValue(1, 'value')).toBe(4);
     service.setFormula(2, 'value', '=Z1+1');
     expect(service.getEvaluatedCellValue(1, 'value')).toBe(FORMULA_ERROR.REF);
     service.setFormula(2, 'value', '=A0+1');
     expect(service.getEvaluatedCellValue(1, 'value')).toBe(FORMULA_ERROR.REF);
+    service.setFormula(2, 'value', '=A1+1');
+    expect(service.getEvaluatedCellValue(1, 'value')).toBe(FORMULA_ERROR.CIRCREF);
     service.dispose();
   });
 
