@@ -631,7 +631,7 @@ describe('FormulaService', () => {
       { id: 'b', value: '6', total: '' },
       { id: 'c', value: true, total: '' },
       { id: 'd', value: null, total: '' },
-      { id: 'e', value: '=""', total: '' },
+      { id: 'e', value: '=CONCAT("")', total: '' },
       { id: 'f', value: 0, total: '' },
       { id: 'g', value: 'text', total: '' },
     ];
