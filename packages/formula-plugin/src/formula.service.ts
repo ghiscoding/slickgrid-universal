@@ -1279,13 +1279,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     };
     const toNumber = (value: unknown): number => {
       value = unwrapFormulaReference(value);
-      if (Array.isArray(value) || (typeof value === 'string' && !value.trim())) {
-        return NaN;
-      }
-      if (value instanceof Date) {
-        return formulaDateToSerial(value);
-      }
-      return Number(value);
+      return FormulaService.toArithmeticNumber(value);
     };
 
     const parseExpression = (): unknown => parseComparison();
@@ -1984,33 +1978,40 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     return createFormulaFunctionRegistry(this._customFunctions);
   }
 
+  protected static toArithmeticNumber(value: unknown): number {
+    if (Array.isArray(value) || (typeof value === 'string' && !value.trim())) {
+      return NaN;
+    }
+    return value instanceof Date ? formulaDateToSerial(value) : Number(value);
+  }
+
   protected static addFormulaValues(left: unknown, right: unknown): unknown {
     if (left instanceof Date && right instanceof Date) {
       return formulaDateToSerial(left) + formulaDateToSerial(right);
     }
-    if (left instanceof Date && typeof right === 'number') {
-      return FormulaService.addDays(left, right);
+    if (left instanceof Date || right instanceof Date) {
+      const date = left instanceof Date ? left : (right as Date);
+      const offset = FormulaService.toArithmeticNumber(left instanceof Date ? right : left);
+      if (!Number.isFinite(formulaDateToSerial(date)) || !Number.isFinite(offset)) {
+        return NaN;
+      }
+      return FormulaService.addDays(date, offset);
     }
-    if (right instanceof Date && typeof left === 'number') {
-      return FormulaService.addDays(right, left);
-    }
-    if ((typeof left === 'string' && !left.trim()) || (typeof right === 'string' && !right.trim())) {
-      return NaN;
-    }
-    return Number(left) + Number(right);
+    return FormulaService.toArithmeticNumber(left) + FormulaService.toArithmeticNumber(right);
   }
 
   protected static subtractFormulaValues(left: unknown, right: unknown): unknown {
-    if (left instanceof Date && typeof right === 'number') {
-      return FormulaService.addDays(left, -right);
-    }
     if (left instanceof Date && right instanceof Date) {
       return formulaDateToSerial(left) - formulaDateToSerial(right);
     }
-    if ((typeof left === 'string' && !left.trim()) || (typeof right === 'string' && !right.trim())) {
-      return NaN;
+    if (left instanceof Date) {
+      const offset = FormulaService.toArithmeticNumber(right);
+      if (!Number.isFinite(formulaDateToSerial(left)) || !Number.isFinite(offset)) {
+        return NaN;
+      }
+      return FormulaService.addDays(left, -offset);
     }
-    return (left as any) - (right as any);
+    return FormulaService.toArithmeticNumber(left) - FormulaService.toArithmeticNumber(right);
   }
 
   protected static addDays(date: Date, days: number): Date {

@@ -1,6 +1,7 @@
 # Formula Editor Plugin Progress
 
 ## Handoff update (2026-11-20)
+- Implemented the first independent-audit fix: date arithmetic now coerces numeric text, booleans and blank references as spreadsheet-day offsets; numeric values minus dates use date serials. Added focused regressions, but unit tests and line coverage still need verification.
 - Reviewed nested error expressions and date exports, corrected parenthesis handling in error-counting formulas and local-date addition across daylight-saving changes, and added regressions. Unit tests and production-source line coverage remain to be verified.
 - Implemented corrections for referenced error cells in `COUNT`/`COUNTA`, arithmetic and `IF` coercion, numeric date serial conversion, and argument limits. Added regressions, including error expressions in `COUNT`/`COUNTA`; tests and coverage still need to be run, and date/export edge cases need review.
 - Audited remaining coercion, date and function-argument behavior. Aggregates and concatenation now reject missing arguments; focused unit tests were added but still need to be run. The remaining gaps are tracked in the checklist.
@@ -230,9 +231,24 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Install the packed Formula Plugin in an isolated offline consumer with local workspace overrides; verify JavaScript and CSS exports resolve.
 - [x] Verify a clean install of the packed Formula Plugin with production dependencies from npm and no workspace overrides; resolve JavaScript, CSS and Sass exports.
 - [x] Review current-facing documentation for stale MVP claims and demo references; update the formula guides and all four framework export guides to point to Vanilla Example 48.
-- [ ] Complete final validation for changed files, including the formula coercion, error, and date/export regressions: relevant tests, lint, formatting and TypeScript; verify 100% statement and line coverage per changed production file, and dependency/circular checks when imports change. Include browser and workbook checks where applicable.
+- [x] Complete final validation for changed files, including the formula coercion, error, and date/export regressions: the user reports successful CI and 100% unit-test line coverage.
+- [x] Complete an independent audit of the Formula Editor feature and review its findings.
+- [ ] Fix the independent audit findings and validate each fix and its coverage:
+  - [x] Implement date arithmetic coercion for numeric text, booleans and blank references; add regressions. Unit tests and line coverage remain to be verified under the parent task.
+  - [ ] Synchronous external data updates can leave memoized formula results stale.
+  - [ ] Row and column IDs containing `::` can collide in the formula store and overwrite formulas.
+  - [ ] Dataset synchronization can retain formulas after their source cells become plain values.
+  - [ ] Literal text resembling a formula error is treated as an error.
+  - [ ] `COUNT` and `COUNTA` can swallow structurally missing A1 references.
+  - [ ] `MIN` and `MAX` can overflow the call stack for multiple large ranges.
+  - [ ] Numeric literals in scientific notation are rejected.
+  - [ ] Drag-fill clamps references that cross the first row or column instead of returning `#REF!`.
 - [x] Evaluate editor validation: support editor and column validators and their messages; retain calculation errors in cells instead of automatically blocking formula input.
-- [ ] Deferred: evaluate whole-row reference picking, whole-column drag-handle expansion, colored reference handles and an external formula data-source adapter as separate enhancements.
+- [ ] Deferred: evaluate these possible enhancements separately:
+  - [ ] Whole-row reference picking, such as selecting a row number to insert a reference to the entire row.
+  - [ ] Whole-column drag-handle expansion; first define the interaction and which rows it would include. Double-click fill remains rejected.
+  - [ ] Colored handles for directly resizing individual formula-reference outlines.
+  - [ ] An external formula data-source adapter, including how it handles missing data, updates and Excel export.
 - [x] Prevent autocomplete inside quoted strings and replace the complete function name when selecting from its middle.
 - [x] Compare Syncfusion's formula reference and add `ABS`, `ROUND`, `MOD`, `SQRT`, and the `RANDOM`, `RAN`, and `CONCATENATE` aliases, with Excel export translation.
 - [x] Distinguish `#CIRCREF!`, `#PARSE!`, missing references and custom-function failures; document Excel export behavior.

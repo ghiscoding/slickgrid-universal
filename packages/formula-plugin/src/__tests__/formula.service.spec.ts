@@ -99,6 +99,36 @@ describe('FormulaService', () => {
     expect(service.getExcelFormula({ rowId: 'a', columnId: 'total', columnIds: ['value', 'total'], rowIds: ['a'], excelRowOffset: 2 } as any)).toBe('A2+1');
   });
 
+  it('uses spreadsheet days for date arithmetic with numeric text, booleans and blank references', () => {
+    const date = new Date(2024, 0, 1, 12);
+    const items = [
+      { id: 'a', value: date, blank: null },
+      { id: 'b', value: new Date(NaN), blank: null },
+    ];
+    const columns: Column[] = [
+      { id: 'value', field: 'value' },
+      { id: 'blank', field: 'blank' },
+    ];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
+    const nextDay = new Date(2024, 0, 2, 12);
+    const previousDay = new Date(2023, 11, 31, 12);
+    for (const formula of ['=A1+"1"', '=A1+TRUE', '="1"+A1', '=TRUE+A1']) {
+      expect(evaluate(formula)).toEqual(nextDay);
+    }
+    for (const formula of ['=A1-"1"', '=A1-TRUE']) {
+      expect(evaluate(formula)).toEqual(previousDay);
+    }
+    expect(evaluate('=A1+B1')).toEqual(date);
+    expect(evaluate('=A1-B1')).toEqual(date);
+    expect(evaluate('=1-A1')).toBe(-45291.5);
+    expect(evaluate('="1"-A1')).toBe(-45291.5);
+    for (const formula of ['=A1+""', '=A1-""', '=A1+"text"', '=A1-"text"', '=A2+1', '=A2-1', '=A1+A1:A2']) {
+      expect(evaluate(formula)).toBe(FORMULA_ERROR.VALUE);
+    }
+  });
+
   it('preserves quoted text through reference resolution, operator normalization and export', () => {
     const items = [
       { id: 'a', value: 'A1', total: '' },
