@@ -1,6 +1,7 @@
 # Formula Editor Plugin Progress
 
 ## Handoff update (2026-11-20)
+- Ctrl/Cmd+C and Ctrl/Cmd+X now respect the editor text selection, including selections spanning styled reference tokens. With no selection they retain whole-formula behavior; cut restores the caret and refreshes tokens/highlights. Added clipboard regressions; all 182 Formula Plugin tests pass with 100% statement and line coverage. Next: Escape while autocomplete is open.
 - Reference coloring now skips complete and unfinished quoted strings. One quote-aware token finder now drives editor spans, grid highlights, caret detection and single-reference replacement, while identifier boundaries also prevent partial matches such as `SUMA1`. Added editor/reference regressions; all 182 Formula Plugin tests pass with 100% statement and line coverage. Next: selected-text copy and cut behavior.
 - A1-shaped custom functions such as `LOG10` and `A1` are no longer parsed, highlighted or drag-filled as cell references when followed by `(`. Bare `LOG10` remains a valid cell reference. Added editor, service, lazy-IF, export and drag-fill regressions; all 180 Formula Plugin tests pass with 100% statement and line coverage. Next: reference coloring inside strings and partial identifiers.
 - Excel export now converts grid string literals to Excel syntax: single-quoted text becomes double-quoted text, quotes are doubled, Unicode and backslash escapes are decoded, and control characters use `CHAR(...)`. Quoted helper-sheet names remain unchanged. Added service and range regressions; all 177 Formula Plugin tests pass with 100% statement and line coverage. Next: custom function names that resemble A1 references.
@@ -256,7 +257,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
   - [x] Excel export emits single-quoted strings and backslash escapes verbatim; convert string literals to Excel's doubled-quote syntax.
   - [x] Custom function names resembling A1 references (for example `LOG10`) are evaluated as cell references.
   - [x] Editor reference coloring and highlights match text inside quoted strings and partial identifiers (for example `SUMA1`).
-  - [ ] Ctrl/Cmd+C and Ctrl/Cmd+X ignore the text selection and copy or clear the whole formula.
+  - [x] Ctrl/Cmd+C and Ctrl/Cmd+X ignore the text selection and copy or clear the whole formula.
   - [ ] Escape with the autocomplete open also cancels the edit.
   - [ ] A failed commit validation leaves the editor in its exiting state, disabling reference picking.
   - [ ] Evaluation re-resolves dependencies per cell (O(n²) for chained formulas), scans the dataset for each row lookup and rebuilds the function registry per evaluation.
@@ -279,8 +280,8 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Decide whether an optional strict selection-prerequisite mode is needed: retain warning-only behavior and CSS fallback.
 - [x] Replicate the Formula Editor and function guides in all four framework documentation sets.
 - [x] Replicate Vanilla Example 48 to all framework wrappers as Example 59, with corresponding Cypress coverage; all four suites passed in CI.
-- [ ] **Second-to-last task:** Evaluate a separate calculated-columns package and identify utilities that could be shared with the formula plugin. Inform the user when this task is reached.
-- [ ] **Final task:** Audit the whole Formula Plugin for performance, DRY and lines of code, and reduce LOC where possible without losing behavior or coverage. This includes the large `slick-formula.scss` stylesheet, plus duplicated quote/reference scanners and A1/reference regex patterns across the service, range, drag-fill and editor modules.
+- [ ] **Second-to-last task:** Evaluate a separate calculated-columns package and identify utilities that could be shared with the formula plugin. Inform the user when this task is reached. The user wants to create 2 more optional packages, 1 package for Column Editor and 1 package for the common code between Formula Editor and Column Editor.
+- [ ] **Final task:** Audit the whole Formula Plugin for performance, DRY and lines of code, and reduce LOC where possible without losing behavior or coverage. This includes the large `slick-formula.scss` stylesheet, plus duplicated quote/reference scanners and A1/reference regex patterns across the service, range, drag-fill and editor modules. We should also audit the feature, are we covering more than Ag-Grid/SyncFusion? If so then maybe decrease the scope a bit.
 
 ## Latest Update: Optional Package Styling (2026-11-14)
 - Moved Formula Editor, reference color, and Excel column-prefix CSS from the common theme into the formula plugin, preserving shared theme variables.

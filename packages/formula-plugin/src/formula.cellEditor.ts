@@ -227,7 +227,7 @@ export class FormulaCellEditor implements Editor {
     // Handle copy/cut to ensure we copy plain text only, not HTML spans
     if ((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === 'c') {
       this.stopKeyboardEvent(event);
-      const plainText = (this._editorElm.textContent || '').replace(/\u00a0/g, ' ');
+      const plainText = this.getClipboardSelection().text;
       navigator.clipboard.writeText(plainText).catch(() => {
         // Fallback for older browsers
       });
@@ -236,16 +236,17 @@ export class FormulaCellEditor implements Editor {
 
     if ((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === 'x') {
       this.stopKeyboardEvent(event);
-      const plainText = (this._editorElm.textContent || '').replace(/\u00a0/g, ' ');
+      const { text: plainText, start, end } = this.getClipboardSelection();
       navigator.clipboard.writeText(plainText).catch(() => {
         // Fallback for older browsers
       });
-      // Clear the editor after cut
-      this._plainTextValue = '';
-      this._editorElm.textContent = '';
+      const value = (this._editorElm.textContent || '').replace(/\u00a0/g, ' ');
+      this._plainTextValue = `${value.slice(0, start)}${value.slice(end)}`;
+      this._editorElm.textContent = this._plainTextValue;
       this._isValueTouched = true;
       this.buildFormulaReferenceColorCache();
       this.renderTokens();
+      this.restoreCaretOffset(start);
       this.publishFormulaInput();
       return;
     }
@@ -444,6 +445,29 @@ export class FormulaCellEditor implements Editor {
 
   protected getPlainTextValue(): string {
     return this._plainTextValue;
+  }
+
+  protected getClipboardSelection(): { text: string; start: number; end: number } {
+    const value = (this._editorElm.textContent || '').replace(/\u00a0/g, ' ');
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) {
+      return { text: value.replace(/\u00a0/g, ' '), start: 0, end: value.length };
+    }
+
+    const range = selection.getRangeAt(0);
+    if (range.collapsed || !this._editorElm.contains(range.startContainer) || !this._editorElm.contains(range.endContainer)) {
+      return { text: value.replace(/\u00a0/g, ' '), start: 0, end: value.length };
+    }
+
+    const startRange = range.cloneRange();
+    startRange.selectNodeContents(this._editorElm);
+    startRange.setEnd(range.startContainer, range.startOffset);
+    const endRange = range.cloneRange();
+    endRange.selectNodeContents(this._editorElm);
+    endRange.setEnd(range.endContainer, range.endOffset);
+    const start = startRange.toString().length;
+    const end = endRange.toString().length;
+    return { text: range.toString().replace(/\u00a0/g, ' '), start, end };
   }
 
   protected publishFormulaInput(): void {

@@ -997,6 +997,7 @@ describe('FormulaCellEditor', () => {
     editor.loadValue((args as any).item);
 
     (editor as any)._editorElm.textContent = '=SUM(A1\u00a0+\u00a0B1)';
+    window.getSelection()?.removeAllRanges();
     (editor as any)._editorElm.dispatchEvent(new KeyboardEvent('keydown', { key: 'c', ctrlKey: true, bubbles: true, cancelable: true }));
 
     expect(writeTextSpy).toHaveBeenNthCalledWith(1, '=SUM(A1 + B1)');
@@ -1006,6 +1007,25 @@ describe('FormulaCellEditor', () => {
 
     expect(writeTextSpy).toHaveBeenNthCalledWith(2, '=SUM(A1 + B1)');
     expect(editor.serializeValue()).toBe('');
+
+    const textWithTokens = '=SUM(A1\u00a0+\u00a0B1)';
+    (editor as any)._editorElm.textContent = textWithTokens;
+    (editor as any).handleInput();
+    const selection = window.getSelection()!;
+    const range = document.createRange();
+    range.selectNodeContents((editor as any)._editorElm);
+    range.setStart((editor as any)._editorElm.querySelector('.formula-token').firstChild, 0);
+    range.setEnd((editor as any)._editorElm.querySelector('.formula-token').firstChild, 2);
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    (editor as any)._editorElm.dispatchEvent(new KeyboardEvent('keydown', { key: 'c', metaKey: true, bubbles: true, cancelable: true }));
+    expect(writeTextSpy).toHaveBeenNthCalledWith(3, 'A1');
+    expect(editor.serializeValue()).toBe('=SUM(A1 + B1)');
+
+    (editor as any)._editorElm.dispatchEvent(new KeyboardEvent('keydown', { key: 'x', metaKey: true, bubbles: true, cancelable: true }));
+    expect(writeTextSpy).toHaveBeenNthCalledWith(4, 'A1');
+    expect(editor.serializeValue()).toBe('=SUM( + B1)');
 
     writeTextSpy.mockRejectedValueOnce(new Error('clipboard unavailable'));
     (editor as any)._editorElm.dispatchEvent(new KeyboardEvent('keydown', { key: 'c', ctrlKey: true, bubbles: true, cancelable: true }));
