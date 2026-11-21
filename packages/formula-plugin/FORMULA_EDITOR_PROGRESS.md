@@ -1,6 +1,8 @@
 # Formula Editor Plugin Progress
 
 ## Handoff update (2026-11-20)
+- Volatile `RAND` (including `RANDOM`/`RAN`), `NOW` and `TODAY` results are now stable for one synchronous calculation pass, including repeated dependency and grouped-total reads. The pass boundary re-evaluates them, while custom overrides of those names retain normal uncached behavior. Next: blank PRODUCT/COUNTA edge cases.
+- CI cleanup: made the shared reference-token regex internal after quote-aware consumers moved to `findFormulaReferenceTokens`. Restored separate Aurelia ambient declarations for HTML and CSS resources so the framework and demo do not contain duplicate default exports. Fallow reports no issues.
 - Formula evaluation now reuses dependency results, the DataView item array, row/column indexes and the custom-function registry during one synchronous render pass. DataView row/column events, formula changes and service re-init invalidate those caches; top-level requested formulas still execute again, preserving freshness. Added shared-dependency and synchronous-update coverage; all 183 Formula Plugin tests pass with 100% statement and line coverage. Next: volatile `RAND`, `NOW` and `TODAY` semantics.
 - Rejected Enter or Tab commits no longer leave the Formula Editor in its exiting state. If the grid keeps the editor mounted, it resumes reference picking, rebuilds persistent colors and restores caret selection; successful commits still navigate normally. Added lifecycle regressions; all 182 Formula Plugin tests pass with 100% statement and line coverage. Next: render-pass formula memoization and row/function lookup performance.
 - Escape now closes an open autocomplete list without cancelling the formula edit; a second Escape still cancels through the existing editor lifecycle. Added lifecycle regression coverage; all 182 Formula Plugin tests pass with 100% statement and line coverage. Next: reset the editor exiting state after rejected validation.
@@ -264,7 +266,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
   - [x] Escape with the autocomplete open also cancels the edit.
   - [x] A failed commit validation leaves the editor in its exiting state, disabling reference picking.
   - [x] Evaluation re-resolves dependencies per cell (O(n²) for chained formulas), scans the dataset for each row lookup and rebuilds the function registry per evaluation.
-  - [ ] Volatile `RAND`, `NOW` and `TODAY` recalculate on every cell render.
+  - [x] Volatile `RAND`, `NOW` and `TODAY` recalculate on every cell render.
   - [ ] `PRODUCT` with no numeric values returns 1 instead of 0; `COUNTA("")` returns 0 instead of 1.
   - [ ] Editor DOM re-rendering breaks IME composition and browser undo; paste processes input twice.
   - [ ] Dates in `&`/`CONCAT` render as JavaScript date strings; invalid custom function names are silently ignored; autocomplete lacks ARIA attributes; drag-fill ignores read-only cells and undo.

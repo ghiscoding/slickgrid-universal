@@ -464,6 +464,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
 
     const memo = this.getOrCreateEvaluationMemo();
     const memoKey = this.buildEvaluationMemoKey(rowId, columnId, formula);
+    if (this.containsBuiltInVolatileFunction(formula) && memo.has(memoKey)) {
+      return memo.get(memoKey);
+    }
     const evaluated = this.evaluateFormulaExpression(formula, {
       visited: new Set<string>([this.buildStoreKey(rowId, columnId)]),
       memo,
@@ -934,6 +937,18 @@ export class FormulaService implements ExternalResource, FormulaProvider {
 
   protected buildEvaluationMemoKey(rowId: number | string, columnId: number | string, formula: string): string {
     return JSON.stringify([this.buildStoreKey(rowId, columnId), formula.trim()]);
+  }
+
+  protected containsBuiltInVolatileFunction(formula: string): boolean {
+    let containsVolatileFunction = false;
+    this.transformFormulaOutsideQuotedStrings(formula, (segment) => {
+      segment.replace(/\b(RAND|RANDOM|RAN|NOW|TODAY)\s*\(/gi, (_token, functionName: string) => {
+        containsVolatileFunction ||= !this._customFunctions.has(functionName.toUpperCase());
+        return '';
+      });
+      return segment;
+    });
+    return containsVolatileFunction;
   }
 
   /** Share dependencies during one synchronous render pass, then discard before later data changes. */

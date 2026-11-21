@@ -2974,6 +2974,65 @@ describe('FormulaService', () => {
     expect(getItems.mock.calls.length).toBeLessThanOrEqual(3);
   });
 
+  it('keeps built-in volatile formulas stable for one render pass and refreshes on the next pass', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date(2026, 10, 20, 10, 30, 15));
+    const random = vi
+      .spyOn(Math, 'random')
+      .mockReturnValueOnce(0.1)
+      .mockReturnValueOnce(0.2)
+      .mockReturnValueOnce(0.3)
+      .mockReturnValueOnce(0.7)
+      .mockReturnValueOnce(0.8)
+      .mockReturnValueOnce(0.9);
+    const service = new FormulaService({ autoAssignEditor: false });
+    const columns: Column[] = [
+      { id: 'random', field: 'random', allowFormula: true },
+      { id: 'aliases', field: 'aliases', allowFormula: true },
+      { id: 'now', field: 'now', allowFormula: true },
+      { id: 'today', field: 'today', allowFormula: true },
+    ];
+    const items = [{ id: 1, random: '=RAND()', aliases: '=RANDOM()+RAN()', now: '=NOW()', today: '=TODAY()' }];
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+
+    const firstRandom = service.getEvaluatedCellValue(1, 'random');
+    const firstAliases = service.getEvaluatedCellValue(1, 'aliases');
+    const firstNow = service.getEvaluatedCellValue(1, 'now');
+    const firstToday = service.getEvaluatedCellValue(1, 'today');
+    expect(service.getEvaluatedCellValue(1, 'random')).toBe(firstRandom);
+    expect(service.getEvaluatedCellValue(1, 'aliases')).toBe(firstAliases);
+    expect(service.getEvaluatedCellValue(1, 'now')).toBe(firstNow);
+    expect(service.getEvaluatedCellValue(1, 'today')).toBe(firstToday);
+    expect(random).toHaveBeenCalledTimes(3);
+
+    await Promise.resolve();
+    vi.setSystemTime(new Date(2026, 10, 20, 10, 31, 15));
+    expect(service.getEvaluatedCellValue(1, 'random')).toBe(0.7);
+    expect(service.getEvaluatedCellValue(1, 'aliases')).toBeCloseTo(1.7);
+    expect(service.getEvaluatedCellValue(1, 'now')).toEqual(new Date(2026, 10, 20, 10, 31, 15));
+    expect(service.getEvaluatedCellValue(1, 'today')).toEqual(new Date(2026, 10, 20));
+    expect(random).toHaveBeenCalledTimes(6);
+
+    random.mockRestore();
+    vi.useRealTimers();
+  });
+
+  it('does not cache custom overrides of volatile function names', async () => {
+    const customRandom = vi.fn().mockReturnValueOnce(0.2).mockReturnValueOnce(0.8);
+    const service = new FormulaService({ autoAssignEditor: false, customFunctions: { RAND: customRandom } });
+    const items = [{ id: 1, value: '=RAND()' }];
+    service.init({
+      getColumns: () => [{ id: 'value', field: 'value', allowFormula: true }],
+      getData: () => ({ getItems: () => items }),
+      getOptions: () => ({}),
+    } as any);
+
+    expect(service.getEvaluatedCellValue(1, 'value')).toBe(0.2);
+    expect(service.getEvaluatedCellValue(1, 'value')).toBe(0.8);
+    expect(customRandom).toHaveBeenCalledTimes(2);
+    await Promise.resolve();
+  });
+
   it('uses current data during synchronous DataView updates and row-change callbacks', () => {
     const dataView = new SlickDataView();
     const columns: Column[] = [
