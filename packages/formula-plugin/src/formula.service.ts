@@ -128,6 +128,12 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   protected _hasAutoAssignedFormulaEditor = false;
   protected _originalColumnDefsById: Map<number | string, Pick<Column, 'formatter' | 'params' | 'editorClass' | 'editor'>> = new Map();
   protected _evaluationMemo: Map<string, unknown> = new Map<string, unknown>();
+  protected _evaluationMemoFlushScheduled = false;
+  protected _evaluationMemoGeneration = 0;
+  protected _dataItemById: Map<string, any> = new Map<string, any>();
+  protected _dataItemsCache?: any[];
+  protected _columnById: Map<string, Column> = new Map<string, Column>();
+  protected _formulaFunctionRegistry?: Map<string, FormulaCallback>;
   protected _formulaRefreshGeneration = 0;
   protected _formulaRefreshScheduled = false;
   protected _eventHandler: SlickEventHandler = new SlickEventHandler();
@@ -149,6 +155,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     this._formulaRefreshScheduled = false;
     this._grid = grid;
     this._dataView = grid?.getData<SlickDataView>() || {};
+    this.resetEvaluationMemo();
 
     // Respect explicit grid opt-out; when disabled, the service stays inert.
     if (grid?.getOptions?.().enableFormulas === false) {
@@ -160,6 +167,12 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     }
     if (this._grid.onCellChange) {
       this._eventHandler.subscribe(this._grid.onCellChange, this.handleCellChange.bind(this));
+    }
+    if (this._dataView.onRowsChanged) {
+      this._eventHandler.subscribe(this._dataView.onRowsChanged, () => this.resetEvaluationMemo());
+    }
+    if (this._dataView.onRowCountChanged) {
+      this._eventHandler.subscribe(this._dataView.onRowCountChanged, () => this.resetEvaluationMemo());
     }
 
     if (this._options.customFunctions) {
@@ -174,6 +187,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     this.autoAssignFormulaEditorToColumns();
     if (this._grid.onBeforeSetColumns) {
       this._eventHandler.subscribe(this._grid.onBeforeSetColumns, (_event, args) => {
+        this.resetEvaluationMemo();
         this.autoAssignFormulaEditorToColumns(args.newColumns);
       });
     }
@@ -249,6 +263,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     this._restoredFormulaKeys.clear();
     this._formulaRefColorCache.clear();
     this.resetEvaluationMemo();
+    this._formulaFunctionRegistry = undefined;
+    this._dataItemById.clear();
+    this._columnById.clear();
     this._customFunctions.clear();
     this._originalColumnNamesById.clear();
   }
@@ -445,17 +462,22 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       return safeFallbackValue;
     }
 
+    const memo = this.getOrCreateEvaluationMemo();
+    const memoKey = this.buildEvaluationMemoKey(rowId, columnId, formula);
     const evaluated = this.evaluateFormulaExpression(formula, {
       visited: new Set<string>([this.buildStoreKey(rowId, columnId)]),
-      memo: this.getOrCreateEvaluationMemo(),
+      memo,
     });
 
     if (evaluated === undefined || (typeof evaluated === 'number' && Number.isNaN(evaluated))) {
+      memo.set(memoKey, FORMULA_ERROR.VALUE);
       return FORMULA_ERROR.VALUE;
     }
     if (typeof evaluated === 'number' && !Number.isFinite(evaluated)) {
+      memo.set(memoKey, FORMULA_ERROR.NUM);
       return FORMULA_ERROR.NUM;
     }
+    memo.set(memoKey, evaluated);
     return evaluated;
   }
 
@@ -725,6 +747,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       return;
     }
     this._customFunctions.set(functionName.toUpperCase(), normalizedCallback);
+    this._formulaFunctionRegistry = undefined;
     this.resetEvaluationMemo();
     if (this._formulaStore.size && this._grid) {
       this.scheduleFormulaRefresh();
@@ -740,6 +763,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   unregisterCustomFunction(functionName: string): boolean {
     const removed = this._customFunctions.delete(functionName.toUpperCase());
     if (removed) {
+      this._formulaFunctionRegistry = undefined;
       this.resetEvaluationMemo();
       if (this._formulaStore.size && this._grid) {
         this.scheduleFormulaRefresh();
@@ -912,13 +936,32 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     return JSON.stringify([this.buildStoreKey(rowId, columnId), formula.trim()]);
   }
 
-  /** Share dependency results only within one evaluation; DataView data can change synchronously. */
+  /** Share dependencies during one synchronous render pass, then discard before later data changes. */
   protected getOrCreateEvaluationMemo(): Map<string, unknown> {
-    return new Map();
+    if (!this._evaluationMemoFlushScheduled) {
+      this._evaluationMemoFlushScheduled = true;
+      const generation = this._evaluationMemoGeneration;
+      queueMicrotask(() => {
+        if (generation !== this._evaluationMemoGeneration) {
+          return;
+        }
+        this._evaluationMemoFlushScheduled = false;
+        this._evaluationMemo.clear();
+        this._dataItemById.clear();
+        this._dataItemsCache = undefined;
+        this._columnById.clear();
+      });
+    }
+    return this._evaluationMemo;
   }
 
   protected resetEvaluationMemo(): void {
     this._evaluationMemo.clear();
+    this._evaluationMemoFlushScheduled = false;
+    this._evaluationMemoGeneration++;
+    this._dataItemById.clear();
+    this._dataItemsCache = undefined;
+    this._columnById.clear();
   }
 
   protected getDatasetLength(): number {
@@ -931,9 +974,15 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   }
 
   protected getDataItems(): any[] {
+    if (this._dataItemsCache) {
+      return this._dataItemsCache;
+    }
+
     const dataViewAny = this._dataView as any;
     const items = dataViewAny?.getItems && typeof dataViewAny.getItems === 'function' ? dataViewAny.getItems() : [];
-    return Array.isArray(items) ? items : [];
+    this._dataItemsCache = Array.isArray(items) ? items : [];
+    this.getOrCreateEvaluationMemo();
+    return this._dataItemsCache;
   }
 
   protected getDatasetIdPropertyName(): string {
@@ -955,7 +1004,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     if (hasUnsafeInput) {
       return FORMULA_ERROR.PARSE;
     }
-    const formulaFunctions = this.getFormulaFunctionRegistry();
+    const formulaFunctions = new Map(this.getFormulaFunctionRegistry());
     const lazyExpression = this._customFunctions.has('IF') ? normalized : this.replaceLazyIfCalls(normalized, context, formulaFunctions);
     const normalizedSyntax = this.normalizeFormulaSyntax(
       this.replaceRefFunctionsWithA1Refs(
@@ -1956,7 +2005,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   }
 
   protected getFormulaFunctionRegistry(): Map<string, FormulaCallback> {
-    return createFormulaFunctionRegistry(this._customFunctions);
+    return (this._formulaFunctionRegistry ??= createFormulaFunctionRegistry(this._customFunctions));
   }
 
   protected static toArithmeticNumber(value: unknown): number {
@@ -2046,13 +2095,26 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   }
 
   protected getCellRawValue(rowId: number | string, columnId: number | string): unknown {
-    const rowIdProp = this.getDatasetIdPropertyName();
-    const item = this.getDataItems().find((it) => String(it?.[rowIdProp]) === String(rowId));
+    if (!this._dataItemById.size) {
+      const rowIdProp = this.getDatasetIdPropertyName();
+      for (const item of this.getDataItems()) {
+        const id = item?.[rowIdProp];
+        if (id !== undefined && id !== null) {
+          this._dataItemById.set(String(id), item);
+        }
+      }
+    }
+    const item = this._dataItemById.get(String(rowId));
     if (!item) {
       return undefined;
     }
 
-    const column = ((this._grid?.getColumns?.() || []) as Column[]).find((col) => String(col.id) === String(columnId));
+    if (!this._columnById.size) {
+      for (const currentColumn of (this._grid?.getColumns?.() || []) as Column[]) {
+        this._columnById.set(String(currentColumn.id), currentColumn);
+      }
+    }
+    const column = this._columnById.get(String(columnId));
     if (!column) {
       return undefined;
     }

@@ -1,6 +1,7 @@
 # Formula Editor Plugin Progress
 
 ## Handoff update (2026-11-20)
+- Formula evaluation now reuses dependency results, the DataView item array, row/column indexes and the custom-function registry during one synchronous render pass. DataView row/column events, formula changes and service re-init invalidate those caches; top-level requested formulas still execute again, preserving freshness. Added shared-dependency and synchronous-update coverage; all 183 Formula Plugin tests pass with 100% statement and line coverage. Next: volatile `RAND`, `NOW` and `TODAY` semantics.
 - Rejected Enter or Tab commits no longer leave the Formula Editor in its exiting state. If the grid keeps the editor mounted, it resumes reference picking, rebuilds persistent colors and restores caret selection; successful commits still navigate normally. Added lifecycle regressions; all 182 Formula Plugin tests pass with 100% statement and line coverage. Next: render-pass formula memoization and row/function lookup performance.
 - Escape now closes an open autocomplete list without cancelling the formula edit; a second Escape still cancels through the existing editor lifecycle. Added lifecycle regression coverage; all 182 Formula Plugin tests pass with 100% statement and line coverage. Next: reset the editor exiting state after rejected validation.
 - Ctrl/Cmd+C and Ctrl/Cmd+X now respect the editor text selection, including selections spanning styled reference tokens. With no selection they retain whole-formula behavior; cut restores the caret and refreshes tokens/highlights. Added clipboard regressions; all 182 Formula Plugin tests pass with 100% statement and line coverage. Next: Escape while autocomplete is open.
@@ -262,7 +263,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
   - [x] Ctrl/Cmd+C and Ctrl/Cmd+X ignore the text selection and copy or clear the whole formula.
   - [x] Escape with the autocomplete open also cancels the edit.
   - [x] A failed commit validation leaves the editor in its exiting state, disabling reference picking.
-  - [ ] Evaluation re-resolves dependencies per cell (O(n²) for chained formulas), scans the dataset for each row lookup and rebuilds the function registry per evaluation.
+  - [x] Evaluation re-resolves dependencies per cell (O(n²) for chained formulas), scans the dataset for each row lookup and rebuilds the function registry per evaluation.
   - [ ] Volatile `RAND`, `NOW` and `TODAY` recalculate on every cell render.
   - [ ] `PRODUCT` with no numeric values returns 1 instead of 0; `COUNTA("")` returns 0 instead of 1.
   - [ ] Editor DOM re-rendering breaks IME composition and browser undo; paste processes input twice.

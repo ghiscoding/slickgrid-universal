@@ -2464,7 +2464,7 @@ describe('FormulaService', () => {
     expect(service.getEvaluatedCellValue(1, 'total', items[0].total, 0)).toBe(13);
   });
 
-  it('evaluates sibling formulas independently while memoizing repeated dependencies within each formula', () => {
+  it('shares dependency formulas across siblings during the same render pass', () => {
     const trackSpy = vi.fn((value: number) => value);
     const service = new FormulaService({
       customFunctions: {
@@ -2497,7 +2497,7 @@ describe('FormulaService', () => {
 
     expect(service.getEvaluatedCellValue(1, 'taxes', items[0].taxes, 0)).toBe(3);
     expect(service.getEvaluatedCellValue(1, 'total', items[0].total, 0)).toBe(60);
-    expect(trackSpy).toHaveBeenCalledTimes(2);
+    expect(trackSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should return #VALUE! for unicode multiply with scalar-times-range shorthand', () => {
@@ -2952,6 +2952,26 @@ describe('FormulaService', () => {
     expect(service.getEvaluatedCellValue(1, 'total', items[0].total, 0)).toBe(6);
     expect(service.getEvaluatedCellValue(1, 'total', items[0].total, 0)).toBe(6);
     expect(trackSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('shares dependency evaluations for one render pass without caching the requested custom formula', () => {
+    const trackSpy = vi.fn((value: number) => value);
+    const service = new FormulaService({ autoAssignEditor: false, customFunctions: { TRACK: trackSpy } });
+    const columns: Column[] = [
+      { id: 'value', field: 'value' },
+      { id: 'subtotal', field: 'subtotal', allowFormula: true },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const items = [{ id: 1, value: 3, subtotal: '=TRACK(A1*2)', total: '=B1+B1' }];
+    const getItems = vi.fn(() => items);
+    service.init({ getColumns: () => columns, getData: () => ({ getItems }), getOptions: () => ({}) } as any);
+
+    expect(service.getEvaluatedCellValue(1, 'subtotal')).toBe(6);
+    expect(service.getEvaluatedCellValue(1, 'total')).toBe(12);
+    expect(service.getEvaluatedCellValue(1, 'total')).toBe(12);
+    expect(trackSpy).toHaveBeenCalledTimes(1);
+    expect((service as any).getFormulaFunctionRegistry()).toBe((service as any).getFormulaFunctionRegistry());
+    expect(getItems.mock.calls.length).toBeLessThanOrEqual(3);
   });
 
   it('uses current data during synchronous DataView updates and row-change callbacks', () => {
