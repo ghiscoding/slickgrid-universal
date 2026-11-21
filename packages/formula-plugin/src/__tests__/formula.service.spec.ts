@@ -177,6 +177,11 @@ describe('FormulaService', () => {
     const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
     expect(evaluate('="A1:C3 TRUE FALSE <> = × ÷ − ; {} `"')).toBe('A1:C3 TRUE FALSE <> = × ÷ − ; {} `');
     expect(evaluate('=CONCAT(A1, ":", A2)')).toBe('A1:C2:D3');
+    expect(evaluate('="#N/A"')).toBe('#N/A');
+    expect(evaluate('="#N/A"&""')).toBe('#N/A');
+    expect(evaluate('=CONCAT("#N/A","")')).toBe('#N/A');
+    expect(evaluate('=IF(TRUE,"#N/A","ok")')).toBe('#N/A');
+    expect(evaluate('="#REF!"+1')).toBe(FORMULA_ERROR.VALUE);
     items[0].value = 'A1\n"quoted"\\path\t';
     expect(evaluate('=A1')).toBe(items[0].value);
     expect(evaluate('="\\u0041\\nB"')).toBe('A\nB');
@@ -192,6 +197,12 @@ describe('FormulaService', () => {
     expect(service.getExcelFormula({ rowId: 'a', columnId: 'total', columnIds: ['value', 'total'], rowIds: ['a', 'b'], excelRowOffset: 2 } as any)).toBe(
       '"A1 × B2"'
     );
+    items[0].value = '#N/A';
+    service.setFormula('b', 'total', '=A1');
+    expect(service.getEvaluatedCellValue('b', 'total')).toBe('#N/A');
+    service.setFormula('b', 'total', '="#N/A"');
+    service.setFormula('a', 'total', '=B2');
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe('#N/A');
   });
 
   it('converts grid string syntax to valid Excel literals', () => {

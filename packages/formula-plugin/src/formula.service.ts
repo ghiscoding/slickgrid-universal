@@ -20,8 +20,11 @@ import {
   calculateFormulaPower,
   createFormulaFunctionRegistry,
   formulaDateToSerial,
+  formulaLiteralText,
   formulaLogicalCondition,
   formulaReference,
+  isFormulaLiteralText,
+  isFormulaReference,
   unwrapFormulaReference,
   type FormulaCallback,
 } from './formula-functions.js';
@@ -87,6 +90,7 @@ export interface FormulaServiceOption {
 interface FormulaEvaluationContext {
   visited: Set<string>;
   memo: Map<string, unknown>;
+  preserveLiteral?: boolean;
 }
 
 export interface FormulaReferenceAbsoluteFlags {
@@ -483,7 +487,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       return FORMULA_ERROR.NUM;
     }
     memo.set(memoKey, evaluated);
-    return evaluated;
+    return unwrapFormulaReference(evaluated);
   }
 
   getFormula(rowId: number | string, columnId: number | string): string | undefined {
@@ -1048,9 +1052,10 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       do {
         name = `__FORMULA_CELL_${referenceSequence++}`;
       } while (normalizedSyntax.toUpperCase().includes(name));
-      const normalizedValue =
-        value === FORMULA_EMPTY_RESULT
-          ? ''
+      const normalizedValue = isFormulaLiteralText(value)
+        ? value
+        : value === FORMULA_EMPTY_RESULT
+          ? formulaLiteralText('')
           : value === '' || value === undefined
             ? null
             : typeof value === 'object' && value !== null && !(value instanceof Date)
@@ -1105,8 +1110,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       // The recursive-descent parser below implements the full supported grammar (operators, ranges,
       // whitelisted functions); it is used exclusively so no formula text is ever passed to a dynamic
       // code evaluator (e.g. `Function`/`eval`), which would otherwise be an unnecessary injection surface.
-      const result = this.evaluateExpressionWithParser(jsExpression, formulaFunctions, false, references);
-      return result === null ? 0 : result;
+      const result = this.evaluateExpressionWithParser(jsExpression, formulaFunctions, false, references, context.preserveLiteral === true);
+      const normalizedResult = result === null ? 0 : result;
+      return context.preserveLiteral ? normalizedResult : unwrapFormulaReference(normalizedResult);
     } catch {
       return FORMULA_ERROR.ERROR;
     }
@@ -1147,7 +1153,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         if (!validSyntax) {
           return FORMULA_ERROR.PARSE;
         }
-        const condition = this.evaluateFormulaExpression(args[0], context);
+        const condition = this.evaluateFormulaExpression(args[0], { ...context, preserveLiteral: true });
         if (isFormulaErrorCode(condition)) {
           return condition;
         }
@@ -1156,7 +1162,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
           return logicalCondition;
         }
         const selected = logicalCondition ? args[1] : (args[2] ?? 'FALSE');
-        return this.evaluateFormulaExpression(selected, context);
+        return this.evaluateFormulaExpression(selected, { ...context, preserveLiteral: true });
       });
       result += expression.slice(previous, match.index) + `${name}()`;
       previous = end + 1;
@@ -1169,7 +1175,8 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     expression: string,
     formulaFunctions: Map<string, FormulaCallback>,
     syntaxOnly = false,
-    references: Map<string, unknown> = new Map<string, unknown>()
+    references: Map<string, unknown> = new Map<string, unknown>(),
+    preserveLiteral = false
   ): unknown {
     type TokenType = 'number' | 'string' | 'identifier' | 'operator' | 'paren' | 'bracket' | 'comma' | 'eof';
     interface Token {
@@ -1320,6 +1327,12 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       value = unwrapFormulaReference(value);
       return FormulaService.toArithmeticNumber(value);
     };
+    const isLiteralFormulaValue = (value: unknown): boolean =>
+      isFormulaLiteralText(value) || (isFormulaReference(value) && isLiteralFormulaValue(value.value));
+    const unwrapFormulaOperand = (value: unknown) => ({
+      isLiteral: isLiteralFormulaValue(value),
+      value: unwrapFormulaReference(value),
+    });
 
     const parseExpression = (): unknown => parseComparison();
 
@@ -1330,9 +1343,11 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       }
       while (matchOperator('==', '!=', '<', '>', '<=', '>=')) {
         const op = consume().value;
-        let right = unwrapFormulaReference(parseConcatenation());
-        left = unwrapFormulaReference(left);
-        if (isFormulaErrorCode(left)) {
+        const rightOperand = unwrapFormulaOperand(parseConcatenation());
+        const leftOperand = unwrapFormulaOperand(left);
+        let right = rightOperand.value;
+        left = leftOperand.value;
+        if (!leftOperand.isLiteral && isFormulaErrorCode(left)) {
           return left;
         }
         if (left instanceof Date) {
@@ -1350,7 +1365,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         if (right === null) {
           right = typeof left === 'string' ? '' : typeof left === 'boolean' ? false : 0;
         }
-        if (isFormulaErrorCode(right)) {
+        if (!rightOperand.isLiteral && isFormulaErrorCode(right)) {
           return right;
         }
         if (typeof left === 'string' && typeof right === 'string') {
@@ -1397,16 +1412,19 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       }
       while (matchOperator('&')) {
         consume();
-        const right = unwrapFormulaReference(parseAdditive());
-        left = unwrapFormulaReference(left);
-        if (isFormulaErrorCode(left)) {
+        const rightOperand = unwrapFormulaOperand(parseAdditive());
+        const leftOperand = unwrapFormulaOperand(left);
+        const right = rightOperand.value;
+        left = leftOperand.value;
+        if (!leftOperand.isLiteral && isFormulaErrorCode(left)) {
           return left;
         }
-        if (isFormulaErrorCode(right)) {
+        if (!rightOperand.isLiteral && isFormulaErrorCode(right)) {
           return right;
         }
         const textValue = (value: unknown) => (typeof value === 'boolean' ? (value ? 'TRUE' : 'FALSE') : String(value ?? ''));
-        left = `${textValue(left)}${textValue(right)}`;
+        const concatenated = `${textValue(left)}${textValue(right)}`;
+        left = isFormulaErrorCode(concatenated) ? formulaLiteralText(concatenated) : concatenated;
       }
       return left;
     };
@@ -1418,12 +1436,14 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       }
       while (matchOperator('+', '-')) {
         const op = consume().value;
-        const right = unwrapFormulaReference(parseMultiplicative());
-        left = unwrapFormulaReference(left);
-        if (isFormulaErrorCode(left)) {
+        const rightOperand = unwrapFormulaOperand(parseMultiplicative());
+        const leftOperand = unwrapFormulaOperand(left);
+        const right = rightOperand.value;
+        left = leftOperand.value;
+        if (!leftOperand.isLiteral && isFormulaErrorCode(left)) {
           return left;
         }
-        if (isFormulaErrorCode(right)) {
+        if (!rightOperand.isLiteral && isFormulaErrorCode(right)) {
           return right;
         }
         left = syntaxOnly
@@ -1445,12 +1465,14 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       }
       while (matchOperator('*', '/')) {
         const op = consume().value;
-        const right = unwrapFormulaReference(parsePower());
-        left = unwrapFormulaReference(left);
-        if (isFormulaErrorCode(left)) {
+        const rightOperand = unwrapFormulaOperand(parsePower());
+        const leftOperand = unwrapFormulaOperand(left);
+        const right = rightOperand.value;
+        left = leftOperand.value;
+        if (!leftOperand.isLiteral && isFormulaErrorCode(left)) {
           return left;
         }
-        if (isFormulaErrorCode(right)) {
+        if (!rightOperand.isLiteral && isFormulaErrorCode(right)) {
           return right;
         }
         if (syntaxOnly) {
@@ -1480,12 +1502,14 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       }
       while (matchOperator('^')) {
         consume();
-        const right = unwrapFormulaReference(parsePostfix());
-        left = unwrapFormulaReference(left);
-        if (isFormulaErrorCode(left)) {
+        const rightOperand = unwrapFormulaOperand(parsePostfix());
+        const leftOperand = unwrapFormulaOperand(left);
+        const right = rightOperand.value;
+        left = leftOperand.value;
+        if (!leftOperand.isLiteral && isFormulaErrorCode(left)) {
           return left;
         }
-        if (isFormulaErrorCode(right)) {
+        if (!rightOperand.isLiteral && isFormulaErrorCode(right)) {
           return right;
         }
         const leftNumber = toNumber(left);
@@ -1520,8 +1544,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     const parseUnary = (): unknown => {
       if (matchOperator('+')) {
         consume();
-        const unary = unwrapFormulaReference(parseUnary());
-        if (isFormulaErrorCode(unary)) {
+        const operand = unwrapFormulaOperand(parseUnary());
+        const unary = operand.value;
+        if (!operand.isLiteral && isFormulaErrorCode(unary)) {
           return unary;
         }
         const numeric = syntaxOnly ? 1 : toNumber(unary);
@@ -1529,8 +1554,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       }
       if (matchOperator('-')) {
         consume();
-        const unary = unwrapFormulaReference(parseUnary());
-        if (isFormulaErrorCode(unary)) {
+        const operand = unwrapFormulaOperand(parseUnary());
+        const unary = operand.value;
+        if (!operand.isLiteral && isFormulaErrorCode(unary)) {
           return unary;
         }
         const numeric = syntaxOnly ? 1 : toNumber(unary);
@@ -1549,7 +1575,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
 
       if (tk.type === 'string') {
         consume();
-        return syntaxOnly ? '' : tk.value;
+        return syntaxOnly ? '' : formulaLiteralText(tk.value);
       }
 
       if (tk.type === 'identifier') {
@@ -1558,7 +1584,8 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         if (references.has(upperIdent)) {
           const reference = references.get(upperIdent);
           const value = unwrapFormulaReference(reference);
-          return !allowCountErrorReferences && isFormulaErrorCode(value) ? value : reference;
+          const referenceLiteral = isFormulaReference(reference) && isFormulaLiteralText(reference.value);
+          return !allowCountErrorReferences && !referenceLiteral && isFormulaErrorCode(value) ? value : reference;
         }
         if (matchParen('(')) {
           consume();
@@ -1629,11 +1656,15 @@ export class FormulaService implements ExternalResource, FormulaProvider {
           } else {
             result = fn(...args);
           }
-          return typeof result === 'number' && !Number.isFinite(result)
-            ? Number.isNaN(result)
+          const wrappedResult =
+            (upperIdent === 'CONCAT' || upperIdent === 'CONCATENATE') && isFormulaErrorCode(result) && args.some(isFormulaLiteralText)
+              ? formulaLiteralText(result)
+              : result;
+          return typeof wrappedResult === 'number' && !Number.isFinite(wrappedResult)
+            ? Number.isNaN(wrappedResult)
               ? FORMULA_ERROR.VALUE
               : FORMULA_ERROR.NUM
-            : result;
+            : wrappedResult;
         }
 
         if (upperIdent === 'TRUE') {
@@ -1700,7 +1731,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     if (peek().type !== 'eof') {
       return FORMULA_ERROR.PARSE;
     }
-    return unwrapFormulaReference(output);
+    return preserveLiteral ? output : unwrapFormulaReference(output);
   }
 
   protected buildFormulaValueFormatter(column: Column): Formatter {
@@ -2102,7 +2133,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       }
 
       context.visited.add(key);
-      const nested = this.evaluateFormulaExpression(nestedFormula, context);
+      const nested = this.evaluateFormulaExpression(nestedFormula, { ...context, preserveLiteral: true });
       context.visited.delete(key);
       context.memo.set(nestedMemoKey, nested);
       return nested === '' ? FORMULA_EMPTY_RESULT : nested;

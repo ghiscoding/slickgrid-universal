@@ -9,6 +9,20 @@ export interface FormulaReferenceValue {
   readonly row?: number;
 }
 
+const literalTag: unique symbol = Symbol('formula literal text');
+export interface FormulaLiteralTextValue {
+  readonly [literalTag]: true;
+  readonly value: string;
+}
+
+export function formulaLiteralText(value: string): FormulaLiteralTextValue {
+  return { [literalTag]: true, value };
+}
+
+export function isFormulaLiteralText(value: unknown): value is FormulaLiteralTextValue {
+  return typeof value === 'object' && value !== null && literalTag in value;
+}
+
 export function formulaReference(value: unknown, row?: number): FormulaReferenceValue {
   return { [referenceTag]: true, value, row };
 }
@@ -18,7 +32,7 @@ export function isFormulaReference(value: unknown): value is FormulaReferenceVal
 }
 
 export function unwrapFormulaReference(value: unknown): unknown {
-  return isFormulaReference(value) ? value.value : value;
+  return isFormulaReference(value) ? unwrapFormulaReference(value.value) : isFormulaLiteralText(value) ? value.value : value;
 }
 
 /** Convert a local JavaScript date to the Excel 1900 date system, including its leap-year compatibility day. */
@@ -245,7 +259,9 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
                 ? isCountableNumericValue(arg.value)
                   ? 1
                   : 0
-                : typeof arg === 'boolean' || isCountableNumericValue(arg) || isNumericFormulaValue(arg)
+                : isCountableNumericValue(unwrapFormulaReference(arg)) ||
+                    typeof unwrapFormulaReference(arg) === 'boolean' ||
+                    isNumericFormulaValue(unwrapFormulaReference(arg))
                   ? 1
                   : 0),
           0
