@@ -1,6 +1,6 @@
 # @slickgrid-universal/formula-plugin
 
-Optional Formula Service for Slickgrid-Universal.
+Optional Formula Editor for Slickgrid-Universal.
 
 ## Purpose
 

@@ -12,7 +12,7 @@
 - [Troubleshooting](#troubleshooting)
 
 ### Description
-Formula Service supports both built-in formula functions and user-defined custom functions.
+Formula Editor supports both built-in formula functions and user-defined custom functions.
 
 Custom functions can be used for:
 - runtime grid formula evaluation
@@ -54,7 +54,7 @@ For Excel export, the built-in `RANDOM` and `RAN` aliases are written as `RAND`,
 
 `CONCAT` and `CONCATENATE` render logical values as `TRUE` and `FALSE`, including values supplied by cell references.
 
-Use matching dimensions for `SUMIF`'s criteria and sum ranges. For mismatched ranges, the grid currently pairs values only up to the shorter range; Excel instead expands from the sum range's first cell, so results may differ after export.
+For mismatched `SUMIF` ranges, the sum range is sized from its first cell to match the criteria range, as in Excel. The effective cells are stored as stable references so their identities survive row and column layout changes.
 
 ### Custom Function Registration
 You can register functions in constructor options.
@@ -114,7 +114,7 @@ For cell references passed to a custom function, blank dataset values (`null`, `
 For `SUM`, `PRODUCT`, `MIN`, `MAX`, `AVERAGE`, `MEDIAN` and `COUNT`, text and booleans in referenced cells are ignored; numeric text and booleans supplied directly as arguments are converted to numbers. `COUNTA` counts a formula that returns empty text, while `COUNTBLANK` also counts it as blank. Disjoint grouped exports preserve this `COUNTA` distinction using helper cells that track whether each source is empty.
 
 ### Excel Export Interop
-Formula Service exposes export helpers:
+Formula Editor exposes export helpers:
 - `getExcelDefinedNames()`
 - `getExcelCustomFunctions()`
 

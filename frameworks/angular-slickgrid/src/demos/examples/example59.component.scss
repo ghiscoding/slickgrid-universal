@@ -1,0 +1,16 @@
+@use '@slickgrid-universal/formula-plugin/dist/styles/sass/slick-formula.scss';
+
+.grid59 {
+  .text-sub-total {
+    font-style: italic;
+    color: rgb(33, 80, 115);
+  }
+  .text-taxes {
+    font-style: italic;
+    color: rgb(198, 89, 17);
+  }
+  .text-total {
+    font-weight: bold;
+    color: rgb(0, 90, 158);
+  }
+}

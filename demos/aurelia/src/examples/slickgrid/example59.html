@@ -1,0 +1,105 @@
+<div id="demo-container" class="container-fluid">
+  <h2>
+    Example 59: Formula Editor
+    <button class="btn btn-outline-secondary btn-sm" data-test="toggle-dark-mode" click.trigger="demo.toggleDarkMode()">
+      Toggle Light/Dark
+    </button>
+  </h2>
+  <p>Edit a formula cell to use reference picking, colored highlights, autocomplete and drag-fill.</p>
+  <div class="mb-2">
+    <button
+      class="btn btn-outline-secondary btn-sm me-1"
+      data-test="export-excel-btn"
+      click.trigger="demo.excelExportService.exportToExcel()"
+    >
+      Export to Excel
+    </button>
+    <button
+      class="btn btn-outline-secondary btn-sm me-1"
+      data-test="export-excel-hidden-btn"
+      click.trigger="demo.excelExportService.exportToExcel({ includeHidden: true })"
+    >
+      Export Including Hidden Columns
+    </button>
+    <button class="btn btn-outline-secondary btn-sm me-1" data-test="export-csv-btn" click.trigger="demo.exportCsv()">
+      Export CSV Values
+    </button>
+    <button class="btn btn-outline-secondary btn-sm me-1" data-test="export-excel-portable-btn" click.trigger="demo.exportPortable()">
+      Export Portable Values
+    </button>
+    <button class="btn btn-outline-secondary btn-sm me-1" data-test="group-by-btn" click.trigger="demo.groupByTaxable()">
+      Group by Taxable
+    </button>
+    <button class="btn btn-outline-secondary btn-sm me-1" data-test="clear-grouping-btn" click.trigger="demo.clearGrouping()">
+      Clear grouping
+    </button>
+    <button class="btn btn-outline-secondary btn-sm me-1" data-test="reload-formulas-btn" click.trigger="demo.loadDefaultFormulas()">
+      Load Default Formulas
+    </button>
+    <button
+      class="btn btn-outline-secondary btn-sm me-1"
+      data-test="clear-formulas-btn"
+      click.trigger="demo.formulaService.clearFormulas()"
+    >
+      Clear Formula Store
+    </button>
+    <button class="btn btn-outline-secondary btn-sm me-1" data-test="register-customsum-btn" click.trigger="demo.registerCustomSum()">
+      Register CUSTOMSUM
+    </button>
+    <button class="btn btn-outline-secondary btn-sm me-1" data-test="remove-customsum-btn" click.trigger="demo.removeCustomSum()">
+      Remove CUSTOMSUM
+    </button>
+    <button class="btn btn-outline-secondary btn-sm me-1" data-test="save-formula-state-btn" click.trigger="demo.saveGridAndFormulas()">
+      Save Grid and Formulas
+    </button>
+    <button
+      class="btn btn-outline-secondary btn-sm me-1"
+      data-test="restore-formula-state-btn"
+      click.trigger="demo.restoreGridAndFormulas()"
+    >
+      Restore Grid and Formulas
+    </button>
+    <label
+      >Tax Rate (%): <input type="number" step="0.25" value="7.5" data-test="taxrate" input.trigger="demo.setTaxRate(+$event.target.value)"
+    /></label>
+    <button class="btn btn-outline-secondary btn-sm" data-test="update-btn" click.trigger="demo.updateTaxRate()">Update</button>
+  </div>
+  <div class="mb-2">
+    <label
+      >Sub-Total editor:
+      <select data-test="formula-editor-mode" change.trigger="demo.setEditorMode($event.target.value)">
+        <option value="formula">Formula editor</option>
+        <option value="text">Text editor</option>
+        <option value="readonly">Read-only</option>
+      </select></label
+    >
+  </div>
+  <div class="grid59">
+    <aurelia-slickgrid
+      grid-id="grid59"
+      columns.bind="demo.columns"
+      options.bind="demo.gridOptions"
+      dataset.bind="demo.dataset"
+      on-aurelia-grid-created.trigger="demo.aureliaGridReady($event.detail)"
+      on-before-edit-cell.trigger="demo.beforeEdit($event.detail.eventData, $event.detail.args)"
+      on-before-cell-editor-destroy.trigger="demo.beforeEditorDestroy()"
+      on-cell-change.trigger="demo.cellChanged()"
+      on-click.trigger="demo.cellClicked($event.detail.args)"
+    ></aurelia-slickgrid>
+  </div>
+  <section class="mt-4">
+    <button class="btn btn-outline-secondary btn-sm" data-test="show-selection-fallback-btn" click.trigger="showFallback = true">
+      Show formula grid without selection
+    </button>
+    <div class="formula-fallback-grid">
+      <aurelia-slickgrid
+        if.bind="showFallback"
+        grid-id="formula-fallback"
+        columns.bind="demo.fallbackColumns"
+        options.bind="demo.fallbackOptions"
+        dataset.bind="demo.fallbackDataset"
+        on-aurelia-grid-created.trigger="demo.fallbackGridReady($event.detail)"
+      ></aurelia-slickgrid>
+    </div>
+  </section>
+</div>

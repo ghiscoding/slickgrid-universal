@@ -350,7 +350,7 @@ export default class Example48 {
       excelExportOptions: {
         filename: 'grocery-list-formula-service',
         sanitizeDataExport: true,
-        sheetName: 'Grocery List Formula Service',
+        sheetName: 'Grocery List Formula Editor',
         columnHeaderStyle: {
           font: { color: 'FFFFFFFF' },
           fill: { type: 'pattern', patternType: 'solid', fgColor: 'FF4a6c91' },
@@ -363,7 +363,7 @@ export default class Example48 {
           });
           sheet.setRowInstructions(0, { height: 40 });
 
-          const customTitle = 'Grocery Shopping List (Formula Service)';
+          const customTitle = 'Grocery Shopping List (Formula Editor)';
           const lastCellMerge = this.isDataGrouped ? 'I1' : 'H1';
           sheet.mergeCells('A1', lastCellMerge);
           sheet.data.push([{ value: customTitle, metadata: { style: excelFormat.id } }]);

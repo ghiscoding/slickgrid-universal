@@ -1,7 +1,7 @@
 {
   "name": "@slickgrid-universal/formula-plugin",
   "version": "11.0.0",
-  "description": "Optional Formula Service for Slickgrid-Universal.",
+  "description": "Optional Formula Editor for Slickgrid-Universal.",
   "type": "module",
   "main": "./dist/index.js",
   "exports": {

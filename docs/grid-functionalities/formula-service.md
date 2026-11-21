@@ -12,7 +12,7 @@
 - [Demo](#demo)
 
 ### Description
-Formula Service is an optional external resource plugin that adds spreadsheet-like formula support to Slickgrid-Universal.
+Formula Editor is an optional external resource plugin that adds spreadsheet-like formula support to Slickgrid-Universal.
 
 At a high level it provides:
 - formula storage by row id and column id
@@ -35,7 +35,7 @@ Related:
 - [Export to Excel](./export-to-excel.md)
 
 ### Install and Register
-Install package and register Formula Service in `externalResources`.
+Install package and register Formula Editor in `externalResources`.
 
 Load the formula plugin styles after the SlickGrid theme. For Sass:
 
@@ -86,7 +86,7 @@ Common `FormulaServiceOption` settings:
 
 ### Formula Editor and References
 Formula editor is auto-assigned when:
-- Formula Service is registered
+- Formula Editor is registered
 - column has `allowFormula: true`
 - `autoAssignEditor` is not disabled and no other editor is configured, or Formula Editor is explicitly configured
 
@@ -207,7 +207,7 @@ Formulas for row or column IDs that are not currently present remain in the stor
 
 ### Formula Drag-Fill
 
-With cell-capable selection enabled, Formula Service handles the `.slick-drag-replace-handle` automatically for formula-enabled columns.
+With cell-capable selection enabled, Formula Editor handles the `.slick-drag-replace-handle` automatically for formula-enabled columns.
 
 - formulas shift relative A1 references while keeping absolute reference parts fixed
 - grouped fill skips group headers/totals as destinations and captures only data members in translated ranges
@@ -216,7 +216,7 @@ With cell-capable selection enabled, Formula Service handles the `.slick-drag-re
 - multiple numeric source values continue as a linear progression
 - string or mixed source values repeat in source order
 
-This matches the common defaults documented by [AG Grid's fill handle](https://www.ag-grid.com/javascript-data-grid/cell-selection-fill-handle/). Series inference is implemented inside the optional formula-plugin package, so grids that do not register Formula Service do not include this behavior.
+This matches the common defaults documented by [AG Grid's fill handle](https://www.ag-grid.com/javascript-data-grid/cell-selection-fill-handle/). Series inference is implemented inside the optional formula-plugin package, so grids that do not register Formula Editor do not include this behavior.
 
 Use `autoEdit: false` when combining formula editing and drag-fill. A single click selects the formula cell and exposes the drag handle; double-click the cell when you want to open the formula editor.
 
@@ -265,7 +265,7 @@ For CSV or text export, enable `exportWithFormatter: true` in `TextExportService
 ### Troubleshooting
 1. Formula cell shows raw formula string
 - Verify the column has `allowFormula: true`.
-- Verify Formula Service is registered in `externalResources`.
+- Verify Formula Editor is registered in `externalResources`.
 - Verify formula text starts with `=`.
 
 2. Click/drag reference picking is missing

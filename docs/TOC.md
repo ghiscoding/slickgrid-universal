@@ -59,7 +59,7 @@
 * [Context Menu](grid-functionalities/context-menu.md)
 * [Custom Footer](grid-functionalities/custom-footer.md)
 * [Excel Copy Buffer Plugin](grid-functionalities/excel-copy-buffer.md)
-* [Formula Service Plugin (Vanilla)](grid-functionalities/formula-service.md)
+* [Formula Editor Plugin (Vanilla)](grid-functionalities/formula-service.md)
 * [Formula Custom Functions](grid-functionalities/formula-functions.md)
 * [Export to Excel](grid-functionalities/export-to-excel.md)
 * [Export to PDF](grid-functionalities/export-to-pdf.md)

@@ -66,6 +66,7 @@ export const routes: RouteRecordRaw[] = [
   { path: '/example56', name: '56- Variable Row Height (metadata)', component: () => import('../components/Example56.vue') },
   { path: '/example57', name: '57- RTL (Right-to-Left)', component: () => import('../components/Example57.vue') },
   { path: '/example58', name: '58- Sticky Financial Report', component: () => import('../components/Example58.vue') },
+  { path: '/example59', name: '59- Formula Editor', component: () => import('../components/Example59.vue') },
 ];
 
 export const router = createRouter({

@@ -296,6 +296,9 @@ importers:
       '@slickgrid-universal/excel-export':
         specifier: workspace:*
         version: link:../../packages/excel-export
+      '@slickgrid-universal/formula-plugin':
+        specifier: workspace:*
+        version: link:../../packages/formula-plugin
       '@slickgrid-universal/graphql':
         specifier: workspace:*
         version: link:../../packages/graphql
@@ -396,6 +399,9 @@ importers:
       '@slickgrid-universal/excel-export':
         specifier: workspace:*
         version: link:../../packages/excel-export
+      '@slickgrid-universal/formula-plugin':
+        specifier: workspace:*
+        version: link:../../packages/formula-plugin
       '@slickgrid-universal/graphql':
         specifier: workspace:*
         version: link:../../packages/graphql
@@ -723,6 +729,9 @@ importers:
       '@slickgrid-universal/excel-export':
         specifier: workspace:*
         version: link:../../packages/excel-export
+      '@slickgrid-universal/formula-plugin':
+        specifier: workspace:*
+        version: link:../../packages/formula-plugin
       '@slickgrid-universal/graphql':
         specifier: workspace:*
         version: link:../../packages/graphql
@@ -1024,6 +1033,9 @@ importers:
       '@slickgrid-universal/excel-export':
         specifier: workspace:*
         version: link:../../packages/excel-export
+      '@slickgrid-universal/formula-plugin':
+        specifier: workspace:*
+        version: link:../../packages/formula-plugin
       '@slickgrid-universal/graphql':
         specifier: workspace:*
         version: link:../../packages/graphql

@@ -60,6 +60,7 @@ const routes = [
   { path: 'example56', route: '/example56', element: lazy(() => import('./Example56.js')), title: '56- Variable Row Height (metadata)' },
   { path: 'example57', route: '/example57', element: lazy(() => import('./Example57.js')), title: '57- RTL (Right-to-Left)' },
   { path: 'example58', route: '/example58', element: lazy(() => import('./Example58.js')), title: '58- Sticky Financial Report' },
+  { path: 'example59', route: '/example59', element: lazy(() => import('./Example59.js')), title: '59- Formula Editor' },
 ];
 
 export default function Routes() {

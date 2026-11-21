@@ -20,6 +20,11 @@ export default defineConfig({
     {
       name: 'aurelia-demo-full-reload',
       handleHotUpdate({ server, modules, timestamp }) {
+        // Downloads and Cypress artifacts are watched files but are not app modules.
+        // Reloading for them interrupts browser tests while exports are being written.
+        if (!modules.length) {
+          return;
+        }
         const invalidatedModules = new Set();
         for (const module of modules) {
           server.moduleGraph.invalidateModule(module, invalidatedModules, timestamp, true);
