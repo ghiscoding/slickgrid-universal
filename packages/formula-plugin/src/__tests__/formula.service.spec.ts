@@ -29,6 +29,43 @@ describe('FormulaService', () => {
     expect(evaluate('=CONCAT("")')).toBe('');
   });
 
+  it('uses export lookups with row offsets and grouped worksheet positions', () => {
+    const columns: Column[] = [
+      { id: 'value', field: 'value' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const items = [
+      { id: 'a', value: 3, total: '' },
+      { id: 'b', value: 4, total: '' },
+    ];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    service.setFormula('a', 'total', '=A2');
+    const context = {
+      rowId: 'a',
+      columnId: 'total',
+      columnIds: ['value', 'total'],
+      rowIds: ['a', 'b'],
+      excelRowOffset: 3,
+      referenceLookups: {
+        columnIds: ['value', 'total'],
+        columnIndexes: new Map([
+          ['value', 0],
+          ['total', 1],
+        ]),
+        rowIds: ['a', 'b'],
+        rowIndexes: new Map([
+          ['a', 0],
+          ['b', 1],
+        ]),
+      },
+    } as FormulaExcelExportContext;
+    expect(service.getExcelFormula(context)).toBe('A4');
+    expect(service.getExcelFormula({ ...context, excelRowOffset: 5 })).toBe('A6');
+    expect(service.getExcelFormula({ ...context, groupedRowPositions: new Map([['b', 9]]), groupedColumnOffset: 1 })).toBe('B9');
+    service.dispose();
+  });
+
   it('keeps formulas distinct when row and column IDs contain key separators', () => {
     const columns: Column[] = [
       { id: 'c', field: 'c', allowFormula: true },

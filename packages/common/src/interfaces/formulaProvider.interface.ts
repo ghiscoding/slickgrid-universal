@@ -9,6 +9,13 @@ export interface FormulaExcelExportContext {
   gridOptions: GridOption;
   rowId: number | string;
   rowIds: Array<number | string>;
+  /** Precomputed lookups for the duration of an export. Row indexes are zero-based. */
+  referenceLookups?: {
+    columnIds: string[];
+    columnIndexes: ReadonlyMap<string, number>;
+    rowIds: string[];
+    rowIndexes: ReadonlyMap<string, number>;
+  };
   /** Worksheet positions for data rows in a grouped export. */
   groupedRowPositions?: ReadonlyMap<string, number>;
   /** Number of structural columns preceding exported data columns. */

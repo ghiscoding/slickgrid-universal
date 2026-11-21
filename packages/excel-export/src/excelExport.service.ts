@@ -8,6 +8,7 @@ import type {
   ExportTranslateFn,
   ExternalResource,
   FileType,
+  FormulaExcelExportContext,
   FormulaProvider,
   GetDataValueCallback,
   GetGroupTotalValueCallback,
@@ -88,6 +89,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   protected _formulaProvider?: FormulaProvider;
   protected _formulaColumnIds: Array<number | string> = [];
   protected _formulaRowIds: Array<number | string> = [];
+  protected _formulaReferenceLookups?: FormulaExcelExportContext['referenceLookups'];
   protected _formulaGroupedRows: Map<string, number> = new Map();
   protected _formulaRangeSheet?: Worksheet;
   protected _formulaRangeCache: Map<string, string> = new Map();
@@ -149,6 +151,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     this._formulaProvider = undefined;
     this._formulaColumnIds = [];
     this._formulaRowIds = [];
+    this._formulaReferenceLookups = undefined;
     this._formulaGroupedRows.clear();
     this._formulaRangeSheet = undefined;
     this._formulaRangeCache.clear();
@@ -375,6 +378,15 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         }
       }
     }
+
+    const formulaColumnIds = this._formulaColumnIds.map(String);
+    const formulaRowIds = this._formulaRowIds.map(String);
+    this._formulaReferenceLookups = {
+      columnIds: formulaColumnIds,
+      columnIndexes: new Map(formulaColumnIds.map((id, index) => [id, index] as const).reverse()),
+      rowIds: formulaRowIds,
+      rowIndexes: new Map(formulaRowIds.map((id, index) => [id, index])),
+    };
 
     // Populate the rest of the Grid Data by reading directly from DataView with yielding for responsiveness
     await this.pushAllGridRowDataToArrayAsync(outputData, columns, columnMetadataCache);
@@ -865,6 +877,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       gridOptions: this._gridOptions,
       rowId,
       rowIds: this._formulaRowIds,
+      referenceLookups: this._formulaReferenceLookups,
       groupedRowPositions: this._hasGroupedItems ? this._formulaGroupedRows : undefined,
       groupedColumnOffset: this._hasGroupedItems ? 1 : undefined,
       registerFormulaRange: (references, width) => this.registerFormulaRange(references, false, width),

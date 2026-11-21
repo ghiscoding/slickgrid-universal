@@ -872,9 +872,8 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     }
 
     const normalizedFormula = originalFormula.startsWith('=') ? originalFormula.slice(1) : originalFormula;
-    const columns = context.columnIds.map(String);
-    const rowPositions =
-      context.groupedRowPositions ?? new Map(context.rowIds.map((id, index) => [String(id), index + context.excelRowOffset]));
+    const columns = context.referenceLookups?.columnIds ?? context.columnIds.map(String);
+    const rowIndexes = context.referenceLookups?.rowIndexes ?? new Map(context.rowIds.map((id, index) => [String(id), index]));
     const stableFormula = this.toStoredFormula(normalizedFormula);
     if (context.groupedRowPositions && this.containsDirectExcelReference(stableFormula)) {
       return undefined;
@@ -883,8 +882,13 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       if (!columnId) {
         return token;
       }
-      const column = columns.indexOf(JSON.parse(columnId));
-      const row = rowPositions.get(JSON.parse(rowId!));
+      const column = context.referenceLookups?.columnIndexes.get(JSON.parse(columnId)) ?? columns.indexOf(JSON.parse(columnId));
+      const index = rowIndexes.get(JSON.parse(rowId!));
+      const row = context.groupedRowPositions
+        ? context.groupedRowPositions.get(JSON.parse(rowId!))
+        : index === undefined
+          ? undefined
+          : index + context.excelRowOffset;
       return column < 0 || row === undefined
         ? FORMULA_ERROR.REF
         : `${getExcelColumnNameByIndex(column + 1 + (context.groupedColumnOffset ?? 0))}${row}`;
@@ -897,7 +901,12 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       if (mapped === stableFormula) {
         mapped = this.shiftDirectExcelReferences(mapped, this.getFormulaColumnIds(), columns, Math.max(0, context.excelRowOffset - 1));
       }
-      mapped = this.replaceRefFunctionsWithA1Refs(mapped, columns, context.rowIds.map(String), context.excelRowOffset);
+      mapped = this.replaceRefFunctionsWithA1Refs(
+        mapped,
+        columns,
+        context.referenceLookups?.rowIds ?? context.rowIds.map(String),
+        context.excelRowOffset
+      );
     }
     if (context.groupedRowPositions && this.matchesOutsideQuotedStrings(mapped, /#REF!/)) {
       return FORMULA_ERROR.REF;
@@ -1070,7 +1079,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     }
 
     const references = new Map<string, unknown>();
-    const occupiedIdentifiers = new Set((normalizedSyntax.match(/[A-Za-z_][A-Za-z0-9_]*/g) ?? []).map((identifier) => identifier.toUpperCase()));
+    const occupiedIdentifiers = new Set(
+      (normalizedSyntax.match(/[A-Za-z_][A-Za-z0-9_]*/g) ?? []).map((identifier) => identifier.toUpperCase())
+    );
     let referenceSequence = 0;
     const referenceLiteral = (value: unknown) => {
       let name: string;
