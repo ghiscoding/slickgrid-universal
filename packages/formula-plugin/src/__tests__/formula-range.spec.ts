@@ -29,6 +29,7 @@ describe('stable formula ranges', () => {
   it('normalizes doubled quotes and leaves unterminated literals intact', () => {
     expect(normalizeExcelFormulaStrings(`=CONCAT("a""b",'c''d')`)).toBe(`=CONCAT("a""b","c'd")`);
     expect(normalizeExcelFormulaStrings('=CONCAT("unterminated')).toBe('=CONCAT("unterminated');
+    expect(normalizeExcelFormulaStrings(`='Sheet 1'!A1&"\\u0041\\nB"`)).toBe(`='Sheet 1'!A1&("A"&CHAR(10)&"B")`);
   });
 
   it('compacts only identical rectangles without adding or reordering members', () => {

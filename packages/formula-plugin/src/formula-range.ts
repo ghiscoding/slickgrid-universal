@@ -74,6 +74,39 @@ export function parseFormulaFunctionArguments(formula: string, openIndex: number
   return undefined;
 }
 
+/** Read a quoted formula string, decoding backslash escapes and doubled delimiters. */
+export function readFormulaString(formula: string, start: number): { value: string; end: number } | undefined {
+  const quote = formula[start];
+  let index = start + 1;
+  let value = '';
+  while (index < formula.length) {
+    const char = formula[index];
+    if (char === '\\' && index + 1 < formula.length) {
+      const escaped = formula[index + 1];
+      const unicode = escaped === 'u' ? formula.slice(index + 2, index + 6) : '';
+      if (/^[\da-f]{4}$/i.test(unicode)) {
+        value += String.fromCharCode(Number.parseInt(unicode, 16));
+        index += 6;
+      } else {
+        const escapes: Record<string, string> = { n: '\n', r: '\r', t: '\t', b: '\b', f: '\f' };
+        value += escapes[escaped] ?? escaped;
+        index += 2;
+      }
+    } else if (char === quote) {
+      if (formula[index + 1] === quote) {
+        value += quote;
+        index += 2;
+      } else {
+        return { value, end: index + 1 };
+      }
+    } else {
+      value += char;
+      index++;
+    }
+  }
+  return undefined;
+}
+
 /** Convert grid string literals (backslash escapes and doubled delimiters) to Excel string expressions. */
 export function normalizeExcelFormulaStrings(formula: string): string {
   let output = '';
@@ -87,46 +120,18 @@ export function normalizeExcelFormulaStrings(formula: string): string {
       continue;
     }
 
-    const start = index++;
-    let value = '';
-    let closed = false;
-    while (index < formula.length) {
-      const char = formula[index];
-      if (char === '\\' && index + 1 < formula.length) {
-        const escaped = formula[index + 1];
-        const unicode = escaped === 'u' ? formula.slice(index + 2, index + 6) : '';
-        if (/^[\da-f]{4}$/i.test(unicode)) {
-          value += String.fromCharCode(Number.parseInt(unicode, 16));
-          index += 6;
-        } else {
-          const escapes: Record<string, string> = { n: '\n', r: '\r', t: '\t', b: '\b', f: '\f' };
-          value += escapes[escaped] ?? escaped;
-          index += 2;
-        }
-      } else if (char === quote) {
-        if (formula[index + 1] === quote) {
-          value += quote;
-          index += 2;
-        } else {
-          index++;
-          closed = true;
-          break;
-        }
-      } else {
-        value += char;
-        index++;
-      }
-    }
-
-    if (!closed) {
+    const start = index;
+    const parsed = readFormulaString(formula, start);
+    if (!parsed) {
       output += formula.slice(start);
       break;
     }
+    index = parsed.end;
     if (quote === "'" && formula.slice(index).match(/^\s*!/)?.[0]) {
       output += formula.slice(start, index);
       continue;
     }
-    output += toExcelFormulaString(value);
+    output += toExcelFormulaString(parsed.value);
   }
 
   return output;

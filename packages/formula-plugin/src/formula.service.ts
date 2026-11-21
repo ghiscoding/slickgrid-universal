@@ -36,6 +36,7 @@ import {
   mapFormulaRanges,
   normalizeExcelFormulaStrings,
   parseFormulaFunctionArguments,
+  readFormulaString,
   rewriteExcelHelperCounta,
 } from './formula-range.js';
 import {
@@ -1249,42 +1250,12 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       }
 
       if (ch === '"' || ch === "'") {
-        const quote = ch;
-        i++;
-        let value = '';
-        let closed = false;
-        while (i < src.length) {
-          const c = src[i];
-          if (c === '\\' && i + 1 < src.length) {
-            const escaped = src[i + 1];
-            const unicode = escaped === 'u' ? src.slice(i + 2, i + 6) : '';
-            if (/^[\da-f]{4}$/i.test(unicode)) {
-              value += String.fromCharCode(Number.parseInt(unicode, 16));
-              i += 6;
-            } else {
-              const escapes: Record<string, string> = { n: '\n', r: '\r', t: '\t', b: '\b', f: '\f' };
-              value += escapes[escaped] ?? escaped;
-              i += 2;
-            }
-            continue;
-          }
-          if (c === quote) {
-            if (src[i + 1] === quote) {
-              value += quote;
-              i += 2;
-              continue;
-            }
-            i++;
-            closed = true;
-            break;
-          }
-          value += c;
-          i++;
-        }
-        if (!closed) {
+        const parsed = readFormulaString(src, i);
+        if (!parsed) {
           return FORMULA_ERROR.PARSE;
         }
-        pushToken('string', value);
+        i = parsed.end;
+        pushToken('string', parsed.value);
         continue;
       }
 
