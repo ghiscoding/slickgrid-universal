@@ -1,5 +1,6 @@
 import type { Column, OnDragReplaceCellsEventArgs, SlickDataView, SlickGrid, SlickRange } from '@slickgrid-universal/common';
 import { SlickSelectionUtils } from '@slickgrid-universal/common';
+import { FORMULA_ERROR } from './formula-errors.js';
 import { getExcelColumnIndexByName, getExcelColumnNameByIndex, setFormulaObjectProperty } from './formula-reference.js';
 
 /** Internal callbacks used by FormulaService to keep storage and display concerns in the service. */
@@ -222,12 +223,10 @@ function getFormulaOrRawValue(
 export function translateFormulaReferences(formula: string, rowDelta: number, columnDelta: number): string {
   const referenceRegex = /(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?:\s*:\s*\$?[A-Z]{1,3}\$?\d+)?(?![A-Za-z0-9_]|\s*\()/gi;
   return transformFormulaOutsideQuotedStrings(formula, (segment) =>
-    segment.replace(referenceRegex, (reference) =>
-      reference
-        .split(':')
-        .map((endpoint) => translateFormulaReferenceEndpoint(endpoint.trim(), rowDelta, columnDelta))
-        .join(':')
-    )
+    segment.replace(referenceRegex, (reference) => {
+      const translated = reference.split(':').map((endpoint) => translateFormulaReferenceEndpoint(endpoint.trim(), rowDelta, columnDelta));
+      return translated.includes(FORMULA_ERROR.REF) ? FORMULA_ERROR.REF : translated.join(':');
+    })
   );
 }
 
@@ -247,8 +246,11 @@ function translateFormulaReferenceEndpoint(reference: string, rowDelta: number, 
     return reference;
   }
 
-  const shiftedColumnIndex = Math.max(0, columnIndex + (columnIsAbsolute ? 0 : columnDelta));
-  const shiftedRowIndex = Math.max(0, rowIndex + (rowIsAbsolute ? 0 : rowDelta));
+  const shiftedColumnIndex = columnIndex + (columnIsAbsolute ? 0 : columnDelta);
+  const shiftedRowIndex = rowIndex + (rowIsAbsolute ? 0 : rowDelta);
+  if (shiftedColumnIndex < 0 || shiftedRowIndex < 0) {
+    return FORMULA_ERROR.REF;
+  }
   return `${columnIsAbsolute ? '$' : ''}${getExcelColumnNameByIndex(shiftedColumnIndex + 1)}${rowIsAbsolute ? '$' : ''}${shiftedRowIndex + 1}`;
 }
 

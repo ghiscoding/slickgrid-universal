@@ -6,6 +6,9 @@ import { getFillSeriesValue, handleFormulaDragFill, translateFormulaReferences, 
 describe('formula drag-fill', () => {
   it('shifts references without changing A1-shaped function names', () => {
     expect(translateFormulaReferences('=LOG10(A1)+A1(2)', 1, 1)).toBe('=LOG10(B2)+A1(2)');
+    expect(translateFormulaReferences('=A1+$B$1', -1, 0)).toBe('=#REF!+$B$1');
+    expect(translateFormulaReferences('=A1:B2', 0, -1)).toBe('=#REF!');
+    expect(translateFormulaReferences('=$A1+B$2', -1, -1)).toBe('=#REF!+A$2');
   });
 
   it('should copy one value, continue numeric ranges, and repeat mixed ranges', () => {

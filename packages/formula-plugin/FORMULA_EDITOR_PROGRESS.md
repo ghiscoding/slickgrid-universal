@@ -255,7 +255,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
   - [x] `COUNT` and `COUNTA` can swallow structurally missing A1 references.
   - [x] `MIN` and `MAX` can overflow the call stack for multiple large ranges.
   - [x] Numeric literals in scientific notation are rejected.
-  - [ ] Drag-fill clamps references that cross the first row or column instead of returning `#REF!`.
+  - [x] Drag-fill clamps references that cross the first row or column instead of returning `#REF!`.
 - [ ] Fix the second audit findings (2026-11-20), committing and validating each separately:
   - [x] Remove the unreachable top-level memo check and unused memo flag left by per-evaluation memoization; restore 100% line coverage.
   - [x] Filtered or paged ungrouped grids map editor A1 rows, highlights and evaluation through unfiltered dataset order instead of displayed rows.
