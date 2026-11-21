@@ -1,6 +1,7 @@
 # Formula Editor Plugin Progress
 
 ## Handoff update (2026-11-20)
+- Formula store and evaluation memo keys now encode row and column IDs without delimiter collisions while retaining numeric/string ID equivalence. Added snapshot, evaluation and reference-flag regressions; unit tests and line coverage still need verification.
 - Formula evaluations now memoize dependencies within each evaluation rather than across separate calls, so synchronous external changes and grouped recalculation see current data. Regression tests cover DataView updates and grouped totals; unit tests and line coverage remain to be verified.
 - Implemented the first independent-audit fix: date arithmetic now coerces numeric text, booleans and blank references as spreadsheet-day offsets; numeric values minus dates use date serials. Added focused regressions, but unit tests and line coverage still need verification.
 - Reviewed nested error expressions and date exports, corrected parenthesis handling in error-counting formulas and local-date addition across daylight-saving changes, and added regressions. Unit tests and production-source line coverage remain to be verified.
@@ -237,7 +238,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [ ] Fix the independent audit findings and validate each fix and its coverage:
   - [x] Implement date arithmetic coercion for numeric text, booleans and blank references; add regressions. Unit tests and line coverage remain to be verified under the parent task.
   - [x] Prevent stale memoized results after synchronous external data updates; add DataView and grouped-total regressions. Unit tests and line coverage remain to be verified under the parent task.
-  - [ ] Row and column IDs containing `::` can collide in the formula store and overwrite formulas.
+  - [x] Prevent formula-store key collisions for row and column IDs containing `::`; add snapshot and evaluation regressions. Unit tests and line coverage remain to be verified under the parent task.
   - [ ] Dataset synchronization can retain formulas after their source cells become plain values.
   - [ ] Literal text resembling a formula error is treated as an error.
   - [ ] `COUNT` and `COUNTA` can swallow structurally missing A1 references.

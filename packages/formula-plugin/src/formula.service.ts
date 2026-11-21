@@ -925,11 +925,11 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   }
 
   protected buildStoreKey(rowId: number | string, columnId: number | string): string {
-    return `${String(rowId)}::${String(columnId)}`;
+    return JSON.stringify([String(rowId), String(columnId)]);
   }
 
   protected buildEvaluationMemoKey(rowId: number | string, columnId: number | string, formula: string): string {
-    return `${this.buildStoreKey(rowId, columnId)}::${formula.trim()}`;
+    return JSON.stringify([this.buildStoreKey(rowId, columnId), formula.trim()]);
   }
 
   /** Share dependency results only within one evaluation; DataView data can change synchronously. */

@@ -28,6 +28,40 @@ describe('FormulaService', () => {
     expect(evaluate('=CONCAT("")')).toBe('');
   });
 
+  it('keeps formulas distinct when row and column IDs contain key separators', () => {
+    const columns: Column[] = [
+      { id: 'c', field: 'c', allowFormula: true },
+      { id: 'b::c', field: 'bc', allowFormula: true },
+    ];
+    const items = [
+      { id: 'a::b', c: '', bc: 10 },
+      { id: 'a', c: '', bc: '' },
+    ];
+    const grid = { getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any;
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init(grid);
+    service.setFormula('a::b', 'c', '=$B$1+1');
+    service.setFormula('a', 'b::c', '=2');
+    service.setFormula('a', 'c', '=A1+B2');
+
+    expect(service.getEvaluatedCellValue('a::b', 'c')).toBe(11);
+    expect(service.getEvaluatedCellValue('a', 'b::c')).toBe(2);
+    expect(service.getEvaluatedCellValue('a', 'c')).toBe(13);
+    const snapshot = JSON.parse(JSON.stringify(service.getFormulaStoreSnapshot()));
+    expect(snapshot.cells).toHaveLength(3);
+
+    const restored = new FormulaService({ autoAssignEditor: false });
+    restored.init(grid);
+    restored.setFormulaStoreSnapshot(snapshot);
+    expect(restored.getEvaluatedCellValue('a', 'c')).toBe(13);
+    expect((restored as any).toDisplayFormulaForCell(restored.getFormula('a::b', 'c'), 'a::b', 'c')).toBe('=$B$1+1');
+    expect(restored.removeFormula('a', 'b::c')).toBe(true);
+    expect(restored.getEvaluatedCellValue('a::b', 'c')).toBe(11);
+    expect(restored.hasFormula('a', 'b::c')).toBe(false);
+    service.dispose();
+    restored.dispose();
+  });
+
   it('ignores error cells in COUNT and counts them in COUNTA without hiding other errors', () => {
     const items = [
       { id: 'a', value: 4 },
@@ -782,13 +816,14 @@ describe('FormulaService', () => {
     } as any);
 
     const flagService = new FormulaService();
-    (flagService as any)._formulaReferenceAbsoluteFlagsByKey.set('r::value', [{ column: true, row: false }]);
-    expect((flagService as any).applyFormulaReferenceAbsoluteFlags('r::value', '=A1+B1')).toBe('=$A1+B1');
+    const flagKey = (flagService as any).buildStoreKey('r', 'value');
+    (flagService as any)._formulaReferenceAbsoluteFlagsByKey.set(flagKey, [{ column: true, row: false }]);
+    expect((flagService as any).applyFormulaReferenceAbsoluteFlags(flagKey, '=A1+B1')).toBe('=$A1+B1');
     (flagService as any)._grid = { getColumns: () => [{ id: 'value', field: 'value' }], getOptions: () => ({}) };
     (flagService as any)._dataView = { getItems: () => [{ id: 'r', value: '=A1' }] };
     (flagService as any)._formulaStore.set('orphan::value', '=A1');
-    (flagService as any)._formulaCoordinatesByKey.set('r::value', { rowId: 'r', columnId: 'value' });
-    (flagService as any)._formulaStore.set('r::value', '=A1');
+    (flagService as any)._formulaCoordinatesByKey.set(flagKey, { rowId: 'r', columnId: 'value' });
+    (flagService as any)._formulaStore.set(flagKey, '=A1');
     (flagService as any).canonicalizeStoredFormulas();
     expect((flagService as any).getFormula('r', 'value')).toContain('REF(COLUMN("value")');
 
@@ -2960,7 +2995,7 @@ describe('FormulaService', () => {
     expect((service as any).resolveExcelReferenceValue('A', 2, context)).toBe(FORMULA_ERROR.REF);
     expect((service as any).resolveExcelRangeValues('?', 1, 'A', 1, context)).toEqual([]);
 
-    context.visited.add('1::value');
+    context.visited.add((service as any).buildStoreKey(1, 'value'));
     expect((service as any).resolveExcelReferenceValue('A', 1, context)).toBe(FORMULA_ERROR.CIRCREF);
     expect((service as any).getCellRawValue('missing', 'value')).toBeUndefined();
     expect((service as any).getCellRawValue(1, 'missing')).toBeUndefined();
