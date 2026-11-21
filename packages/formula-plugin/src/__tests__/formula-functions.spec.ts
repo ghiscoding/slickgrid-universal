@@ -239,6 +239,9 @@ describe('createFormulaFunctionRegistry', () => {
     expect(conditional(0, 1, 2)).toBe(2);
     expect(conditional(-1, 1, 2)).toBe(1);
     expect(conditional('text', 1, 2)).toBe(FORMULA_ERROR.VALUE);
+    expect(conditional(null, 1, 2)).toBe(2);
+    expect(conditional(new Date(2024, 0, 1), 1, 2)).toBe(1);
+    expect(conditional(new Date(NaN), 1, 2)).toBe(FORMULA_ERROR.VALUE);
   });
 
   it('validates fixed-arity built-ins and reports invalid powers', () => {

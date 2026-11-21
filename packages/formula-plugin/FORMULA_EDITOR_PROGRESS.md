@@ -1,6 +1,7 @@
 # Formula Editor Plugin Progress
 
 ## Handoff update (2026-11-20)
+- Reviewed nested error expressions and date exports, corrected parenthesis handling in error-counting formulas and local-date addition across daylight-saving changes, and added regressions. Unit tests and production-source line coverage remain to be verified.
 - Implemented corrections for referenced error cells in `COUNT`/`COUNTA`, arithmetic and `IF` coercion, numeric date serial conversion, and argument limits. Added regressions, including error expressions in `COUNT`/`COUNTA`; tests and coverage still need to be run, and date/export edge cases need review.
 - Audited remaining coercion, date and function-argument behavior. Aggregates and concatenation now reject missing arguments; focused unit tests were added but still need to be run. The remaining gaps are tracked in the checklist.
 - The user reports that all four framework wrappers and their Formula Editor Cypress suites passed in CI. The Aurelia Vite reload plugin ignores changes to non-module files such as Cypress downloads.
@@ -222,14 +223,14 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Count valid date values in `COUNT`, including references and date-function results.
 - [x] Audit remaining operator and conditional-function coercion, dates and function argument counts; identify the remaining gaps below.
 - [x] Implement the initial audited fixes for error values in `COUNT`/`COUNTA`, `IF` and arithmetic text coercion, numeric Excel 1900 date serials, and function argument limits; add regression tests.
-- [ ] Validate those formula fixes and full line coverage; review nested error expressions and date/export edge cases.
+- [x] Review nested error expressions and date/export edge cases; correct the issues found and add regressions.
 - [x] Consolidate argument, quote and nesting scans shared by lazy `IF` evaluation and `SUMIF` range normalization; preserve existing parsing behavior and coverage.
 - [x] Smoke-test formula integration and the optional stylesheet in all framework demos; all four framework Cypress suites passed in CI.
 - [x] Complete the pnpm formula-plugin package build; package exports, custom Sass, five theme builds and version alignment are verified.
 - [x] Install the packed Formula Plugin in an isolated offline consumer with local workspace overrides; verify JavaScript and CSS exports resolve.
 - [x] Verify a clean install of the packed Formula Plugin with production dependencies from npm and no workspace overrides; resolve JavaScript, CSS and Sass exports.
 - [x] Review current-facing documentation for stale MVP claims and demo references; update the formula guides and all four framework export guides to point to Vanilla Example 48.
-- [ ] Complete final validation for changed files: relevant tests, lint, formatting and TypeScript; verify 100% statement and line coverage per changed production file, and dependency/circular checks when imports change. Include browser and workbook checks where applicable.
+- [ ] Complete final validation for changed files, including the formula coercion, error, and date/export regressions: relevant tests, lint, formatting and TypeScript; verify 100% statement and line coverage per changed production file, and dependency/circular checks when imports change. Include browser and workbook checks where applicable.
 - [x] Evaluate editor validation: support editor and column validators and their messages; retain calculation errors in cells instead of automatically blocking formula input.
 - [ ] Deferred: evaluate whole-row reference picking, whole-column drag-handle expansion, colored reference handles and an external formula data-source adapter as separate enhancements.
 - [x] Prevent autocomplete inside quoted strings and replace the complete function name when selecting from its middle.

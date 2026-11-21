@@ -49,6 +49,15 @@ describe('FormulaService', () => {
     expect(evaluate('=COUNTA(A2+1,1/0,2)')).toBe(3);
     expect(evaluate('=COUNT(1/0+1,2)')).toBe(1);
     expect(evaluate('=COUNT(NA())')).toBe(0);
+    expect(evaluate('=COUNT((1/0)+1,2)')).toBe(1);
+    expect(evaluate('=COUNTA((SUM(A2)),2)')).toBe(2);
+    expect(evaluate('=COUNT(IF(TRUE,1/0,4),2)')).toBe(1);
+    expect(evaluate('=COUNT(SUM(A2+SUM(1)),2)')).toBe(1);
+    expect(evaluate('=COUNT(1/0+SUM(1),2)')).toBe(1);
+    for (const expression of ['A2=1', 'A2&"x"', 'A2*2', 'A2^2']) {
+      expect(evaluate(`=COUNT(${expression})`)).toBe(0);
+      expect(evaluate(`=COUNTA(${expression})`)).toBe(1);
+    }
     expect(evaluate('=COUNT(A1:A3)+A2')).toBe(FORMULA_ERROR.DIV0);
     service.registerCustomFunction('COUNT', () => 10);
     expect(evaluate('=COUNT(A2)')).toBe(FORMULA_ERROR.DIV0);
@@ -66,8 +75,14 @@ describe('FormulaService', () => {
   });
 
   it('uses spreadsheet logical conditions and numeric dates in formulas', () => {
-    const items = [{ id: 'a', value: new Date(2024, 0, 1, 12) }];
-    const columns: Column[] = [{ id: 'value', field: 'value' }];
+    const items = [
+      { id: 'a', value: new Date(2024, 0, 1, 12), total: '' },
+      { id: 'b', value: new Date(NaN), total: '' },
+    ];
+    const columns: Column[] = [
+      { id: 'value', field: 'value' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
     const service = new FormulaService({ autoAssignEditor: false });
     service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
     const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
@@ -76,7 +91,12 @@ describe('FormulaService', () => {
     expect(evaluate('=IF(0,1,2)')).toBe(2);
     expect(evaluate('=SUM(A1)')).toBe(45292.5);
     expect(evaluate('=A1=45292.5')).toBe(true);
+    expect(evaluate('=45292.5=A1')).toBe(true);
+    expect(evaluate('=A2=1')).toBe(FORMULA_ERROR.VALUE);
     expect(evaluate('=A1*2')).toBe(90585);
+    expect(evaluate('=A1+A1')).toBe(90585);
+    service.setFormula('a', 'total', '=A1+1');
+    expect(service.getExcelFormula({ rowId: 'a', columnId: 'total', columnIds: ['value', 'total'], rowIds: ['a'], excelRowOffset: 2 } as any)).toBe('A2+1');
   });
 
   it('preserves quoted text through reference resolution, operator normalization and export', () => {
@@ -2897,6 +2917,10 @@ describe('FormulaService', () => {
     expect((FormulaService as any).subtractFormulaValues(baseDate, new Date('2024-01-08T00:00:00.000Z'))).toBe(2);
     expect((FormulaService as any).subtractFormulaValues(5, 2)).toBe(3);
     expect((FormulaService as any).addDays(baseDate, 1)).toEqual(new Date('2024-01-11T00:00:00.000Z'));
+    const beforeDaylightSaving = new Date(2024, 2, 9, 12);
+    const nextLocalDay = new Date(beforeDaylightSaving);
+    nextLocalDay.setDate(nextLocalDay.getDate() + 1);
+    expect((FormulaService as any).addDays(beforeDaylightSaving, 1)).toEqual(nextLocalDay);
   });
 
   it('should cover the recursive-descent parser operators, literals, collections, and syntax errors', () => {

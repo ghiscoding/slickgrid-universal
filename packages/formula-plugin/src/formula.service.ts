@@ -1260,6 +1260,23 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     const matchOperator = (...ops: string[]) => peek().type === 'operator' && ops.includes(peek().value);
     const matchParen = (p: '(' | ')') => peek().type === 'paren' && peek().value === p;
     const matchBracket = (b: '[' | ']') => peek().type === 'bracket' && peek().value === b;
+    const skipToClosing = (open: string, close: string) => {
+      let depth = 0;
+      while (peek().type !== 'eof') {
+        const token = consume();
+        if (token.type !== 'paren' && token.type !== 'bracket') {
+          continue;
+        }
+        if (token.value === close && depth === 0) {
+          return;
+        }
+        if (token.value === open) {
+          depth++;
+        } else if (token.value === close) {
+          depth--;
+        }
+      }
+    };
     const toNumber = (value: unknown): number => {
       value = unwrapFormulaReference(value);
       if (Array.isArray(value) || (typeof value === 'string' && !value.trim())) {
@@ -1523,20 +1540,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
                   if (!allowCountErrorReferences || value === FORMULA_ERROR.PARSE || value === FORMULA_ERROR.CIRCREF) {
                     // Consume this function's remaining tokens so an enclosing COUNT/COUNTA
                     // can handle the error as one complete argument.
-                    let depth = 0;
-                    while (peek().type !== 'eof') {
-                      if (matchParen(')') && depth === 0) {
-                        consume();
-                        break;
-                      }
-                      if (matchParen('(')) {
-                        depth++;
-                      }
-                      if (matchParen(')')) {
-                        depth--;
-                      }
-                      consume();
-                    }
+                    skipToClosing('(', ')');
                     return value;
                   }
                   // The failed expression may still have tokens after the error.
@@ -1615,6 +1619,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         consume();
         const value = parseExpression();
         if (isFormulaErrorCode(value)) {
+          skipToClosing('(', ')');
           return value;
         }
         if (!matchParen(')')) {
@@ -1632,6 +1637,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
           while (true) {
             const value = parseExpression();
             if (isFormulaErrorCode(value)) {
+              skipToClosing('[', ']');
               return value;
             }
             values.push(value);
@@ -2008,7 +2014,10 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   }
 
   protected static addDays(date: Date, days: number): Date {
-    return new Date(date.getTime() + days * 24 * 60 * 60 * 1000);
+    const result = new Date(date.getTime());
+    const wholeDays = Math.trunc(days);
+    result.setDate(result.getDate() + wholeDays);
+    return new Date(result.getTime() + (days - wholeDays) * 24 * 60 * 60 * 1000);
   }
 
   protected resolveExcelReferenceValue(colName: string, rowNumber: number, context: FormulaEvaluationContext): unknown {
