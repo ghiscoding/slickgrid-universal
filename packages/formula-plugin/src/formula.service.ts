@@ -54,6 +54,18 @@ import { handleFormulaDragFill } from './formula.drag-fill.js';
 export type { FormulaCallback } from './formula-functions.js';
 
 const FORMULA_EMPTY_RESULT = Symbol('formula empty result');
+const formulaRowIndexes = new WeakMap<ReadonlyArray<string | undefined>, Map<string, number>>();
+
+/** First index of a row ID; lists are cached per evaluation pass, so build each lookup once instead of scanning. */
+function indexOfFormulaRowId(rowIds: ReadonlyArray<string | undefined>, rowId: string): number {
+  let indexes = formulaRowIndexes.get(rowIds);
+  if (!indexes) {
+    indexes = new Map();
+    rowIds.forEach((id, index) => id !== undefined && !indexes!.has(id) && indexes!.set(id, index));
+    formulaRowIndexes.set(rowIds, indexes);
+  }
+  return indexes.get(rowId) ?? -1;
+}
 // Quoted text is matched first so references inside strings are skipped by String.replace callbacks.
 const FORMULA_STABLE_REF_TOKEN_REGEX =
   /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|REF\(\s*COLUMN\(("(?:\\.|[^"\\])*")\)\s*,\s*ROW\(("(?:\\.|[^"\\])*")\)\s*\)/gi;
@@ -150,6 +162,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   protected _evaluationMemoGeneration = 0;
   protected _dataItemById: Map<string, any> = new Map<string, any>();
   protected _dataItemsCache?: any[];
+  protected _rowIdsCache?: string[];
+  protected _evaluationRowIdsCache?: string[];
+  protected _isBulkLoading = false;
   protected _columnById: Map<string, Column> = new Map<string, Column>();
   protected _formulaFunctionRegistry?: Map<string, FormulaCallback>;
   protected _isLoadingFormulaDataSource = false;
@@ -392,7 +407,15 @@ export class FormulaService implements ExternalResource, FormulaProvider {
 
     const items = this.getDataItems();
     const datasetIdPropertyName = this.getDatasetIdPropertyName();
+    this._isBulkLoading = true;
+    try {
+      this.syncDatasetFormulas(items, formulaColumns, datasetIdPropertyName);
+    } finally {
+      this._isBulkLoading = false;
+    }
+  }
 
+  protected syncDatasetFormulas(items: any[], formulaColumns: Column[], datasetIdPropertyName: string): void {
     for (const item of items) {
       const rowId = item?.[datasetIdPropertyName] as number | string | undefined;
       if (rowId === undefined || rowId === null) {
@@ -605,6 +628,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     const formulaColumns = ((this._grid?.getColumns?.() || []) as Column[]).filter((column) => column.allowFormula);
     const idProperty = this.getDatasetIdPropertyName();
     this._isLoadingFormulaDataSource = true;
+    this._isBulkLoading = true;
     try {
       for (const item of this.getDataItems()) {
         const rowId = item?.[idProperty] as number | string | undefined;
@@ -620,6 +644,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       }
     } finally {
       this._isLoadingFormulaDataSource = false;
+      this._isBulkLoading = false;
     }
   }
 
@@ -981,9 +1006,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         }
         this._evaluationMemoFlushScheduled = false;
         this._evaluationMemo.clear();
-        this._dataItemById.clear();
-        this._dataItemsCache = undefined;
-        this._columnById.clear();
+        this.clearDataCaches();
       });
     }
     return this._evaluationMemo;
@@ -993,8 +1016,17 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     this._evaluationMemo.clear();
     this._evaluationMemoFlushScheduled = false;
     this._evaluationMemoGeneration++;
+    // Bulk loading only changes formulas while iterating the data, so its row caches stay valid.
+    if (!this._isBulkLoading) {
+      this.clearDataCaches();
+    }
+  }
+
+  protected clearDataCaches(): void {
     this._dataItemById.clear();
     this._dataItemsCache = undefined;
+    this._rowIdsCache = undefined;
+    this._evaluationRowIdsCache = undefined;
     this._columnById.clear();
   }
 
@@ -1028,7 +1060,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       this.replaceRefFunctionsWithA1Refs(
         lazyExpression,
         ((this._grid?.getColumns?.() as Column[] | undefined) || []).map((col) => String(col.id)),
-        this.getDataItems().map((item) => String(item?.[this.getDatasetIdPropertyName()] ?? '')),
+        (this._evaluationRowIdsCache ??= this.getDataItems().map((item) => String(item?.[this.getDatasetIdPropertyName()] ?? ''))),
         1
       )
     );
@@ -1818,10 +1850,10 @@ export class FormulaService implements ExternalResource, FormulaProvider {
 
   /** Return the current DataView row identity list in display/evaluation order. */
   protected getFormulaRowIds(): string[] {
-    return this.getDataItems()
+    return (this._rowIdsCache ??= this.getDataItems()
       .map((item) => item?.[this.getDatasetIdPropertyName()])
       .filter((rowId) => rowId !== undefined && rowId !== null)
-      .map((rowId) => String(rowId));
+      .map((rowId) => String(rowId)));
   }
 
   /**
@@ -1927,9 +1959,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       const columnId = JSON.parse(columnToken) as string;
       const rowId = JSON.parse(rowToken!) as string;
       const columnIdx = columnIds.indexOf(String(columnId));
-      const rowIdx = rowIds.indexOf(String(rowId));
+      const rowIdx = indexOfFormulaRowId(rowIds, String(rowId));
       if (columnIdx < 0 || rowIdx < 0) {
-        return preserveMissing && columnIdx >= 0 && this.getFormulaRowIds().includes(rowId) ? match : FORMULA_ERROR.REF;
+        return preserveMissing && columnIdx >= 0 && indexOfFormulaRowId(this.getFormulaRowIds(), rowId) >= 0 ? match : FORMULA_ERROR.REF;
       }
 
       const excelColName = getExcelColumnNameByIndex(columnIdx + 1);

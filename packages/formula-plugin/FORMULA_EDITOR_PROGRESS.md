@@ -1,6 +1,8 @@
 # Formula Editor Plugin Progress
 
 ## Handoff update (2026-11-21)
+- Full-audit follow-up: production bundle baseline is about 74 KB minified / 22 KB gzipped (excluding `@slickgrid-universal/*`). Consolidated the editor (about -110 lines, -2 KB minified), simplified the Excel provider wiring, and stopped exporting unparseable formula text (for example DDE payloads with `|`) as live Excel formulas.
+- Performance: row-ID lists and their index lookups are now cached per synchronous pass and kept during bulk formula loading. Benchmark with 5,000 rows: init 1,534 ms -> 71 ms, independent formula pass 431 ms -> 52 ms, 5,000-deep dependency chain 395 ms -> 68 ms. Row caches clear on DataView events, formula/layout changes and at the end of each pass, so in-place dataset mutations need the usual `dataView.refresh()`.
 - Scope/size audit (user decision: keep grouping, target AG Grid/Syncfusion parity, measure production LOC only). Consolidated A1 regexes and the quote-aware transform helper, removed the unused `renderFormulaReferenceHighlights`/`extractExcelReferences` API and pass-through input callback, and generated the light/dark palettes from one Sass mixin (shipped CSS about 8% smaller). Net production change: about -166 lines.
 - Removed `SUMPRODUCT` (in neither AG Grid nor Syncfusion) along with the per-reference row tracking that only it used. Two-dimensional helper ranges remain for grouped export and are covered with `SUM`.
 - Replaced Excel-style `SUMIF` sum-range resizing with `#VALUE!` when the criteria and sum ranges differ in size; exported workbooks keep the original formula. Production code went from about 5,470 to 5,117 lines (-352, about 6.4%) across the audit.

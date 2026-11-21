@@ -620,7 +620,7 @@ describe('FormulaService', () => {
     expect(evaluate('=COUNT(TODAY(),NOW())')).toBe(2);
   });
 
-  it('preserves blank range members for aggregates and custom functions', () => {
+  it('preserves blank range members for aggregates and custom functions', async () => {
     const items = [
       { id: 'a', value: 2, total: '' },
       { id: 'b', value: null, total: '' },
@@ -653,6 +653,7 @@ describe('FormulaService', () => {
     service.setFormula('a', 'total', '=AVERAGE(A1:A3)');
     expect(service.getEvaluatedCellValue('a', 'total')).toBe(1);
     items.splice(1, 0, items.pop()!);
+    await Promise.resolve(); // row caches last one synchronous pass, like a grid render after a DataView refresh
     expect(evaluate(service.getFormula('a', 'total')!)).toBe(1);
     expect(evaluate('=AVERAGE(REFRANGE(A1,A3,A4))')).toBe(1);
     expect(evaluate('=AVERAGE(REFRANGE(A1,A99))')).toBe('#REF!');
