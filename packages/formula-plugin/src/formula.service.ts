@@ -2202,6 +2202,26 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     return JSON.stringify(String(value));
   }
 
+  protected getFormulaValidationError(formula: string, rowId: number | string, columnId: number | string): string | undefined {
+    if (!formula.trimStart().startsWith('=')) {
+      return undefined;
+    }
+    const displayRows = this.getDisplayRowIds();
+    const storedFormula = displayRows
+      ? this.convertA1ReferencesToStableRefs(formula, this.getFormulaColumnIds(), displayRows, true)
+      : this.toStoredFormula(formula);
+    const result = this.evaluateFormulaExpression(storedFormula, {
+      visited: new Set<string>([this.buildStoreKey(rowId, columnId)]),
+      memo: this.getOrCreateEvaluationMemo(),
+      preserveLiteral: true,
+    });
+    return isFormulaErrorCode(result) ? result : undefined;
+  }
+
+  protected isActualFormulaError(rowId: number | string, columnId: number | string, formula: string, value: unknown): boolean {
+    return isFormulaErrorCode(value) && this.getFormulaValidationError(formula, rowId, columnId) === value;
+  }
+
   protected autoAssignFormulaEditorToColumns(incomingColumns?: Column[]): void {
     if (!this._grid?.getColumns || !this._grid?.setColumns) {
       return;
@@ -2273,6 +2293,10 @@ export class FormulaService implements ExternalResource, FormulaProvider {
           this.setFormula(rowId, column.id, formula);
         }
       };
+      mergedParams.validateFormula ??= (formula: string, item?: any) => {
+        const rowId = item?.[this.getDatasetIdPropertyName()] as number | string | undefined;
+        return rowId === undefined || rowId === null ? undefined : this.getFormulaValidationError(formula, rowId, column.id);
+      };
 
       const formulaValueFormatter = this.buildFormulaValueFormatter(column);
       const { formatter: pipelineFormatter, params: pipelineParams } = this.withFormulaFormatterPipeline(column, formulaValueFormatter);
@@ -2285,19 +2309,38 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         const wrappedFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
           const formattedValue = basePipelineFormatter ? basePipelineFormatter(row, cell, value, columnDef, dataContext, grid) : value;
           const baseValue = formattedValue === undefined ? value : formattedValue;
+          const dataItem = dataContext ?? this._dataView?.getItem?.(row);
+          const rowId = dataItem?.[this.getDatasetIdPropertyName()] as number | string | undefined;
+          const field = String(columnDef?.field ?? columnDef?.id ?? column.field ?? column.id);
+          const formula = rowId === undefined ? undefined : (this.getFormula(rowId, column.id) ?? dataItem?.[field]);
+          const hasFormulaError =
+            rowId !== undefined && typeof formula === 'string' && this.isActualFormulaError(rowId, column.id, formula, baseValue);
+          const withFormulaErrorTooltip = (renderedValue: ReturnType<Formatter>): ReturnType<Formatter> => {
+            if (!hasFormulaError) {
+              return renderedValue;
+            }
+            const errorElm = createDomElement('span', { className: 'formula-error' });
+            errorElm.title = `Formula error: ${String(baseValue)}`;
+            if (renderedValue instanceof HTMLElement) {
+              errorElm.appendChild(renderedValue);
+            } else {
+              errorElm.textContent = renderedValue === null || renderedValue === undefined ? '' : String(renderedValue);
+            }
+            return errorElm;
+          };
 
           if (!useFormulaEditor) {
-            return baseValue;
+            return withFormulaErrorTooltip(baseValue);
           }
           if (typeof autoEditableFormatter === 'function') {
-            return autoEditableFormatter(row, cell, baseValue, columnDef, dataContext, grid);
+            return withFormulaErrorTooltip(autoEditableFormatter(row, cell, baseValue, columnDef, dataContext, grid));
           }
 
           // Fallback behavior: still show editable UI marker when formula feature is enabled.
           const isGridEditable = !!grid?.getOptions?.().editable;
           const isFormulaCell = !!columnDef?.allowFormula;
           if (!isGridEditable || !isFormulaCell) {
-            return baseValue;
+            return withFormulaErrorTooltip(baseValue);
           }
 
           const divElm = createDomElement('div', { className: 'editing-field' });
@@ -2306,7 +2349,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
           } else {
             divElm.textContent = baseValue === null || baseValue === undefined ? '' : String(baseValue);
           }
-          return divElm;
+          return withFormulaErrorTooltip(divElm);
         };
         (wrappedFormatter as any).__formulaAutoEditableWrapped = true;
         (wrappedFormatter as any).__formulaAutoEditableBaseFormatter = basePipelineFormatter;

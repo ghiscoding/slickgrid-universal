@@ -15,6 +15,10 @@ import {
 export interface FormulaEditorParams {
   debug?: boolean;
   formulaFunctionList?: string[];
+  /** Validate calculation errors before committing; disabled by default. */
+  validateFormulas?: boolean;
+  /** Service-provided calculator used by validateFormulas. */
+  validateFormula?: (formula: string, item?: any) => string | undefined;
   /** Supply function names dynamically; an explicit formulaFunctionList takes precedence. */
   getFormulaFunctionList?: () => string[];
   onFormulaInputChange?: (formula: string) => void;
@@ -159,7 +163,14 @@ export class FormulaCellEditor implements Editor {
 
   validate(): EditorValidationResult {
     const validator = this.args.column.editor?.validator ?? this.args.column.validator;
-    return validator ? validator(this.getPlainTextValue(), this.args) : { valid: true, msg: '' };
+    const formula = this.getPlainTextValue();
+    const validation = validator?.(formula, this.args);
+    if (validation && !validation.valid) {
+      return validation;
+    }
+    const editorParams = this.args.column.editor?.params as FormulaEditorParams | undefined;
+    const error = editorParams?.validateFormulas ? editorParams.validateFormula?.(formula, this.args.item) : undefined;
+    return error ? { valid: false, msg: `Invalid formula: ${error}` } : { valid: true, msg: '' };
   }
 
   protected handleInput(): void {

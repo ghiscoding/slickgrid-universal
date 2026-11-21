@@ -271,7 +271,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
   - [x] `PRODUCT` with no numeric values returns 1 instead of 0; `COUNTA("")` returns 0 instead of 1.
   - [x] Editor DOM re-rendering breaks IME composition and browser undo; paste processes input twice.
   - [x] Dates in `&`/`CONCAT` render as JavaScript date strings; invalid custom function names are silently ignored; autocomplete lacks ARIA attributes; drag-fill ignores read-only cells and undo.
-- [ ] Evaluate AG Grid parity: an opt-in `validateFormulas` editor param and formula error tooltips.
+- [x] Evaluate AG Grid parity: an opt-in `validateFormulas` editor param and formula error tooltips.
 - [x] Evaluate editor validation: support editor and column validators and their messages; retain calculation errors in cells instead of automatically blocking formula input.
 - [ ] Deferred: evaluate these possible enhancements separately:
   - [ ] Whole-row reference picking, such as selecting a row number to insert a reference to the entire row.

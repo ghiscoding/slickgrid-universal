@@ -92,7 +92,7 @@ Formula editor is auto-assigned when:
 
 A column can use a custom editor while still calculating formulas. The existing column formatter receives the calculated value. A custom editor can enter a formula string beginning with `=` or replace it with a plain value; FormulaService updates its store after a grid edit. Formula-specific reference picking, coloring and autocomplete require Formula Editor.
 
-Formula Editor calls the column's `editor.validator` or `validator`, with `editor.validator` taking precedence. The validator receives the displayed formula text and editor arguments and can return a validation message to prevent the edit from committing. Formula syntax is otherwise accepted and calculation errors are shown in the cell.
+Formula Editor calls the column's `editor.validator` or `validator`, with `editor.validator` taking precedence. The validator receives the displayed formula text and editor arguments and can return a validation message to prevent the edit from committing. Set `editor.params.validateFormulas: true` to reject calculated formula errors before commit. Without that opt-in, calculation errors remain visible in the cell with a tooltip.
 
 ```ts
 import { Editors, Formatters } from '@slickgrid-universal/common';

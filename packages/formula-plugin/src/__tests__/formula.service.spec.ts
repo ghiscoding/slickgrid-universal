@@ -2867,6 +2867,46 @@ describe('FormulaService', () => {
     expect((formatted as HTMLElement).textContent).toBe('3');
   });
 
+  it('shows tooltips for calculation errors without treating error-like text as an error', () => {
+    const columns: Column[] = [{ id: 'total', field: 'total', allowFormula: true }];
+    const items = [{ id: 1, total: '=1/0' }];
+    const gridStub = {
+      getColumns: () => columns,
+      setColumns: (newCols: Column[]) => columns.splice(0, columns.length, ...newCols),
+      getData: () => ({ getItems: () => items, getLength: () => items.length }),
+      getOptions: () => ({ editable: true, datasetIdPropertyName: 'id' }),
+      invalidate: vi.fn(),
+      render: vi.fn(),
+    } as any;
+    const service = new FormulaService();
+    service.init(gridStub);
+
+    const error = columns[0].formatter?.(0, 0, items[0].total, columns[0], items[0], gridStub) as HTMLElement;
+    expect(error.className).toContain('formula-error');
+    expect(error.title).toBe('Formula error: #DIV/0!');
+
+    items[0].total = '="#N/A"';
+    service.setFormula(1, 'total', '="#N/A"');
+    const text = columns[0].formatter?.(0, 0, items[0].total, columns[0], items[0], gridStub) as HTMLElement;
+    expect(text.className).not.toContain('formula-error');
+    expect(text.textContent).toBe('#N/A');
+
+    class CustomEditor {}
+    const customColumns: Column[] = [{ id: 'total', field: 'total', allowFormula: true, editorClass: CustomEditor as any }];
+    const customGrid = {
+      getColumns: () => customColumns,
+      setColumns: (newCols: Column[]) => customColumns.splice(0, customColumns.length, ...newCols),
+      getData: () => ({ getItems: () => items, getLength: () => items.length }),
+      getOptions: () => ({ editable: true, datasetIdPropertyName: 'id' }),
+    } as any;
+    const customService = new FormulaService();
+    customService.init(customGrid);
+    items[0].total = '=1/0';
+    customService.setFormula(1, 'total', '=1/0');
+    const customError = customColumns[0].formatter?.(0, 0, items[0].total, customColumns[0], items[0], customGrid) as HTMLElement;
+    expect(customError.className).toContain('formula-error');
+  });
+
   it('should keep formatter output untouched when grid is not editable', () => {
     const baseElm = document.createElement('span');
     baseElm.textContent = 'already-formatted';
@@ -3383,6 +3423,9 @@ describe('FormulaService', () => {
     expect(params.toDisplayFormula('=A1', { id: 'r1' })).toBe('=A1');
     expect(params.toStoredFormula('=A1')).toContain('REF(COLUMN("total"),ROW("r1"))');
     expect(params.toStoredFormula('=A1', { id: 'r1' })).toContain('REF(COLUMN("total"),ROW("r1"))');
+    expect(params.validateFormula('=1/0', { id: 'r1' })).toBe(FORMULA_ERROR.DIV0);
+    expect(params.validateFormula('="#N/A"', { id: 'r1' })).toBeUndefined();
+    expect(params.validateFormula('plain', { id: 'r1' })).toBeUndefined();
 
     params.onFormulaCommit('=A1');
     expect(service.getFormula('r1', 'total')).toBe('=REF(COLUMN("total"),ROW("r1"))');

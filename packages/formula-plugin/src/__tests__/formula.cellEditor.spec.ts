@@ -169,6 +169,11 @@ describe('FormulaCellEditor', () => {
     args.column.editor!.validator = undefined;
     expect(editor.validate()).toEqual({ valid: false, msg: 'Column rejected formula' });
     expect(columnValidator).toHaveBeenCalledWith('=A1', args);
+    args.column.validator = undefined;
+    const validateFormula = vi.fn().mockReturnValue('#REF!');
+    args.column.editor!.params = { validateFormulas: true, validateFormula };
+    expect(editor.validate()).toEqual({ valid: false, msg: 'Invalid formula: #REF!' });
+    expect(validateFormula).toHaveBeenCalledWith('=A1', item);
     editor.destroy();
   });
 
