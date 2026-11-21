@@ -150,6 +150,93 @@ export function parseFormulaFunctionArguments(formula: string, openIndex: number
   return undefined;
 }
 
+/** Convert grid string literals (backslash escapes and doubled delimiters) to Excel string expressions. */
+export function normalizeExcelFormulaStrings(formula: string): string {
+  let output = '';
+  let index = 0;
+
+  while (index < formula.length) {
+    const quote = formula[index];
+    if (quote !== '"' && quote !== "'") {
+      output += quote;
+      index++;
+      continue;
+    }
+
+    const start = index++;
+    let value = '';
+    let closed = false;
+    while (index < formula.length) {
+      const char = formula[index];
+      if (char === '\\' && index + 1 < formula.length) {
+        const escaped = formula[index + 1];
+        const unicode = escaped === 'u' ? formula.slice(index + 2, index + 6) : '';
+        if (/^[\da-f]{4}$/i.test(unicode)) {
+          value += String.fromCharCode(Number.parseInt(unicode, 16));
+          index += 6;
+        } else {
+          const escapes: Record<string, string> = { n: '\n', r: '\r', t: '\t', b: '\b', f: '\f' };
+          value += escapes[escaped] ?? escaped;
+          index += 2;
+        }
+      } else if (char === quote) {
+        if (formula[index + 1] === quote) {
+          value += quote;
+          index += 2;
+        } else {
+          index++;
+          closed = true;
+          break;
+        }
+      } else {
+        value += char;
+        index++;
+      }
+    }
+
+    if (!closed) {
+      output += formula.slice(start);
+      break;
+    }
+    if (quote === "'" && formula.slice(index).match(/^\s*!/)?.[0]) {
+      output += formula.slice(start, index);
+      continue;
+    }
+    output += toExcelFormulaString(value);
+  }
+
+  return output;
+}
+
+function toExcelFormulaString(value: string): string {
+  const quoteText = (text: string) => `"${text.replace(/"/g, '""')}"`;
+  const isControlCharacter = (text: string) => {
+    const code = text.charCodeAt(0);
+    return code <= 31 || code === 127;
+  };
+  if (!Array.from(value).some(isControlCharacter)) {
+    return quoteText(value);
+  }
+
+  const parts: string[] = [];
+  let text = '';
+  for (const char of value) {
+    if (isControlCharacter(char)) {
+      if (text) {
+        parts.push(quoteText(text));
+        text = '';
+      }
+      parts.push(`CHAR(${char.charCodeAt(0)})`);
+    } else {
+      text += char;
+    }
+  }
+  if (text) {
+    parts.push(quoteText(text));
+  }
+  return `(${parts.join('&')})`;
+}
+
 function resizeSumIfRange(criteriaRange: string, sumRange: string): string {
   const criteria = parseA1RangeShape(criteriaRange);
   const sum = parseA1RangeShape(sumRange);

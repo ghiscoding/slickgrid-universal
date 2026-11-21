@@ -194,6 +194,27 @@ describe('FormulaService', () => {
     );
   });
 
+  it('converts grid string syntax to valid Excel literals', () => {
+    const items = [{ id: 'a', value: 1, total: '' }];
+    const columns: Column[] = [
+      { id: 'value', field: 'value' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    service.setFormula('a', 'total', `=CONCAT('single "quote"', "escaped \\"quote\\"", "line\\nnext", "\\u0041", "A1")`);
+
+    expect(
+      service.getExcelFormula({
+        rowId: 'a',
+        columnId: 'total',
+        columnIds: ['value', 'total'],
+        rowIds: ['a'],
+        excelRowOffset: 1,
+      } as any)
+    ).toBe('CONCAT("single ""quote""", "escaped ""quote""", ("line"&CHAR(10)&"next"), "A", "A1")');
+  });
+
   it('compares text without case sensitivity, including references and IF conditions', () => {
     const items = [{ id: 'a', value: 'Apple', total: '' }];
     const columns: Column[] = [

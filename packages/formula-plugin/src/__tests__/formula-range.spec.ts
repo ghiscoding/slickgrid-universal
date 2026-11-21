@@ -4,6 +4,7 @@ import {
   expandFormulaRanges,
   getFormulaRangeWidth,
   mapFormulaRanges,
+  normalizeExcelFormulaStrings,
   normalizeSumIfRangeDimensions,
   rewriteExcelHelperCounta,
 } from '../formula-range.js';
@@ -41,6 +42,11 @@ describe('stable formula ranges', () => {
     expect(mapFormulaRanges(formula, (members) => JSON.stringify(members))).toBe(
       '=SUM(["REF(COLUMN(\\"x\\"),ROW(\\"a\\\\\\"b\\"))","A3","#REF!"])+"REFRANGE(A1,A2)"'
     );
+  });
+
+  it('normalizes doubled quotes and leaves unterminated literals intact', () => {
+    expect(normalizeExcelFormulaStrings(`=CONCAT("a""b",'c''d')`)).toBe(`=CONCAT("a""b","c'd")`);
+    expect(normalizeExcelFormulaStrings('=CONCAT("unterminated')).toBe('=CONCAT("unterminated');
   });
 
   it('compacts only identical rectangles without adding or reordering members', () => {

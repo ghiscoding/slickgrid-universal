@@ -1,6 +1,7 @@
 # Formula Editor Plugin Progress
 
 ## Handoff update (2026-11-20)
+- Excel export now converts grid string literals to Excel syntax: single-quoted text becomes double-quoted text, quotes are doubled, Unicode and backslash escapes are decoded, and control characters use `CHAR(...)`. Quoted helper-sheet names remain unchanged. Added service and range regressions; all 177 Formula Plugin tests pass with 100% statement and line coverage. Next: custom function names that resemble A1 references.
 - Filtered and paged grids now use displayed row numbers for editor A1 references, highlights and drag-fill, as grouped grids already did. References to hidden records keep their stable form and evaluation still uses dataset identities. Added a service regression and updated all five formula guides. Next: Excel export string-literal syntax.
 - Second audit: added its findings to the checklist. Removed the unreachable top-level memo check and unused memo flag; all 174 Formula Plugin tests pass with 100% statement and line coverage, verifying the three earlier audit fixes below. `_evaluationMemo` and `resetEvaluationMemo()` remain as invalidation hooks for the planned render-pass cache.
 - Formula store and evaluation memo keys now encode row and column IDs without delimiter collisions while retaining numeric/string ID equivalence. Added snapshot, evaluation and reference-flag regressions; unit tests and line coverage still need verification.
@@ -250,7 +251,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [ ] Fix the second audit findings (2026-11-20), committing and validating each separately:
   - [x] Remove the unreachable top-level memo check and unused memo flag left by per-evaluation memoization; restore 100% line coverage.
   - [x] Filtered or paged ungrouped grids map editor A1 rows, highlights and evaluation through unfiltered dataset order instead of displayed rows.
-  - [ ] Excel export emits single-quoted strings and backslash escapes verbatim; convert string literals to Excel's doubled-quote syntax.
+  - [x] Excel export emits single-quoted strings and backslash escapes verbatim; convert string literals to Excel's doubled-quote syntax.
   - [ ] Custom function names resembling A1 references (for example `LOG10`) are evaluated as cell references.
   - [ ] Editor reference coloring and highlights match text inside quoted strings and partial identifiers (for example `SUMA1`).
   - [ ] Ctrl/Cmd+C and Ctrl/Cmd+X ignore the text selection and copy or clear the whole formula.
