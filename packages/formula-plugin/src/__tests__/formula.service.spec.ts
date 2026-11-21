@@ -476,6 +476,7 @@ describe('FormulaService', () => {
       { id: 'total', field: 'total', allowFormula: true },
     ];
     const service = new FormulaService({ autoAssignEditor: false });
+
     service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
     const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
 
@@ -496,6 +497,19 @@ describe('FormulaService', () => {
     service.setFormula('a', 'total', '=-A1^2');
     expect(service.getEvaluatedCellValue('a', 'total')).toBe(4);
     expect(service.getExcelFormula({ rowId: 'a', columnId: 'total', columnIds: ['value', 'total'], rowIds: ['a'], excelRowOffset: 2 } as any)).toBe('-A2^2');
+  });
+
+  it('accepts decimal and scientific numeric literals', () => {
+    const service = new FormulaService({ autoAssignEditor: false });
+    const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
+
+    expect(evaluate('=1E3')).toBe(1000);
+    expect(evaluate('=1.5e-2*2')).toBe(0.03);
+    expect(evaluate('=.5E+2')).toBe(50);
+    expect(evaluate('=1E')).toBe(FORMULA_ERROR.PARSE);
+    expect(evaluate('=1E+')).toBe(FORMULA_ERROR.PARSE);
+    expect(evaluate('=1.2.3')).toBe(FORMULA_ERROR.PARSE);
+    expect(evaluate('=.')).toBe(FORMULA_ERROR.PARSE);
   });
 
   it('evaluates new math functions and exports built-in aliases as Excel functions', () => {

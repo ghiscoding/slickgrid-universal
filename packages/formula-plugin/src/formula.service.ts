@@ -1239,15 +1239,11 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       }
 
       if (/\d|\./.test(ch)) {
-        let numberValue = ch;
-        i++;
-        while (i < src.length && /[\d.]/.test(src[i])) {
-          numberValue += src[i];
-          i++;
-        }
-        if (!/^\d*\.?\d+$/.test(numberValue)) {
+        const numberValue = src.slice(i).match(/^(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?/i)?.[0];
+        if (!numberValue) {
           return FORMULA_ERROR.PARSE;
         }
+        i += numberValue.length;
         pushToken('number', numberValue);
         continue;
       }
