@@ -40,12 +40,6 @@ export interface FormulaExcelCustomFunctionExport {
 export interface FormulaProvider {
   /** Opt in to grouped worksheet position mapping. */
   supportsGroupedFormulaExport?: boolean;
-  /** Return whether a formula exists for the given row/column cell. */
-  hasFormula?: (rowId: number | string, columnId: number | string) => boolean;
-
-  /** Return the formula for a given row/column cell. */
-  getFormula?: (rowId: number | string, columnId: number | string) => string | undefined;
-
   /**
    * Return an Excel-ready formula for a given row/column cell.
    * Formula should be returned without the leading `=`.

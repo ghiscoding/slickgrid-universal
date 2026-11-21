@@ -38,18 +38,13 @@ import {
   createExcelFileStream,
   createWorkbook,
   downloadExcelFile,
-  Workbook,
   type ExcelColumnMetadata,
   type ExcelMetadata,
   type StyleSheet,
+  type Workbook,
   type Worksheet,
 } from 'excel-builder-vanilla';
 import { getExcelFormatFromGridFormatter, getGroupTotalValue, useCellFormatByFieldType, type ExcelFormatter } from './excelUtils.js';
-
-interface WorkbookWithFormulas {
-  addCustomFunction?: (name: string, args: string[], body: string, options?: any) => void;
-  addDefinedName?: (name: string, refersTo: string, scope?: number | string) => void;
-}
 
 interface RegularCellExcelFormat {
   excelFormatId?: number;
@@ -213,7 +208,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
     // prepare the Excel Workbook & Sheet
     const worksheetOptions = { name: this._excelExportOptions.sheetName || 'Sheet1' };
-    this._workbook = this.createWorkbookInstance();
+    this._workbook = createWorkbook();
     this._sheet = this._workbook.createWorksheet(worksheetOptions);
 
     // add any Excel Format/Stylesheet to current Workbook
@@ -374,7 +369,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           const rowId = item[this._datasetIdPropName] as number | string | undefined;
           if (rowId !== undefined && rowId !== null) {
             this._formulaGroupedRows.set(String(rowId), excelRow++);
-          } else if (item.__groupTotals || this._hasGroupedItems) {
+          } else {
             excelRow++;
           }
         }
@@ -861,7 +856,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       return undefined;
     }
 
-    let formula = this._formulaProvider.getExcelFormula?.({
+    const formula = this._formulaProvider.getExcelFormula?.({
       columnId: columnDef.id,
       columnIds: this._formulaColumnIds,
       dataRowIdx,
@@ -875,10 +870,6 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       registerFormulaRange: (references, width) => this.registerFormulaRange(references, false, width),
       registerFormulaPresenceRange: (references, width) => this.registerFormulaRange(references, true, width),
     });
-
-    if (!formula && !this._hasGroupedItems && this._formulaProvider.hasFormula?.(rowId, columnDef.id)) {
-      formula = this._formulaProvider.getFormula?.(rowId, columnDef.id);
-    }
 
     if (typeof formula !== 'string') {
       return undefined;
@@ -940,15 +931,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       return undefined;
     }
 
-    return registeredResources.find((resource) => {
-      const ref = resource as FormulaProvider;
-      return (
-        typeof ref?.getExcelFormula === 'function' ||
-        typeof ref?.getFormula === 'function' ||
-        typeof ref?.getExcelCustomFunctions === 'function' ||
-        typeof ref?.getExcelDefinedNames === 'function'
-      );
-    }) as FormulaProvider | undefined;
+    return registeredResources.find((resource) => typeof (resource as FormulaProvider)?.getExcelFormula === 'function') as
+      FormulaProvider | undefined;
   }
 
   /** Register workbook-level defined names and custom functions exposed by FormulaProvider. */
@@ -957,25 +941,14 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       return;
     }
 
-    const workbook = this._workbook as WorkbookWithFormulas;
-    const definedNames = this._formulaProvider.getExcelDefinedNames?.() ?? [];
-    const customFunctions = this._formulaProvider.getExcelCustomFunctions?.() ?? [];
-
-    if (typeof workbook.addDefinedName === 'function') {
-      for (const definedName of definedNames) {
-        if (!definedName?.name || !definedName?.refersTo) {
-          continue;
-        }
-        workbook.addDefinedName(definedName.name, definedName.refersTo, definedName.scope);
+    for (const { name, refersTo, scope } of this._formulaProvider.getExcelDefinedNames?.() ?? []) {
+      if (name && refersTo) {
+        this._workbook.addDefinedName(name, refersTo, scope);
       }
     }
-
-    if (typeof workbook.addCustomFunction === 'function') {
-      for (const customFunction of customFunctions) {
-        if (!customFunction?.name || !Array.isArray(customFunction.args) || !customFunction?.body) {
-          continue;
-        }
-        workbook.addCustomFunction(customFunction.name, customFunction.args, customFunction.body, customFunction.options);
+    for (const { name, args, body, options } of this._formulaProvider.getExcelCustomFunctions?.() ?? []) {
+      if (name && Array.isArray(args) && body) {
+        this._workbook.addCustomFunction(name, args, body, options);
       }
     }
   }
@@ -1010,11 +983,6 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   /** Return absolute Excel row offset for first exported dataset row. */
   protected getExcelDataStartRowOffset(): number {
     return this.getWorksheetReservedRowCount() + this.getDefaultExcelHeaderRowCount() + 1;
-  }
-
-  /** Create workbook using the factory API when available, fallback to class constructor for backward compatibility. */
-  protected createWorkbookInstance(): Workbook {
-    return typeof createWorkbook === 'function' ? (createWorkbook() as Workbook) : new Workbook();
   }
 
   /**

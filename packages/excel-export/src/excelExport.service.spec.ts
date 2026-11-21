@@ -15,7 +15,7 @@ import {
   type SlickGrid,
 } from '@slickgrid-universal/common';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { createExcelFileStream, createWorkbook, downloadExcelFile, Workbook } from 'excel-builder-vanilla';
+import { createExcelFileStream, downloadExcelFile, Workbook } from 'excel-builder-vanilla';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { ContainerServiceStub } from '../../../test/containerServiceStub.js';
 import { TranslateServiceStub } from '../../../test/translateServiceStub.js';
@@ -2817,19 +2817,14 @@ describe('ExcelExportService', () => {
       expect(output[0]).toEqual(expect.objectContaining({ value: 'B2*C2', metadata: expect.objectContaining({ type: 'formula' }) }));
     });
 
-    it('getCellFormulaForExcel should handle provider fallbacks and invalid rows', () => {
+    it('getCellFormulaForExcel should handle provider results and invalid rows', () => {
       service.init(gridStub, container);
-      const provider = {
-        getExcelFormula: vi.fn().mockReturnValue(undefined),
-        hasFormula: vi.fn().mockReturnValue(true),
-        getFormula: vi.fn().mockReturnValue('=A1'),
-      };
+      const provider = { getExcelFormula: vi.fn().mockReturnValue('=A1') };
       (service as any)._formulaProvider = provider;
 
       expect((service as any).getCellFormulaForExcel({ id: 'row-1' }, { id: 'total' }, 0)).toBe('A1');
 
       provider.getExcelFormula.mockReturnValue(123);
-      provider.hasFormula.mockReturnValue(false);
       expect((service as any).getCellFormulaForExcel({ id: 'row-1' }, { id: 'total' }, 0)).toBeUndefined();
       expect((service as any).getCellFormulaForExcel({}, { id: 'total' }, 0)).toBeUndefined();
 
@@ -2943,7 +2938,7 @@ describe('ExcelExportService', () => {
     });
 
     it('findFormulaProvider should skip unrelated resources and tolerate missing registrations', () => {
-      const sharedServiceStub = { externalRegisteredResources: [{ pluginName: 'OtherService' }, { getFormula: vi.fn() }] };
+      const sharedServiceStub = { externalRegisteredResources: [{ pluginName: 'OtherService' }, { getExcelFormula: vi.fn() }] };
       container.registerInstance('SharedService', sharedServiceStub);
       service.init(gridStub, container);
       expect((service as any).findFormulaProvider()).toBe(sharedServiceStub.externalRegisteredResources[1]);
@@ -3002,25 +2997,19 @@ describe('ExcelExportService', () => {
       expect((service as any).getAllDataRowIds()).toEqual(['a', 'c']);
     });
 
-    it('registerFormulaProviderWorkbookArtifacts should not throw when workbook custom formula APIs are unavailable', () => {
+    it('handles minimal formula providers, pre-header row offsets and data views without length', () => {
       service.init(gridStub, container);
+      const svc = service as any;
+      svc._workbook = new Workbook();
+      svc._formulaProvider = { getExcelFormula: vi.fn() };
+      expect(() => svc.registerFormulaProviderWorkbookArtifacts()).not.toThrow();
 
-      (service as any)._workbook = {};
-      (service as any)._formulaProvider = {
-        getExcelDefinedNames: () => [{ name: 'MY_RANGE', refersTo: 'Sheet1!$B$2:$C$100' }],
-        getExcelCustomFunctions: () => [{ name: 'CUSTOMSUM', args: ['values'], body: 'SUM(values)' }],
-      };
+      svc._sheet = { data: [] };
+      svc._hasColumnTitlePreHeader = true;
+      expect(svc.getExcelDataStartRowOffset()).toBe(3);
 
-      expect(() => (service as any).registerFormulaProviderWorkbookArtifacts()).not.toThrow();
-    });
-
-    it('createWorkbookInstance should prefer createWorkbook factory for workbook compatibility features', () => {
-      service.init(gridStub, container);
-
-      const workbook = (service as any).createWorkbookInstance();
-
-      expect(createWorkbook).toHaveBeenCalledTimes(1);
-      expect(workbook).toBeDefined();
+      svc._dataView = { getItem: vi.fn() };
+      expect(svc.getAllDataRowIds()).toEqual([]);
     });
 
     it('efficientYield should use scheduler.postTask when available', async () => {
