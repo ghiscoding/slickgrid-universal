@@ -11,7 +11,7 @@ Handoff for future AI/dev sessions. Detailed history is in the git log of this f
 - Every documented AG Grid Formula Editor behavior is covered: default editor for `allowFormula` columns, custom-editor opt-out, selection-model fallback, opt-in `validateFormulas`, error tooltips and `formulaDataSource`. Range handles are covered by range-endpoint dragging rather than visible handles.
 - Functions: all AG Grid functions plus the Syncfusion set (`ABS`, `ROUND`, `MOD`, `SQRT`, `RANDOM`/`RAN`, `CONCATENATE`) and `NA`. `SUMPRODUCT` and Excel-style `SUMIF` resizing were removed; mismatched `SUMIF` ranges return `#VALUE!`.
 - Size: about 5,020 production source lines; bundle about 74 KB minified / 22 KB gzipped, excluding `@slickgrid-universal/*`.
-- Performance (5,000 rows): init about 70 ms and a full evaluation pass about 50 ms. A cold dependency chain can overflow the stack; see Open Work.
+- Performance (5,000 rows): init about 70 ms and a full evaluation pass about 50 ms. Deep dependency chains defer nested cells past 64 levels to an explicit stack, so they cannot overflow the call stack.
 - Security: formula text is rendered only through DOM text APIs, there is no dynamic code evaluation, reference expansion is bounded, highlight dictionaries use null-prototype objects, and formulas the grid cannot parse (for example DDE payloads with `|`) are exported to Excel as text.
 - Validation: unit tests at 100% statement/line coverage (Codecov patch and project 100%). Framework Cypress suites (Vanilla Example 48, framework Example 59) run in CI.
 
@@ -28,7 +28,7 @@ Handoff for future AI/dev sessions. Detailed history is in the git log of this f
 - `formulaDataSource` does not persist absolute-reference (`$`) markers; use formula snapshots when they matter.
 
 ## Open Work
-- [ ] Fix cold dependency chains overflowing the call stack, preserving cycle detection and lazy evaluation. Direct and stored-range references without IF use iterative traversal when no custom functions are registered; direct A1 ranges, IF and custom-function chains still need work.
+- [x] Fix cold dependency chains overflowing the call stack (depth-bounded deferral; keeps cycle detection and lazy IF for every formula shape).
 - [x] Avoid exponential work when rewriting nested COUNTA calls for Excel export; regression added.
 - [x] Reuse row and column lookups across formula cells during Excel export; preserve standalone and grouped export behavior.
 - [x] Reuse row coordinates during formula drag-fill and undo, clearing cached data when DataView changes.

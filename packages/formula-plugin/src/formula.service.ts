@@ -42,7 +42,6 @@ import {
 import {
   createFormulaA1RangeRegex,
   createFormulaA1ReferenceRegex,
-  findFormulaReferenceTokens,
   FORMULA_MAX_REFERENCE_CELLS,
   FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY,
   getExcelColumnIndexByName,
@@ -116,6 +115,19 @@ export interface FormulaDataSource {
   setFormula: (rowId: number | string, columnId: number | string, formula: string | undefined) => void;
 }
 
+interface FormulaDependency {
+  key: string;
+  memoKey: string;
+  formula: string;
+}
+
+/** Thrown past the nesting limit so the outermost nested evaluation resolves the dependency first. */
+class FormulaDeferral {
+  constructor(public dependency: FormulaDependency) {}
+}
+
+const FORMULA_MAX_NESTED_DEPTH = 64;
+
 interface FormulaEvaluationContext {
   visited: Set<string>;
   memo: Map<string, unknown>;
@@ -167,6 +179,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   protected _rowIdsCache?: string[];
   protected _evaluationRowIdsCache?: string[];
   protected _isBulkLoading = false;
+  protected _nestedDepth = 0;
   protected _columnById: Map<string, Column> = new Map<string, Column>();
   protected _formulaFunctionRegistry?: Map<string, FormulaCallback>;
   protected _isLoadingFormulaDataSource = false;
@@ -1165,7 +1178,10 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       const result = this.evaluateExpressionWithParser(jsExpression, formulaFunctions, false, references, context.preserveLiteral === true);
       const normalizedResult = result === null ? 0 : result;
       return context.preserveLiteral ? normalizedResult : unwrapFormulaReference(normalizedResult);
-    } catch {
+    } catch (error) {
+      if (error instanceof FormulaDeferral) {
+        throw error;
+      }
       return FORMULA_ERROR.ERROR;
     }
   }
@@ -2132,124 +2148,49 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         return cached === '' ? FORMULA_EMPTY_RESULT : cached;
       }
 
-      const chainResult = this.evaluateDirectDependencyGraph(rowId, columnId, nestedFormula, context);
-      if (chainResult.handled) {
-        return chainResult.value === '' ? FORMULA_EMPTY_RESULT : chainResult.value;
-      }
-
-      context.visited.add(key);
-      let nested: unknown;
-      try {
-        nested = this.evaluateFormulaExpression(nestedFormula, { ...context, preserveLiteral: true });
-      } finally {
-        context.visited.delete(key);
-      }
-      context.memo.set(nestedMemoKey, nested);
+      const nested = this.evaluateNestedFormula({ key, memoKey: nestedMemoKey, formula: nestedFormula }, context);
       return nested === '' ? FORMULA_EMPTY_RESULT : nested;
     }
 
     return rawValue;
   }
 
-  /** Evaluate direct-reference dependencies on an explicit stack. */
-  protected evaluateDirectDependencyGraph(
-    rowId: number | string,
-    columnId: number | string,
-    formula: string,
-    context: FormulaEvaluationContext
-  ): { handled: boolean; value?: unknown } {
-    if (this._customFunctions.size) {
-      return { handled: false };
+  /**
+   * Evaluate a nested cell formula. Past `FORMULA_MAX_NESTED_DEPTH`, the dependency is deferred to the outermost
+   * call, which evaluates it on an explicit stack and retries, so deep chains cannot overflow the call stack.
+   */
+  protected evaluateNestedFormula(dependency: FormulaDependency, context: FormulaEvaluationContext): unknown {
+    if (this._nestedDepth >= FORMULA_MAX_NESTED_DEPTH) {
+      throw new FormulaDeferral(dependency);
     }
-    const columns = (this._grid?.getColumns?.() || []) as Column[];
-    const columnIds = columns.map((column) => String(column.id));
-    const items = this.getDataItems();
-    const idProperty = this.getDatasetIdPropertyName();
-    const rowIds = (this._evaluationRowIdsCache ??= items.map((item) => String(item?.[idProperty] ?? '')));
-    const frames: Array<{
-      key: string;
-      memoKey: string;
-      formula: string;
-      references: string[];
-      nextReference: number;
-    }> = [];
-
-    const pushFrame = (currentRowId: number | string, currentColumnId: number | string, currentFormula: string): boolean => {
-      const expression = this.replaceRefFunctionsWithA1Refs(currentFormula, columnIds, rowIds);
-      const rangeReferences: string[] = [];
-      const withoutRanges = mapFormulaRanges(expression, (members) => {
-        for (const member of members) {
-          rangeReferences.push(member);
-        }
-        return '0';
-      });
-      const references = findFormulaReferenceTokens(withoutRanges);
-      if (
-        this.hasUnsafeFormulaSyntax(expression) ||
-        this.matchesOutsideQuotedStrings(expression, /\bIF\s*\(|#REF!|["']/i) ||
-        (rangeReferences.length === 0 && references.length === 0) ||
-        references.some(({ ref }) => ref.includes(':'))
-      ) {
-        return false;
-      }
-      const key = this.buildStoreKey(currentRowId, currentColumnId);
-      const memoKey = this.buildEvaluationMemoKey(currentRowId, currentColumnId, currentFormula);
-      if (context.visited.has(key) || context.memo.has(memoKey)) {
-        return false;
-      }
-      frames.push({
-        key,
-        memoKey,
-        formula: currentFormula,
-        references: [...rangeReferences, ...references.map(({ ref }) => ref)],
-        nextReference: 0,
-      });
-      context.visited.add(key);
-      return true;
-    };
-
-    if (!pushFrame(rowId, columnId, formula)) {
-      return { handled: false };
-    }
-    let value: unknown;
+    const pending = [dependency];
     try {
-      while (frames.length) {
-        const frame = frames[frames.length - 1];
-        if (frame.nextReference < frame.references.length) {
-          const reference = parseExcelReferenceCell(frame.references[frame.nextReference++]);
-          if (!reference) {
-            continue;
+      for (;;) {
+        const current = pending[pending.length - 1];
+        let value: unknown;
+        this._nestedDepth++;
+        context.visited.add(current.key);
+        try {
+          value = this.evaluateFormulaExpression(current.formula, { ...context, preserveLiteral: true });
+        } catch (error) {
+          if (!(error instanceof FormulaDeferral) || this._nestedDepth > 1) {
+            throw error;
           }
-          const nextItem = items[reference.row];
-          const nextColumn = columns[reference.cell];
-          const nextRowId = nextItem?.[idProperty] as number | string | undefined;
-          if (!nextColumn || nextRowId == null) {
-            continue;
-          }
-          const rawValue = nextItem[String(nextColumn.field ?? nextColumn.id)];
-          const nextFormula = this.getFormula(nextRowId, nextColumn.id) ?? rawValue;
-          if (typeof nextFormula !== 'string' || !nextFormula.trim().startsWith('=')) {
-            continue;
-          }
-          const nextKey = this.buildStoreKey(nextRowId, nextColumn.id);
-          const nextMemoKey = this.buildEvaluationMemoKey(nextRowId, nextColumn.id, nextFormula);
-          if (context.visited.has(nextKey) || context.memo.has(nextMemoKey)) {
-            continue;
-          }
-          if (!pushFrame(nextRowId, nextColumn.id, nextFormula)) {
-            this.resolveExcelReferenceValue(getExcelColumnNameByIndex(reference.cell + 1), reference.row + 1, context);
-          }
+          pending.push(error.dependency);
           continue;
+        } finally {
+          this._nestedDepth--;
         }
-        value = this.evaluateFormulaExpression(frame.formula, { ...context, preserveLiteral: true });
-        context.visited.delete(frame.key);
-        context.memo.set(frame.memoKey, value);
-        frames.pop();
+        context.memo.set(current.memoKey, value);
+        context.visited.delete(current.key);
+        pending.pop();
+        if (!pending.length) {
+          return value;
+        }
       }
-      return { handled: true, value };
     } finally {
-      for (const frame of frames) {
-        context.visited.delete(frame.key);
+      for (const { key } of pending) {
+        context.visited.delete(key);
       }
     }
   }
