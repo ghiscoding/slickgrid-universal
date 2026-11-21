@@ -98,7 +98,7 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
   };
   const PRODUCT = (...args: unknown[]) => {
     const values = aggregateNumbers(args);
-    return Array.isArray(values) ? values.reduce((acc, value) => acc * value, 1) : values;
+    return Array.isArray(values) ? (values.length ? values.reduce((acc, value) => acc * value, 1) : 0) : values;
   };
   const SUMPRODUCT = (...args: unknown[]) => {
     if (!args.length || args.length > 255) {
@@ -254,9 +254,7 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
     !args.length || args.length > 255
       ? FORMULA_ERROR.VALUE
       : flattenFormulaFunctionArgs(args).filter((value) =>
-          isFormulaReference(value)
-            ? value.value !== null && value.value !== undefined
-            : value !== null && value !== undefined && value !== ''
+          isFormulaReference(value) ? value.value !== null && value.value !== undefined : value !== null && value !== undefined
         ).length;
   const COUNTBLANK = (...args: unknown[]) =>
     args.length !== 1

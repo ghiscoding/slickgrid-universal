@@ -102,6 +102,8 @@ describe('createFormulaFunctionRegistry', () => {
       expect(registry.get(name)?.()).toBe(FORMULA_ERROR.VALUE);
     }
     expect(registry.get('CONCAT')?.('')).toBe('');
+    expect(registry.get('PRODUCT')?.(formulaReference(null))).toBe(0);
+    expect(registry.get('PRODUCT')?.([formulaReference(null), formulaReference('')])).toBe(0);
   });
 
   it('limits the number of arguments without limiting the size of a range', () => {
@@ -130,7 +132,9 @@ describe('createFormulaFunctionRegistry', () => {
     expect(registry.get('COUNT')?.(formulaReference(4), formulaReference(0), formulaReference('4'), formulaReference(null), formulaReference(Infinity))).toBe(
       2
     );
-    expect(registry.get('COUNTA')?.(1, '2', '', null, undefined, false)).toBe(3);
+    expect(registry.get('COUNTA')?.(1, '2', '', null, undefined, false)).toBe(4);
+    expect(registry.get('COUNTA')?.('')).toBe(1);
+    expect(registry.get('COUNTA')?.(formulaReference(''))).toBe(1);
     expect(registry.get('COUNTBLANK')?.([1, '', null, undefined, 'x'])).toBe(3);
     expect(registry.get('COUNT')?.()).toBe(FORMULA_ERROR.VALUE);
     expect(registry.get('COUNTA')?.()).toBe(FORMULA_ERROR.VALUE);

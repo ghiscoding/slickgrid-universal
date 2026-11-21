@@ -267,7 +267,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
   - [x] A failed commit validation leaves the editor in its exiting state, disabling reference picking.
   - [x] Evaluation re-resolves dependencies per cell (O(n²) for chained formulas), scans the dataset for each row lookup and rebuilds the function registry per evaluation.
   - [x] Volatile `RAND`, `NOW` and `TODAY` recalculate on every cell render.
-  - [ ] `PRODUCT` with no numeric values returns 1 instead of 0; `COUNTA("")` returns 0 instead of 1.
+  - [x] `PRODUCT` with no numeric values returns 1 instead of 0; `COUNTA("")` returns 0 instead of 1.
   - [ ] Editor DOM re-rendering breaks IME composition and browser undo; paste processes input twice.
   - [ ] Dates in `&`/`CONCAT` render as JavaScript date strings; invalid custom function names are silently ignored; autocomplete lacks ARIA attributes; drag-fill ignores read-only cells and undo.
 - [ ] Evaluate AG Grid parity: an opt-in `validateFormulas` editor param and formula error tooltips.
