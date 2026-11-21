@@ -280,6 +280,7 @@ Arithmetic or function results that overflow return `#NUM!`; division by zero re
 Export supports:
 - conversion of formula-enabled cells to native Excel formulas
 - workbook metadata hooks for defined names and custom functions
+- formulas the grid cannot parse (for example a DDE payload containing `|`) are exported as text, never as live Excel formulas
 
 For CSV or text export, enable `exportWithFormatter: true` in `TextExportService` options to export the displayed formula results. Column-level `exportWithFormatter` and `exportCustomFormatter` settings take precedence; with formatters disabled, export reads the raw dataset value instead.
 

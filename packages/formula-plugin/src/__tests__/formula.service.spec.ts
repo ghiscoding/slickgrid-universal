@@ -210,6 +210,23 @@ describe('FormulaService', () => {
     expect(service.getEvaluatedCellValue('a', 'total')).toBe('#N/A');
   });
 
+  it('never exports unparseable formula text such as DDE payloads as live Excel formulas', () => {
+    const items = [{ id: 'a', value: 1, total: '' }];
+    const columns: Column[] = [
+      { id: 'value', field: 'value' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    const context = { rowId: 'a', columnId: 'total', columnIds: ['value', 'total'], rowIds: ['a'], excelRowOffset: 1 } as any;
+
+    service.setFormula('a', 'total', "=cmd|' /C calc'!A0");
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe(FORMULA_ERROR.PARSE);
+    expect(service.getExcelFormula(context)).toBeUndefined();
+    service.setFormula('a', 'total', '="a|b"&A1');
+    expect(service.getExcelFormula(context)).toBe('"a|b"&A1');
+  });
+
   it('converts grid string syntax to valid Excel literals', () => {
     const items = [{ id: 'a', value: 1, total: '' }];
     const columns: Column[] = [

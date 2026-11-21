@@ -659,9 +659,18 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   }
 
   protected containsDirectExcelReference(formula: string): boolean {
+    return this.matchesOutsideQuotedStrings(formula, createFormulaA1ReferenceRegex());
+  }
+
+  /** Characters the grid parser rejects; such formulas are never exported as live Excel formulas. */
+  protected hasUnsafeFormulaSyntax(formula: string): boolean {
+    return this.matchesOutsideQuotedStrings(formula, /[;{}\\`|]/);
+  }
+
+  protected matchesOutsideQuotedStrings(formula: string, pattern: RegExp): boolean {
     let found = false;
     transformFormulaOutsideQuotedStrings(formula, (segment) => {
-      found ||= createFormulaA1ReferenceRegex().test(segment);
+      found ||= new RegExp(pattern.source, pattern.flags.replace('g', '')).test(segment);
       return segment;
     });
     return found;
@@ -832,7 +841,8 @@ export class FormulaService implements ExternalResource, FormulaProvider {
    */
   getExcelFormula(context: FormulaExcelExportContext): string | undefined {
     const originalFormula = this.getFormula(context.rowId, context.columnId);
-    if (!originalFormula) {
+    // Unparseable text (for example a DDE payload such as =cmd|'...'!A0) is exported as a value, never as a formula.
+    if (!originalFormula || this.hasUnsafeFormulaSyntax(originalFormula)) {
       return undefined;
     }
 
@@ -854,12 +864,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         ? FORMULA_ERROR.REF
         : `${getExcelColumnNameByIndex(column + 1 + (context.groupedColumnOffset ?? 0))}${row}`;
     });
-    let hasUnmappedRef = false;
-    transformFormulaOutsideQuotedStrings(mapped, (segment) => {
-      hasUnmappedRef ||= /\bREF\s*\(/i.test(segment);
-      return segment;
-    });
-    if (context.groupedRowPositions && hasUnmappedRef) {
+    if (context.groupedRowPositions && this.matchesOutsideQuotedStrings(mapped, /\bREF\s*\(/i)) {
       return undefined;
     }
     // Numeric ROW(n) and legacy A1 references remain supported for ungrouped exports.
@@ -869,12 +874,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       }
       mapped = this.replaceRefFunctionsWithA1Refs(mapped, columns, context.rowIds.map(String), context.excelRowOffset);
     }
-    let hasMissing = false;
-    transformFormulaOutsideQuotedStrings(mapped, (segment) => {
-      hasMissing ||= segment.includes(FORMULA_ERROR.REF);
-      return segment;
-    });
-    if (context.groupedRowPositions && hasMissing) {
+    if (context.groupedRowPositions && this.matchesOutsideQuotedStrings(mapped, /#REF!/)) {
       return FORMULA_ERROR.REF;
     }
     mapped = this.applyFormulaReferenceAbsoluteFlags(this.buildStoreKey(context.rowId, context.columnId), mapped);
@@ -1015,18 +1015,11 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   }
 
   protected evaluateFormulaExpression(formula: string, context: FormulaEvaluationContext): unknown {
-    const formulaBody = formula.trim().startsWith('=') ? formula.trim().slice(1) : formula.trim();
-    const normalized = formulaBody;
+    const normalized = formula.trim().startsWith('=') ? formula.trim().slice(1) : formula.trim();
     if (!normalized) {
       return FORMULA_ERROR.NULL;
     }
-
-    let hasUnsafeInput = false;
-    transformFormulaOutsideQuotedStrings(normalized, (segment) => {
-      hasUnsafeInput ||= /[;{}\\`]/.test(segment);
-      return segment;
-    });
-    if (hasUnsafeInput) {
+    if (this.hasUnsafeFormulaSyntax(normalized)) {
       return FORMULA_ERROR.PARSE;
     }
     const formulaFunctions = new Map(this.getFormulaFunctionRegistry());
@@ -1040,12 +1033,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       )
     );
 
-    let hasMissingReference = false;
-    transformFormulaOutsideQuotedStrings(normalizedSyntax, (segment) => {
-      hasMissingReference ||= segment.includes(FORMULA_ERROR.REF);
-      return segment;
-    });
-    if (hasMissingReference) {
+    if (this.matchesOutsideQuotedStrings(normalizedSyntax, /#REF!/)) {
       return FORMULA_ERROR.REF;
     }
 
