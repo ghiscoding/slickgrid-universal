@@ -74,8 +74,11 @@ const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, 
   value = value === null || value === undefined ? '' : value;
   const elm = document.createElement('div');
   elm.className = 'editing-field';
-  if (value instanceof HTMLElement) elm.appendChild(value);
-  else elm.textContent = value;
+  if (value instanceof HTMLElement) {
+    elm.appendChild(value);
+  } else {
+    elm.textContent = value;
+  }
   return editable ? elm : value;
 };
 const columns = ref<Column<GroceryItem>[]>([
@@ -380,7 +383,9 @@ function createDataset() {
 }
 
 const dataset = ref<GroceryItem[]>(saved?.dataset ?? createDataset());
-if (saved) gridOptions.value.presets = saved.gridState;
+if (saved) {
+  gridOptions.value.presets = saved.gridState;
+}
 
 const fallbackColumns = ref<Column[]>([
   { id: 'value', name: 'Value', field: 'value', width: 150 },
@@ -409,8 +414,11 @@ function invalidateAll() {
 }
 function vueGridReady(instance: SlickgridVueInstance) {
   vueGrid = instance;
-  if (saved) formulaService.setFormulaStoreSnapshot(saved.formulas);
-  else formulaService.syncFormulasFromDataset();
+  if (saved) {
+    formulaService.setFormulaStoreSnapshot(saved.formulas);
+  } else {
+    formulaService.syncFormulasFromDataset();
+  }
   invalidateAll();
 }
 function fallbackGridReady(instance: SlickgridVueInstance) {
@@ -424,8 +432,9 @@ function beforeEdit(event: Event, args: { column?: Column<GroceryItem> }) {
     event.preventDefault();
     return;
   }
-  if (args.column?.allowFormula) formulaService.enableExcelHeaderPrefix();
-  else {
+  if (args.column?.allowFormula) {
+    formulaService.enableExcelHeaderPrefix();
+  } else {
     formulaService.clearFormulaReferenceHighlights();
     formulaService.disableExcelHeaderPrefix();
   }
@@ -449,7 +458,9 @@ function cellClicked(args: { cell?: number }) {
 }
 function setSubTotalEditorMode() {
   const original = columns.value.find((column) => column.id === 'subTotal');
-  if (!original || !vueGrid?.slickGrid) return;
+  if (!original || !vueGrid?.slickGrid) {
+    return;
+  }
   const textEditor = editorMode.value === 'text' ? Editors.text : undefined;
   vueGrid.slickGrid.setColumns(
     vueGrid.slickGrid.getColumns().map((column) =>
@@ -478,7 +489,9 @@ function loadDefaultFormulas() {
   formulaService.syncFormulasFromDataset();
 }
 function updateTaxRate() {
-  if (isDataGrouped.value) groupByTaxable();
+  if (isDataGrouped.value) {
+    groupByTaxable();
+  }
   loadDefaultFormulas();
   invalidateAll();
 }
@@ -539,7 +552,9 @@ async function exportPortable() {
   const backups = new Map<number, string>();
   for (const item of items) {
     const formula = formulaService.getFormula(item.id, 'customSum');
-    if (typeof formula !== 'string' || !formula.toUpperCase().includes('CUSTOMSUM(')) continue;
+    if (typeof formula !== 'string' || !formula.toUpperCase().includes('CUSTOMSUM(')) {
+      continue;
+    }
     const value = formulaService.getEvaluatedCellValue(item.id, 'customSum', item.customSum, item.customSum);
     backups.set(item.id, formula);
     item.customSum = value as number | string;
@@ -555,7 +570,9 @@ async function exportPortable() {
         formulaService.setFormula(item.id, 'customSum', formula);
       }
     }
-    if (backups.size) invalidateAll();
+    if (backups.size) {
+      invalidateAll();
+    }
   }
 }
 function registerCustomSum() {
