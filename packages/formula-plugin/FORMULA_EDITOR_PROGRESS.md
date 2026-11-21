@@ -273,11 +273,11 @@ This checklist is the authoritative list of remaining work and decisions, includ
   - [x] Dates in `&`/`CONCAT` render as JavaScript date strings; invalid custom function names are silently ignored; autocomplete lacks ARIA attributes; drag-fill ignores read-only cells and undo.
 - [x] Evaluate AG Grid parity: an opt-in `validateFormulas` editor param and formula error tooltips.
 - [x] Evaluate editor validation: support editor and column validators and their messages; retain calculation errors in cells instead of automatically blocking formula input.
-- [ ] Deferred: evaluate these possible enhancements separately:
-  - [ ] Whole-row reference picking, such as selecting a row number to insert a reference to the entire row.
-  - [ ] Whole-column drag-handle expansion; first define the interaction and which rows it would include. Double-click fill remains rejected.
-  - [ ] Colored handles for directly resizing individual formula-reference outlines.
-  - [ ] An external formula data-source adapter, including how it handles missing data, updates and Excel export.
+- [ ] Deferred enhancements, re-evaluated against AG Grid/Syncfusion scope (2026-11-20):
+  - [x] Rejected: whole-row reference picking. AG Grid implements it through its Row Numbers column; SlickGrid has no row-number column, so this would require a separate grid feature first.
+  - [x] Rejected: whole-column drag-handle expansion. Neither AG Grid's fill handle nor Excel drag-fill does this; double-click fill remains rejected.
+  - [x] Rejected: colored handles for resizing reference outlines. Range-endpoint dragging already resizes references; handles would only add a virtualization-aware overlay for visual affordance.
+  - [ ] Add an AG Grid-style `formulaDataSource` (`getFormula`/`setFormula`) adapter that loads formulas at init and mirrors formula store changes.
 - [x] Prevent autocomplete inside quoted strings and replace the complete function name when selecting from its middle.
 - [x] Compare Syncfusion's formula reference and add `ABS`, `ROUND`, `MOD`, `SQRT`, and the `RANDOM`, `RAN`, and `CONCATENATE` aliases, with Excel export translation.
 - [x] Distinguish `#CIRCREF!`, `#PARSE!`, missing references and custom-function failures; document Excel export behavior.
@@ -286,7 +286,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Decide whether an optional strict selection-prerequisite mode is needed: retain warning-only behavior and CSS fallback.
 - [x] Replicate the Formula Editor and function guides in all four framework documentation sets.
 - [x] Replicate Vanilla Example 48 to all framework wrappers as Example 59, with corresponding Cypress coverage; all four suites passed in CI.
-- [ ] **Second-to-last task:** Audit the whole Formula Plugin for performance, DRY and lines of code, and reduce LOC where possible without losing behavior or coverage. This includes the large `slick-formula.scss` stylesheet, plus duplicated quote/reference scanners and A1/reference regex patterns across the service, range, drag-fill and editor modules. We should also audit the feature, are we covering more than Ag-Grid/SyncFusion? If so then maybe decrease the scope a bit.
+- [ ] **Second-to-last task:** Audit the whole Formula Plugin for performance, DRY and lines of code, and reduce LOC where possible without losing behavior or coverage. This includes the large `slick-formula.scss` stylesheet, plus duplicated quote/reference scanners and A1/reference regex patterns across the service, range, drag-fill and editor modules. We should also audit the feature, are we covering more than Ag-Grid/SyncFusion? If so then maybe decrease the scope a bit. AG Grid lists grouping, tree data and aggregation as unsupported with formulas; decide whether to keep or simplify our grouping support (grouped references, `createGroupingAggregator`, grouped Excel export helper sheet and `COUNTA` presence ranges). Syncfusion's reference (https://react.syncfusion.com/react-ui/data-grid/formulas/formula-reference/) is narrower still: no `^`, `&` or `%` operators (it uses `POWER`/`CONCAT`), no `SUMPRODUCT`/`NA`, optional `ROUND` digits, `TODAY`/`NOW` as aliases, and only four error codes (`#INVALID_REFERENCE`, `#CIRCREF!`, `#PARSE!`, `#NAME?`). A partial A1 regex consolidation is stashed as `wip: formula A1 regex consolidation (LOC audit, untested)`.
 - [ ] **Final task:** Evaluate a separate calculated-columns package and identify utilities that could be shared with the formula plugin. Inform the user when this task is reached. The user wants to create 2 more optional packages, 1 package for Column Editor and 1 package for the common code between Formula Editor and Column Editor. We should probably merge the current Formula Editor feature PR before running this task.
 
 ## Latest Update: Optional Package Styling (2026-11-14)
