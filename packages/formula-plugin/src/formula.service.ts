@@ -40,13 +40,14 @@ import {
   rewriteExcelHelperCounta,
 } from './formula-range.js';
 import {
-  buildFormulaReferenceCssHash,
+  createFormulaA1RangeRegex,
+  createFormulaA1ReferenceRegex,
   FORMULA_MAX_REFERENCE_CELLS,
   FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY,
-  FormulaReferenceColorCache,
   getExcelColumnIndexByName,
   getExcelColumnNameByIndex,
   parseExcelReferenceCell,
+  transformFormulaOutsideQuotedStrings,
 } from './formula-reference.js';
 import { FormulaCellEditor, type FormulaEditorParams } from './formula.cellEditor.js';
 import { handleFormulaDragFill } from './formula.drag-fill.js';
@@ -54,6 +55,11 @@ import { handleFormulaDragFill } from './formula.drag-fill.js';
 export type { FormulaCallback } from './formula-functions.js';
 
 const FORMULA_EMPTY_RESULT = Symbol('formula empty result');
+// Quoted text is matched first so references inside strings are skipped by String.replace callbacks.
+const FORMULA_STABLE_REF_TOKEN_REGEX =
+  /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|REF\(\s*COLUMN\(("(?:\\.|[^"\\])*")\)\s*,\s*ROW\(("(?:\\.|[^"\\])*")\)\s*\)/gi;
+const FORMULA_FLAG_TOKEN_REGEX =
+  /REF\(\s*COLUMN\("(?:\\.|[^"\\])*"\)\s*,\s*ROW\("(?:\\.|[^"\\])*"\)\s*\)|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_]|\s*\()/gi;
 
 export interface FormulaCustomFunctionParams {
   values: unknown[];
@@ -135,7 +141,6 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   protected _formulaCoordinatesByKey: Map<string, { rowId: number | string; columnId: number | string }> = new Map();
   protected _formulaReferenceAbsoluteFlagsByKey: Map<string, FormulaReferenceAbsoluteFlags[]> = new Map();
   protected _restoredFormulaKeys: Set<string> = new Set();
-  protected _formulaRefColorCache: FormulaReferenceColorCache = new FormulaReferenceColorCache();
   protected _originalColumnNamesById: Map<number | string, string | HTMLElement | DocumentFragment | undefined> = new Map();
   protected _isExcelHeaderPrefixEnabled = false;
   protected _hasWarnedSelectionPrerequisite = false;
@@ -278,7 +283,6 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     this._formulaCoordinatesByKey.clear();
     this._formulaReferenceAbsoluteFlagsByKey.clear();
     this._restoredFormulaKeys.clear();
-    this._formulaRefColorCache.clear();
     this.resetEvaluationMemo();
     this._formulaFunctionRegistry = undefined;
     this._dataItemById.clear();
@@ -365,38 +369,6 @@ export class FormulaService implements ExternalResource, FormulaProvider {
 
     this._grid.setColumns(restoredColumns as Column[]);
     this._isExcelHeaderPrefixEnabled = false;
-  }
-
-  renderFormulaReferenceHighlights(formula?: string): void {
-    this.clearFormulaReferenceHighlights();
-    if (!this._grid?.getColumns || !this._grid?.setCellCssStyles || !formula || !formula.startsWith('=')) {
-      return;
-    }
-
-    const normalizedFormula = formula.startsWith('=') ? formula.slice(1) : formula;
-    const normalizedFormulaWithRefs = `=${this.replaceRefFunctionsWithA1Refs(
-      normalizedFormula,
-      ((this._grid?.getColumns?.() as Column[] | undefined) || []).map((col) => String(col.id)),
-      this.getDisplayRowIds() ?? this.getFormulaRowIds(),
-      1,
-      true
-    )}`;
-    this._formulaRefColorCache.update(normalizedFormulaWithRefs);
-    const columns = this._grid.getColumns() as Column[];
-    const hash = buildFormulaReferenceCssHash(this._formulaRefColorCache.values(), columns, this.getDatasetLength());
-
-    if (Object.keys(hash).length > 0) {
-      this._grid.setCellCssStyles(FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY, hash as any);
-    }
-    this._formulaRefColorCache.markClean();
-  }
-
-  extractExcelReferences(formula: string): Array<{ col: string; row: number }> {
-    const displayFormula = this.toDisplayFormula(formula);
-    this._formulaRefColorCache.update(displayFormula);
-    return Array.from(this._formulaRefColorCache.values()).flatMap((reference) =>
-      reference.cells.map((cell) => ({ col: getExcelColumnNameByIndex(cell.cell + 1), row: cell.row + 1 }))
-    );
   }
 
   clearFormulas(): void {
@@ -688,11 +660,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   }
 
   protected containsDirectExcelReference(formula: string): boolean {
-    const referenceRegex = /(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?:\s*:\s*\$?[A-Z]{1,3}\$?\d+)?(?![A-Za-z0-9_]|\s*\()/gi;
     let found = false;
-    this.transformFormulaOutsideQuotedStrings(formula, (segment) => {
-      found ||= referenceRegex.test(segment);
-      referenceRegex.lastIndex = 0;
+    transformFormulaOutsideQuotedStrings(formula, (segment) => {
+      found ||= createFormulaA1ReferenceRegex().test(segment);
       return segment;
     });
     return found;
@@ -701,8 +671,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   protected captureFormulaReferenceAbsoluteFlags(key: string, formula: string, rowIds?: Array<string | undefined>): void {
     const previousFlags = this._formulaReferenceAbsoluteFlagsByKey.get(key) ?? [];
     const flags: FormulaReferenceAbsoluteFlags[] = [];
-    const tokens =
-      /REF\(\s*COLUMN\("(?:\\.|[^"\\])*"\)\s*,\s*ROW\("(?:\\.|[^"\\])*"\)\s*\)|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_]|\s*\()/gi;
+    const tokens = FORMULA_FLAG_TOKEN_REGEX;
     const expanded = expandFormulaRanges(this.normalizeFormulaRangeDimensions(formula), (row) => !rowIds || rowIds[row] !== undefined);
     expanded.replace(tokens, (token) => {
       if (/^REF\(/i.test(token)) {
@@ -735,8 +704,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       return formula;
     }
 
-    const tokens =
-      /REF\(\s*COLUMN\("(?:\\.|[^"\\])*"\)\s*,\s*ROW\("(?:\\.|[^"\\])*"\)\s*\)|"(?:\\.|[^"\\])*"|'(?:\\.|[^"\\])*'|(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_]|\s*\()/gi;
+    const tokens = FORMULA_FLAG_TOKEN_REGEX;
     let flagIndex = 0;
     return formula.replace(tokens, (token) => {
       if (/^REF\(/i.test(token)) {
@@ -877,21 +845,18 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     if (context.groupedRowPositions && this.containsDirectExcelReference(stableFormula)) {
       return undefined;
     }
-    let mapped = stableFormula.replace(
-      /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|REF\(\s*COLUMN\(("(?:\\.|[^"\\])*")\)\s*,\s*ROW\(("(?:\\.|[^"\\])*")\)\s*\)/gi,
-      (token, columnId?: string, rowId?: string) => {
-        if (!columnId) {
-          return token;
-        }
-        const column = columns.indexOf(JSON.parse(columnId));
-        const row = rowPositions.get(JSON.parse(rowId!));
-        return column < 0 || row === undefined
-          ? FORMULA_ERROR.REF
-          : `${getExcelColumnNameByIndex(column + 1 + (context.groupedColumnOffset ?? 0))}${row}`;
+    let mapped = stableFormula.replace(FORMULA_STABLE_REF_TOKEN_REGEX, (token, columnId?: string, rowId?: string) => {
+      if (!columnId) {
+        return token;
       }
-    );
+      const column = columns.indexOf(JSON.parse(columnId));
+      const row = rowPositions.get(JSON.parse(rowId!));
+      return column < 0 || row === undefined
+        ? FORMULA_ERROR.REF
+        : `${getExcelColumnNameByIndex(column + 1 + (context.groupedColumnOffset ?? 0))}${row}`;
+    });
     let hasUnmappedRef = false;
-    this.transformFormulaOutsideQuotedStrings(mapped, (segment) => {
+    transformFormulaOutsideQuotedStrings(mapped, (segment) => {
       hasUnmappedRef ||= /\bREF\s*\(/i.test(segment);
       return segment;
     });
@@ -906,7 +871,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       mapped = this.replaceRefFunctionsWithA1Refs(mapped, columns, context.rowIds.map(String), context.excelRowOffset);
     }
     let hasMissing = false;
-    this.transformFormulaOutsideQuotedStrings(mapped, (segment) => {
+    transformFormulaOutsideQuotedStrings(mapped, (segment) => {
       hasMissing ||= segment.includes(FORMULA_ERROR.REF);
       return segment;
     });
@@ -943,7 +908,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       return helper;
     });
     const rewritten = normalizeExcelFormulaStrings(
-      this.transformFormulaOutsideQuotedStrings(this.normalizeFormulaSyntax(rewriteExcelHelperCounta(output, helpers)), (segment) =>
+      transformFormulaOutsideQuotedStrings(this.normalizeFormulaSyntax(rewriteExcelHelperCounta(output, helpers)), (segment) =>
         segment.replace(/(?<![\w.])(RANDOM|RAN|CONCATENATE)(?=\s*\()/gi, (name: string) =>
           this._customFunctions.has(name.toUpperCase()) ? name : name.toUpperCase() === 'CONCATENATE' ? 'CONCAT' : 'RAND'
         )
@@ -958,8 +923,6 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       return formula;
     }
 
-    const a1ReferenceRegex =
-      /(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+\s*:\s*\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_])|(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_]|\s*\()/gi;
     const remapEndpoint = (token: string): string => {
       const parsed = parseExcelReferenceCell(token);
       /* v8 ignore if - the A1 token regex guarantees that parsing succeeds */
@@ -979,8 +942,8 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       return `${hasLeadingDollar || columnDollar ? '$' : ''}${columnName}${rowDollar}${rowNumber}`;
     };
 
-    return this.transformFormulaOutsideQuotedStrings(formula, (segment) =>
-      segment.replace(a1ReferenceRegex, (reference) => {
+    return transformFormulaOutsideQuotedStrings(formula, (segment) =>
+      segment.replace(createFormulaA1ReferenceRegex(), (reference) => {
         const [startToken, endToken] = reference.split(':', 2);
         const shiftedStart = remapEndpoint(startToken);
         return endToken ? `${shiftedStart}:${remapEndpoint(endToken)}` : shiftedStart;
@@ -998,7 +961,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
 
   protected containsBuiltInVolatileFunction(formula: string): boolean {
     let containsVolatileFunction = false;
-    this.transformFormulaOutsideQuotedStrings(formula, (segment) => {
+    transformFormulaOutsideQuotedStrings(formula, (segment) => {
       segment.replace(/\b(RAND|RANDOM|RAN|NOW|TODAY)\s*\(/gi, (_token, functionName: string) => {
         containsVolatileFunction ||= !this._customFunctions.has(functionName.toUpperCase());
         return '';
@@ -1036,15 +999,6 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     this._columnById.clear();
   }
 
-  protected getDatasetLength(): number {
-    const dataViewAny = this._dataView as any;
-    if (dataViewAny?.getLength && typeof dataViewAny.getLength === 'function') {
-      return dataViewAny.getLength();
-    }
-    const items = dataViewAny?.getItems && typeof dataViewAny.getItems === 'function' ? dataViewAny.getItems() : [];
-    return Array.isArray(items) ? items.length : 0;
-  }
-
   protected getDataItems(): any[] {
     if (this._dataItemsCache) {
       return this._dataItemsCache;
@@ -1069,7 +1023,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     }
 
     let hasUnsafeInput = false;
-    this.transformFormulaOutsideQuotedStrings(normalized, (segment) => {
+    transformFormulaOutsideQuotedStrings(normalized, (segment) => {
       hasUnsafeInput ||= /[;{}\\`]/.test(segment);
       return segment;
     });
@@ -1088,7 +1042,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     );
 
     let hasMissingReference = false;
-    this.transformFormulaOutsideQuotedStrings(normalizedSyntax, (segment) => {
+    transformFormulaOutsideQuotedStrings(normalizedSyntax, (segment) => {
       hasMissingReference ||= segment.includes(FORMULA_ERROR.REF);
       return segment;
     });
@@ -1149,7 +1103,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       }
     );
 
-    const jsExpression = this.transformFormulaOutsideQuotedStrings(expressionWithValues, (segment) =>
+    const jsExpression = transformFormulaOutsideQuotedStrings(expressionWithValues, (segment) =>
       segment
         .replace(/<>/g, '!=')
         .replace(/\bTRUE\b/gi, 'true')
@@ -1190,10 +1144,10 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         name = `__FORMULA_LAZY_IF_${sequence++}`;
       }
       const validSyntax = args.every((arg) => {
-        const syntax = this.transformFormulaOutsideQuotedStrings(this.normalizeFormulaSyntax(arg), (segment) =>
+        const syntax = transformFormulaOutsideQuotedStrings(this.normalizeFormulaSyntax(arg), (segment) =>
           segment
-            .replace(/\$?[A-Z]{1,3}\$?\d+\s*:\s*\$?[A-Z]{1,3}\$?\d+/gi, '1')
-            .replace(/\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_]|\s*\()/gi, '1')
+            .replace(createFormulaA1RangeRegex(), '1')
+            .replace(createFormulaA1ReferenceRegex(), '1')
             .replace(/#(?:CIRCREF!|PARSE!|REF!|DIV\/0!|VALUE!|NAME\?|NUM!|NULL!|ERROR!|N\/A)/gi, '1')
             .replace(/<>/g, '!=')
             .replace(/(?<![<>=!])=(?!=)/g, '==')
@@ -1867,7 +1821,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       return expression;
     }
 
-    return this.transformFormulaOutsideQuotedStrings(expression, (segment) =>
+    return transformFormulaOutsideQuotedStrings(expression, (segment) =>
       segment.replace(/×/g, '*').replace(/÷/g, '/').replace(/[−–—]/g, '-')
     );
   }
@@ -1926,8 +1880,8 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       (token) => (token.startsWith('REF(') ? this.replaceRefFunctionsWithA1Refs(token, columnIds, rowIds) : token)
     );
     if (invalidRowAsError) {
-      formula = this.transformFormulaOutsideQuotedStrings(formula, (segment) =>
-        segment.replace(/(?<![\w])\$?[A-Z]{1,3}\$?\d+\s*:\s*\$?[A-Z]{1,3}\$?\d+(?![\w])/gi, (range) => {
+      formula = transformFormulaOutsideQuotedStrings(formula, (segment) =>
+        segment.replace(createFormulaA1RangeRegex(), (range) => {
           const endpoints = range.split(':').map((part) => parseExcelReferenceCell(part.trim()));
           return endpoints.some((cell) => !cell || cell.row >= rowIds.length || cell.cell >= columnIds.length) ? FORMULA_ERROR.REF : range;
         })
@@ -1935,9 +1889,8 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     }
     formula = expandFormulaRanges(formula, (row) => !invalidRowAsError || rowIds[row] !== undefined);
 
-    const a1ReferenceRegex =
-      /(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+\s*:\s*\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_])|(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_]|\s*\()/gi;
-    return this.transformFormulaOutsideQuotedStrings(formula, (segment) =>
+    const a1ReferenceRegex = createFormulaA1ReferenceRegex();
+    return transformFormulaOutsideQuotedStrings(formula, (segment) =>
       segment.replace(a1ReferenceRegex, (reference) => {
         const [startToken, endToken] = reference.split(':', 2);
         const startCell = parseExcelReferenceCell(startToken);
@@ -1975,22 +1928,6 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     return this._customFunctions.has('SUMIF') ? formula : normalizeSumIfRangeDimensions(formula);
   }
 
-  /** Transform only formula text outside quoted string literals. */
-  protected transformFormulaOutsideQuotedStrings(formula: string, transform: (segment: string) => string): string {
-    const quotedTextRegex = /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/g;
-    let result = '';
-    let previousEnd = 0;
-    let match: RegExpExecArray | null;
-
-    while ((match = quotedTextRegex.exec(formula)) !== null) {
-      result += transform(formula.slice(previousEnd, match.index));
-      result += match[0];
-      previousEnd = match.index + match[0].length;
-    }
-
-    return result + transform(formula.slice(previousEnd));
-  }
-
   /** Replace REF(COLUMN("x"),ROW(...)) expressions by concrete A1 references. */
   protected replaceRefFunctionsWithA1Refs(
     expression: string,
@@ -2003,25 +1940,22 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       return expression;
     }
 
-    const withNamedRowRefs = expression.replace(
-      /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|REF\(\s*COLUMN\(("(?:\\.|[^"\\])*")\)\s*,\s*ROW\(("(?:\\.|[^"\\])*")\)\s*\)/gi,
-      (match, columnToken?: string, rowToken?: string) => {
-        if (!columnToken) {
-          return match;
-        }
-        const columnId = JSON.parse(columnToken) as string;
-        const rowId = JSON.parse(rowToken!) as string;
-        const columnIdx = columnIds.indexOf(String(columnId));
-        const rowIdx = rowIds.indexOf(String(rowId));
-        if (columnIdx < 0 || rowIdx < 0) {
-          return preserveMissing && columnIdx >= 0 && this.getFormulaRowIds().includes(rowId) ? match : FORMULA_ERROR.REF;
-        }
-
-        const excelColName = getExcelColumnNameByIndex(columnIdx + 1);
-        const excelRowNumber = rowIdx + excelRowOffset;
-        return `${excelColName}${excelRowNumber}`;
+    const withNamedRowRefs = expression.replace(FORMULA_STABLE_REF_TOKEN_REGEX, (match, columnToken?: string, rowToken?: string) => {
+      if (!columnToken) {
+        return match;
       }
-    );
+      const columnId = JSON.parse(columnToken) as string;
+      const rowId = JSON.parse(rowToken!) as string;
+      const columnIdx = columnIds.indexOf(String(columnId));
+      const rowIdx = rowIds.indexOf(String(rowId));
+      if (columnIdx < 0 || rowIdx < 0) {
+        return preserveMissing && columnIdx >= 0 && this.getFormulaRowIds().includes(rowId) ? match : FORMULA_ERROR.REF;
+      }
+
+      const excelColName = getExcelColumnNameByIndex(columnIdx + 1);
+      const excelRowNumber = rowIdx + excelRowOffset;
+      return `${excelColName}${excelRowNumber}`;
+    });
 
     return withNamedRowRefs.replace(
       /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|REF\(\s*COLUMN\("([^"]+)"\)\s*,\s*ROW\((\d+)\)\s*\)/gi,
@@ -2225,30 +2159,6 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     return item[field as keyof typeof item];
   }
 
-  protected toExpressionLiteral(value: unknown): string {
-    if (value === null || value === undefined || value === '') {
-      return '0';
-    }
-
-    if (typeof value === 'number') {
-      return Number.isFinite(value) ? String(value) : '0';
-    }
-
-    if (typeof value === 'boolean') {
-      return value ? 'true' : 'false';
-    }
-
-    if (typeof value === 'string') {
-      const trimmed = value.trim();
-      if (/^-?\d+(\.\d+)?$/.test(trimmed)) {
-        return trimmed;
-      }
-      return JSON.stringify(trimmed);
-    }
-
-    return JSON.stringify(String(value));
-  }
-
   protected getFormulaValidationError(formula: string, rowId: number | string, columnId: number | string): string | undefined {
     if (!formula.trimStart().startsWith('=')) {
       return undefined;
@@ -2309,10 +2219,6 @@ export class FormulaService implements ExternalResource, FormulaProvider {
           Array.from(this.getFormulaFunctionRegistry().keys()).sort((a, b) => a.localeCompare(b));
       }
 
-      const userOnFormulaInputChange = mergedParams.onFormulaInputChange;
-      mergedParams.onFormulaInputChange = (formula: string) => {
-        userOnFormulaInputChange?.(formula);
-      };
       mergedParams.toDisplayFormula = (formula: string, item?: any) => {
         const rowId = item?.[this.getDatasetIdPropertyName()] as number | string | undefined;
         return rowId === undefined || rowId === null

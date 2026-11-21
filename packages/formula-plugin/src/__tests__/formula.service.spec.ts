@@ -886,9 +886,6 @@ describe('FormulaService', () => {
     service.init(gridStub);
 
     service.clearFormulaReferenceHighlights();
-    service.renderFormulaReferenceHighlights();
-    service.renderFormulaReferenceHighlights('=Z1');
-    expect(service.extractExcelReferences('=A1')).toEqual([{ col: 'A', row: 1 }]);
     service.clearFormulas();
     expect(service.hasFormula('r1', 'value')).toBe(false);
     service.setFormula('r1', 'value', '=A1');
@@ -898,11 +895,6 @@ describe('FormulaService', () => {
     expect(service.getExcelDefinedNames()).toEqual([]);
     expect(service.getExcelCustomFunctions()).toEqual([]);
     expect((service as any).shiftDirectExcelReferences('', [], [], 0)).toBe('');
-
-    (service as any)._dataView = { getItems: () => items };
-    expect((service as any).getDatasetLength()).toBe(1);
-    (service as any)._dataView = {};
-    expect((service as any).getDatasetLength()).toBe(0);
 
     const fallbackService = new FormulaService();
     expect(fallbackService.getEvaluatedCellValue('missing', 'value', 42)).toBe(42);
@@ -963,24 +955,6 @@ describe('FormulaService', () => {
     flagService.setFormula('r', 'value', '=Z1');
     expect(flagService.getEvaluatedCellValue('r', 'value', '=Z1', 0)).toBe(FORMULA_ERROR.REF);
     expect((flagService as any).evaluateExpressionWithParser('"x"^2', new Map())).toBe(FORMULA_ERROR.VALUE);
-  });
-
-  it('should keep special column IDs as own highlight hash keys', () => {
-    const columns: Column[] = [{ id: '__proto__', field: '__proto__', allowFormula: true }];
-    const setCellCssStyles = vi.fn();
-    const service = new FormulaService({ autoAssignEditor: false });
-    service.init({
-      getColumns: () => columns,
-      getData: () => ({ getItems: () => [{ id: 'r1', value: 1 }], getLength: () => 1 }),
-      getOptions: () => ({ datasetIdPropertyName: 'id', enableFormulas: true }),
-      setCellCssStyles,
-    } as any);
-
-    service.renderFormulaReferenceHighlights('=A1');
-
-    const hash = setCellCssStyles.mock.calls[0]?.[1] as Record<number, Record<string, string>>;
-    expect(Object.prototype.hasOwnProperty.call(hash[0], '__proto__')).toBe(true);
-    expect(hash[0].__proto__).toBe('formula-cell-color-1');
   });
 
   it('should set/get/has formula by row and column ids', () => {
@@ -1128,8 +1102,6 @@ describe('FormulaService', () => {
     expect(params.toDisplayFormula(items[2].total, items[2])).toBe('=A1*2');
     expect(params.toStoredFormula('=A2+A1', items[2])).toBe('=REF(COLUMN("price"),ROW("c"))+REF(COLUMN("price"),ROW("b"))');
     expect(params.toStoredFormula('=A3', items[2])).toBe('=#REF!');
-    service.renderFormulaReferenceHighlights(items[2].total);
-    expect(setCellCssStyles).toHaveBeenCalledWith(expect.any(String), { 0: { price: 'formula-cell-color-1' } });
     expect(service.getEvaluatedCellValue('c', 'total', items[2].total, undefined)).toBe(14);
 
     rows = [items[2]];
@@ -2407,84 +2379,7 @@ describe('FormulaService', () => {
     expect(service.getEvaluatedCellValue(1, 'total', items[0].total, 0)).toBe(FORMULA_ERROR.VALUE);
   });
 
-  it('should highlight a full range token with a single color class', () => {
-    const setCellCssStyles = vi.fn();
-    const columns: Column[] = [
-      { id: 'a', field: 'a' },
-      { id: 'b', field: 'b' },
-      { id: 'c', field: 'c' },
-      { id: 'd', field: 'd' },
-    ];
-    const items = [{ id: 1 }, { id: 2 }, { id: 3 }];
-
-    const gridStub = {
-      getColumns: () => columns,
-      setColumns: (_newCols: Column[]) => undefined,
-      setCellCssStyles,
-      removeCellCssStyles: vi.fn(),
-      getData: () => ({
-        getItems: () => items,
-        getLength: () => items.length,
-      }),
-    } as any;
-
-    const service = new FormulaService();
-    service.init(gridStub);
-    service.renderFormulaReferenceHighlights('=C1:C3');
-
-    expect(setCellCssStyles).toHaveBeenCalledTimes(1);
-    const cssHash = setCellCssStyles.mock.calls[0][1] as Record<number, Record<string, string>>;
-    expect(cssHash[0].c).toBe('formula-cell-color-1 formula-ref-range formula-ref-top formula-ref-left formula-ref-right');
-    expect(cssHash[1].c).toBe('formula-cell-color-1 formula-ref-range formula-ref-left formula-ref-right');
-    expect(cssHash[2].c).toBe('formula-cell-color-1 formula-ref-range formula-ref-bottom formula-ref-left formula-ref-right');
-  });
-
-  it('should preserve formula reference order when assigning highlight colors', () => {
-    const setCellCssStyles = vi.fn();
-    const columns: Column[] = [
-      { id: 'a', field: 'a' },
-      { id: 'b', field: 'b' },
-      { id: 'c', field: 'c' },
-      { id: 'd', field: 'd' },
-    ];
-    const items = [{ id: 1 }, { id: 2 }, { id: 3 }];
-
-    const gridStub = {
-      getColumns: () => columns,
-      setColumns: (_newCols: Column[]) => undefined,
-      setCellCssStyles,
-      removeCellCssStyles: vi.fn(),
-      getData: () => ({
-        getItems: () => items,
-        getLength: () => items.length,
-      }),
-    } as any;
-
-    const service = new FormulaService();
-    service.init(gridStub);
-    service.renderFormulaReferenceHighlights('=C1*SUM(D1:D3)');
-
-    expect(setCellCssStyles).toHaveBeenCalledTimes(1);
-    expect(setCellCssStyles.mock.calls[0][0]).toBe(FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY);
-    expect(setCellCssStyles.mock.calls[0][1]).toEqual({
-      0: { c: 'formula-cell-color-1', d: 'formula-cell-color-2 formula-ref-range formula-ref-top formula-ref-left formula-ref-right' },
-      1: { d: 'formula-cell-color-2 formula-ref-range formula-ref-left formula-ref-right' },
-      2: { d: 'formula-cell-color-2 formula-ref-range formula-ref-bottom formula-ref-left formula-ref-right' },
-    });
-
-    // The same mapping must work when the range is the first reference in the formula.
-    setCellCssStyles.mockClear();
-    service.renderFormulaReferenceHighlights('=SUM(D1:D3)*C1');
-
-    expect(setCellCssStyles).toHaveBeenCalledTimes(1);
-    expect(setCellCssStyles.mock.calls[0][1]).toEqual({
-      0: { c: 'formula-cell-color-2', d: 'formula-cell-color-1 formula-ref-range formula-ref-top formula-ref-left formula-ref-right' },
-      1: { d: 'formula-cell-color-1 formula-ref-range formula-ref-left formula-ref-right' },
-      2: { d: 'formula-cell-color-1 formula-ref-range formula-ref-bottom formula-ref-left formula-ref-right' },
-    });
-  });
-
-  it('should use and clear one aggregate highlight key for more than ten references', () => {
+  it('should clear the aggregate highlight key', () => {
     const setCellCssStyles = vi.fn();
     const removeCellCssStyles = vi.fn();
     const columns = Array.from({ length: 11 }, (_value, index) => ({
@@ -2501,13 +2396,6 @@ describe('FormulaService', () => {
     const service = new FormulaService();
     service.init(gridStub);
 
-    service.renderFormulaReferenceHighlights('=A1+B1+C1+D1+E1+F1+G1+H1+I1+J1+K1');
-
-    expect(setCellCssStyles).toHaveBeenCalledTimes(1);
-    expect(setCellCssStyles.mock.calls[0][0]).toBe(FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY);
-    expect(Object.keys(setCellCssStyles.mock.calls[0][1][0])).toHaveLength(11);
-
-    removeCellCssStyles.mockClear();
     service.clearFormulaReferenceHighlights();
     expect(removeCellCssStyles).toHaveBeenCalledOnce();
     expect(removeCellCssStyles).toHaveBeenCalledWith(FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY);
@@ -3318,14 +3206,6 @@ describe('FormulaService', () => {
     expect((service as any).getCellRawValue('missing', 'value')).toBeUndefined();
     expect((service as any).getCellRawValue(1, 'missing')).toBeUndefined();
 
-    expect((service as any).toExpressionLiteral(null)).toBe('0');
-    expect((service as any).toExpressionLiteral(1.5)).toBe('1.5');
-    expect((service as any).toExpressionLiteral(Infinity)).toBe('0');
-    expect((service as any).toExpressionLiteral({})).toBe('"[object Object]"');
-    expect((service as any).toExpressionLiteral(true)).toBe('true');
-    expect((service as any).toExpressionLiteral(false)).toBe('false');
-    expect((service as any).toExpressionLiteral(' 12.5 ')).toBe('12.5');
-    expect((service as any).toExpressionLiteral('hello')).toBe('"hello"');
     expect((service as any).replaceRefFunctionsWithA1Refs('=REF(COLUMN("missing"),ROW(1))', ['value'], ['1'], 1)).toBe('=#REF!');
     service.registerCustomFunction('INVALID', {} as any);
     expect(service.getCustomFunction('INVALID')).toBeUndefined();
@@ -3414,31 +3294,6 @@ describe('FormulaService', () => {
       throw new Error('unexpected parser failure');
     });
     expect((service as any).evaluateFormulaExpression('=1', context)).toBe(FORMULA_ERROR.ERROR);
-  });
-
-  it('should wrap onFormulaInputChange and invoke user callback without forcing highlight refresh', () => {
-    const userCallback = vi.fn();
-    const service = new FormulaService();
-    const highlightSpy = vi.spyOn(service as any, 'renderFormulaReferenceHighlights');
-    const columns: Column[] = [{ id: 'total', field: 'total', allowFormula: true, editor: { params: { onFormulaInputChange: userCallback } } }];
-
-    const gridStub = {
-      getColumns: () => columns,
-      setColumns: (newCols: Column[]) => {
-        columns.splice(0, columns.length, ...newCols);
-      },
-      getData: () => ({ getItems: () => [], getLength: () => 0 }),
-      getOptions: () => ({ editable: true, datasetIdPropertyName: 'id' }),
-      invalidate: vi.fn(),
-      render: vi.fn(),
-    } as any;
-
-    service.init(gridStub);
-    const wrapped = columns[0].editor?.params?.onFormulaInputChange as ((formula: string) => void) | undefined;
-    wrapped?.('=A1');
-
-    expect(highlightSpy).not.toHaveBeenCalled();
-    expect(userCallback).toHaveBeenCalledWith('=A1');
   });
 
   it('should wrap formula editor conversion and commit callbacks with and without row items', () => {

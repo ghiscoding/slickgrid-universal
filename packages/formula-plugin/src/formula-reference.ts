@@ -65,17 +65,47 @@ export class FormulaReferenceColorCache {
   }
 }
 
+const FORMULA_A1_CELL_PATTERN = String.raw`\$?[A-Z]{1,3}\$?\d+`;
+const FORMULA_A1_RANGE_PATTERN = String.raw`${FORMULA_A1_CELL_PATTERN}\s*:\s*${FORMULA_A1_CELL_PATTERN}`;
+const FORMULA_REFERENCE_BOUNDARY_START = String.raw`(?<![A-Za-z0-9_])`;
+const FORMULA_REFERENCE_BOUNDARY_END = String.raw`(?![A-Za-z0-9_]|\s*\()`;
+
 // Match complete or incomplete ranges (D1:D4, D1:D, D1:) before single cells.
-const FORMULA_REFERENCE_TOKEN_PATTERN = String.raw`(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+\s*:\s*(?:\$?[A-Z]{1,3}\$?\d*)?(?![A-Za-z0-9_])|(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_]|\s*\()`;
+const FORMULA_REFERENCE_TOKEN_PATTERN = String.raw`${FORMULA_REFERENCE_BOUNDARY_START}${FORMULA_A1_CELL_PATTERN}\s*:\s*(?:\$?[A-Z]{1,3}\$?\d*)?(?![A-Za-z0-9_])|${FORMULA_REFERENCE_BOUNDARY_START}${FORMULA_A1_CELL_PATTERN}${FORMULA_REFERENCE_BOUNDARY_END}`;
 
 function createFormulaReferenceTokenRegex(): RegExp {
   return new RegExp(FORMULA_REFERENCE_TOKEN_PATTERN, 'gi');
+}
+
+export function createFormulaA1RangeRegex(): RegExp {
+  return new RegExp(`${FORMULA_REFERENCE_BOUNDARY_START}${FORMULA_A1_RANGE_PATTERN}(?![A-Za-z0-9_])`, 'gi');
+}
+
+export function createFormulaA1ReferenceRegex(): RegExp {
+  return new RegExp(
+    `${FORMULA_REFERENCE_BOUNDARY_START}(?:${FORMULA_A1_RANGE_PATTERN}|${FORMULA_A1_CELL_PATTERN})${FORMULA_REFERENCE_BOUNDARY_END}`,
+    'gi'
+  );
 }
 
 export interface FormulaReferenceToken {
   ref: string;
   start: number;
   end: number;
+}
+
+/** Transform only formula text outside quoted string literals. */
+export function transformFormulaOutsideQuotedStrings(formula: string, transform: (segment: string) => string): string {
+  const quotedTextRegex = /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/g;
+  let result = '';
+  let previousEnd = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = quotedTextRegex.exec(formula)) !== null) {
+    result += transform(formula.slice(previousEnd, match.index)) + match[0];
+    previousEnd = match.index + match[0].length;
+  }
+  return result + transform(formula.slice(previousEnd));
 }
 
 /** Find references only outside quoted strings, including through unfinished string literals. */

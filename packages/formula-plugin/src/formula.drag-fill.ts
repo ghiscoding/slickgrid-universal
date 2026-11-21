@@ -1,7 +1,13 @@
 import type { Column, OnDragReplaceCellsEventArgs, SlickDataView, SlickGrid, SlickRange } from '@slickgrid-universal/common';
 import { SlickSelectionUtils } from '@slickgrid-universal/common';
 import { FORMULA_ERROR } from './formula-errors.js';
-import { getExcelColumnIndexByName, getExcelColumnNameByIndex, setFormulaObjectProperty } from './formula-reference.js';
+import {
+  createFormulaA1ReferenceRegex,
+  getExcelColumnIndexByName,
+  getExcelColumnNameByIndex,
+  setFormulaObjectProperty,
+  transformFormulaOutsideQuotedStrings,
+} from './formula-reference.js';
 
 /** Internal callbacks used by FormulaService to keep storage and display concerns in the service. */
 export interface FormulaDragFillContext {
@@ -292,7 +298,7 @@ function getFormulaOrRawValue(
 /** Shift relative A1 references while leaving quoted literals untouched. */
 // fallow-ignore-next-line unused-export
 export function translateFormulaReferences(formula: string, rowDelta: number, columnDelta: number): string {
-  const referenceRegex = /(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?:\s*:\s*\$?[A-Z]{1,3}\$?\d+)?(?![A-Za-z0-9_]|\s*\()/gi;
+  const referenceRegex = createFormulaA1ReferenceRegex();
   return transformFormulaOutsideQuotedStrings(formula, (segment) =>
     segment.replace(referenceRegex, (reference) => {
       const translated = reference.split(':').map((endpoint) => translateFormulaReferenceEndpoint(endpoint.trim(), rowDelta, columnDelta));
@@ -323,19 +329,4 @@ function translateFormulaReferenceEndpoint(reference: string, rowDelta: number, 
     return FORMULA_ERROR.REF;
   }
   return `${columnIsAbsolute ? '$' : ''}${getExcelColumnNameByIndex(shiftedColumnIndex + 1)}${rowIsAbsolute ? '$' : ''}${shiftedRowIndex + 1}`;
-}
-
-function transformFormulaOutsideQuotedStrings(formula: string, transform: (segment: string) => string): string {
-  const quotedTextRegex = /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/g;
-  let result = '';
-  let previousEnd = 0;
-  let match: RegExpExecArray | null;
-
-  while ((match = quotedTextRegex.exec(formula)) !== null) {
-    result += transform(formula.slice(previousEnd, match.index));
-    result += match[0];
-    previousEnd = match.index + match[0].length;
-  }
-
-  return result + transform(formula.slice(previousEnd));
 }

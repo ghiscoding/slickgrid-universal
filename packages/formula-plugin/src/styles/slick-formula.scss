@@ -3,62 +3,36 @@
 @use 'sass:map';
 @use '@slickgrid-universal/common/dist/styles/sass/variables' as v;
 
-.slick-cell {
-  .formula-editor-input {
-    border: var(--slick-text-editor-border, v.$slick-text-editor-border);
-    border-radius: var(--slick-text-editor-border-radius, v.$slick-text-editor-border-radius);
-    background: var(--slick-text-editor-background, v.$slick-text-editor-background);
-    color: var(--slick-text-editor-color, v.$slick-text-editor-color);
-    padding-bottom: var(--slick-text-editor-padding-bottom, v.$slick-text-editor-padding-bottom);
-    padding-left: var(--slick-text-editor-padding-left, v.$slick-text-editor-padding-left);
-    padding-right: var(--slick-text-editor-padding-right, v.$slick-text-editor-padding-right);
-    padding-top: var(--slick-text-editor-padding-top, v.$slick-text-editor-padding-top);
-    margin-left: var(--slick-text-editor-margin-left, v.$slick-text-editor-margin-left);
-    margin-bottom: var(--slick-text-editor-margin-bottom, v.$slick-text-editor-margin-bottom);
-    margin-right: var(--slick-text-editor-margin-right, v.$slick-text-editor-margin-right);
-    margin-top: var(--slick-text-editor-margin-top, v.$slick-text-editor-margin-top);
-    box-sizing: border-box;
-    outline: 0;
-    height: 100%;
-    max-width: 100%;
+$editor-properties:
+  border, border-radius, background, color, padding-bottom, padding-left, padding-right, padding-top, margin-left, margin-bottom,
+  margin-right, margin-top;
+$variables: meta.module-variables('v');
 
-    &:not(.input-group-editor) {
-      width: 100%;
-    }
-    &:focus {
-      outline: 0;
-      border-color: var(--slick-text-editor-focus-border-color, v.$slick-text-editor-focus-border-color);
-      box-shadow: var(--slick-text-editor-focus-box-shadow, v.$slick-text-editor-focus-box-shadow);
-    }
-
-    &.right {
-      margin-left: var(--slick-text-editor-right-input-margin-left, v.$slick-text-editor-right-input-margin-left);
-    }
-
-    &[readonly]:not(.date-picker) {
-      background-color: var(--slick-text-editor-readonly-color, v.$slick-text-editor-readonly-color);
-    }
-    &.date-picker {
-      cursor: pointer;
-    }
+.slick-cell .formula-editor-input {
+  @each $property in $editor-properties {
+    #{$property}: var(--slick-text-editor-#{$property}, map.get($variables, 'slick-text-editor-#{$property}'));
   }
+  box-sizing: border-box;
+  outline: 0;
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  line-height: normal;
+  overflow: auto hidden;
+  white-space: nowrap;
+  scrollbar-width: none;
+  font-style: normal;
 
-  .formula-editor-input {
-    display: flex;
-    align-items: center;
-    flex: 1 1 auto;
-    min-width: 0;
-    line-height: normal;
-    overflow: auto hidden;
-    white-space: nowrap;
-    scrollbar-width: none;
-    font-style: normal;
+  &:focus {
+    outline: 0;
+    border-color: var(--slick-text-editor-focus-border-color, v.$slick-text-editor-focus-border-color);
+    box-shadow: var(--slick-text-editor-focus-box-shadow, v.$slick-text-editor-focus-box-shadow);
   }
 }
-
-// ----------------------------------------------
-// Formula UX Helpers
-// ----------------------------------------------
 
 .excel-col-prefix {
   display: inline-flex;
@@ -66,7 +40,6 @@
   justify-content: center;
   min-width: 1.35rem;
   height: 1.2rem;
-  // margin-right: 0.35rem;
   padding: 0 0.25rem;
   border-radius: 999px;
   font-size: 0.72rem;
@@ -88,71 +61,37 @@
   line-height: inherit;
 }
 
-.formula-token-color-1,
-.formula-token-color-7 {
-  color: #{v.$slick-formula-token-1-color};
-}
-.formula-token-color-2,
-.formula-token-color-8 {
-  color: #{v.$slick-formula-token-2-color};
-}
-.formula-token-color-3,
-.formula-token-color-9 {
-  color: #{v.$slick-formula-token-3-color};
-}
-.formula-token-color-4,
-.formula-token-color-10 {
-  color: #{v.$slick-formula-token-4-color};
-}
-.formula-token-color-5 {
-  color: #{v.$slick-formula-token-5-color};
-}
-.formula-token-color-6 {
-  color: #{v.$slick-formula-token-6-color};
+// Ten reference color slots reuse six palette colors (slots 7-10 share colors 1-4).
+@mixin formula-palette($suffix: '') {
+  @for $index from 1 through 6 {
+    $color: map.get($variables, 'slick-formula-token-#{$index}#{$suffix}-color');
+    $tokens: '.formula-token-color-#{$index}';
+    $cells: '.formula-cell-color-#{$index}';
+    @if $index <= 4 {
+      $tokens: '#{$tokens}, .formula-token-color-#{$index + 6}';
+      $cells: '#{$cells}, .formula-cell-color-#{$index + 6}';
+    }
+    #{$tokens} {
+      color: $color;
+    }
+    #{$cells} {
+      --formula-reference-color: #{$color};
+      background-color: map.get($variables, 'slick-formula-token-#{$index}#{$suffix}-background-color') !important;
+      box-shadow: inset 0 0 0 2px $color !important;
+    }
+  }
+
+  // Declared after the palette so edge-only range outlines replace the single-cell outline.
+  .formula-ref-range {
+    box-shadow:
+      inset 0 var(--formula-ref-top, 0px) var(--formula-reference-color),
+      inset 0 var(--formula-ref-bottom, 0px) var(--formula-reference-color),
+      inset var(--formula-ref-left, 0px) 0 var(--formula-reference-color),
+      inset var(--formula-ref-right, 0px) 0 var(--formula-reference-color) !important;
+  }
 }
 
-.formula-cell-color-1,
-.formula-cell-color-7 {
-  --formula-reference-color: #{v.$slick-formula-token-1-color};
-  background-color: #{v.$slick-formula-token-1-background-color} !important;
-  box-shadow: inset 0 0 0 2px #{v.$slick-formula-token-1-color} !important;
-}
-.formula-cell-color-2,
-.formula-cell-color-8 {
-  --formula-reference-color: #{v.$slick-formula-token-2-color};
-  background-color: #{v.$slick-formula-token-2-background-color} !important;
-  box-shadow: inset 0 0 0 2px #{v.$slick-formula-token-2-color} !important;
-}
-.formula-cell-color-3,
-.formula-cell-color-9 {
-  --formula-reference-color: #{v.$slick-formula-token-3-color};
-  background-color: #{v.$slick-formula-token-3-background-color} !important;
-  box-shadow: inset 0 0 0 2px #{v.$slick-formula-token-3-color} !important;
-}
-.formula-cell-color-4,
-.formula-cell-color-10 {
-  --formula-reference-color: #{v.$slick-formula-token-4-color};
-  background-color: #{v.$slick-formula-token-4-background-color} !important;
-  box-shadow: inset 0 0 0 2px #{v.$slick-formula-token-4-color} !important;
-}
-.formula-cell-color-5 {
-  --formula-reference-color: #{v.$slick-formula-token-5-color};
-  background-color: #{v.$slick-formula-token-5-background-color} !important;
-  box-shadow: inset 0 0 0 2px #{v.$slick-formula-token-5-color} !important;
-}
-.formula-cell-color-6 {
-  --formula-reference-color: #{v.$slick-formula-token-6-color};
-  background-color: #{v.$slick-formula-token-6-background-color} !important;
-  box-shadow: inset 0 0 0 2px #{v.$slick-formula-token-6-color} !important;
-}
-
-.formula-ref-range {
-  box-shadow:
-    inset 0 var(--formula-ref-top, 0px) var(--formula-reference-color),
-    inset 0 var(--formula-ref-bottom, 0px) var(--formula-reference-color),
-    inset var(--formula-ref-left, 0px) 0 var(--formula-reference-color),
-    inset var(--formula-ref-right, 0px) 0 var(--formula-reference-color) !important;
-}
+@include formula-palette;
 
 .formula-ref-top {
   --formula-ref-top: 2px;
@@ -180,37 +119,5 @@
     border-color: var(--slick-excel-col-prefix-border-color, #{v.$slick-excel-col-prefix-dark-border-color});
   }
 
-  @for $index from 1 through 6 {
-    $color: map.get(meta.module-variables('v'), 'slick-formula-token-#{$index}-dark-color');
-    $background: map.get(meta.module-variables('v'), 'slick-formula-token-#{$index}-dark-background-color');
-
-    .formula-token-color-#{$index} {
-      color: $color;
-    }
-    .formula-cell-color-#{$index} {
-      --formula-reference-color: #{$color};
-      background-color: $background !important;
-      box-shadow: inset 0 0 0 2px $color !important;
-    }
-
-    @if $index <= 4 {
-      .formula-token-color-#{$index + 6} {
-        color: $color;
-      }
-      .formula-cell-color-#{$index + 6} {
-        --formula-reference-color: #{$color};
-        background-color: $background !important;
-        box-shadow: inset 0 0 0 2px $color !important;
-      }
-    }
-  }
-
-  // Keep edge-only shadows above the dark palette's single-cell outline.
-  .formula-ref-range {
-    box-shadow:
-      inset 0 var(--formula-ref-top, 0px) var(--formula-reference-color),
-      inset 0 var(--formula-ref-bottom, 0px) var(--formula-reference-color),
-      inset var(--formula-ref-left, 0px) 0 var(--formula-reference-color),
-      inset var(--formula-ref-right, 0px) 0 var(--formula-reference-color) !important;
-  }
+  @include formula-palette('-dark');
 }
