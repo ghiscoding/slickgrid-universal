@@ -13,7 +13,6 @@ import {
 } from './formula-reference.js';
 
 export interface FormulaEditorParams {
-  debug?: boolean;
   formulaFunctionList?: string[];
   /** Validate calculation errors before committing; disabled by default. */
   validateFormulas?: boolean;
@@ -60,7 +59,6 @@ export class FormulaCellEditor implements Editor {
   protected _redoStack: Array<{ value: string; caret: number }> = [];
   protected _formulaRefColorCache: FormulaReferenceColorCache = new FormulaReferenceColorCache();
   protected _bindEventService: BindingEventService = new BindingEventService();
-  protected _debug = false;
   protected readonly _autocompleteId: string;
 
   protected _initialLoadComplete = false; // Skip sync on first focusin during editor load
@@ -75,10 +73,6 @@ export class FormulaCellEditor implements Editor {
   }
 
   init(): void {
-    // Extract debug flag from editor params
-    const editorParams = this.args.column.editor?.params as FormulaEditorParams | undefined;
-    this._debug = editorParams?.debug ?? false;
-
     this._editorElm = createDomElement('div', { className: 'formula-editor-input' });
     this._editorElm.setAttribute('contenteditable', 'plaintext-only');
     this._editorElm.setAttribute('role', 'textbox');
@@ -174,7 +168,7 @@ export class FormulaCellEditor implements Editor {
   }
 
   protected handleInput(): void {
-    const nextValue = (this._editorElm.textContent || '').replace(/\u00a0/g, ' ');
+    const nextValue = this.readEditorText();
     if (this._isComposing) {
       this._plainTextValue = nextValue;
       this.publishFormulaInput();
@@ -206,8 +200,7 @@ export class FormulaCellEditor implements Editor {
 
   protected handleCompositionEnd(): void {
     this._isComposing = false;
-    const value = (this._editorElm.textContent || '').replace(/\u00a0/g, ' ');
-    this.processInputChange(this._compositionStartValue, value);
+    this.processInputChange(this._compositionStartValue, this.readEditorText());
   }
 
   protected handlePaste(event: ClipboardEvent): void {
@@ -271,85 +264,65 @@ export class FormulaCellEditor implements Editor {
   }
 
   protected handleKeydown(event: KeyboardEvent): void {
-    // Keep Select-All scoped to the formula editor.
-    // Let browser default behavior select editor content, but stop SlickGrid from handling Ctrl/Cmd+A.
-    if ((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === 'a') {
-      this.stopKeyboardEvent(event, false);
+    const isShortcut = (event.ctrlKey || event.metaKey) && !event.altKey;
+    const shortcutKey = isShortcut ? event.key.toLowerCase() : '';
+
+    // Keep Select-All scoped to the formula editor: let the browser select editor content, but stop SlickGrid handling it.
+    if (shortcutKey === 'a') {
+      this.stopEvent(event, false);
       return;
     }
 
-    if ((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === 'z') {
+    if (shortcutKey === 'z') {
       const stack = event.shiftKey ? this._redoStack : this._undoStack;
       if (stack.length) {
-        this.stopKeyboardEvent(event);
+        this.stopEvent(event);
         this.applyInputHistory(event.shiftKey);
       }
       return;
     }
 
-    // Handle copy/cut to ensure we copy plain text only, not HTML spans
-    if ((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === 'c') {
-      this.stopKeyboardEvent(event);
-      const plainText = this.getClipboardSelection().text;
-      navigator.clipboard.writeText(plainText).catch(() => {
-        // Fallback for older browsers
-      });
-      return;
-    }
-
-    if ((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === 'x') {
-      this.stopKeyboardEvent(event);
-      const { text: plainText, start, end } = this.getClipboardSelection();
-      navigator.clipboard.writeText(plainText).catch(() => {
-        // Fallback for older browsers
-      });
-      const value = (this._editorElm.textContent || '').replace(/\u00a0/g, ' ');
-      this._undoStack.push({ value, caret: start });
-      this._redoStack = [];
-      this._plainTextValue = `${value.slice(0, start)}${value.slice(end)}`;
-      this._editorElm.textContent = this._plainTextValue;
-      this._isValueTouched = true;
-      this.buildFormulaReferenceColorCache();
-      this.renderTokens();
-      this.restoreCaretOffset(start);
-      this.publishFormulaInput();
+    // Copy/cut plain text only, not token HTML.
+    if (shortcutKey === 'c' || shortcutKey === 'x') {
+      this.stopEvent(event);
+      const { text, start, end } = this.getClipboardSelection();
+      navigator.clipboard.writeText(text).catch(() => {});
+      if (shortcutKey === 'x') {
+        const value = this.readEditorText();
+        this._undoStack.push({ value, caret: start });
+        this._redoStack = [];
+        this.setEditorText(`${value.slice(0, start)}${value.slice(end)}`, start);
+      }
       return;
     }
 
     if (this._autocompleteItems.length > 0) {
-      if (event.key === 'ArrowDown') {
-        this.stopKeyboardEvent(event);
-        this._autocompleteSelectedIdx = (this._autocompleteSelectedIdx + 1) % this._autocompleteItems.length;
-        this.renderAutocompleteItems();
-        return;
-      }
-
-      if (event.key === 'ArrowUp') {
-        this.stopKeyboardEvent(event);
-        this._autocompleteSelectedIdx =
-          (this._autocompleteSelectedIdx - 1 + this._autocompleteItems.length) % this._autocompleteItems.length;
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        this.stopEvent(event);
+        const count = this._autocompleteItems.length;
+        this._autocompleteSelectedIdx = (this._autocompleteSelectedIdx + (event.key === 'ArrowDown' ? 1 : count - 1)) % count;
         this.renderAutocompleteItems();
         return;
       }
 
       if (event.key === 'Enter' || event.key === 'Tab') {
-        this.stopKeyboardEvent(event);
+        this.stopEvent(event);
         this.selectAutocompleteItem(this._autocompleteItems[this._autocompleteSelectedIdx]);
         return;
       }
 
       if (event.key === 'Escape') {
-        this.stopKeyboardEvent(event);
+        this.stopEvent(event);
         this.hideAutocomplete();
         return;
       }
     }
 
-    if ((event.ctrlKey || event.metaKey) && !event.altKey && !event.shiftKey && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
+    if (isShortcut && !event.shiftKey && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
       const text = this.getPlainTextValue();
       const tokenRanges = this.getFormulaReferenceTokenRanges(text);
       if (tokenRanges.length > 0) {
-        this.stopKeyboardEvent(event);
+        this.stopEvent(event);
 
         const caretOffset = this.getCaretOffset();
         const previousToken = tokenRanges.filter((range) => range.start < caretOffset).pop();
@@ -364,7 +337,7 @@ export class FormulaCellEditor implements Editor {
     }
 
     if (event.key === 'Home' || event.key === 'End') {
-      this.stopKeyboardEvent(event);
+      this.stopEvent(event);
       this.moveCaretToOffset(event.key === 'Home' ? 0 : this.getPlainTextValue().length);
       return;
     }
@@ -375,19 +348,13 @@ export class FormulaCellEditor implements Editor {
     }
 
     if (event.key === 'Enter') {
-      this.stopKeyboardEvent(event);
-      this._isExitingEditor = true;
-      this.clearReferenceSelectionHighlight();
-      const didCommit = this.args.grid.getEditorLock?.()?.commitCurrentEdit?.();
-      if (didCommit === false) {
-        this.args.commitChanges();
-        this.restoreEditorAfterRejectedCommit();
-      }
+      this.stopEvent(event);
+      this.commitEdit();
     } else if (event.key === 'Tab') {
       const grid = this.args.grid;
       const isShiftTab = event.shiftKey;
 
-      this.stopKeyboardEvent(event);
+      this.stopEvent(event);
 
       if (this._isOpenedByTabKey && !this._isValueTouched) {
         this._isOpenedByTabKey = false;
@@ -396,13 +363,7 @@ export class FormulaCellEditor implements Editor {
 
       this._isOpenedByTabKey = false;
       this._suppressInitialTabBlur = false;
-      this._isExitingEditor = true;
-      this.clearReferenceSelectionHighlight();
-      const didCommit = this.args.grid.getEditorLock?.()?.commitCurrentEdit?.();
-      if (didCommit === false) {
-        this.args.commitChanges();
-        this.restoreEditorAfterRejectedCommit();
-      }
+      const didCommit = this.commitEdit();
 
       this._tabNavigateTimer = setTimeout(() => {
         if (didCommit === false) {
@@ -424,7 +385,19 @@ export class FormulaCellEditor implements Editor {
     }
   }
 
-  protected stopKeyboardEvent(event: KeyboardEvent, preventDefault = true): void {
+  /** Commit through the editor lock; when validation keeps the editor open, resume editing. */
+  protected commitEdit(): boolean | undefined {
+    this._isExitingEditor = true;
+    this.clearReferenceSelectionHighlight();
+    const didCommit = this.args.grid.getEditorLock?.()?.commitCurrentEdit?.();
+    if (didCommit === false) {
+      this.args.commitChanges();
+      this.restoreEditorAfterRejectedCommit();
+    }
+    return didCommit;
+  }
+
+  protected stopEvent(event: Event, preventDefault = true): void {
     if (preventDefault) {
       event.preventDefault();
     }
@@ -437,13 +410,22 @@ export class FormulaCellEditor implements Editor {
     const target = redo ? this._undoStack : this._redoStack;
     const state = source.pop()!;
     target.push({ value: this._plainTextValue, caret: this.getCaretOffset() });
-    this._plainTextValue = state.value;
-    this._editorElm.textContent = state.value;
+    this.setEditorText(state.value, state.caret);
+  }
+
+  /** Replace the editor text, then refresh reference colors, tokens, caret and listeners. */
+  protected setEditorText(text: string, caret: number): void {
+    this._plainTextValue = text;
+    this._editorElm.textContent = text;
     this._isValueTouched = true;
     this.buildFormulaReferenceColorCache();
     this.renderTokens();
-    this.restoreCaretOffset(state.caret);
+    this.restoreCaretOffset(caret);
     this.publishFormulaInput();
+  }
+
+  protected readEditorText(): string {
+    return (this._editorElm.textContent as string).replace(/\u00a0/g, ' ');
   }
 
   protected restoreEditorAfterRejectedCommit(): void {
@@ -467,9 +449,7 @@ export class FormulaCellEditor implements Editor {
       return;
     }
 
-    event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
+    this.stopEvent(event);
 
     this._isDraggingGridRefSelection = true;
     this._suppressNextGridClick = true;
@@ -493,9 +473,7 @@ export class FormulaCellEditor implements Editor {
       return;
     }
 
-    event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
+    this.stopEvent(event);
     clearTimeout(this._suppressGridClickResetTimer);
     this._suppressNextGridClick = false;
   };
@@ -510,9 +488,7 @@ export class FormulaCellEditor implements Editor {
       return;
     }
 
-    event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
+    this.stopEvent(event);
 
     this.replaceReferenceRangeFromGridSelection(this._referenceRangeAnchorCell, cell);
   };
@@ -522,9 +498,7 @@ export class FormulaCellEditor implements Editor {
       return;
     }
 
-    event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
+    this.stopEvent(event);
 
     this._isDraggingGridRefSelection = false;
     // Keep click suppression active through the click phase fired right after mouseup.
@@ -541,27 +515,25 @@ export class FormulaCellEditor implements Editor {
     return this._plainTextValue;
   }
 
+  /** Selected editor text and offsets; without a selection inside the editor, the whole formula. */
   protected getClipboardSelection(): { text: string; start: number; end: number } {
-    const value = (this._editorElm.textContent || '').replace(/\u00a0/g, ' ');
+    const value = this.readEditorText();
     const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) {
-      return { text: value.replace(/\u00a0/g, ' '), start: 0, end: value.length };
+    const range = selection?.rangeCount ? selection.getRangeAt(0) : undefined;
+    if (!range || range.collapsed || !this._editorElm.contains(range.startContainer) || !this._editorElm.contains(range.endContainer)) {
+      return { text: value, start: 0, end: value.length };
     }
-
-    const range = selection.getRangeAt(0);
-    if (range.collapsed || !this._editorElm.contains(range.startContainer) || !this._editorElm.contains(range.endContainer)) {
-      return { text: value.replace(/\u00a0/g, ' '), start: 0, end: value.length };
-    }
-
-    const startRange = range.cloneRange();
-    startRange.selectNodeContents(this._editorElm);
-    startRange.setEnd(range.startContainer, range.startOffset);
-    const endRange = range.cloneRange();
-    endRange.selectNodeContents(this._editorElm);
-    endRange.setEnd(range.endContainer, range.endOffset);
-    const start = startRange.toString().length;
-    const end = endRange.toString().length;
-    return { text: range.toString().replace(/\u00a0/g, ' '), start, end };
+    const offsetOf = (container: Node, offset: number) => {
+      const prefix = range.cloneRange();
+      prefix.selectNodeContents(this._editorElm);
+      prefix.setEnd(container, offset);
+      return prefix.toString().length;
+    };
+    return {
+      text: range.toString().replace(/\u00a0/g, ' '),
+      start: offsetOf(range.startContainer, range.startOffset),
+      end: offsetOf(range.endContainer, range.endOffset),
+    };
   }
 
   protected publishFormulaInput(): void {
@@ -590,32 +562,17 @@ export class FormulaCellEditor implements Editor {
   }
 
   protected shouldCaptureGridReferenceSelection(event: MouseEvent): boolean {
-    if (this._isDestroyed || this._isExitingEditor || event.button !== 0) {
-      return false;
-    }
-
-    if (!this._editorElm?.isConnected) {
-      return false;
-    }
-
-    const plainText = this.getPlainTextValue().trimStart();
-    if (!plainText.startsWith('=')) {
-      return false;
-    }
-
-    if (!this.isEventInsideGrid(event)) {
-      return false;
-    }
-
-    const eventTarget = event.target as Node | null;
-    if (eventTarget && this._editorElm.contains(eventTarget)) {
-      return false;
-    }
-    if (eventTarget && this._autocompleteElm?.contains(eventTarget)) {
-      return false;
-    }
-
-    return !!this.args.grid.getCellFromEvent(event);
+    const target = event.target as Node | null;
+    return (
+      !this._isDestroyed &&
+      !this._isExitingEditor &&
+      event.button === 0 &&
+      !!this._editorElm?.isConnected &&
+      this.getPlainTextValue().trimStart().startsWith('=') &&
+      this.isEventInsideGrid(event) &&
+      !(target && (this._editorElm.contains(target) || this._autocompleteElm?.contains(target))) &&
+      !!this.args.grid.getCellFromEvent(event)
+    );
   }
 
   protected isEventInsideGrid(event: MouseEvent): boolean {
@@ -634,15 +591,9 @@ export class FormulaCellEditor implements Editor {
   }
 
   protected getReferenceTokenRangeAtCaretOrUndefined(): { start: number; end: number } | undefined {
-    const text = this.getPlainTextValue();
     const caretOffset = this.getCaretOffset();
-    for (const token of findFormulaReferenceTokens(text)) {
-      if (caretOffset >= token.start && caretOffset <= token.end) {
-        return { start: token.start, end: token.end };
-      }
-    }
-
-    return undefined;
+    const token = findFormulaReferenceTokens(this.getPlainTextValue()).find(({ start, end }) => caretOffset >= start && caretOffset <= end);
+    return token && { start: token.start, end: token.end };
   }
 
   protected syncReferenceSelectionFromCaret(): void {
@@ -650,14 +601,9 @@ export class FormulaCellEditor implements Editor {
       return;
     }
 
-    const rawFormulaText = this.getPlainTextValue().trimStart();
-    if (!rawFormulaText.startsWith('=')) {
-      this._referenceEditRange = undefined;
-      this.clearReferenceSelectionHighlight();
-      return;
-    }
-
-    const activeReferenceRange = this.getReferenceTokenRangeAtCaretOrUndefined();
+    const activeReferenceRange = this.getPlainTextValue().trimStart().startsWith('=')
+      ? this.getReferenceTokenRangeAtCaretOrUndefined()
+      : undefined;
     if (!activeReferenceRange) {
       this._referenceEditRange = undefined;
       this.clearReferenceSelectionHighlight();
@@ -675,7 +621,7 @@ export class FormulaCellEditor implements Editor {
 
     this._isSyncingReferenceFromCaret = true;
     try {
-      this.renderGridSelectionHighlight(parsedRange.startCell, parsedRange.endCell);
+      this.renderSelectionModelHighlight(parsedRange.startCell, parsedRange.endCell);
     } finally {
       this._isSyncingReferenceFromCaret = false;
     }
@@ -684,22 +630,10 @@ export class FormulaCellEditor implements Editor {
   protected parseExcelReferenceCellRange(
     referenceToken: string
   ): { startCell: { row: number; cell: number }; endCell: { row: number; cell: number } } | undefined {
-    const normalizedReferenceToken = normalizeFormulaReferenceToken(referenceToken);
-    if (!normalizedReferenceToken) {
-      return undefined;
-    }
-
-    const [startToken, endToken] = normalizedReferenceToken.includes(':')
-      ? normalizedReferenceToken.split(':', 2)
-      : [normalizedReferenceToken, normalizedReferenceToken];
-
+    const [startToken, endToken = startToken] = normalizeFormulaReferenceToken(referenceToken).split(':', 2);
     const startCell = parseExcelReferenceCell(startToken);
     const endCell = parseExcelReferenceCell(endToken);
-    if (!startCell || !endCell) {
-      return undefined;
-    }
-
-    return { startCell, endCell };
+    return startCell && endCell ? { startCell, endCell } : undefined;
   }
 
   protected replaceReferenceRangeFromGridSelection(startCell: { row: number; cell: number }, endCell: { row: number; cell: number }): void {
@@ -712,16 +646,10 @@ export class FormulaCellEditor implements Editor {
     const nextText = `${text.slice(0, safeStart)}${nextReference}${text.slice(safeEnd)}`;
     this._referenceEditRange = { start: safeStart, end: safeStart + nextReference.length };
 
-    this._plainTextValue = nextText; // Keep in sync
-    this._editorElm.textContent = nextText;
-    this.buildFormulaReferenceColorCache();
-    this.renderTokens();
     this.args.grid.focus('internal');
     this._editorElm.focus();
-    this.restoreCaretOffset(this._referenceEditRange.end);
-    this._isValueTouched = true;
-    this.publishFormulaInput();
-    this.renderGridSelectionHighlight(startCell, endCell);
+    this.setEditorText(nextText, this._referenceEditRange.end);
+    this.renderSelectionModelHighlight(startCell, endCell);
   }
 
   protected resolveReferenceEditRangeForGridSelection(): { start: number; end: number } | undefined {
@@ -761,17 +689,8 @@ export class FormulaCellEditor implements Editor {
   }
 
   protected getSingleReferenceTokenRangeOrUndefined(): { start: number; end: number } | undefined {
-    const text = this.getPlainTextValue();
-    const tokens = findFormulaReferenceTokens(text);
-    if (!tokens.length) {
-      return undefined;
-    }
-
-    if (tokens.length > 1) {
-      return undefined;
-    }
-
-    return { start: tokens[0].start, end: tokens[0].end };
+    const tokens = findFormulaReferenceTokens(this.getPlainTextValue());
+    return tokens.length === 1 ? { start: tokens[0].start, end: tokens[0].end } : undefined;
   }
 
   protected resolveReferenceSelectionAnchorCell(
@@ -783,38 +702,15 @@ export class FormulaCellEditor implements Editor {
     }
 
     const { startCell, endCell } = existingReferenceCellRange;
-    if (this.cellsAreEqual(selectedCell, startCell)) {
-      return endCell;
-    }
-    if (this.cellsAreEqual(selectedCell, endCell)) {
-      return startCell;
-    }
-
-    return selectedCell;
-  }
-
-  protected cellsAreEqual(cellA: { row: number; cell: number }, cellB: { row: number; cell: number }): boolean {
-    return cellA.row === cellB.row && cellA.cell === cellB.cell;
+    const isSelected = (cell: { row: number; cell: number }) => cell.row === selectedCell.row && cell.cell === selectedCell.cell;
+    return isSelected(startCell) ? endCell : isSelected(endCell) ? startCell : selectedCell;
   }
 
   protected buildExcelReferenceFromCellRange(startCell: { row: number; cell: number }, endCell: { row: number; cell: number }): string {
-    const startColIdx = Math.min(startCell.cell, endCell.cell);
-    const endColIdx = Math.max(startCell.cell, endCell.cell);
-    const startRowIdx = Math.min(startCell.row, endCell.row);
-    const endRowIdx = Math.max(startCell.row, endCell.row);
-
-    // getExcelColumnNameByIndex expects a 1-based column number, grid cell index is 0-based
-    const startRef = `${getExcelColumnNameByIndex(startColIdx + 1)}${startRowIdx + 1}`;
-    const endRef = `${getExcelColumnNameByIndex(endColIdx + 1)}${endRowIdx + 1}`;
+    const toRef = (cell: number, row: number) => `${getExcelColumnNameByIndex(cell + 1)}${row + 1}`;
+    const startRef = toRef(Math.min(startCell.cell, endCell.cell), Math.min(startCell.row, endCell.row));
+    const endRef = toRef(Math.max(startCell.cell, endCell.cell), Math.max(startCell.row, endCell.row));
     return startRef === endRef ? startRef : `${startRef}:${endRef}`;
-  }
-
-  protected renderGridSelectionHighlight(startCell: { row: number; cell: number }, endCell: { row: number; cell: number }): void {
-    // The grid already has persistent formula reference colors applied from applyFormulaReferenceCellColors()
-    // This method just manages the selection model highlighting, not the colors
-    // Use the selection model to show a blue highlight box around the reference
-    // The persistent colors are already applied by applyFormulaReferenceCellColors()
-    this.renderSelectionModelHighlight(startCell, endCell);
   }
 
   /**
@@ -1135,8 +1031,7 @@ export class FormulaCellEditor implements Editor {
       return;
     }
 
-    // Read directly from DOM to handle cases where textContent was set externally (e.g., in tests)
-    const text = (this._editorElm.textContent || '').replace(/\u00a0/g, ' ');
+    const text = this.readEditorText();
     const caretOffset = this.getCaretOffset();
     const textBeforeCaret = text.slice(0, caretOffset);
     const textAfterCaret = text.slice(caretOffset).replace(/^[A-Za-z0-9_]*/, '');
@@ -1157,15 +1052,7 @@ export class FormulaCellEditor implements Editor {
       ? replaceStart + functionName.length + whitespacePrefixLength + 1
       : replaceStart + functionName.length + 1;
 
-    this._plainTextValue = nextText; // Keep in sync
-    this._editorElm.textContent = nextText;
-    // Manually update _plainTextValue from DOM after setting textContent to ensure sync
-    this._plainTextValue = (this._editorElm.textContent || '').replace(/\u00a0/g, ' ');
-    this.buildFormulaReferenceColorCache();
-    this.renderTokens();
-    this.restoreCaretOffset(nextCaret);
-    this._isValueTouched = true;
     this.hideAutocomplete();
-    this.publishFormulaInput();
+    this.setEditorText(nextText, nextCaret);
   }
 }
