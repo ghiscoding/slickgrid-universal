@@ -159,10 +159,13 @@ describe('FormulaService', () => {
     const service = new FormulaService({ autoAssignEditor: false });
     service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
     service.setFormula('a', 'total', '=A2');
-    const context = {
+    const context: FormulaExcelExportContext = {
       rowId: 'a',
       columnId: 'total',
       columnIds: ['value', 'total'],
+      dataRowIdx: 0,
+      datasetIdPropertyName: 'id',
+      gridOptions: {},
       rowIds: ['a', 'b'],
       excelRowOffset: 3,
       referenceLookups: {
@@ -177,7 +180,7 @@ describe('FormulaService', () => {
           ['b', 1],
         ]),
       },
-    } as FormulaExcelExportContext;
+    };
     expect(service.getExcelFormula(context)).toBe('A4');
     expect(service.getExcelFormula({ ...context, excelRowOffset: 5 })).toBe('A6');
     expect(service.getExcelFormula({ ...context, groupedRowPositions: new Map([['b', 9]]), groupedColumnOffset: 1 })).toBe('B9');
@@ -1124,7 +1127,7 @@ describe('FormulaService', () => {
   });
 
   it('reconciles stored formulas when dataset synchronization receives plain values', () => {
-    const items = [{ id: 'a', value: '=A1*2' }];
+    const items: Array<{ id: string; value: string | number }> = [{ id: 'a', value: '=A1*2' }];
     const columns: Column[] = [{ id: 'value', field: 'value', allowFormula: true }];
     const service = new FormulaService({ autoAssignEditor: false });
     service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
@@ -1446,7 +1449,7 @@ describe('FormulaService', () => {
     expect(formatted).toBeInstanceOf(HTMLElement);
     expect((formatted as HTMLElement).textContent).toBe('6');
     service.dispose();
-    const replacement = [{ id: 'total', field: 'total', allowFormula: true }];
+    const replacement: Column[] = [{ id: 'total', field: 'total', allowFormula: true }];
     grid.setColumns(replacement);
     expect(replacement[0].editor).toBeUndefined();
   });

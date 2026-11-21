@@ -300,11 +300,11 @@ describe('formula drag-fill', () => {
     ];
     let editCommand: any;
     const formulas = new Map([['r1', '=A1+1']]);
-    const setFormula = vi.fn((rowId: string, _columnId: string, formula?: string) => {
+    const setFormula = vi.fn((rowId: number | string, _columnId: number | string, formula?: string | null) => {
       if (formula) {
-        formulas.set(rowId, formula);
+        formulas.set(String(rowId), formula);
       } else {
-        formulas.delete(rowId);
+        formulas.delete(String(rowId));
       }
     });
     const updateItems = vi.fn();
