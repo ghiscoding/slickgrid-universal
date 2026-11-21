@@ -72,6 +72,14 @@ export function formulaLogicalCondition(value: unknown): boolean | string {
   return FORMULA_ERROR.VALUE;
 }
 
+export function formulaTextValue(value: unknown): string {
+  value = unwrapFormulaReference(value);
+  if (value instanceof Date) {
+    return String(formulaDateToSerial(value));
+  }
+  return typeof value === 'boolean' ? (value ? 'TRUE' : 'FALSE') : String(value ?? '');
+}
+
 export function calculateFormulaPower(base: number, exponent: number): number | string {
   if (base === 0 && exponent < 0) {
     return FORMULA_ERROR.DIV0;
@@ -239,14 +247,7 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
     return new Date(now.getFullYear(), now.getMonth(), now.getDate());
   };
   const CONCAT = (...args: unknown[]) =>
-    !args.length || args.length > 253
-      ? FORMULA_ERROR.VALUE
-      : flattenFormulaFunctionArgs(args)
-          .map((arg) => {
-            const value = unwrapFormulaReference(arg);
-            return typeof value === 'boolean' ? (value ? 'TRUE' : 'FALSE') : String(value ?? '');
-          })
-          .join('');
+    !args.length || args.length > 253 ? FORMULA_ERROR.VALUE : flattenFormulaFunctionArgs(args).map(formulaTextValue).join('');
   const COUNT = (...args: unknown[]) =>
     !args.length || args.length > 255
       ? FORMULA_ERROR.VALUE

@@ -23,6 +23,7 @@ import {
   formulaLiteralText,
   formulaLogicalCondition,
   formulaReference,
+  formulaTextValue,
   isFormulaLiteralText,
   isFormulaReference,
   unwrapFormulaReference,
@@ -751,6 +752,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   }
 
   registerCustomFunction(functionName: string, functionInput: FormulaCustomFunctionInput): void {
+    if (!/^[A-Z_][A-Z0-9_]*$/i.test(functionName)) {
+      throw new TypeError(`Invalid formula function name: ${functionName}`);
+    }
     const normalizedCallback = this.normalizeCustomFunctionInput(functionInput);
     if (!normalizedCallback) {
       return;
@@ -1418,8 +1422,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         if (!rightOperand.isLiteral && isFormulaErrorCode(right)) {
           return right;
         }
-        const textValue = (value: unknown) => (typeof value === 'boolean' ? (value ? 'TRUE' : 'FALSE') : String(value ?? ''));
-        const concatenated = `${textValue(left)}${textValue(right)}`;
+        const concatenated = `${formulaTextValue(left)}${formulaTextValue(right)}`;
         left = isFormulaErrorCode(concatenated) ? formulaLiteralText(concatenated) : concatenated;
       }
       return left;

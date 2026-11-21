@@ -102,6 +102,8 @@ describe('createFormulaFunctionRegistry', () => {
       expect(registry.get(name)?.()).toBe(FORMULA_ERROR.VALUE);
     }
     expect(registry.get('CONCAT')?.('')).toBe('');
+    const date = new Date(1900, 0, 1);
+    expect(registry.get('CONCAT')?.('date:', date)).toBe(`date:${formulaDateToSerial(date)}`);
     expect(registry.get('PRODUCT')?.(formulaReference(null))).toBe(0);
     expect(registry.get('PRODUCT')?.([formulaReference(null), formulaReference('')])).toBe(0);
   });

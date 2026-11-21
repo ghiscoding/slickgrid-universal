@@ -2,6 +2,7 @@ import { Aggregators, Formatters, SlickDataView, SlickEvent, SlickRange } from '
 import type { Column, FormulaExcelExportContext } from '@slickgrid-universal/common';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { FORMULA_ERROR } from '../formula-errors.js';
+import { formulaDateToSerial } from '../formula-functions.js';
 import { FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY } from '../formula-reference.js';
 import { FormulaCellEditor } from '../formula.cellEditor.js';
 import { translateFormulaReferences } from '../formula.drag-fill.js';
@@ -510,6 +511,22 @@ describe('FormulaService', () => {
     expect(evaluate('=1E+')).toBe(FORMULA_ERROR.PARSE);
     expect(evaluate('=1.2.3')).toBe(FORMULA_ERROR.PARSE);
     expect(evaluate('=.')).toBe(FORMULA_ERROR.PARSE);
+  });
+
+  it('formats dates as spreadsheet serials during concatenation and rejects invalid custom names', () => {
+    const date = new Date(2024, 0, 2, 12);
+    const service = new FormulaService({ autoAssignEditor: false, customFunctions: { VALID_NAME: () => 1 } });
+    service.init({
+      getColumns: () => [{ id: 'value', field: 'value' }],
+      getData: () => ({ getItems: () => [{ id: 'a', value: date }] }),
+      getOptions: () => ({}),
+    } as any);
+    const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
+
+    expect(evaluate('=A1&"x"')).toBe(`${formulaDateToSerial(date)}x`);
+    expect(evaluate('=CONCAT(A1,"x")')).toBe(`${formulaDateToSerial(date)}x`);
+    expect(() => service.registerCustomFunction('BAD-NAME', () => 2)).toThrow(TypeError);
+    expect(() => service.registerCustomFunction('', () => 2)).toThrow(TypeError);
   });
 
   it('evaluates new math functions and exports built-in aliases as Excel functions', () => {

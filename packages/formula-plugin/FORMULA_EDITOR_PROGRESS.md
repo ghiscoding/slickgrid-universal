@@ -1,6 +1,7 @@
 # Formula Editor Plugin Progress
 
 ## Handoff update (2026-11-20)
+- Dates now concatenate as Excel serial text instead of JavaScript date strings, and invalid runtime custom-function names throw an explicit `TypeError` instead of being silently ignored. Added focused function/service coverage.
 - Volatile `RAND` (including `RANDOM`/`RAN`), `NOW` and `TODAY` results are now stable for one synchronous calculation pass, including repeated dependency and grouped-total reads. The pass boundary re-evaluates them, while custom overrides of those names retain normal uncached behavior. Next: blank PRODUCT/COUNTA edge cases.
 - CI cleanup: made the shared reference-token regex internal after quote-aware consumers moved to `findFormulaReferenceTokens`. Restored separate Aurelia ambient declarations for HTML and CSS resources so the framework and demo do not contain duplicate default exports. Fallow reports no issues.
 - Formula evaluation now reuses dependency results, the DataView item array, row/column indexes and the custom-function registry during one synchronous render pass. DataView row/column events, formula changes and service re-init invalidate those caches; top-level requested formulas still execute again, preserving freshness. Added shared-dependency and synchronous-update coverage; all 183 Formula Plugin tests pass with 100% statement and line coverage. Next: volatile `RAND`, `NOW` and `TODAY` semantics.
