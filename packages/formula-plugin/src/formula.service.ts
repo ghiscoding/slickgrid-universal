@@ -1052,7 +1052,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
 
     const references = new Map<string, unknown>();
     let referenceSequence = 0;
-    const referenceLiteral = (value: unknown, row?: number) => {
+    const referenceLiteral = (value: unknown) => {
       let name: string;
       do {
         name = `__FORMULA_CELL_${referenceSequence++}`;
@@ -1066,7 +1066,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
             : typeof value === 'object' && value !== null && !(value instanceof Date)
               ? String(value)
               : value;
-      references.set(name, formulaReference(normalizedValue, row));
+      references.set(name, formulaReference(normalizedValue));
       return name;
     };
 
@@ -1077,9 +1077,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
           return match;
         }
         const rangeValues = this.resolveExcelRangeValues(startCol, Number(startRow), endCol, Number(endRow), context);
-        const width = Math.abs(getExcelColumnIndexByName(startCol.toUpperCase()) - getExcelColumnIndexByName(endCol.toUpperCase())) + 1;
-        const firstRow = Math.min(Number(startRow), Number(endRow));
-        return `[${rangeValues.map((value, index) => referenceLiteral(value, firstRow + Math.floor(index / width))).join(',')}]`;
+        return `[${rangeValues.map(referenceLiteral).join(',')}]`;
       }
     );
 
@@ -1089,7 +1087,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         const value = cell
           ? this.resolveExcelReferenceValue(getExcelColumnNameByIndex(cell.cell + 1), cell.row + 1, context)
           : FORMULA_ERROR.REF;
-        return referenceLiteral(value, cell?.row);
+        return referenceLiteral(value);
       });
       return `[${values.join(',')}]`;
     }).replace(

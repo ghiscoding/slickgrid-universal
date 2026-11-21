@@ -1,5 +1,9 @@
 # Formula Editor Plugin Progress
 
+## Handoff update (2026-11-21)
+- Scope/size audit (user decision: keep grouping, target AG Grid/Syncfusion parity, measure production LOC only). Consolidated A1 regexes and the quote-aware transform helper, removed the unused `renderFormulaReferenceHighlights`/`extractExcelReferences` API and pass-through input callback, and generated the light/dark palettes from one Sass mixin (shipped CSS about 8% smaller). Net production change: about -166 lines.
+- Removed `SUMPRODUCT` (in neither AG Grid nor Syncfusion) along with the per-reference row tracking that only it used. Two-dimensional helper ranges remain for grouped export and are covered with `SUM`.
+
 ## Handoff update (2026-11-20)
 - Dates now concatenate as Excel serial text instead of JavaScript date strings, and invalid runtime custom-function names throw an explicit `TypeError` instead of being silently ignored. Added focused function/service coverage.
 - Volatile `RAND` (including `RANDOM`/`RAN`), `NOW` and `TODAY` results are now stable for one synchronous calculation pass, including repeated dependency and grouped-total reads. The pass boundary re-evaluates them, while custom overrides of those names retain normal uncached behavior. Next: blank PRODUCT/COUNTA edge cases.
@@ -247,7 +251,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Review current-facing documentation for stale MVP claims and demo references; update the formula guides and all four framework export guides to point to Vanilla Example 48.
 - [x] Complete final validation for changed files, including the formula coercion, error, and date/export regressions: the user reports successful CI and 100% unit-test line coverage.
 - [x] Complete an independent audit of the Formula Editor feature and review its findings.
-- [ ] Fix the independent audit findings and validate each fix and its coverage:
+- [x] Fix the independent audit findings and validate each fix and its coverage:
   - [x] Implement date arithmetic coercion for numeric text, booleans and blank references; add regressions.
   - [x] Prevent stale memoized results after synchronous external data updates; add DataView and grouped-total regressions.
   - [x] Prevent formula-store key collisions for row and column IDs containing `::`; add snapshot and evaluation regressions.
@@ -257,7 +261,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
   - [x] `MIN` and `MAX` can overflow the call stack for multiple large ranges.
   - [x] Numeric literals in scientific notation are rejected.
   - [x] Drag-fill clamps references that cross the first row or column instead of returning `#REF!`.
-- [ ] Fix the second audit findings (2026-11-20), committing and validating each separately:
+- [x] Fix the second audit findings (2026-11-20), committing and validating each separately:
   - [x] Remove the unreachable top-level memo check and unused memo flag left by per-evaluation memoization; restore 100% line coverage.
   - [x] Filtered or paged ungrouped grids map editor A1 rows, highlights and evaluation through unfiltered dataset order instead of displayed rows.
   - [x] Excel export emits single-quoted strings and backslash escapes verbatim; convert string literals to Excel's doubled-quote syntax.
@@ -273,7 +277,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
   - [x] Dates in `&`/`CONCAT` render as JavaScript date strings; invalid custom function names are silently ignored; autocomplete lacks ARIA attributes; drag-fill ignores read-only cells and undo.
 - [x] Evaluate AG Grid parity: an opt-in `validateFormulas` editor param and formula error tooltips.
 - [x] Evaluate editor validation: support editor and column validators and their messages; retain calculation errors in cells instead of automatically blocking formula input.
-- [ ] Deferred enhancements, re-evaluated against AG Grid/Syncfusion scope (2026-11-20):
+- [x] Deferred enhancements, re-evaluated against AG Grid/Syncfusion scope (2026-11-20):
   - [x] Rejected: whole-row reference picking. AG Grid implements it through its Row Numbers column; SlickGrid has no row-number column, so this would require a separate grid feature first.
   - [x] Rejected: whole-column drag-handle expansion. Neither AG Grid's fill handle nor Excel drag-fill does this; double-click fill remains rejected.
   - [x] Rejected: colored handles for resizing reference outlines. Range-endpoint dragging already resizes references; handles would only add a virtualization-aware overlay for visual affordance.

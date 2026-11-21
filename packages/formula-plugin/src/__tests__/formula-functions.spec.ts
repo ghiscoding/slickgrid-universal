@@ -76,21 +76,6 @@ describe('createFormulaFunctionRegistry', () => {
     expect(registry.get('POWER')?.({}, 2)).toBe(FORMULA_ERROR.VALUE);
   });
 
-  it('evaluates SUMPRODUCT using matching dimensions and numeric values', () => {
-    const registry = createFormulaFunctionRegistry(new Map());
-
-    expect(registry.get('SUMPRODUCT')?.([1, 2, 3], 10)).toBe(FORMULA_ERROR.VALUE);
-    expect(registry.get('SUMPRODUCT')?.([1, 2], [3, 4])).toBe(11);
-    expect(registry.get('SUMPRODUCT')?.([2, 3, 4], [10, 20])).toBe(FORMULA_ERROR.VALUE);
-    expect(registry.get('SUMPRODUCT')?.([], [])).toBe(0);
-    expect(registry.get('SUMPRODUCT')?.([1, undefined], [2, 3])).toBe(2);
-    expect(registry.get('SUMPRODUCT')?.([[1], []], [2, 3])).toBe(FORMULA_ERROR.VALUE);
-    expect(registry.get('SUMPRODUCT')?.([true, false, '2', 'bad', {}], [1, 1, 1, 1, 1])).toBe(0);
-    expect(registry.get('SUMPRODUCT')?.(true, 2)).toBe(2);
-    expect(registry.get('SUMPRODUCT')?.('2', 2)).toBe(0);
-    expect(registry.get('SUMPRODUCT')?.()).toBe(FORMULA_ERROR.VALUE);
-  });
-
   it('should evaluate IF and concatenation helpers', () => {
     const registry = createFormulaFunctionRegistry(new Map());
 
@@ -111,7 +96,7 @@ describe('createFormulaFunctionRegistry', () => {
   it('limits the number of arguments without limiting the size of a range', () => {
     const registry = createFormulaFunctionRegistry(new Map());
     const values = Array(255).fill(1);
-    for (const name of ['SUM', 'PRODUCT', 'MIN', 'MAX', 'AVERAGE', 'MEDIAN', 'SUMPRODUCT', 'COUNT', 'COUNTA']) {
+    for (const name of ['SUM', 'PRODUCT', 'MIN', 'MAX', 'AVERAGE', 'MEDIAN', 'COUNT', 'COUNTA']) {
       expect(registry.get(name)?.(...values)).not.toBe(FORMULA_ERROR.VALUE);
       expect(registry.get(name)?.(...values, 1)).toBe(FORMULA_ERROR.VALUE);
     }
@@ -243,7 +228,6 @@ describe('createFormulaFunctionRegistry', () => {
     expect(registry.get('SUM')?.(formulaReference(date))).toBe(45292.5);
     expect(registry.get('AVERAGE')?.([formulaReference(date)])).toBe(45292.5);
     expect(registry.get('ABS')?.(date)).toBe(45292.5);
-    expect(registry.get('SUMPRODUCT')?.([formulaReference(date)], [2])).toBe(90585);
     expect(registry.get('SUMIF')?.([date], date, [2])).toBe(2);
   });
 

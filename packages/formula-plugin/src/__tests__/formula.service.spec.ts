@@ -2519,37 +2519,7 @@ describe('FormulaService', () => {
     expect(service.getEvaluatedCellValue(1, 'total', items[0].total, 0)).toBe(FORMULA_ERROR.VALUE);
   });
 
-  it('should reject SUMPRODUCT with a scalar and a differently sized range', () => {
-    const service = new FormulaService();
-    const columns: Column[] = [
-      { id: 'a', field: 'a' },
-      { id: 'b', field: 'b' },
-      { id: 'c', field: 'c' },
-      { id: 'total', field: 'total', allowFormula: true },
-    ];
-    const items = [
-      { id: 1, a: 0, b: 2, c: 3, total: '=SUMPRODUCT(B1,C1:C3)' },
-      { id: 2, a: 0, b: 0, c: 4, total: 0 },
-      { id: 3, a: 0, b: 0, c: 5, total: 0 },
-    ];
-
-    const gridStub = {
-      getColumns: () => columns,
-      setColumns: (_newCols: Column[]) => undefined,
-      getData: () => ({
-        getItems: () => items,
-        getLength: () => items.length,
-      }),
-      getOptions: () => ({ datasetIdPropertyName: 'id' }),
-    } as any;
-
-    service.init(gridStub);
-    service.setFormula(1, 'total', '=SUMPRODUCT(B1,C1:C3)');
-
-    expect(service.getEvaluatedCellValue(1, 'total', items[0].total, 0)).toBe(FORMULA_ERROR.VALUE);
-  });
-
-  it('keeps SUMPRODUCT range dimensions across row reorder and grouped export', () => {
+  it('keeps two-dimensional range shape across row reorder and grouped export', () => {
     const items = [
       { id: 'a', a: 1, b: 10, c: 3, d: 30, total: '' },
       { id: 'b', a: 2, b: 20, c: 4, d: 40, total: '' },
@@ -2560,12 +2530,10 @@ describe('FormulaService', () => {
     const service = new FormulaService({ autoAssignEditor: false });
     service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
     const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
-    expect(evaluate('=SUMPRODUCT(A1:B2,C1:D2)')).toBe(1111);
-    expect(evaluate('=SUMPRODUCT(A1:B2,A1:A4)')).toBe('#VALUE!');
-    expect(evaluate('=SUMPRODUCT(A1:A3,B1:B2)')).toBe('#VALUE!');
-    service.setFormula('a', 'total', '=SUMPRODUCT(A1:B2,C1:D2)');
+    expect(evaluate('=SUM(A1:B2,C1:D2)')).toBe(110);
+    service.setFormula('a', 'total', '=SUM(A1:B2,C1:D2)');
     items.reverse();
-    expect(service.getEvaluatedCellValue('a', 'total')).toBe(1111);
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe(110);
     const registerFormulaRange = vi.fn().mockReturnValueOnce("'Formula References'!$A$1:$B$2").mockReturnValueOnce("'Formula References'!$A$3:$B$4");
     expect(
       service.getExcelFormula({
@@ -2583,7 +2551,7 @@ describe('FormulaService', () => {
         groupedColumnOffset: 1,
         registerFormulaRange,
       } as any)
-    ).toBe("SUMPRODUCT('Formula References'!$A$1:$B$2,'Formula References'!$A$3:$B$4)");
+    ).toBe("SUM('Formula References'!$A$1:$B$2,'Formula References'!$A$3:$B$4)");
     expect(registerFormulaRange.mock.calls).toEqual([
       [['B8', 'C8', 'B4', 'C4'], 2],
       [['D8', 'E8', 'D4', 'E4'], 2],

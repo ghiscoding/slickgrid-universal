@@ -22,7 +22,6 @@ Custom functions can be used for:
 Current built-ins include:
 - `IF`
 - `SUM`
-- `SUMPRODUCT`
 - `SUMIF`
 - `PRODUCT`
 - `MIN`
@@ -46,7 +45,7 @@ Current built-ins include:
 
 `ROUND(number, digits)` requires both arguments, matching Excel. A negative digit count rounds to the left of the decimal point; halfway values round away from zero. `MOD` uses the divisor's sign and returns `#DIV/0!` for zero. `SQRT` returns `#NUM!` for negative inputs. These scalar math functions return `#VALUE!` for invalid arguments.
 
-`SUM`, `PRODUCT`, `MIN`, `MAX`, `AVERAGE`, `MEDIAN`, `CONCAT` and `CONCATENATE` require at least one argument. Aggregate functions and `SUMPRODUCT` accept at most 255 arguments, while `CONCAT` and `CONCATENATE` accept at most 253; each range counts as one argument. Referenced error cells are ignored by `COUNT` and counted by `COUNTA`. Numeric operations use the Excel 1900 date system for JavaScript `Date` values from 1900 through 9999. For Excel formulas that reference date columns, set `exportWithFormatter: false` so the workbook receives date values instead of formatted text. `POWER` requires two numeric arguments. A zero base with a negative exponent returns `#DIV/0!`; zero to the zero power, invalid roots and overflow return `#NUM!`. `RAND`, `RANDOM`, `RAN`, `NOW`, `TODAY` and `NA` accept no arguments. `IF` accepts two or three arguments. Invalid argument counts return `#VALUE!` in the grid.
+`SUM`, `PRODUCT`, `MIN`, `MAX`, `AVERAGE`, `MEDIAN`, `CONCAT` and `CONCATENATE` require at least one argument. Aggregate functions accept at most 255 arguments, while `CONCAT` and `CONCATENATE` accept at most 253; each range counts as one argument. Referenced error cells are ignored by `COUNT` and counted by `COUNTA`. Numeric operations use the Excel 1900 date system for JavaScript `Date` values from 1900 through 9999. For Excel formulas that reference date columns, set `exportWithFormatter: false` so the workbook receives date values instead of formatted text. `POWER` requires two numeric arguments. A zero base with a negative exponent returns `#DIV/0!`; zero to the zero power, invalid roots and overflow return `#NUM!`. `RAND`, `RANDOM`, `RAN`, `NOW`, `TODAY` and `NA` accept no arguments. `IF` accepts two or three arguments. Invalid argument counts return `#VALUE!` in the grid.
 
 For Excel export, the built-in `RANDOM` and `RAN` aliases are written as `RAND`, and `CONCATENATE` is written as `CONCAT` so range arguments retain the same behavior. Custom functions overriding an alias retain their name; export them using the custom-function configuration if needed. `CONCAT` requires a compatible Excel version.
 

@@ -6,7 +6,6 @@ const referenceTag: unique symbol = Symbol('formula reference');
 export interface FormulaReferenceValue {
   readonly [referenceTag]: true;
   readonly value: unknown;
-  readonly row?: number;
 }
 
 const literalTag: unique symbol = Symbol('formula literal text');
@@ -23,8 +22,8 @@ export function isFormulaLiteralText(value: unknown): value is FormulaLiteralTex
   return typeof value === 'object' && value !== null && literalTag in value;
 }
 
-export function formulaReference(value: unknown, row?: number): FormulaReferenceValue {
-  return { [referenceTag]: true, value, row };
+export function formulaReference(value: unknown): FormulaReferenceValue {
+  return { [referenceTag]: true, value };
 }
 
 export function isFormulaReference(value: unknown): value is FormulaReferenceValue {
@@ -121,41 +120,6 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
   const PRODUCT = (...args: unknown[]) => {
     const values = aggregateNumbers(args);
     return Array.isArray(values) ? (values.length ? values.reduce((acc, value) => acc * value, 1) : 0) : values;
-  };
-  const SUMPRODUCT = (...args: unknown[]) => {
-    if (!args.length || args.length > 255) {
-      return FORMULA_ERROR.VALUE;
-    }
-
-    const arrays = args.map((arg) => {
-      const values = toFormulaArray(arg);
-      const first = values[0];
-      const row = isFormulaReference(first) ? first.row : undefined;
-      const width = row === undefined ? 1 : values.findIndex((value) => isFormulaReference(value) && value.row !== row);
-      return { values, width: width === -1 ? values.length : width };
-    });
-    const first = arrays[0];
-    if (arrays.some((array) => array.values.length !== first.values.length || array.width !== first.width)) {
-      return FORMULA_ERROR.VALUE;
-    }
-
-    let sum = 0;
-    for (let i = 0; i < first.values.length; i++) {
-      let product = 1;
-      for (let j = 0; j < arrays.length; j++) {
-        const rawValue = unwrapFormulaReference(arrays[j].values[i]);
-        const value = rawValue instanceof Date ? formulaDateToSerial(rawValue) : rawValue;
-        product *=
-          typeof value === 'number' && Number.isFinite(value)
-            ? value
-            : !Array.isArray(args[j]) && !isFormulaReference(args[j]) && typeof value === 'boolean'
-              ? Number(value)
-              : 0;
-      }
-      sum += product;
-    }
-
-    return sum;
   };
   const MIN = (...args: unknown[]) => {
     const values = aggregateNumbers(args);
@@ -312,7 +276,6 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
 
   registry.set('IF', IF);
   registry.set('SUM', SUM);
-  registry.set('SUMPRODUCT', SUMPRODUCT);
   registry.set('SUMIF', SUMIF);
   registry.set('PRODUCT', PRODUCT);
   registry.set('MIN', MIN);
