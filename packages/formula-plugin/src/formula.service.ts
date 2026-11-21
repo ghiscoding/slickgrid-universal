@@ -2131,6 +2131,11 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         return cached === '' ? FORMULA_EMPTY_RESULT : cached;
       }
 
+      const chainResult = this.evaluateArithmeticDependencyChain(rowId, columnId, nestedFormula, context);
+      if (chainResult.handled) {
+        return chainResult.value === '' ? FORMULA_EMPTY_RESULT : chainResult.value;
+      }
+
       context.visited.add(key);
       const nested = this.evaluateFormulaExpression(nestedFormula, { ...context, preserveLiteral: true });
       context.visited.delete(key);
@@ -2139,6 +2144,76 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     }
 
     return rawValue;
+  }
+
+  /** Evaluate simple arithmetic chains from their deepest dependency to avoid recursive cell traversal. */
+  protected evaluateArithmeticDependencyChain(
+    rowId: number | string,
+    columnId: number | string,
+    formula: string,
+    context: FormulaEvaluationContext
+  ): { handled: boolean; value?: unknown } {
+    const columns = (this._grid?.getColumns?.() || []) as Column[];
+    const columnIds = columns.map((column) => String(column.id));
+    const items = this.getDataItems();
+    const idProperty = this.getDatasetIdPropertyName();
+    const rowIds = (this._evaluationRowIdsCache ??= items.map((item) => String(item?.[idProperty] ?? '')));
+    const frames: Array<{ key: string; memoKey: string; formula: string }> = [];
+    let currentRowId = rowId;
+    let currentColumnId = columnId;
+    let currentFormula = formula;
+    try {
+      while (true) {
+        const expression = this.replaceRefFunctionsWithA1Refs(currentFormula, columnIds, rowIds);
+        const match = /^=\s*(\$?[A-Z]{1,3}\$?\d+)\s*[+*/-]\s*(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?\s*$/i.exec(expression);
+        if (!match) {
+          break;
+        }
+        const key = this.buildStoreKey(currentRowId, currentColumnId);
+        if (context.visited.has(key)) {
+          break;
+        }
+        const memoKey = this.buildEvaluationMemoKey(currentRowId, currentColumnId, currentFormula);
+        if (context.memo.has(memoKey)) {
+          break;
+        }
+        frames.push({ key, memoKey, formula: currentFormula });
+        context.visited.add(key);
+        const reference = parseExcelReferenceCell(match[1]);
+        if (!reference) {
+          break;
+        }
+        const nextItem = items[reference.row];
+        const nextColumn = columns[reference.cell];
+        const nextRowId = nextItem?.[idProperty] as number | string | undefined;
+        if (!nextColumn || nextRowId == null) {
+          break;
+        }
+        const rawValue = nextItem[String(nextColumn.field ?? nextColumn.id)];
+        const nextFormula = this.getFormula(nextRowId, nextColumn.id) ?? rawValue;
+        if (typeof nextFormula !== 'string' || !nextFormula.trim().startsWith('=')) {
+          break;
+        }
+        currentRowId = nextRowId;
+        currentColumnId = nextColumn.id;
+        currentFormula = nextFormula;
+      }
+      if (frames.length === 0) {
+        return { handled: false };
+      }
+      let value: unknown;
+      for (let index = frames.length - 1; index >= 0; index--) {
+        const frame = frames[index];
+        value = this.evaluateFormulaExpression(frame.formula, { ...context, preserveLiteral: true });
+        context.visited.delete(frame.key);
+        context.memo.set(frame.memoKey, value);
+      }
+      return { handled: true, value };
+    } finally {
+      for (const frame of frames) {
+        context.visited.delete(frame.key);
+      }
+    }
   }
 
   protected getCellRawValue(rowId: number | string, columnId: number | string): unknown {

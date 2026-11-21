@@ -29,6 +29,54 @@ describe('FormulaService', () => {
     expect(evaluate('=CONCAT("")')).toBe('');
   });
 
+  it('evaluates a cold arithmetic dependency chain without overflowing the stack', () => {
+    const items = Array.from({ length: 2000 }, (_, index) => ({ id: index + 1, value: index ? `=A${index}+1` : 1 }));
+    const columns: Column[] = [{ id: 'value', field: 'value', allowFormula: true }];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    expect(service.getEvaluatedCellValue(2000, 'value')).toBe(2000);
+    service.dispose();
+  });
+
+  it('preserves circular references and lazy custom calls at the end of an arithmetic chain', () => {
+    const items = [
+      { id: 1, value: '=A2+1' },
+      { id: 2, value: '=A3+1' },
+      { id: 3, value: '=IF(FALSE,CALLED(),7)' },
+    ];
+    const called = vi.fn(() => 10);
+    const columns: Column[] = [{ id: 'value', field: 'value', allowFormula: true }];
+    const service = new FormulaService({ autoAssignEditor: false, customFunctions: { CALLED: called } });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    expect(service.getEvaluatedCellValue(1, 'value')).toBe(9);
+    expect(called).not.toHaveBeenCalled();
+    service.setFormula(3, 'value', '=A1+1');
+    expect(service.getEvaluatedCellValue(1, 'value')).toBe(FORMULA_ERROR.CIRCREF);
+    service.dispose();
+  });
+
+  it('uses cached dependencies and reports missing references in arithmetic chains', () => {
+    const items = [
+      { id: 1, value: '=A2+1' },
+      { id: 2, value: '=A3+1' },
+      { id: 3, value: '=A4+1' },
+      { id: 4, value: 1 },
+    ];
+    const columns: Column[] = [{ id: 'value', field: 'value', allowFormula: true }];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    (service as any).clearDataCaches();
+    const context = { visited: new Set<string>(), memo: new Map<string, unknown>() };
+    expect((service as any).evaluateArithmeticDependencyChain(1, 'value', service.getFormula(1, 'value'), context).value).toBe(4);
+    expect(service.getEvaluatedCellValue(3, 'value')).toBe(2);
+    expect(service.getEvaluatedCellValue(1, 'value')).toBe(4);
+    service.setFormula(2, 'value', '=Z1+1');
+    expect(service.getEvaluatedCellValue(1, 'value')).toBe(FORMULA_ERROR.REF);
+    service.setFormula(2, 'value', '=A0+1');
+    expect(service.getEvaluatedCellValue(1, 'value')).toBe(FORMULA_ERROR.REF);
+    service.dispose();
+  });
+
   it('uses export lookups with row offsets and grouped worksheet positions', () => {
     const columns: Column[] = [
       { id: 'value', field: 'value' },
