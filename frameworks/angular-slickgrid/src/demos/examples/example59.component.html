@@ -1,0 +1,88 @@
+<div id="demo-container" class="container-fluid">
+  <h2>
+    Example 59: Formula Editor
+    <button class="btn btn-outline-secondary btn-sm" data-test="toggle-dark-mode" (click)="demo.toggleDarkMode()">Toggle Light/Dark</button>
+  </h2>
+  <p>Edit a formula cell to use reference picking, colored highlights, autocomplete and drag-fill.</p>
+  <div class="mb-2">
+    <button class="btn btn-outline-secondary btn-sm me-1" data-test="export-excel-btn" (click)="demo.excelExportService.exportToExcel()">
+      Export to Excel
+    </button>
+    <button
+      class="btn btn-outline-secondary btn-sm me-1"
+      data-test="export-excel-hidden-btn"
+      (click)="demo.excelExportService.exportToExcel({ includeHidden: true })"
+    >
+      Export Including Hidden Columns
+    </button>
+    <button class="btn btn-outline-secondary btn-sm me-1" data-test="export-csv-btn" (click)="demo.exportCsv()">Export CSV Values</button>
+    <button class="btn btn-outline-secondary btn-sm me-1" data-test="export-excel-portable-btn" (click)="demo.exportPortable()">
+      Export Portable Values
+    </button>
+    <button class="btn btn-outline-secondary btn-sm me-1" data-test="group-by-btn" (click)="demo.groupByTaxable()">Group by Taxable</button>
+    <button class="btn btn-outline-secondary btn-sm me-1" data-test="clear-grouping-btn" (click)="demo.clearGrouping()">
+      Clear grouping
+    </button>
+    <button class="btn btn-outline-secondary btn-sm me-1" data-test="reload-formulas-btn" (click)="demo.loadDefaultFormulas()">
+      Load Default Formulas
+    </button>
+    <button class="btn btn-outline-secondary btn-sm me-1" data-test="clear-formulas-btn" (click)="demo.formulaService.clearFormulas()">
+      Clear Formula Store
+    </button>
+    <button class="btn btn-outline-secondary btn-sm me-1" data-test="register-customsum-btn" (click)="demo.registerCustomSum()">
+      Register CUSTOMSUM
+    </button>
+    <button class="btn btn-outline-secondary btn-sm me-1" data-test="remove-customsum-btn" (click)="demo.removeCustomSum()">
+      Remove CUSTOMSUM
+    </button>
+    <button class="btn btn-outline-secondary btn-sm me-1" data-test="save-formula-state-btn" (click)="demo.saveGridAndFormulas()">
+      Save Grid and Formulas
+    </button>
+    <button class="btn btn-outline-secondary btn-sm me-1" data-test="restore-formula-state-btn" (click)="demo.restoreGridAndFormulas()">
+      Restore Grid and Formulas
+    </button>
+    <label
+      >Tax Rate (%): <input type="number" step="0.25" value="7.5" data-test="taxrate" (input)="demo.setTaxRate(+$any($event.target).value)"
+    /></label>
+    <button class="btn btn-outline-secondary btn-sm" data-test="update-btn" (click)="demo.updateTaxRate()">Update</button>
+  </div>
+  <div class="mb-2">
+    <label
+      >Sub-Total editor:
+      <select data-test="formula-editor-mode" (change)="demo.setEditorMode($any($event.target).value)">
+        <option value="formula">Formula editor</option>
+        <option value="text">Text editor</option>
+        <option value="readonly">Read-only</option>
+      </select></label
+    >
+  </div>
+  <div class="grid59">
+    <angular-slickgrid
+      gridId="grid59"
+      [columns]="demo.columns"
+      [options]="demo.gridOptions"
+      [dataset]="demo.dataset"
+      (onAngularGridCreated)="demo.angularGridReady($event.detail)"
+      (onBeforeEditCell)="demo.beforeEdit($event.detail.eventData, $event.detail.args)"
+      (onBeforeCellEditorDestroy)="demo.beforeEditorDestroy()"
+      (onCellChange)="demo.cellChanged()"
+      (onClick)="demo.cellClicked($event.detail.args)"
+    ></angular-slickgrid>
+  </div>
+  <section class="mt-4">
+    <button class="btn btn-outline-secondary btn-sm" data-test="show-selection-fallback-btn" (click)="showFallback = true">
+      Show formula grid without selection
+    </button>
+    <div class="formula-fallback-grid">
+      @if (showFallback) {
+        <angular-slickgrid
+          gridId="formula-fallback"
+          [columns]="demo.fallbackColumns"
+          [options]="demo.fallbackOptions"
+          [dataset]="demo.fallbackDataset"
+          (onAngularGridCreated)="demo.fallbackGridReady($event.detail)"
+        ></angular-slickgrid>
+      }
+    </div>
+  </section>
+</div>

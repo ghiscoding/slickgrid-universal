@@ -1,0 +1,123 @@
+/** Formula plugin styling; load after the SlickGrid theme to reuse its configured Sass variables. */
+@use 'sass:meta';
+@use 'sass:map';
+@use '@slickgrid-universal/common/dist/styles/sass/variables' as v;
+
+$editor-properties:
+  border, border-radius, background, color, padding-bottom, padding-left, padding-right, padding-top, margin-left, margin-bottom,
+  margin-right, margin-top;
+$variables: meta.module-variables('v');
+
+.slick-cell .formula-editor-input {
+  @each $property in $editor-properties {
+    #{$property}: var(--slick-text-editor-#{$property}, map.get($variables, 'slick-text-editor-#{$property}'));
+  }
+  box-sizing: border-box;
+  outline: 0;
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  line-height: normal;
+  overflow: auto hidden;
+  white-space: nowrap;
+  scrollbar-width: none;
+  font-style: normal;
+
+  &:focus {
+    outline: 0;
+    border-color: var(--slick-text-editor-focus-border-color, v.$slick-text-editor-focus-border-color);
+    box-shadow: var(--slick-text-editor-focus-box-shadow, v.$slick-text-editor-focus-box-shadow);
+  }
+}
+
+.excel-col-prefix {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.35rem;
+  height: 1.2rem;
+  padding: 0 0.25rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: var(--slick-excel-col-prefix-bg-color, #{v.$slick-excel-col-prefix-bg-color});
+  color: var(--slick-excel-col-prefix-color, #{v.$slick-excel-col-prefix-color});
+  border: 1px solid var(--slick-excel-col-prefix-border-color, #{v.$slick-excel-col-prefix-border-color});
+  vertical-align: middle;
+}
+
+.formula-token {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-weight: inherit;
+  line-height: inherit;
+}
+
+// Ten reference color slots reuse six palette colors (slots 7-10 share colors 1-4).
+@mixin formula-palette($suffix: '') {
+  @for $index from 1 through 6 {
+    $color: map.get($variables, 'slick-formula-token-#{$index}#{$suffix}-color');
+    $tokens: '.formula-token-color-#{$index}';
+    $cells: '.formula-cell-color-#{$index}';
+    @if $index <= 4 {
+      $tokens: '#{$tokens}, .formula-token-color-#{$index + 6}';
+      $cells: '#{$cells}, .formula-cell-color-#{$index + 6}';
+    }
+    #{$tokens} {
+      color: $color;
+    }
+    #{$cells} {
+      --formula-reference-color: #{$color};
+      background-color: map.get($variables, 'slick-formula-token-#{$index}#{$suffix}-background-color') !important;
+      box-shadow: inset 0 0 0 2px $color !important;
+    }
+  }
+
+  // Declared after the palette so edge-only range outlines replace the single-cell outline.
+  .formula-ref-range {
+    box-shadow:
+      inset 0 var(--formula-ref-top, 0px) var(--formula-reference-color),
+      inset 0 var(--formula-ref-bottom, 0px) var(--formula-reference-color),
+      inset var(--formula-ref-left, 0px) 0 var(--formula-reference-color),
+      inset var(--formula-ref-right, 0px) 0 var(--formula-reference-color) !important;
+  }
+}
+
+@include formula-palette;
+
+.formula-ref-top {
+  --formula-ref-top: 2px;
+}
+.formula-ref-bottom {
+  --formula-ref-bottom: -2px;
+}
+.formula-ref-left {
+  --formula-ref-left: 2px;
+}
+.formula-ref-right {
+  --formula-ref-right: -2px;
+}
+
+// Salesforce's editable-field wrapper otherwise hides the reference tint and adds an inner border.
+.slick-cell[class*='formula-cell-color-'] > .editing-field {
+  background: transparent !important;
+  border-color: transparent !important;
+}
+
+.slick-dark-mode {
+  .excel-col-prefix {
+    background: var(--slick-excel-col-prefix-bg-color, #{v.$slick-excel-col-prefix-dark-bg-color});
+    color: var(--slick-excel-col-prefix-color, #{v.$slick-excel-col-prefix-dark-color});
+    border-color: var(--slick-excel-col-prefix-border-color, #{v.$slick-excel-col-prefix-dark-border-color});
+  }
+
+  @include formula-palette('-dark');
+}

@@ -8,12 +8,15 @@ import type {
   ExportTranslateFn,
   ExternalResource,
   FileType,
+  FormulaExcelExportContext,
+  FormulaProvider,
   GetDataValueCallback,
   GetGroupTotalValueCallback,
   GridOption,
   KeyTitlePair,
   Locale,
   PubSubService,
+  SharedService,
   SlickDataView,
   SlickGrid,
   TranslaterService,
@@ -34,11 +37,12 @@ import {
 import { addWhiteSpaces, createDomElement, extend, htmlDecode, isEmptyObject, stripTags } from '@slickgrid-universal/utils';
 import {
   createExcelFileStream,
+  createWorkbook,
   downloadExcelFile,
-  Workbook,
   type ExcelColumnMetadata,
   type ExcelMetadata,
   type StyleSheet,
+  type Workbook,
   type Worksheet,
 } from 'excel-builder-vanilla';
 import { getExcelFormatFromGridFormatter, getGroupTotalValue, useCellFormatByFieldType, type ExcelFormatter } from './excelUtils.js';
@@ -77,10 +81,18 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   protected _stylesheet!: StyleSheet;
   protected _stylesheetFormats: any;
   protected _pubSubService: PubSubService | null = null;
+  protected _sharedService: SharedService | null = null;
   protected _translaterService: TranslaterService | undefined;
   protected _workbook!: Workbook;
   protected _timer1?: any;
   protected _timer2?: any;
+  protected _formulaProvider?: FormulaProvider;
+  protected _formulaColumnIds: Array<number | string> = [];
+  protected _formulaRowIds: Array<number | string> = [];
+  protected _formulaReferenceLookups?: FormulaExcelExportContext['referenceLookups'];
+  protected _formulaGroupedRows: Map<string, number> = new Map();
+  protected _formulaRangeSheet?: Worksheet;
+  protected _formulaRangeCache: Map<string, string> = new Map();
 
   // references of each detected cell and/or group total formats
   protected _regularCellExcelFormats: { [fieldId: string]: RegularCellExcelFormat } = Object.create(null);
@@ -134,7 +146,15 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     this._grid = null as any;
     this._dataView = null as any;
     this._pubSubService = null;
+    this._sharedService = null;
     this._translaterService = undefined;
+    this._formulaProvider = undefined;
+    this._formulaColumnIds = [];
+    this._formulaRowIds = [];
+    this._formulaReferenceLookups = undefined;
+    this._formulaGroupedRows.clear();
+    this._formulaRangeSheet = undefined;
+    this._formulaRangeCache.clear();
     this._regularCellExcelFormats = Object.create(null);
     this._groupTotalExcelFormats = Object.create(null);
   }
@@ -148,6 +168,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     this._grid = grid;
     this._dataView = grid?.getData<SlickDataView>() || {};
     this._pubSubService = containerService.get<PubSubService>('PubSubService');
+    this._sharedService = containerService.get<SharedService>('SharedService');
 
     // get locales provided by user in main file or else use default English locales via the Constants
     this._locales = this._gridOptions?.locales ?? Constants.locales;
@@ -190,7 +211,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
     // prepare the Excel Workbook & Sheet
     const worksheetOptions = { name: this._excelExportOptions.sheetName || 'Sheet1' };
-    this._workbook = new Workbook();
+    this._workbook = createWorkbook();
     this._sheet = this._workbook.createWorksheet(worksheetOptions);
 
     // add any Excel Format/Stylesheet to current Workbook
@@ -204,12 +225,12 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     this._sheet.setColumnFormats([boldFormat]);
 
     try {
-      // get all data by reading all DataView rows with yielding for responsiveness
-      const dataOutput = await this.getDataOutputAsync();
-
       if (this._gridOptions?.excelExportOptions?.customExcelHeader) {
         this._gridOptions.excelExportOptions.customExcelHeader(this._workbook, this._sheet);
       }
+
+      // get all data by reading all DataView rows with yielding for responsiveness
+      const dataOutput = await this.getDataOutputAsync();
 
       const columns = this.getColumns();
       this._sheet.setColumns(this.getColumnStyles(columns));
@@ -223,6 +244,9 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       this._sheet.setData(finalOutput);
 
       this._workbook.addWorksheet(this._sheet);
+      if (this._formulaRangeSheet) {
+        this._workbook.addWorksheet(this._formulaRangeSheet);
+      }
 
       // MIME type could be undefined, if that's the case we'll detect the type by its file extension
       // user could also provide its own mime type, if however an empty string is provided we will consider to be without any MIME type)
@@ -305,7 +329,13 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * Async version of getDataOutput with yielding for UI responsiveness during large dataset processing
    */
   protected async getDataOutputAsync(): Promise<Array<string[] | ExcelColumnMetadata[]>> {
+    this._formulaRangeSheet = undefined;
+    this._formulaRangeCache.clear();
     const columns = this.getColumns();
+    this._formulaProvider = this.findFormulaProvider();
+    this.registerFormulaProviderWorkbookArtifacts();
+    this._formulaColumnIds = columns.filter((col) => !col.excludeFromExport).map((col) => col.id);
+    this._formulaRowIds = this._formulaProvider ? this.getAllDataRowIds() : [];
     const columnMetadataCache = this.preCalculateColumnMetadata(columns);
 
     // pre-cache detected cell format/parser once per column to avoid repeated checks in row loop
@@ -331,6 +361,32 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     // get all Column Header Titles (it might include a "Group by" title at A1 cell)
     // also style the headers, defaults to Bold but user could pass his own style
     outputData.push(this.getColumnHeaderData(columns, { style: columnHeaderStyleId }));
+
+    this._formulaGroupedRows.clear();
+    if (this._hasGroupedItems && this._formulaProvider?.supportsGroupedFormulaExport) {
+      this._formulaColumnIds = columns.filter(isColumnExported).map((column) => column.id);
+      let excelRow = this.getWorksheetReservedRowCount() + outputData.length + 1;
+      for (let row = 0; row < this._dataView.getLength(); row++) {
+        const item = this._dataView.getItem(row);
+        if (item && !Object.prototype.hasOwnProperty.call(item, 'getItem')) {
+          const rowId = item[this._datasetIdPropName] as number | string | undefined;
+          if (rowId !== undefined && rowId !== null) {
+            this._formulaGroupedRows.set(String(rowId), excelRow++);
+          } else {
+            excelRow++;
+          }
+        }
+      }
+    }
+
+    const formulaColumnIds = this._formulaColumnIds.map(String);
+    const formulaRowIds = this._formulaRowIds.map(String);
+    this._formulaReferenceLookups = {
+      columnIds: formulaColumnIds,
+      columnIndexes: new Map(formulaColumnIds.map((id, index) => [id, index] as const).reverse()),
+      rowIds: formulaRowIds,
+      rowIndexes: new Map(formulaRowIds.map((id, index) => [id, index])),
+    };
 
     // Populate the rest of the Grid Data by reading directly from DataView with yielding for responsiveness
     await this.pushAllGridRowDataToArrayAsync(outputData, columns, columnMetadataCache);
@@ -395,6 +451,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     let colspanStartIndex = 0;
     let headerOffset = 0; // increases when "Group by" is provided in the next header row
     let outputGroupedHeaderTitles: Array<ExcelColumnMetadata> = [];
+    const groupedHeaderRowNumber = this.getWorksheetReservedRowCount() + 1;
 
     if (this.getGroupColumnTitle()) {
       outputGroupedHeaderTitles.push({ value: '' });
@@ -417,7 +474,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       ) {
         const leftExcelColumnChar = this.getExcelColumnNameByIndex(colspanStartIndex + 1 + headerOffset);
         const rightExcelColumnChar = this.getExcelColumnNameByIndex(cellIndex + 1 + headerOffset);
-        this._sheet.mergeCells(`${leftExcelColumnChar}1`, `${rightExcelColumnChar}1`);
+        this._sheet.mergeCells(`${leftExcelColumnChar}${groupedHeaderRowNumber}`, `${rightExcelColumnChar}${groupedHeaderRowNumber}`);
 
         // next group starts 1 column index away
         colspanStartIndex = cellIndex + 1;
@@ -778,20 +835,167 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         }
 
         const { excelFormatId, getDataValueParser } = cellStyleFormat;
-        const parsedItemData = getDataValueParser(itemData, {
-          columnDef,
-          excelFormatId,
-          stylesheet: this._stylesheet,
-          gridOptions,
-          dataRowIdx,
-          dataContext: itemObj,
-        }) as Date | number | string | ExcelColumnMetadata;
+        const formulaValue = this.getCellFormulaForExcel(itemObj, columnDef, dataRowIdx);
+        if (formulaValue !== undefined) {
+          rowOutputStrings.push({ value: formulaValue, metadata: { type: 'formula', style: excelFormatId } });
+        } else {
+          const parsedItemData = getDataValueParser(itemData, {
+            columnDef,
+            excelFormatId,
+            stylesheet: this._stylesheet,
+            gridOptions,
+            dataRowIdx,
+            dataContext: itemObj,
+          }) as Date | number | string | ExcelColumnMetadata;
 
-        rowOutputStrings.push(parsedItemData);
+          rowOutputStrings.push(parsedItemData);
+        }
       }
     }
 
     return rowOutputStrings as string[];
+  }
+
+  /** Return a normalized Excel formula when a formula provider is available and the current row has an id. */
+  protected getCellFormulaForExcel(itemObj: any, columnDef: Column, dataRowIdx: number): string | undefined {
+    // grouped exports currently rely on row-level parser callbacks for deterministic row offsets.
+    if (!this._formulaProvider || (this._hasGroupedItems && !this._formulaProvider.supportsGroupedFormulaExport)) {
+      return undefined;
+    }
+
+    const rowId = itemObj?.[this._datasetIdPropName] as number | string | undefined;
+    if (rowId === undefined || rowId === null) {
+      return undefined;
+    }
+
+    const formula = this._formulaProvider.getExcelFormula?.({
+      columnId: columnDef.id,
+      columnIds: this._formulaColumnIds,
+      dataRowIdx,
+      datasetIdPropertyName: this._datasetIdPropName,
+      excelRowOffset: this.getExcelDataStartRowOffset(),
+      gridOptions: this._gridOptions,
+      rowId,
+      rowIds: this._formulaRowIds,
+      referenceLookups: this._formulaReferenceLookups,
+      groupedRowPositions: this._hasGroupedItems ? this._formulaGroupedRows : undefined,
+      groupedColumnOffset: this._hasGroupedItems ? 1 : undefined,
+      registerFormulaRange: (references, width) => this.registerFormulaRange(references, false, width),
+      registerFormulaPresenceRange: (references, width) => this.registerFormulaRange(references, true, width),
+    });
+
+    if (typeof formula !== 'string') {
+      return undefined;
+    }
+
+    return formula.startsWith('=') ? formula.slice(1) : formula;
+  }
+
+  /** Keep disjoint references in one range argument, including for SUMIF and custom functions. */
+  protected registerFormulaRange(references: string[], presence = false, width = 1): string {
+    const key = `${presence ? 'presence:' : 'values:'}${width}:${references.join(',')}`;
+    const cached = this._formulaRangeCache.get(key);
+    if (cached) {
+      return cached;
+    }
+    if (!this._formulaRangeSheet) {
+      const names = new Set([this._sheet.name, ...this._workbook.worksheets.map((sheet) => sheet.name)]);
+      let name = 'Formula References';
+      for (let suffix = 2; names.has(name); suffix++) {
+        name = `Formula References ${suffix}`;
+      }
+      this._formulaRangeSheet = this._workbook.createWorksheet({ name });
+    }
+    const sheet = this._formulaRangeSheet;
+    const height = references.length / width;
+    if (
+      !Number.isInteger(width) ||
+      width < 1 ||
+      width > 16384 ||
+      !Number.isInteger(height) ||
+      height < 1 ||
+      sheet.data.length + height > 1048576
+    ) {
+      return '#REF!';
+    }
+    const firstRow = sheet.data.length + 1;
+    const sourceName = this._sheet.name.replace(/'/g, "''");
+    for (let row = 0; row < height; row++) {
+      sheet.data.push(
+        references.slice(row * width, (row + 1) * width).map((reference) => {
+          const source = `'${sourceName}'!${reference}`;
+          return { value: presence ? `--NOT(ISBLANK(${source}))` : `IF(ISBLANK(${source}),"",${source})`, metadata: { type: 'formula' } };
+        })
+      );
+    }
+    const range = `'${sheet.name}'!$A$${firstRow}:$${this.getExcelColumnNameByIndex(width)}$${sheet.data.length}`;
+    this._formulaRangeCache.set(key, range);
+    return range;
+  }
+
+  /** Find first registered external resource that exposes formula provider methods. */
+  protected findFormulaProvider(): FormulaProvider | undefined {
+    if (this._gridOptions?.enableFormulas === false) {
+      return undefined;
+    }
+
+    const registeredResources = this._sharedService?.externalRegisteredResources;
+    if (!Array.isArray(registeredResources)) {
+      return undefined;
+    }
+
+    return registeredResources.find((resource) => typeof (resource as FormulaProvider)?.getExcelFormula === 'function') as
+      FormulaProvider | undefined;
+  }
+
+  /** Register workbook-level defined names and custom functions exposed by FormulaProvider. */
+  protected registerFormulaProviderWorkbookArtifacts(): void {
+    if (!this._formulaProvider || !this._workbook) {
+      return;
+    }
+
+    for (const { name, refersTo, scope } of this._formulaProvider.getExcelDefinedNames?.() ?? []) {
+      if (name && refersTo) {
+        this._workbook.addDefinedName(name, refersTo, scope);
+      }
+    }
+    for (const { name, args, body, options } of this._formulaProvider.getExcelCustomFunctions?.() ?? []) {
+      if (name && Array.isArray(args) && body) {
+        this._workbook.addCustomFunction(name, args, body, options);
+      }
+    }
+  }
+
+  /** Return all row ids from DataView for formula reference translation (flat dataset use case). */
+  protected getAllDataRowIds(): Array<number | string> {
+    const rowIds: Array<number | string> = [];
+    const datasetIdPropertyName = this._datasetIdPropName;
+    const itemCount = this._dataView.getLength?.() ?? 0;
+
+    for (let rowIdx = 0; rowIdx < itemCount; rowIdx++) {
+      const item = this._dataView.getItem(rowIdx);
+      const rowId = item?.[datasetIdPropertyName] as number | string | undefined;
+      if (rowId !== undefined && rowId !== null) {
+        rowIds.push(rowId);
+      }
+    }
+
+    return rowIds;
+  }
+
+  /** Return number of worksheet rows already reserved before grid headers/data (includes merged-cell vertical spans). */
+  protected getWorksheetReservedRowCount(): number {
+    return Array.isArray(this._sheet?.data) ? this._sheet.data.length : 0;
+  }
+
+  /** Return default header row count generated by this service before first data row. */
+  protected getDefaultExcelHeaderRowCount(): number {
+    return this._hasColumnTitlePreHeader ? 2 : 1;
+  }
+
+  /** Return absolute Excel row offset for first exported dataset row. */
+  protected getExcelDataStartRowOffset(): number {
+    return this.getWorksheetReservedRowCount() + this.getDefaultExcelHeaderRowCount() + 1;
   }
 
   /**

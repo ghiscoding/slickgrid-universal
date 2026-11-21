@@ -99,6 +99,11 @@ describe('excelUtils', () => {
       });
       expect(output).toEqual({ metadata: { style: 3 }, value: 1244209.33 });
     });
+
+    it('should return zero when group totals or fields are missing', () => {
+      expect(getGroupTotalValue(undefined, { columnDef: { field: 'amount' } as Column, groupType: 'sum' })).toBe(0);
+      expect(getGroupTotalValue({ sum: {} }, { columnDef: { field: 'amount' } as Column, groupType: 'sum' })).toBe(0);
+    });
   });
 
   describe('decimal formatter', () => {

@@ -60,6 +60,7 @@ export const routes: Routes = [
   { path: 'example56', loadComponent: () => import('./examples/example56.component').then((m) => m.Example56Component) },
   { path: 'example57', loadComponent: () => import('./examples/example57.component').then((m) => m.Example57Component) },
   { path: 'example58', loadComponent: () => import('./examples/example58.component').then((m) => m.Example58Component) },
+  { path: 'example59', loadComponent: () => import('./examples/example59.component').then((m) => m.Example59Component) },
   { path: '', redirectTo: '/example34', pathMatch: 'full' },
   { path: '**', redirectTo: '/example34', pathMatch: 'full' },
 ];
