@@ -28,7 +28,7 @@ Handoff for future AI/dev sessions. Detailed history is in the git log of this f
 - `formulaDataSource` does not persist absolute-reference (`$`) markers; use formula snapshots when they matter.
 
 ## Open Work
-- [ ] Fix cold dependency chains overflowing the call stack, preserving cycle detection and lazy evaluation. Direct-reference graphs without IF use iterative traversal when no custom functions are registered; range, IF and custom-function chains still need work.
+- [ ] Fix cold dependency chains overflowing the call stack, preserving cycle detection and lazy evaluation. Direct and stored-range references without IF use iterative traversal when no custom functions are registered; direct A1 ranges, IF and custom-function chains still need work.
 - [x] Avoid exponential work when rewriting nested COUNTA calls for Excel export; regression added.
 - [x] Reuse row and column lookups across formula cells during Excel export; preserve standalone and grouped export behavior.
 - [x] Reuse row coordinates during formula drag-fill and undo, clearing cached data when DataView changes.

@@ -59,6 +59,22 @@ describe('FormulaService', () => {
     service.dispose();
   });
 
+  it('evaluates a deep chain of stored range references', () => {
+    const items = Array.from({ length: 1500 }, (_, index) => ({
+      id: index + 1,
+      value: index ? `=SUM(A${index}:B${index})` : 1,
+      increment: 1,
+    }));
+    const columns: Column[] = [
+      { id: 'value', field: 'value', allowFormula: true },
+      { id: 'increment', field: 'increment' },
+    ];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    expect(service.getEvaluatedCellValue(1500, 'value')).toBe(1500);
+    service.dispose();
+  });
+
   it('preserves circular references and lazy custom calls at the end of an arithmetic chain', () => {
     const items = [
       { id: 1, value: '=A2+1' },

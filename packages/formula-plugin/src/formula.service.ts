@@ -2176,11 +2176,18 @@ export class FormulaService implements ExternalResource, FormulaProvider {
 
     const pushFrame = (currentRowId: number | string, currentColumnId: number | string, currentFormula: string): boolean => {
       const expression = this.replaceRefFunctionsWithA1Refs(currentFormula, columnIds, rowIds);
-      const references = findFormulaReferenceTokens(expression);
+      const rangeReferences: string[] = [];
+      const withoutRanges = mapFormulaRanges(expression, (members) => {
+        for (const member of members) {
+          rangeReferences.push(member);
+        }
+        return '0';
+      });
+      const references = findFormulaReferenceTokens(withoutRanges);
       if (
         this.hasUnsafeFormulaSyntax(expression) ||
-        this.matchesOutsideQuotedStrings(expression, /\b(?:IF|REFRANGE)\s*\(|#REF!|["']/i) ||
-        references.length === 0 ||
+        this.matchesOutsideQuotedStrings(expression, /\bIF\s*\(|#REF!|["']/i) ||
+        (rangeReferences.length === 0 && references.length === 0) ||
         references.some(({ ref }) => ref.includes(':'))
       ) {
         return false;
@@ -2190,7 +2197,13 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       if (context.visited.has(key) || context.memo.has(memoKey)) {
         return false;
       }
-      frames.push({ key, memoKey, formula: currentFormula, references: references.map(({ ref }) => ref), nextReference: 0 });
+      frames.push({
+        key,
+        memoKey,
+        formula: currentFormula,
+        references: [...rangeReferences, ...references.map(({ ref }) => ref)],
+        nextReference: 0,
+      });
       context.visited.add(key);
       return true;
     };
