@@ -1312,6 +1312,8 @@ describe('FormulaCellEditor', () => {
     (editor as any).handleInput();
     (editor as any).handleKeydown(new KeyboardEvent('keydown', { key: 'ArrowUp', cancelable: true }));
     (editor as any).handleKeydown(new KeyboardEvent('keydown', { key: 'Escape', cancelable: true }));
+    expect(cancelChanges).not.toHaveBeenCalled();
+    expect((editor as any)._autocompleteItems).toEqual([]);
 
     (editor as any)._autocompleteItems = [];
     (editor as any).handleKeydown(new KeyboardEvent('keydown', { key: 'ArrowLeft', cancelable: true }));

@@ -274,7 +274,9 @@ export class FormulaCellEditor implements Editor {
       }
 
       if (event.key === 'Escape') {
+        this.stopKeyboardEvent(event);
         this.hideAutocomplete();
+        return;
       }
     }
 
