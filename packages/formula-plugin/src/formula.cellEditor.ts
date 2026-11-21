@@ -27,6 +27,7 @@ export interface FormulaEditorParams {
 }
 
 export class FormulaCellEditor implements Editor {
+  protected static _instanceCount = 0;
   protected _autocompleteElm?: HTMLDivElement;
   protected _autocompleteItems: string[] = [];
   protected _autocompleteSelectedIdx = 0;
@@ -56,10 +57,12 @@ export class FormulaCellEditor implements Editor {
   protected _formulaRefColorCache: FormulaReferenceColorCache = new FormulaReferenceColorCache();
   protected _bindEventService: BindingEventService = new BindingEventService();
   protected _debug = false;
+  protected readonly _autocompleteId: string;
 
   protected _initialLoadComplete = false; // Skip sync on first focusin during editor load
 
   constructor(protected readonly args: EditorArguments) {
+    this._autocompleteId = `formula-autocomplete-${++FormulaCellEditor._instanceCount}`;
     this._isOpenedByTabKey = (this.args.event as KeyboardEvent | undefined)?.key === 'Tab';
     // Some grid focus transitions trigger an immediate blur right after editor activation.
     // Suppress the first external blur by default to keep keyboard focus inside the grid.
@@ -75,6 +78,10 @@ export class FormulaCellEditor implements Editor {
     this._editorElm = createDomElement('div', { className: 'formula-editor-input' });
     this._editorElm.setAttribute('contenteditable', 'plaintext-only');
     this._editorElm.setAttribute('role', 'textbox');
+    this._editorElm.setAttribute('aria-autocomplete', 'list');
+    this._editorElm.setAttribute('aria-controls', this._autocompleteId);
+    this._editorElm.setAttribute('aria-expanded', 'false');
+    this._editorElm.setAttribute('aria-haspopup', 'listbox');
     this._editorElm.setAttribute('spellcheck', 'false');
     this.args.container.appendChild(this._editorElm);
 
@@ -1024,6 +1031,7 @@ export class FormulaCellEditor implements Editor {
     this.renderAutocompleteItems();
     this.positionAutocomplete();
     this._autocompleteElm!.style.display = 'block';
+    this._editorElm.setAttribute('aria-expanded', 'true');
   }
 
   protected isInsideQuotedText(text: string): boolean {
@@ -1058,6 +1066,9 @@ export class FormulaCellEditor implements Editor {
         display: 'none',
       },
     });
+    elm.id = this._autocompleteId;
+    elm.setAttribute('role', 'listbox');
+    elm.setAttribute('aria-label', 'Formula functions');
     document.body.appendChild(elm);
     this._autocompleteElm = elm;
   }
@@ -1084,6 +1095,9 @@ export class FormulaCellEditor implements Editor {
       const itemElm = createDomElement('div', {
         className: i === this._autocompleteSelectedIdx ? 'selected' : '',
       });
+      itemElm.id = `${this._autocompleteId}-option-${i}`;
+      itemElm.setAttribute('role', 'option');
+      itemElm.setAttribute('aria-selected', String(i === this._autocompleteSelectedIdx));
       itemElm.textContent = suggestion;
       itemElm.addEventListener('mousedown', (e) => {
         e.preventDefault();
@@ -1091,6 +1105,7 @@ export class FormulaCellEditor implements Editor {
       });
       this._autocompleteElm.appendChild(itemElm);
     }
+    this._editorElm.setAttribute('aria-activedescendant', `${this._autocompleteId}-option-${this._autocompleteSelectedIdx}`);
   }
 
   protected hideAutocomplete(): void {
@@ -1100,6 +1115,8 @@ export class FormulaCellEditor implements Editor {
       this._autocompleteElm.style.display = 'none';
       this._autocompleteElm.innerHTML = '';
     }
+    this._editorElm.removeAttribute('aria-activedescendant');
+    this._editorElm.setAttribute('aria-expanded', 'false');
   }
 
   protected selectAutocompleteItem(functionName?: string): void {

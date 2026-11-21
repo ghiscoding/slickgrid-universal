@@ -131,8 +131,16 @@ describe('FormulaCellEditor', () => {
     expect((editor as any)._autocompleteItems).toEqual(['SUM', 'SUMIF']);
     update('=SUMIF(A1:A3)', 3);
     expect((editor as any)._autocompleteItems).toEqual(['SUM', 'SUMIF']);
+    expect(input.getAttribute('aria-expanded')).toBe('true');
+    const autocomplete = (editor as any)._autocompleteElm as HTMLElement;
+    expect(autocomplete.getAttribute('role')).toBe('listbox');
+    expect(autocomplete.getAttribute('aria-label')).toBe('Formula functions');
+    expect(autocomplete.querySelectorAll('[role="option"]')).toHaveLength(2);
+    expect(autocomplete.querySelector('[role="option"]')?.getAttribute('aria-selected')).toBe('true');
+    expect(input.getAttribute('aria-activedescendant')).toBe(autocomplete.querySelector('[role="option"]')?.id);
     (editor as any).selectAutocompleteItem('SUM');
     expect(editor.serializeValue()).toBe('=SUM(A1:A3)');
+    expect(input.getAttribute('aria-expanded')).toBe('false');
     update('=SUFFIX+1', 3);
     (editor as any).selectAutocompleteItem('SUM');
     expect(editor.serializeValue()).toBe('=SUM(+1');
