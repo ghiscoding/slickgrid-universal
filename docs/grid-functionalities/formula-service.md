@@ -215,6 +215,7 @@ With cell-capable selection enabled, Formula Editor handles the `.slick-drag-rep
 - one static source value is copied
 - multiple numeric source values continue as a linear progression
 - string or mixed source values repeat in source order
+- read-only targets are skipped and a complete fill is submitted through editCommandHandler so the configured undo/redo queue can restore it
 
 This matches the common defaults documented by [AG Grid's fill handle](https://www.ag-grid.com/javascript-data-grid/cell-selection-fill-handle/). Series inference is implemented inside the optional formula-plugin package, so grids that do not register Formula Editor do not include this behavior.
 

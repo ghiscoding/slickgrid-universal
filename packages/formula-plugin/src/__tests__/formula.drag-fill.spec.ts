@@ -238,6 +238,106 @@ describe('formula drag-fill', () => {
     expect(items[1].source).toBe(4);
   });
 
+  it('skips read-only target cells', () => {
+    const columns: Column[] = [{ id: 'value', field: 'value', allowFormula: true }];
+    const items = [
+      { id: 'r1', value: 2 },
+      { id: 'r2', value: 7 },
+    ];
+    const setFormula = vi.fn();
+    const grid = {
+      getColumns: () => columns,
+      getVisibleColumns: () => columns,
+      getDataItem: (row: number) => items[row],
+      isCellEditable: (row: number) => row === 0,
+      getOptions: () => ({ editable: true }),
+    } as any;
+
+    handleFormulaDragFill({ grid, prevSelectedRange: new SlickRange(0, 0), selectedRange: new SlickRange(0, 0, 1, 0) } as any, {
+      grid,
+      dataView: { updateItem: vi.fn() } as any,
+      getDatasetIdPropertyName: () => 'id',
+      getFormula: () => undefined,
+      setFormula,
+      toStoredFormula: (formula: string) => formula,
+      toDisplayFormulaForCell: (formula: string) => formula,
+    });
+
+    expect(items[1].value).toBe(7);
+    expect(setFormula).not.toHaveBeenCalled();
+
+    const fallbackGrid = {
+      getColumns: () => columns,
+      getVisibleColumns: () => columns,
+      getDataItem: (row: number) => items[row],
+      getOptions: () => ({ editable: false }),
+    } as any;
+    const context: any = {
+      grid: fallbackGrid,
+      dataView: { getItemMetadata: () => undefined, updateItem: vi.fn() } as any,
+      getDatasetIdPropertyName: () => 'id',
+      getFormula: () => undefined,
+      setFormula,
+      toStoredFormula: (formula: string) => formula,
+      toDisplayFormulaForCell: (formula: string) => formula,
+    };
+    handleFormulaDragFill({ grid: fallbackGrid, prevSelectedRange: new SlickRange(0, 0), selectedRange: new SlickRange(0, 0, 1, 0) } as any, context);
+
+    fallbackGrid.getOptions = () => ({ editable: true });
+    context.dataView = {
+      getItemMetadata: () => ({ columns: { value: { editorClass: null } } }),
+      updateItem: vi.fn(),
+    } as any;
+    handleFormulaDragFill({ grid: fallbackGrid, prevSelectedRange: new SlickRange(0, 0), selectedRange: new SlickRange(0, 0, 1, 0) } as any, context);
+    expect(setFormula).not.toHaveBeenCalled();
+  });
+
+  it('uses the grid edit command handler for drag-fill undo', () => {
+    const columns: Column[] = [{ id: 'value', field: 'value', allowFormula: true }];
+    const items = [
+      { id: 'r1', value: '=A1+1' },
+      { id: 'r2', value: 7 },
+    ];
+    let editCommand: any;
+    const formulas = new Map([['r1', '=A1+1']]);
+    const setFormula = vi.fn((rowId: string, _columnId: string, formula?: string) => {
+      if (formula) {
+        formulas.set(rowId, formula);
+      } else {
+        formulas.delete(rowId);
+      }
+    });
+    const updateItems = vi.fn();
+    const grid = {
+      getColumns: () => columns,
+      getVisibleColumns: () => columns,
+      getDataItem: (row: number) => items[row],
+      getOptions: () => ({
+        editCommandHandler: (_item: unknown, _column: Column, command: any) => {
+          editCommand = command;
+          command.execute();
+        },
+      }),
+    } as any;
+
+    handleFormulaDragFill({ grid, prevSelectedRange: new SlickRange(0, 0), selectedRange: new SlickRange(0, 0, 1, 0) } as any, {
+      grid,
+      dataView: { updateItems } as any,
+      getDatasetIdPropertyName: () => 'id',
+      getFormula: (rowId: number | string) => formulas.get(String(rowId)),
+      setFormula,
+      toStoredFormula: (formula: string) => formula,
+      toDisplayFormulaForCell: (formula: string) => formula,
+    });
+
+    expect(items[1].value).toBe('=A2+1');
+    expect(formulas.get('r2')).toBe('=A2+1');
+    editCommand.undo();
+    expect(items[1].value).toBe(7);
+    expect(formulas.has('r2')).toBe(false);
+    expect(updateItems).toHaveBeenCalledTimes(2);
+  });
+
   it('fills visible formulas using logical column indexes when earlier columns are hidden', () => {
     const columns: Column[] = [
       { id: 'hidden', field: 'hidden', hidden: true, allowFormula: true },

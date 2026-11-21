@@ -21,6 +21,19 @@ interface FormulaFillTarget {
   range: SlickRange;
 }
 
+interface FormulaFillChange {
+  row: number;
+  cell: number;
+  rowId: number | string;
+  column: Column;
+  item: any;
+  field: string;
+  previousValue: unknown;
+  previousFormula?: string;
+  nextValue: unknown;
+  nextFormula?: string | null;
+}
+
 /** Fill formula cells through the same target-range semantics as the spreadsheet drag-fill example. */
 export function handleFormulaDragFill(args: OnDragReplaceCellsEventArgs, context: FormulaDragFillContext): void {
   const baseRange = args?.prevSelectedRange;
@@ -53,7 +66,7 @@ export function handleFormulaDragFill(args: OnDragReplaceCellsEventArgs, context
   const sourceCells = allColumns.flatMap((column, index) =>
     index >= baseRange.fromCell && index <= baseRange.toCell && !column.hidden ? [index] : []
   );
-  const updatedItems = new Map<string, { id: number | string; item: any }>();
+  const changes = new Map<string, FormulaFillChange>();
   const valueSeriesCache = new Map<string, unknown[]>();
   const rowIdProperty = context.getDatasetIdPropertyName();
 
@@ -78,17 +91,19 @@ export function handleFormulaDragFill(args: OnDragReplaceCellsEventArgs, context
         }
         const sourceCell = sourceCells[visibleOffset++ % sourceCells.length];
         const sourceColumn = allColumns[sourceCell];
-        if (!targetColumn.allowFormula) {
+        if (!targetColumn.allowFormula || !isFormulaFillCellEditable(context, targetRow, targetCell, targetColumn)) {
           continue;
         }
 
         const targetField = String(targetColumn.field ?? targetColumn.id);
         const sourceFormula = getFormulaOrRawValue(sourceItem, sourceRowId, sourceColumn, context.getFormula);
+        let nextValue: unknown;
+        let nextFormula: string | null | undefined;
         if (sourceFormula) {
           const displayFormula = context.toDisplayFormulaForCell(sourceFormula, sourceRowId, sourceColumn.id);
           const translatedFormula = translateFormulaReferences(displayFormula, targetRow - sourceRow, targetCell - sourceCell);
-          setFormulaObjectProperty(targetItem, targetField, context.toStoredFormula(translatedFormula));
-          context.setFormula(targetRowId, targetColumn.id, translatedFormula);
+          nextValue = context.toStoredFormula(translatedFormula);
+          nextFormula = translatedFormula;
         } else {
           const { seriesIndex, sourceValues } = getSourceValueSeries(
             baseRange,
@@ -100,15 +115,39 @@ export function handleFormulaDragFill(args: OnDragReplaceCellsEventArgs, context
             context.grid,
             valueSeriesCache
           );
-          setFormulaObjectProperty(targetItem, targetField, getFillSeriesValue(sourceValues, seriesIndex));
-          context.setFormula(targetRowId, targetColumn.id, null);
+          nextValue = getFillSeriesValue(sourceValues, seriesIndex);
+          nextFormula = null;
         }
-        updatedItems.set(String(targetRowId), { id: targetRowId, item: targetItem });
+        const key = `${targetRow}:${targetCell}`;
+        if (!changes.has(key)) {
+          changes.set(key, {
+            row: targetRow,
+            cell: targetCell,
+            rowId: targetRowId,
+            column: targetColumn,
+            item: targetItem,
+            field: targetField,
+            previousValue: targetItem?.[targetField],
+            previousFormula: context.getFormula(targetRowId, targetColumn.id),
+            nextValue,
+            nextFormula,
+          });
+        }
       }
     }
   }
 
-  if (updatedItems.size > 0) {
+  if (changes.size === 0) {
+    return;
+  }
+
+  const applyChanges = (useNext: boolean) => {
+    const updatedItems = new Map<string, { id: number | string; item: any }>();
+    for (const change of changes.values()) {
+      setFormulaObjectProperty(change.item, change.field, useNext ? change.nextValue : change.previousValue);
+      context.setFormula(change.rowId, change.column.id, useNext ? change.nextFormula : change.previousFormula);
+      updatedItems.set(String(change.rowId), { id: change.rowId, item: change.item });
+    }
     const updates = Array.from(updatedItems.values());
     if (typeof context.dataView?.updateItems === 'function') {
       context.dataView.updateItems(
@@ -118,7 +157,39 @@ export function handleFormulaDragFill(args: OnDragReplaceCellsEventArgs, context
     } else if (typeof context.dataView?.updateItem === 'function') {
       updates.forEach(({ id, item }) => context.dataView.updateItem(id, item));
     }
+  };
+  const first = changes.values().next().value!;
+  const editCommand = {
+    row: first.row,
+    cell: first.cell,
+    editor: undefined,
+    serializedValue: first.nextValue,
+    prevSerializedValue: first.previousValue,
+    execute: () => applyChanges(true),
+    undo: () => applyChanges(false),
+  };
+  const editCommandHandler = context.grid.getOptions()?.editCommandHandler;
+  if (typeof editCommandHandler === 'function') {
+    editCommandHandler(first.item, first.column, editCommand);
+  } else {
+    editCommand.execute();
   }
+}
+
+function isFormulaFillCellEditable(context: FormulaDragFillContext, row: number, cell: number, column: Column): boolean {
+  const grid = context.grid as any;
+  if (typeof grid.isCellEditable === 'function') {
+    return grid.isCellEditable(row, cell);
+  }
+  if (context.grid.getOptions?.().editable === false) {
+    return false;
+  }
+  const metadataColumns = context.dataView?.getItemMetadata?.(row)?.columns;
+  const metadata = metadataColumns?.[column.id] ?? metadataColumns?.[cell];
+  if (metadata?.editorClass === null || metadata?.editor === null) {
+    return false;
+  }
+  return column.editorClass !== null && column.editor !== null && !column.denyPaste;
 }
 
 function getSourceValueSeries(
