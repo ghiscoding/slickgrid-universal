@@ -1,6 +1,7 @@
 # Formula Editor Plugin Progress
 
 ## Handoff update (2026-11-20)
+- Second audit: added its findings to the checklist. Removed the unreachable top-level memo check and unused memo flag; all 174 Formula Plugin tests pass with 100% statement and line coverage, verifying the three earlier audit fixes below. `_evaluationMemo` and `resetEvaluationMemo()` remain as invalidation hooks for the planned render-pass cache.
 - Formula store and evaluation memo keys now encode row and column IDs without delimiter collisions while retaining numeric/string ID equivalence. Added snapshot, evaluation and reference-flag regressions; unit tests and line coverage still need verification.
 - Formula evaluations now memoize dependencies within each evaluation rather than across separate calls, so synchronous external changes and grouped recalculation see current data. Regression tests cover DataView updates and grouped totals; unit tests and line coverage remain to be verified.
 - Implemented the first independent-audit fix: date arithmetic now coerces numeric text, booleans and blank references as spreadsheet-day offsets; numeric values minus dates use date serials. Added focused regressions, but unit tests and line coverage still need verification.
@@ -236,15 +237,30 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Complete final validation for changed files, including the formula coercion, error, and date/export regressions: the user reports successful CI and 100% unit-test line coverage.
 - [x] Complete an independent audit of the Formula Editor feature and review its findings.
 - [ ] Fix the independent audit findings and validate each fix and its coverage:
-  - [x] Implement date arithmetic coercion for numeric text, booleans and blank references; add regressions. Unit tests and line coverage remain to be verified under the parent task.
-  - [x] Prevent stale memoized results after synchronous external data updates; add DataView and grouped-total regressions. Unit tests and line coverage remain to be verified under the parent task.
-  - [x] Prevent formula-store key collisions for row and column IDs containing `::`; add snapshot and evaluation regressions. Unit tests and line coverage remain to be verified under the parent task.
+  - [x] Implement date arithmetic coercion for numeric text, booleans and blank references; add regressions.
+  - [x] Prevent stale memoized results after synchronous external data updates; add DataView and grouped-total regressions.
+  - [x] Prevent formula-store key collisions for row and column IDs containing `::`; add snapshot and evaluation regressions.
   - [ ] Dataset synchronization can retain formulas after their source cells become plain values.
   - [ ] Literal text resembling a formula error is treated as an error.
   - [ ] `COUNT` and `COUNTA` can swallow structurally missing A1 references.
   - [ ] `MIN` and `MAX` can overflow the call stack for multiple large ranges.
   - [ ] Numeric literals in scientific notation are rejected.
   - [ ] Drag-fill clamps references that cross the first row or column instead of returning `#REF!`.
+- [ ] Fix the second audit findings (2026-11-20), committing and validating each separately:
+  - [x] Remove the unreachable top-level memo check and unused memo flag left by per-evaluation memoization; restore 100% line coverage.
+  - [ ] Filtered or paged ungrouped grids map editor A1 rows, highlights and evaluation through unfiltered dataset order instead of displayed rows.
+  - [ ] Excel export emits single-quoted strings and backslash escapes verbatim; convert string literals to Excel's doubled-quote syntax.
+  - [ ] Custom function names resembling A1 references (for example `LOG10`) are evaluated as cell references.
+  - [ ] Editor reference coloring and highlights match text inside quoted strings and partial identifiers (for example `SUMA1`).
+  - [ ] Ctrl/Cmd+C and Ctrl/Cmd+X ignore the text selection and copy or clear the whole formula.
+  - [ ] Escape with the autocomplete open also cancels the edit.
+  - [ ] A failed commit validation leaves the editor in its exiting state, disabling reference picking.
+  - [ ] Evaluation re-resolves dependencies per cell (O(n²) for chained formulas), scans the dataset for each row lookup and rebuilds the function registry per evaluation.
+  - [ ] Volatile `RAND`, `NOW` and `TODAY` recalculate on every cell render.
+  - [ ] `PRODUCT` with no numeric values returns 1 instead of 0; `COUNTA("")` returns 0 instead of 1.
+  - [ ] Editor DOM re-rendering breaks IME composition and browser undo; paste processes input twice.
+  - [ ] Dates in `&`/`CONCAT` render as JavaScript date strings; invalid custom function names are silently ignored; autocomplete lacks ARIA attributes; drag-fill ignores read-only cells and undo.
+- [ ] Evaluate AG Grid parity: an opt-in `validateFormulas` editor param and formula error tooltips.
 - [x] Evaluate editor validation: support editor and column validators and their messages; retain calculation errors in cells instead of automatically blocking formula input.
 - [ ] Deferred: evaluate these possible enhancements separately:
   - [ ] Whole-row reference picking, such as selecting a row number to insert a reference to the entire row.

@@ -127,7 +127,6 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   protected _hasAutoAssignedFormulaEditor = false;
   protected _originalColumnDefsById: Map<number | string, Pick<Column, 'formatter' | 'params' | 'editorClass' | 'editor'>> = new Map();
   protected _evaluationMemo: Map<string, unknown> = new Map<string, unknown>();
-  protected _isEvaluationMemoFlushScheduled = false;
   protected _formulaRefreshGeneration = 0;
   protected _formulaRefreshScheduled = false;
   protected _eventHandler: SlickEventHandler = new SlickEventHandler();
@@ -445,37 +444,17 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       return safeFallbackValue;
     }
 
-    const storeKey = this.buildStoreKey(rowId, columnId);
-    const evalMemo = this.getOrCreateEvaluationMemo();
-    const memoKey = this.buildEvaluationMemoKey(rowId, columnId, formula);
-
-    if (evalMemo.has(memoKey)) {
-      return evalMemo.get(memoKey);
-    }
-
     const evaluated = this.evaluateFormulaExpression(formula, {
-      visited: new Set<string>([storeKey]),
-      memo: evalMemo,
+      visited: new Set<string>([this.buildStoreKey(rowId, columnId)]),
+      memo: this.getOrCreateEvaluationMemo(),
     });
 
-    if (isFormulaErrorCode(evaluated)) {
-      evalMemo.set(memoKey, evaluated);
-      return evaluated;
-    }
-
     if (evaluated === undefined || (typeof evaluated === 'number' && Number.isNaN(evaluated))) {
-      const errorValue = FORMULA_ERROR.VALUE;
-      evalMemo.set(memoKey, errorValue);
-      return errorValue;
+      return FORMULA_ERROR.VALUE;
     }
-
     if (typeof evaluated === 'number' && !Number.isFinite(evaluated)) {
-      const errorValue = FORMULA_ERROR.NUM;
-      evalMemo.set(memoKey, errorValue);
-      return errorValue;
+      return FORMULA_ERROR.NUM;
     }
-
-    evalMemo.set(memoKey, evaluated);
     return evaluated;
   }
 
@@ -939,7 +918,6 @@ export class FormulaService implements ExternalResource, FormulaProvider {
 
   protected resetEvaluationMemo(): void {
     this._evaluationMemo.clear();
-    this._isEvaluationMemoFlushScheduled = false;
   }
 
   protected getDatasetLength(): number {
