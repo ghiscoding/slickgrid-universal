@@ -31,7 +31,7 @@ Handoff for future AI/dev sessions. Detailed history is in the git log of this f
 - [ ] Fix cold dependency chains overflowing the call stack, preserving cycle detection and lazy evaluation.
 - [x] Avoid exponential work when rewriting nested COUNTA calls for Excel export; regression added.
 - [x] Reuse row and column lookups across formula cells during Excel export; preserve standalone and grouped export behavior.
-- [ ] Reuse row coordinates during formula drag-fill and undo.
+- [x] Reuse row coordinates during formula drag-fill and undo, clearing cached data when DataView changes.
 - [x] Avoid repeatedly scanning the expression when generating range reference placeholders.
 - [ ] Consolidate the five Formula Editor Cypress suites while preserving framework coverage and serial order.
 - [ ] Share formula string-literal decoding between evaluation and Excel export.

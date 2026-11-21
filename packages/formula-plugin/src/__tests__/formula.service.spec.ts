@@ -1592,6 +1592,7 @@ describe('FormulaService', () => {
     } as any;
 
     service.init(gridStub);
+    const clearDataCaches = vi.spyOn(service as any, 'clearDataCaches');
     (service as any).handleDragReplaceCells(
       {},
       {
@@ -1600,6 +1601,8 @@ describe('FormulaService', () => {
         grid: gridStub,
       }
     );
+
+    expect(clearDataCaches).toHaveBeenCalledTimes(1);
 
     expect(service.getFormula('r2', 'total')).toBe('=REF(COLUMN("price"),ROW("r2"))*2');
     expect(service.getFormula('r3', 'total')).toBe('=REF(COLUMN("price"),ROW("r3"))*2');

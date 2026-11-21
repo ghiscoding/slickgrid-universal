@@ -18,6 +18,7 @@ export interface FormulaDragFillContext {
   setFormula: (rowId: number | string, columnId: number | string, formula?: string | null) => void;
   toStoredFormula: (formula: string) => string;
   toDisplayFormulaForCell: (formula: string, rowId: number | string, columnId: number | string) => string;
+  applyFormulaChanges?: (apply: () => void) => void;
 }
 
 type FormulaFillDirection = 'horizontal' | 'vertical';
@@ -149,11 +150,14 @@ export function handleFormulaDragFill(args: OnDragReplaceCellsEventArgs, context
 
   const applyChanges = (useNext: boolean) => {
     const updatedItems = new Map<string, { id: number | string; item: any }>();
-    for (const change of changes.values()) {
-      setFormulaObjectProperty(change.item, change.field, useNext ? change.nextValue : change.previousValue);
-      context.setFormula(change.rowId, change.column.id, useNext ? change.nextFormula : change.previousFormula);
-      updatedItems.set(String(change.rowId), { id: change.rowId, item: change.item });
-    }
+    const applyFormulaChanges = context.applyFormulaChanges ?? ((apply: () => void) => apply());
+    applyFormulaChanges(() => {
+      for (const change of changes.values()) {
+        setFormulaObjectProperty(change.item, change.field, useNext ? change.nextValue : change.previousValue);
+        context.setFormula(change.rowId, change.column.id, useNext ? change.nextFormula : change.previousFormula);
+        updatedItems.set(String(change.rowId), { id: change.rowId, item: change.item });
+      }
+    });
     const updates = Array.from(updatedItems.values());
     if (typeof context.dataView?.updateItems === 'function') {
       context.dataView.updateItems(

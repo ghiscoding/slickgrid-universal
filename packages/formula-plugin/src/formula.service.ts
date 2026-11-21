@@ -203,10 +203,16 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       this._eventHandler.subscribe(this._grid.onCellChange, this.handleCellChange.bind(this));
     }
     if (this._dataView.onRowsChanged) {
-      this._eventHandler.subscribe(this._dataView.onRowsChanged, () => this.resetEvaluationMemo());
+      this._eventHandler.subscribe(this._dataView.onRowsChanged, () => {
+        this.clearDataCaches();
+        this.resetEvaluationMemo();
+      });
     }
     if (this._dataView.onRowCountChanged) {
-      this._eventHandler.subscribe(this._dataView.onRowCountChanged, () => this.resetEvaluationMemo());
+      this._eventHandler.subscribe(this._dataView.onRowCountChanged, () => {
+        this.clearDataCaches();
+        this.resetEvaluationMemo();
+      });
     }
 
     if (this._options.customFunctions) {
@@ -670,6 +676,16 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       dataView: this._dataView,
       getDatasetIdPropertyName: this.getDatasetIdPropertyName.bind(this),
       getFormula: this.getFormula.bind(this),
+      applyFormulaChanges: (apply) => {
+        const wasBulkLoading = this._isBulkLoading;
+        this._isBulkLoading = true;
+        try {
+          apply();
+        } finally {
+          this._isBulkLoading = wasBulkLoading;
+          this.clearDataCaches();
+        }
+      },
       setFormula: (rowId, columnId, formula) => {
         if (formula && groupedRows) {
           this.captureFormulaReferenceAbsoluteFlags(this.buildStoreKey(rowId, columnId), formula, groupedRows);
