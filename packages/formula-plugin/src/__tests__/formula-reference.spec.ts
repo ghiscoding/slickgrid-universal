@@ -54,6 +54,11 @@ describe('formula reference utilities', () => {
     expect(buildFormulaReferenceColorInfos('=LOG10').map(({ ref }) => ref)).toEqual(['LOG10']);
   });
 
+  it('ignores references in complete and unfinished quoted strings', () => {
+    expect(buildFormulaReferenceColorInfos(`=CONCAT("Item A1", "a""B2", 'C3', SUMA1, D4)`).map(({ ref }) => ref)).toEqual(['D4']);
+    expect(buildFormulaReferenceColorInfos(`=CONCAT("unfinished A1, B2`).map(({ ref }) => ref)).toEqual([]);
+  });
+
   it('should convert Excel column names and indexes through one shared implementation', () => {
     expect(getExcelColumnNameByIndex(0)).toBe('');
     expect(getExcelColumnNameByIndex(28)).toBe('AB');

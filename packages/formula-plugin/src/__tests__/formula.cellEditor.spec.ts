@@ -4,6 +4,38 @@ import { FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY } from '../formula-reference.js';
 import { FormulaCellEditor } from '../formula.cellEditor.js';
 
 describe('FormulaCellEditor', () => {
+  it('styles and highlights references only outside quoted text and identifiers', () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    const setCellCssStyles = vi.fn();
+    const editor = new FormulaCellEditor({
+      column: { field: 'total' },
+      container,
+      item: { total: '' },
+      grid: {
+        getContainerNode: () => container,
+        getColumns: () => [{ id: 'a' }, { id: 'b' }, { id: 'c' }, { id: 'd' }],
+        getDataLength: () => 1,
+        setCellCssStyles,
+      },
+    } as any);
+    const input = (editor as any)._editorElm as HTMLElement;
+    input.textContent = `=CONCAT("A1", 'B2', SUMA1, D1)`;
+    (editor as any).restoreCaretOffset(input.textContent.length);
+    (editor as any).handleInput();
+
+    expect(Array.from(input.querySelectorAll('.formula-token'), (token) => token.textContent)).toEqual(['D1']);
+    expect(setCellCssStyles).toHaveBeenCalledWith(FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY, {
+      0: { d: 'formula-cell-color-1' },
+    });
+    const referenceStart = input.textContent!.lastIndexOf('D1');
+    expect((editor as any).getFormulaReferenceTokenRanges(input.textContent!)).toEqual([{ start: referenceStart, end: referenceStart + 2 }]);
+
+    editor.destroy();
+    container.remove();
+    window.getSelection()?.removeAllRanges();
+  });
+
   it('ignores quoted text and replaces the entire function name at the caret', () => {
     const container = document.createElement('div');
     document.body.appendChild(container);

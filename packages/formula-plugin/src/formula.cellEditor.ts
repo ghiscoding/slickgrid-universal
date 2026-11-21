@@ -3,7 +3,7 @@ import type { Editor, EditorArguments, EditorValidationResult, SelectionModel } 
 import { createDomElement, SlickRange } from '@slickgrid-universal/common';
 import {
   buildFormulaReferenceCssHash,
-  createFormulaReferenceTokenRegex,
+  findFormulaReferenceTokens,
   FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY,
   FormulaReferenceColorCache,
   getExcelColumnNameByIndex,
@@ -518,14 +518,9 @@ export class FormulaCellEditor implements Editor {
   protected getReferenceTokenRangeAtCaretOrUndefined(): { start: number; end: number } | undefined {
     const text = this.getPlainTextValue();
     const caretOffset = this.getCaretOffset();
-    const regex = createFormulaReferenceTokenRegex();
-    let match: RegExpExecArray | null;
-
-    while ((match = regex.exec(text)) !== null) {
-      const start = match.index;
-      const end = start + match[0].length;
-      if (caretOffset >= start && caretOffset <= end) {
-        return { start, end };
+    for (const token of findFormulaReferenceTokens(text)) {
+      if (caretOffset >= token.start && caretOffset <= token.end) {
+        return { start: token.start, end: token.end };
       }
     }
 
@@ -649,18 +644,16 @@ export class FormulaCellEditor implements Editor {
 
   protected getSingleReferenceTokenRangeOrUndefined(): { start: number; end: number } | undefined {
     const text = this.getPlainTextValue();
-    const regex = createFormulaReferenceTokenRegex();
-    const firstMatch = regex.exec(text);
-    if (!firstMatch) {
+    const tokens = findFormulaReferenceTokens(text);
+    if (!tokens.length) {
       return undefined;
     }
 
-    const secondMatch = regex.exec(text);
-    if (secondMatch) {
+    if (tokens.length > 1) {
       return undefined;
     }
 
-    return { start: firstMatch.index, end: firstMatch.index + firstMatch[0].length };
+    return { start: tokens[0].start, end: tokens[0].end };
   }
 
   protected resolveReferenceSelectionAnchorCell(
@@ -815,10 +808,7 @@ export class FormulaCellEditor implements Editor {
   }
 
   protected getFormulaReferenceTokenRanges(text: string): Array<{ start: number; end: number }> {
-    return Array.from(text.matchAll(createFormulaReferenceTokenRegex()), (match) => ({
-      start: match.index,
-      end: match.index + match[0].length,
-    }));
+    return findFormulaReferenceTokens(text).map(({ start, end }) => ({ start, end }));
   }
 
   protected restoreCaretOffset(offset: number): void {
@@ -867,26 +857,23 @@ export class FormulaCellEditor implements Editor {
     // Read from the shared cache; callers are responsible for calling buildFormulaReferenceColorCache() first
     const refColorCache = this._formulaRefColorCache;
 
-    const referenceTokenRegex = createFormulaReferenceTokenRegex();
     // Build nodes via the DOM API (instead of innerHTML+string concat) so untrusted formula
     // text (e.g. `=A1&"<img src=x onerror=...>"`) can never be parsed as markup.
     const fragment = document.createDocumentFragment();
     let lastIndex = 0;
-    let match: RegExpExecArray | null;
-
-    while ((match = referenceTokenRegex.exec(raw)) !== null) {
-      if (match.index > lastIndex) {
-        fragment.appendChild(document.createTextNode(raw.slice(lastIndex, match.index)));
+    for (const token of findFormulaReferenceTokens(raw)) {
+      if (token.start > lastIndex) {
+        fragment.appendChild(document.createTextNode(raw.slice(lastIndex, token.start)));
       }
 
-      const normalizedRef = normalizeFormulaReferenceToken(match[0]);
+      const normalizedRef = normalizeFormulaReferenceToken(token.ref);
       const colorIdx = refColorCache.get(normalizedRef)?.colorIdx ?? 0;
       const colorClass = `formula-token-color-${colorIdx + 1}`;
       const span = createDomElement('span', { className: `formula-token ${colorClass}` });
-      span.textContent = match[0];
+      span.textContent = token.ref;
       fragment.appendChild(span);
 
-      lastIndex = match.index + match[0].length;
+      lastIndex = token.end;
     }
 
     if (lastIndex < raw.length) {

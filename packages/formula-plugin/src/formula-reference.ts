@@ -72,6 +72,55 @@ export function createFormulaReferenceTokenRegex(): RegExp {
   return new RegExp(FORMULA_REFERENCE_TOKEN_PATTERN, 'gi');
 }
 
+export interface FormulaReferenceToken {
+  ref: string;
+  start: number;
+  end: number;
+}
+
+/** Find references only outside quoted strings, including through unfinished string literals. */
+export function findFormulaReferenceTokens(formula: string): FormulaReferenceToken[] {
+  const references: FormulaReferenceToken[] = [];
+  const addSegment = (start: number, end: number) => {
+    const segment = formula.slice(start, end);
+    const referenceRegex = createFormulaReferenceTokenRegex();
+    let match: RegExpExecArray | null;
+    while ((match = referenceRegex.exec(segment)) !== null) {
+      references.push({ ref: match[0], start: start + match.index, end: start + match.index + match[0].length });
+    }
+  };
+
+  let segmentStart = 0;
+  let index = 0;
+  while (index < formula.length) {
+    const quote = formula[index];
+    if (quote !== '"' && quote !== "'") {
+      index++;
+      continue;
+    }
+
+    addSegment(segmentStart, index);
+    index++;
+    while (index < formula.length) {
+      if (formula[index] === '\\') {
+        index += 2;
+      } else if (formula[index] === quote) {
+        if (formula[index + 1] === quote) {
+          index += 2;
+        } else {
+          index++;
+          break;
+        }
+      } else {
+        index++;
+      }
+    }
+    segmentStart = index;
+  }
+  addSegment(segmentStart, formula.length);
+  return references;
+}
+
 export function normalizeFormulaReferenceToken(token: string): string {
   return token.replace(/\$/g, '').replace(/\s+/g, '').toUpperCase();
 }
@@ -150,11 +199,8 @@ export function expandFormulaReferenceToGridCells(reference: string): FormulaGri
 export function buildFormulaReferenceColorInfos(formula: string): FormulaReferenceColorInfo[] {
   const references: FormulaReferenceColorInfo[] = [];
   const seen = new Set<string>();
-  const referenceRegex = createFormulaReferenceTokenRegex();
-  let match: RegExpExecArray | null;
-
-  while ((match = referenceRegex.exec(formula)) !== null) {
-    const ref = normalizeFormulaReferenceToken(match[0]);
+  for (const token of findFormulaReferenceTokens(formula)) {
+    const ref = normalizeFormulaReferenceToken(token.ref);
     if (seen.has(ref)) {
       continue;
     }
