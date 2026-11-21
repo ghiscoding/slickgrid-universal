@@ -1,9 +1,4 @@
-import {
-  FORMULA_MAX_REFERENCE_CELLS,
-  getExcelColumnNameByIndex,
-  parseExcelReferenceCell,
-  type FormulaGridCell,
-} from './formula-reference.js';
+import { FORMULA_MAX_REFERENCE_CELLS, getExcelColumnNameByIndex, parseExcelReferenceCell } from './formula-reference.js';
 
 /** Expand rectangles before storing identities. Structural rows are excluded by the caller. */
 export function expandFormulaRanges(formula: string, isDataRow: (row: number) => boolean = () => true): string {
@@ -42,77 +37,6 @@ export function expandFormulaRanges(formula: string, isDataRow: (row: number) =>
       return members.length ? `REFRANGE(${members.join(',')})` : '#REF!';
     }
   );
-}
-
-/** Match Excel's SUMIF rule by sizing sum_range from its first cell to the criteria range dimensions. */
-export function normalizeSumIfRangeDimensions(formula: string): string {
-  let output = '';
-  let index = 0;
-
-  while (index < formula.length) {
-    const char = formula[index];
-    if (char === '"' || char === "'") {
-      const quote = char;
-      const start = index++;
-      while (index < formula.length) {
-        if (formula[index] === '\\') {
-          index += 2;
-          continue;
-        }
-        if (formula[index] === quote) {
-          if (formula[index + 1] === quote) {
-            index += 2;
-          } else {
-            index++;
-            break;
-          }
-        } else {
-          index++;
-        }
-      }
-      output += formula.slice(start, index);
-      continue;
-    }
-
-    const identifier = formula.slice(index).match(/^[A-Za-z_][A-Za-z0-9_.]*/)?.[0];
-    if (!identifier) {
-      output += char;
-      index++;
-      continue;
-    }
-
-    let openIndex = index + identifier.length;
-    while (/\s/.test(formula[openIndex] ?? '')) {
-      openIndex++;
-    }
-    if (formula[openIndex] !== '(') {
-      output += identifier;
-      index += identifier.length;
-      continue;
-    }
-
-    const parsed = parseFormulaFunctionArguments(formula, openIndex);
-    if (!parsed) {
-      output += formula.slice(index);
-      break;
-    }
-
-    const { end: closeIndex } = parsed;
-    const args = parsed.args.map(normalizeSumIfRangeDimensions);
-    if (identifier.toUpperCase() !== 'SUMIF') {
-      output += `${formula.slice(index, openIndex + 1)}${args.join(',')})`;
-      index = closeIndex + 1;
-      continue;
-    }
-
-    if (args.length === 3) {
-      args[2] = resizeSumIfRange(args[0], args[2]);
-    }
-    output += `${formula.slice(index, openIndex + 1)}${args.join(',')})`;
-    index = closeIndex + 1;
-  }
-
-  return output;
 }
 
 export function parseFormulaFunctionArguments(formula: string, openIndex: number): { args: string[]; end: number } | undefined {
@@ -235,68 +159,6 @@ function toExcelFormulaString(value: string): string {
     parts.push(quoteText(text));
   }
   return `(${parts.join('&')})`;
-}
-
-function resizeSumIfRange(criteriaRange: string, sumRange: string): string {
-  const criteria = parseA1RangeShape(criteriaRange);
-  const sum = parseA1RangeShape(sumRange);
-  if (!criteria || !sum || (criteria.height === sum.height && criteria.width === sum.width)) {
-    return sumRange;
-  }
-
-  const leadingWhitespace = sumRange.match(/^\s*/)?.[0] ?? '';
-  const trailingWhitespace = sumRange.match(/\s*$/)?.[0] ?? '';
-  const endRow = sum.start.row + criteria.height - 1;
-  const endColumn = sum.start.cell + criteria.width - 1;
-  const resizedRange = formatA1Range(
-    sum.start,
-    { row: endRow, cell: endColumn },
-    sum.startFlags,
-    sum.endFlags,
-    criteria.height > 1 || criteria.width > 1
-  );
-
-  return `${leadingWhitespace}${resizedRange}${trailingWhitespace}`;
-}
-
-interface A1RangeShape {
-  start: FormulaGridCell;
-  height: number;
-  width: number;
-  startFlags: string[];
-  endFlags: string[];
-}
-
-function parseA1RangeShape(expression: string): A1RangeShape | undefined {
-  const match = expression.trim().match(/^(\$?[A-Z]{1,3}\$?\d+)(?:\s*:\s*(\$?[A-Z]{1,3}\$?\d+))?$/i);
-  if (!match) {
-    return undefined;
-  }
-
-  const start = parseExcelReferenceCell(match[1]);
-  const end = parseExcelReferenceCell(match[2] ?? match[1]);
-  if (!start || !end) {
-    return undefined;
-  }
-  const startFlags = match[1].match(/^(\$?)[A-Z]{1,3}(\$?)/i)!.slice(1);
-  const endFlags = (match[2] ?? match[1]).match(/^(\$?)[A-Z]{1,3}(\$?)/i)!.slice(1);
-
-  return {
-    start,
-    height: Math.abs(end.row - start.row) + 1,
-    width: Math.abs(end.cell - start.cell) + 1,
-    startFlags,
-    endFlags,
-  };
-}
-
-function formatA1Range(start: FormulaGridCell, end: FormulaGridCell, startFlags: string[], endFlags: string[], isRange: boolean): string {
-  const first = `${startFlags[0]}${getExcelColumnNameByIndex(start.cell + 1)}${startFlags[1]}${start.row + 1}`;
-  if (!isRange) {
-    return first;
-  }
-  const last = `${endFlags[0]}${getExcelColumnNameByIndex(end.cell + 1)}${endFlags[1]}${end.row + 1}`;
-  return `${first}:${last}`;
 }
 
 /** REFRANGE is an internal, ordered reference list; strings and stable REF arguments are preserved. */

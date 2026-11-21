@@ -3,6 +3,7 @@
 ## Handoff update (2026-11-21)
 - Scope/size audit (user decision: keep grouping, target AG Grid/Syncfusion parity, measure production LOC only). Consolidated A1 regexes and the quote-aware transform helper, removed the unused `renderFormulaReferenceHighlights`/`extractExcelReferences` API and pass-through input callback, and generated the light/dark palettes from one Sass mixin (shipped CSS about 8% smaller). Net production change: about -166 lines.
 - Removed `SUMPRODUCT` (in neither AG Grid nor Syncfusion) along with the per-reference row tracking that only it used. Two-dimensional helper ranges remain for grouped export and are covered with `SUM`.
+- Replaced Excel-style `SUMIF` sum-range resizing with `#VALUE!` when the criteria and sum ranges differ in size; exported workbooks keep the original formula. Production code went from about 5,470 to 5,117 lines (-352, about 6.4%) across the audit.
 
 ## Handoff update (2026-11-20)
 - Dates now concatenate as Excel serial text instead of JavaScript date strings, and invalid runtime custom-function names throw an explicit `TypeError` instead of being silently ignored. Added focused function/service coverage.
@@ -233,10 +234,10 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Preserve single-cell and range reference types and formula-produced empty strings for `SUM`, `PRODUCT`, `MIN`, `MAX`, `AVERAGE`, `MEDIAN`, `COUNT`, `COUNTA`, and `COUNTBLANK`.
 - [x] Fix grouped disjoint Excel `COUNTA` export for formulas returning empty text while still excluding truly blank source cells.
 - [x] Add wildcard, escape, case-insensitive and blank criteria handling to `COUNTIF` and `SUMIF`; ignore nonnumeric sum-range values and validate their argument counts.
-- [x] Validate `SUMPRODUCT` range dimensions and preserve two-dimensional grouped Excel helper ranges.
+- [x] Validate `SUMPRODUCT` range dimensions and preserve two-dimensional grouped Excel helper ranges. Superseded: `SUMPRODUCT` was removed in the 2026-11-21 scope audit.
 - [x] Correct number-versus-text comparison and uppercase logical values in `&` concatenation; cover both with unit tests.
 - [x] Report arithmetic and function overflow as `#NUM!` without masking division-by-zero errors, and render logical values consistently in `CONCAT`/`CONCATENATE`.
-- [x] Match Excel `SUMIF` behavior for mismatched ranges by sizing `sum_range` from its first cell to the criteria range dimensions; preserve expanded cells through layout changes, snapshots and Excel export.
+- [x] Match Excel `SUMIF` behavior for mismatched ranges by sizing `sum_range` from its first cell to the criteria range dimensions; preserve expanded cells through layout changes, snapshots and Excel export. Superseded: mismatched ranges now return `#VALUE!` (2026-11-21 scope audit).
 - [x] Audit and correct comparisons between logical, numeric and text values, including chained comparisons and blank references. Logical values remain numeric in arithmetic.
 - [x] Validate required argument counts for `COUNT`, `COUNTA` and `COUNTBLANK`.
 - [x] Count valid date values in `COUNT`, including references and date-function results.
@@ -290,7 +291,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Decide whether an optional strict selection-prerequisite mode is needed: retain warning-only behavior and CSS fallback.
 - [x] Replicate the Formula Editor and function guides in all four framework documentation sets.
 - [x] Replicate Vanilla Example 48 to all framework wrappers as Example 59, with corresponding Cypress coverage; all four suites passed in CI.
-- [ ] **Second-to-last task:** Audit the whole Formula Plugin for performance, DRY and lines of code, and reduce LOC where possible without losing behavior or coverage. This includes the large `slick-formula.scss` stylesheet, plus duplicated quote/reference scanners and A1/reference regex patterns across the service, range, drag-fill and editor modules. We should also audit the feature, are we covering more than Ag-Grid/SyncFusion? If so then maybe decrease the scope a bit. AG Grid lists grouping, tree data and aggregation as unsupported with formulas; decide whether to keep or simplify our grouping support (grouped references, `createGroupingAggregator`, grouped Excel export helper sheet and `COUNTA` presence ranges). Syncfusion's reference (https://react.syncfusion.com/react-ui/data-grid/formulas/formula-reference/) is narrower still: no `^`, `&` or `%` operators (it uses `POWER`/`CONCAT`), no `SUMPRODUCT`/`NA`, optional `ROUND` digits, `TODAY`/`NOW` as aliases, and only four error codes (`#INVALID_REFERENCE`, `#CIRCREF!`, `#PARSE!`, `#NAME?`). A partial A1 regex consolidation is stashed as `wip: formula A1 regex consolidation (LOC audit, untested)`.
+- [x] **Second-to-last task:** Audit the Formula Plugin for performance, DRY, lines of code and scope against AG Grid/Syncfusion. Decisions: keep grouping support, wildcards, `NA()` and the extra error codes; remove `SUMPRODUCT` and `SUMIF` resizing; consolidate regexes, quote scanning and palette styles; remove unused highlight/export helpers. Production code: about 5,470 to 5,117 lines.
 - [ ] **Final task:** Evaluate a separate calculated-columns package and identify utilities that could be shared with the formula plugin. Inform the user when this task is reached. The user wants to create 2 more optional packages, 1 package for Column Editor and 1 package for the common code between Formula Editor and Column Editor. We should probably merge the current Formula Editor feature PR before running this task.
 
 ## Latest Update: Optional Package Styling (2026-11-14)

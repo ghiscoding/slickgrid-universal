@@ -35,7 +35,6 @@ import {
   getFormulaRangeWidth,
   mapFormulaRanges,
   normalizeExcelFormulaStrings,
-  normalizeSumIfRangeDimensions,
   parseFormulaFunctionArguments,
   rewriteExcelHelperCounta,
 } from './formula-range.js';
@@ -672,7 +671,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     const previousFlags = this._formulaReferenceAbsoluteFlagsByKey.get(key) ?? [];
     const flags: FormulaReferenceAbsoluteFlags[] = [];
     const tokens = FORMULA_FLAG_TOKEN_REGEX;
-    const expanded = expandFormulaRanges(this.normalizeFormulaRangeDimensions(formula), (row) => !rowIds || rowIds[row] !== undefined);
+    const expanded = expandFormulaRanges(formula, (row) => !rowIds || rowIds[row] !== undefined);
     expanded.replace(tokens, (token) => {
       if (/^REF\(/i.test(token)) {
         flags.push(previousFlags[flags.length] ?? { column: false, row: false });
@@ -1017,7 +1016,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
 
   protected evaluateFormulaExpression(formula: string, context: FormulaEvaluationContext): unknown {
     const formulaBody = formula.trim().startsWith('=') ? formula.trim().slice(1) : formula.trim();
-    const normalized = this.normalizeFormulaRangeDimensions(formulaBody);
+    const normalized = formulaBody;
     if (!normalized) {
       return FORMULA_ERROR.NULL;
     }
@@ -1868,7 +1867,6 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     rowIds: Array<string | undefined> = this.getFormulaRowIds(),
     invalidRowAsError = false
   ): string {
-    formula = this.normalizeFormulaRangeDimensions(formula);
     if (!formula || columnIds.length === 0 || rowIds.length === 0) {
       return formula;
     }
@@ -1920,10 +1918,6 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   /** Convert editor A1 syntax to the stable syntax used by runtime storage and export. */
   protected toStoredFormula(formula: string): string {
     return this.convertA1ReferencesToStableRefs(formula);
-  }
-
-  protected normalizeFormulaRangeDimensions(formula: string): string {
-    return this._customFunctions.has('SUMIF') ? formula : normalizeSumIfRangeDimensions(formula);
   }
 
   /** Replace REF(COLUMN("x"),ROW(...)) expressions by concrete A1 references. */

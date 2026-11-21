@@ -260,6 +260,9 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
     const [range, criteria, sumRange] = args;
     const criteriaValues = toFormulaArray(range);
     const sumValues = sumRange === undefined ? criteriaValues : toFormulaArray(sumRange);
+    if (sumValues.length !== criteriaValues.length) {
+      return FORMULA_ERROR.VALUE;
+    }
     const matches = createFormulaCriteriaMatcher(criteria);
     const length = Math.min(criteriaValues.length, sumValues.length);
     let sum = 0;

@@ -53,7 +53,7 @@ For Excel export, the built-in `RANDOM` and `RAN` aliases are written as `RAND`,
 
 `CONCAT` and `CONCATENATE` render logical values as `TRUE` and `FALSE`, including values supplied by cell references.
 
-For mismatched `SUMIF` ranges, the sum range is sized from its first cell to match the criteria range, as in Excel. The effective cells are stored as stable references so their identities survive row and column layout changes.
+When `SUMIF` receives a sum range, it must contain the same number of cells as the criteria range; otherwise the grid returns `#VALUE!`. Exported workbooks keep the original formula.
 
 ### Custom Function Registration
 You can register functions in constructor options.
