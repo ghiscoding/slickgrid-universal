@@ -1249,6 +1249,7 @@ describe('FormulaCellEditor', () => {
     (editor as any).restoreCaretOffset(999);
     (editor as any)._isDestroyed = true;
     (editor as any).restoreCaretOffset(0);
+    (editor as any).restoreEditorAfterRejectedCommit();
     (editor as any)._isDestroyed = false;
     const selectionSpy = vi.spyOn(window, 'getSelection').mockReturnValue(null);
     (editor as any).restoreCaretOffset(0);
@@ -1445,10 +1446,12 @@ describe('FormulaCellEditor', () => {
 
     (editor as any).handleKeydown(new KeyboardEvent('keydown', { key: 'Enter', cancelable: true }));
     expect(commitChanges).toHaveBeenCalled();
-    (editor as any)._isExitingEditor = false;
+    expect((editor as any)._isExitingEditor).toBe(false);
     (editor as any)._isValueTouched = true;
     (editor as any).handleKeydown(new KeyboardEvent('keydown', { key: 'Tab', cancelable: true }));
     vi.runAllTimers();
+    expect((editor as any)._isExitingEditor).toBe(false);
+    expect(navigateNext).not.toHaveBeenCalled();
 
     commitResult = true;
     (editor as any)._isExitingEditor = false;

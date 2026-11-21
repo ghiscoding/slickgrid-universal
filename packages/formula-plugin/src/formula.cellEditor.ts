@@ -316,6 +316,7 @@ export class FormulaCellEditor implements Editor {
       const didCommit = this.args.grid.getEditorLock?.()?.commitCurrentEdit?.();
       if (didCommit === false) {
         this.args.commitChanges();
+        this.restoreEditorAfterRejectedCommit();
       }
     } else if (event.key === 'Tab') {
       const grid = this.args.grid;
@@ -335,6 +336,7 @@ export class FormulaCellEditor implements Editor {
       const didCommit = this.args.grid.getEditorLock?.()?.commitCurrentEdit?.();
       if (didCommit === false) {
         this.args.commitChanges();
+        this.restoreEditorAfterRejectedCommit();
       }
 
       this._tabNavigateTimer = setTimeout(() => {
@@ -363,6 +365,17 @@ export class FormulaCellEditor implements Editor {
     }
     event.stopPropagation();
     event.stopImmediatePropagation();
+  }
+
+  protected restoreEditorAfterRejectedCommit(): void {
+    if (this._isDestroyed || !this._editorElm?.isConnected) {
+      return;
+    }
+
+    this._isExitingEditor = false;
+    this._formulaRefColorCache.clear();
+    this.buildFormulaReferenceColorCache();
+    this.syncReferenceSelectionFromCaret();
   }
 
   protected handleWindowMouseDown = (event: MouseEvent): void => {
