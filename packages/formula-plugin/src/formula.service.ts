@@ -2132,14 +2132,18 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         return cached === '' ? FORMULA_EMPTY_RESULT : cached;
       }
 
-      const chainResult = this.evaluateSingleReferenceDependencyChain(rowId, columnId, nestedFormula, context);
+      const chainResult = this.evaluateDirectDependencyGraph(rowId, columnId, nestedFormula, context);
       if (chainResult.handled) {
         return chainResult.value === '' ? FORMULA_EMPTY_RESULT : chainResult.value;
       }
 
       context.visited.add(key);
-      const nested = this.evaluateFormulaExpression(nestedFormula, { ...context, preserveLiteral: true });
-      context.visited.delete(key);
+      let nested: unknown;
+      try {
+        nested = this.evaluateFormulaExpression(nestedFormula, { ...context, preserveLiteral: true });
+      } finally {
+        context.visited.delete(key);
+      }
       context.memo.set(nestedMemoKey, nested);
       return nested === '' ? FORMULA_EMPTY_RESULT : nested;
     }
@@ -2147,8 +2151,8 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     return rawValue;
   }
 
-  /** Evaluate chains with one eagerly resolved reference without recursive cell traversal. */
-  protected evaluateSingleReferenceDependencyChain(
+  /** Evaluate direct-reference dependencies on an explicit stack. */
+  protected evaluateDirectDependencyGraph(
     rowId: number | string,
     columnId: number | string,
     formula: string,
@@ -2162,60 +2166,72 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     const items = this.getDataItems();
     const idProperty = this.getDatasetIdPropertyName();
     const rowIds = (this._evaluationRowIdsCache ??= items.map((item) => String(item?.[idProperty] ?? '')));
-    const frames: Array<{ key: string; memoKey: string; formula: string }> = [];
-    let currentRowId = rowId;
-    let currentColumnId = columnId;
-    let currentFormula = formula;
+    const frames: Array<{
+      key: string;
+      memoKey: string;
+      formula: string;
+      references: string[];
+      nextReference: number;
+    }> = [];
+
+    const pushFrame = (currentRowId: number | string, currentColumnId: number | string, currentFormula: string): boolean => {
+      const expression = this.replaceRefFunctionsWithA1Refs(currentFormula, columnIds, rowIds);
+      const references = findFormulaReferenceTokens(expression);
+      if (
+        this.hasUnsafeFormulaSyntax(expression) ||
+        this.matchesOutsideQuotedStrings(expression, /\b(?:IF|REFRANGE)\s*\(|#REF!|["']/i) ||
+        references.length === 0 ||
+        references.some(({ ref }) => ref.includes(':'))
+      ) {
+        return false;
+      }
+      const key = this.buildStoreKey(currentRowId, currentColumnId);
+      const memoKey = this.buildEvaluationMemoKey(currentRowId, currentColumnId, currentFormula);
+      if (context.visited.has(key) || context.memo.has(memoKey)) {
+        return false;
+      }
+      frames.push({ key, memoKey, formula: currentFormula, references: references.map(({ ref }) => ref), nextReference: 0 });
+      context.visited.add(key);
+      return true;
+    };
+
+    if (!pushFrame(rowId, columnId, formula)) {
+      return { handled: false };
+    }
+    let value: unknown;
     try {
-      while (true) {
-        const expression = this.replaceRefFunctionsWithA1Refs(currentFormula, columnIds, rowIds);
-        const references = findFormulaReferenceTokens(expression);
-        if (
-          this.hasUnsafeFormulaSyntax(expression) ||
-          this.matchesOutsideQuotedStrings(expression, /\b(?:IF|REFRANGE)\s*\(|#REF!/i) ||
-          references.length !== 1 ||
-          references[0].ref.includes(':')
-        ) {
-          break;
+      while (frames.length) {
+        const frame = frames[frames.length - 1];
+        if (frame.nextReference < frame.references.length) {
+          const reference = parseExcelReferenceCell(frame.references[frame.nextReference++]);
+          if (!reference) {
+            continue;
+          }
+          const nextItem = items[reference.row];
+          const nextColumn = columns[reference.cell];
+          const nextRowId = nextItem?.[idProperty] as number | string | undefined;
+          if (!nextColumn || nextRowId == null) {
+            continue;
+          }
+          const rawValue = nextItem[String(nextColumn.field ?? nextColumn.id)];
+          const nextFormula = this.getFormula(nextRowId, nextColumn.id) ?? rawValue;
+          if (typeof nextFormula !== 'string' || !nextFormula.trim().startsWith('=')) {
+            continue;
+          }
+          const nextKey = this.buildStoreKey(nextRowId, nextColumn.id);
+          const nextMemoKey = this.buildEvaluationMemoKey(nextRowId, nextColumn.id, nextFormula);
+          if (context.visited.has(nextKey) || context.memo.has(nextMemoKey)) {
+            continue;
+          }
+          if (!pushFrame(nextRowId, nextColumn.id, nextFormula)) {
+            this.resolveExcelReferenceValue(getExcelColumnNameByIndex(reference.cell + 1), reference.row + 1, context);
+          }
+          continue;
         }
-        const key = this.buildStoreKey(currentRowId, currentColumnId);
-        if (context.visited.has(key)) {
-          break;
-        }
-        const memoKey = this.buildEvaluationMemoKey(currentRowId, currentColumnId, currentFormula);
-        if (context.memo.has(memoKey)) {
-          break;
-        }
-        frames.push({ key, memoKey, formula: currentFormula });
-        context.visited.add(key);
-        const reference = parseExcelReferenceCell(references[0].ref);
-        if (!reference) {
-          break;
-        }
-        const nextItem = items[reference.row];
-        const nextColumn = columns[reference.cell];
-        const nextRowId = nextItem?.[idProperty] as number | string | undefined;
-        if (!nextColumn || nextRowId == null) {
-          break;
-        }
-        const rawValue = nextItem[String(nextColumn.field ?? nextColumn.id)];
-        const nextFormula = this.getFormula(nextRowId, nextColumn.id) ?? rawValue;
-        if (typeof nextFormula !== 'string' || !nextFormula.trim().startsWith('=')) {
-          break;
-        }
-        currentRowId = nextRowId;
-        currentColumnId = nextColumn.id;
-        currentFormula = nextFormula;
-      }
-      if (frames.length === 0) {
-        return { handled: false };
-      }
-      let value: unknown;
-      for (let index = frames.length - 1; index >= 0; index--) {
-        const frame = frames[index];
         value = this.evaluateFormulaExpression(frame.formula, { ...context, preserveLiteral: true });
         context.visited.delete(frame.key);
         context.memo.set(frame.memoKey, value);
+        frames.pop();
       }
       return { handled: true, value };
     } finally {

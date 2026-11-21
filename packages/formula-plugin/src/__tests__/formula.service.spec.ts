@@ -47,6 +47,18 @@ describe('FormulaService', () => {
     service.dispose();
   });
 
+  it('evaluates a deep graph with multiple and repeated cell references', () => {
+    const items = Array.from({ length: 2000 }, (_, index) => ({ id: index + 1, value: index ? `=A${index}+B${index}+B${index}` : 1, increment: 1 }));
+    const columns: Column[] = [
+      { id: 'value', field: 'value', allowFormula: true },
+      { id: 'increment', field: 'increment' },
+    ];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    expect(service.getEvaluatedCellValue(2000, 'value')).toBe(3999);
+    service.dispose();
+  });
+
   it('preserves circular references and lazy custom calls at the end of an arithmetic chain', () => {
     const items = [
       { id: 1, value: '=A2+1' },
@@ -92,7 +104,7 @@ describe('FormulaService', () => {
     service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
     (service as any).clearDataCaches();
     const context = { visited: new Set<string>(), memo: new Map<string, unknown>() };
-    expect((service as any).evaluateSingleReferenceDependencyChain(1, 'value', service.getFormula(1, 'value'), context).value).toBe(4);
+    expect((service as any).evaluateDirectDependencyGraph(1, 'value', service.getFormula(1, 'value'), context).value).toBe(4);
     expect(service.getEvaluatedCellValue(3, 'value')).toBe(2);
     expect(service.getEvaluatedCellValue(1, 'value')).toBe(4);
     service.setFormula(2, 'value', '=Z1+1');
@@ -101,6 +113,29 @@ describe('FormulaService', () => {
     expect(service.getEvaluatedCellValue(1, 'value')).toBe(FORMULA_ERROR.REF);
     service.setFormula(2, 'value', '=A1+1');
     expect(service.getEvaluatedCellValue(1, 'value')).toBe(FORMULA_ERROR.CIRCREF);
+    service.dispose();
+  });
+
+  it('cleans up dependency traversal after an error and handles deferred formulas', () => {
+    const items = [
+      { id: 1, value: '=A2+1' },
+      { id: 2, value: '=IF(FALSE,0,7)' },
+    ];
+    const columns: Column[] = [{ id: 'value', field: 'value', allowFormula: true }];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    expect(service.getEvaluatedCellValue(1, 'value')).toBe(8);
+    const key = (service as any).buildStoreKey(1, 'value');
+    const context = { visited: new Set<string>([key]), memo: new Map<string, unknown>() };
+    const formula = service.getFormula(1, 'value');
+    expect((service as any).evaluateDirectDependencyGraph(1, 'value', formula, context).handled).toBe(false);
+    context.visited.clear();
+    const evaluate = vi.spyOn(service as any, 'evaluateFormulaExpression').mockImplementation(() => {
+      throw new Error('failure');
+    });
+    expect(() => (service as any).evaluateDirectDependencyGraph(1, 'value', formula, context)).toThrow('failure');
+    expect(context.visited.size).toBe(0);
+    evaluate.mockRestore();
     service.dispose();
   });
 
