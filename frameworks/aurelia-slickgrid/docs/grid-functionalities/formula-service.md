@@ -144,7 +144,7 @@ When a formula references a hidden source column, export it with `includeHidden:
 
 ### Grouping and Group Totals
 
-Formula references use the displayed row numbers while editing a grouped grid. Group headers and totals occupy row numbers, but are not data cells: selecting a range skips those structural rows, and a single reference to one produces `#REF!`.
+Formula references use the displayed row numbers while editing a grouped, filtered or paged grid. References to records hidden by a filter or another page keep their stable `REF(COLUMN(...),ROW(...))` form in the editor and still evaluate. Group headers and totals occupy row numbers, but are not data cells: selecting a range skips those structural rows, and a single reference to one produces `#REF!`.
 
 Ranges capture their member cells in row-major order as `REFRANGE(REF(...),REF(...),...)`. This preserves both membership and argument boundaries through grouping, sorting, filtering and column reordering. Contiguous members display as `A1:A3`; disjoint members display explicitly, for example `REFRANGE(A2,A9,A3)`. References hidden by collapsed groups retain their stable `REF(COLUMN(...),ROW(...))` form. Reopening and committing a formula does not change the referenced records. Legacy endpoint-only stable ranges are expanded using the dataset order when supplied to the service; import them before reordering the original dataset.
 

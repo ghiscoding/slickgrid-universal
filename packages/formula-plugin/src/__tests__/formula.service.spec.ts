@@ -924,6 +924,7 @@ describe('FormulaService', () => {
     rows = [{ __group: true }, items[0], items[1]];
     expect(params.toDisplayFormula(items[0].total, items[0])).toBe('=A2*2');
     grouped = false;
+    rows = items;
     expect(params.toDisplayFormula(items[0].total, items[0])).toBe('=A1*2');
     service.setFormula('a', 'total', '=SUM($A$1:A2)');
     grouped = true;
@@ -933,12 +934,53 @@ describe('FormulaService', () => {
     const edited = params.toStoredFormula(`${collapsed}+1`, items[0]);
     service.setFormula('a', 'total', edited);
     grouped = false;
+    rows = items;
     expect(params.toDisplayFormula(edited, items[0])).toBe('=SUM($A$1:A2)+1');
     grouped = true;
     service.setFormula('a', 'total', '=SUM($A$1:A2)');
     service.setFormula('a', 'total', params.toStoredFormula(collapsed, items[0]));
     grouped = false;
+    rows = items;
     expect(params.toDisplayFormula(service.getFormula('a', 'total'), items[0])).toBe('=SUM($A$1:A2)');
+  });
+
+  it('maps editor and highlight references to displayed rows when filtering or paging hides records', () => {
+    const items = [
+      { id: 'a', price: 2, total: null },
+      { id: 'b', price: 7, total: null },
+      { id: 'c', price: 9, total: '=REF(COLUMN("price"),ROW("b"))*2' },
+    ];
+    const columns: Column[] = [
+      { id: 'price', field: 'price' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    let rows: any[] = [items[1], items[2]];
+    const dataView = { getItems: () => items, getLength: () => rows.length, getItem: (row: number) => rows[row], getGrouping: () => [] };
+    const setCellCssStyles = vi.fn();
+    const service = new FormulaService();
+    service.init({
+      getColumns: () => columns,
+      setColumns: (next: Column[]) => columns.splice(0, columns.length, ...next),
+      getData: () => dataView,
+      getOptions: () => ({ datasetIdPropertyName: 'id' }),
+      setCellCssStyles,
+      removeCellCssStyles: vi.fn(),
+    } as any);
+    const params = columns[1].editor!.params as any;
+
+    expect(params.toDisplayFormula(items[2].total, items[2])).toBe('=A1*2');
+    expect(params.toStoredFormula('=A2+A1', items[2])).toBe('=REF(COLUMN("price"),ROW("c"))+REF(COLUMN("price"),ROW("b"))');
+    expect(params.toStoredFormula('=A3', items[2])).toBe('=#REF!');
+    service.renderFormulaReferenceHighlights(items[2].total);
+    expect(setCellCssStyles).toHaveBeenCalledWith(expect.any(String), { 0: { price: 'formula-cell-color-1' } });
+    expect(service.getEvaluatedCellValue('c', 'total', items[2].total, undefined)).toBe(14);
+
+    rows = [items[2]];
+    expect(params.toDisplayFormula(items[2].total, items[2])).toBe('=REF(COLUMN("price"),ROW("b"))*2');
+    expect(service.getEvaluatedCellValue('c', 'total', items[2].total, undefined)).toBe(14);
+
+    rows = items;
+    expect(params.toDisplayFormula(items[2].total, items[2])).toBe('=A2*2');
   });
 
   it('preserves range membership through nested grouping, reorder, collapse and editor commits', () => {

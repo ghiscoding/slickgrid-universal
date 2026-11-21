@@ -203,7 +203,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     const value = item[String(column.field ?? column.id)];
     if (typeof value === 'string' && value.trim().startsWith('=')) {
       const formula = value.trim();
-      const rows = this.getGroupedDisplayRowIds();
+      const rows = this.getDisplayRowIds();
       if (rows) {
         this.captureFormulaReferenceAbsoluteFlags(this.buildStoreKey(rowId, column.id), formula, rows);
         this.setFormula(rowId, column.id, this.convertA1ReferencesToStableRefs(formula, this.getFormulaColumnIds(), rows, true));
@@ -342,7 +342,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     const normalizedFormulaWithRefs = `=${this.replaceRefFunctionsWithA1Refs(
       normalizedFormula,
       ((this._grid?.getColumns?.() as Column[] | undefined) || []).map((col) => String(col.id)),
-      this.getGroupedDisplayRowIds() ?? this.getFormulaRowIds(),
+      this.getDisplayRowIds() ?? this.getFormulaRowIds(),
       1,
       true
     )}`;
@@ -584,7 +584,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
    * source cell, and then stored again in stable column/row-reference form.
    */
   protected handleDragReplaceCells(_event: unknown, args: OnDragReplaceCellsEventArgs): void {
-    const groupedRows = this.getGroupedDisplayRowIds();
+    const groupedRows = this.getDisplayRowIds();
     const toStoredFormula = (formula: string) =>
       groupedRows
         ? this.convertA1ReferencesToStableRefs(formula, this.getFormulaColumnIds(), groupedRows, true)
@@ -637,7 +637,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   }
 
   protected toDisplayFormulaForCell(formula: string, rowId: number | string, columnId: number | string, useGroupedRows = false): string {
-    const groupedRows = useGroupedRows ? this.getGroupedDisplayRowIds() : undefined;
+    const groupedRows = useGroupedRows ? this.getDisplayRowIds() : undefined;
     const storedFormula = this.getFormula(rowId, columnId);
     const sourceFormula = storedFormula ?? formula;
     const displayFormula = groupedRows
@@ -1732,14 +1732,22 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       .map((rowId) => String(rowId));
   }
 
-  /** Display indexes include structural rows, which cannot be formula targets. */
-  protected getGroupedDisplayRowIds(): Array<string | undefined> | undefined {
-    if (!this._dataView?.getGrouping?.().length || !this._dataView.getItem || !this._dataView.getLength) {
+  /**
+   * Row IDs by displayed row index when grouping, filtering or paging makes it differ from dataset order.
+   * Display indexes include structural rows, which cannot be formula targets.
+   */
+  protected getDisplayRowIds(): Array<string | undefined> | undefined {
+    const dataView = this._dataView;
+    if (
+      !dataView?.getItem ||
+      !dataView.getLength ||
+      (!dataView.getGrouping?.().length && dataView.getLength() === this.getDataItems().length)
+    ) {
       return undefined;
     }
     const idProperty = this.getDatasetIdPropertyName();
-    return Array.from({ length: this._dataView.getLength() }, (_, row) => {
-      const item = this._dataView.getItem(row);
+    return Array.from({ length: dataView.getLength() }, (_, row) => {
+      const item = dataView.getItem(row);
       const id = item?.__group || item?.__groupTotals ? undefined : item?.[idProperty];
       return id == null ? undefined : String(id);
     });
@@ -2131,7 +2139,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         if (existing && formula === this.toDisplayFormulaForCell(existing, rowId!, column.id, true)) {
           return existing;
         }
-        const groupedRows = this.getGroupedDisplayRowIds();
+        const groupedRows = this.getDisplayRowIds();
         const storedFormula = groupedRows
           ? this.convertA1ReferencesToStableRefs(formula, this.getFormulaColumnIds(), groupedRows, true)
           : this.toStoredFormula(formula);

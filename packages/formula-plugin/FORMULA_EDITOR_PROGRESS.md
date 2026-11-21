@@ -1,6 +1,7 @@
 # Formula Editor Plugin Progress
 
 ## Handoff update (2026-11-20)
+- Filtered and paged grids now use displayed row numbers for editor A1 references, highlights and drag-fill, as grouped grids already did. References to hidden records keep their stable form and evaluation still uses dataset identities. Added a service regression and updated all five formula guides. Next: Excel export string-literal syntax.
 - Second audit: added its findings to the checklist. Removed the unreachable top-level memo check and unused memo flag; all 174 Formula Plugin tests pass with 100% statement and line coverage, verifying the three earlier audit fixes below. `_evaluationMemo` and `resetEvaluationMemo()` remain as invalidation hooks for the planned render-pass cache.
 - Formula store and evaluation memo keys now encode row and column IDs without delimiter collisions while retaining numeric/string ID equivalence. Added snapshot, evaluation and reference-flag regressions; unit tests and line coverage still need verification.
 - Formula evaluations now memoize dependencies within each evaluation rather than across separate calls, so synchronous external changes and grouped recalculation see current data. Regression tests cover DataView updates and grouped totals; unit tests and line coverage remain to be verified.
@@ -248,7 +249,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
   - [ ] Drag-fill clamps references that cross the first row or column instead of returning `#REF!`.
 - [ ] Fix the second audit findings (2026-11-20), committing and validating each separately:
   - [x] Remove the unreachable top-level memo check and unused memo flag left by per-evaluation memoization; restore 100% line coverage.
-  - [ ] Filtered or paged ungrouped grids map editor A1 rows, highlights and evaluation through unfiltered dataset order instead of displayed rows.
+  - [x] Filtered or paged ungrouped grids map editor A1 rows, highlights and evaluation through unfiltered dataset order instead of displayed rows.
   - [ ] Excel export emits single-quoted strings and backslash escapes verbatim; convert string literals to Excel's doubled-quote syntax.
   - [ ] Custom function names resembling A1 references (for example `LOG10`) are evaluated as cell references.
   - [ ] Editor reference coloring and highlights match text inside quoted strings and partial identifiers (for example `SUMA1`).
@@ -275,7 +276,8 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Decide whether an optional strict selection-prerequisite mode is needed: retain warning-only behavior and CSS fallback.
 - [x] Replicate the Formula Editor and function guides in all four framework documentation sets.
 - [x] Replicate Vanilla Example 48 to all framework wrappers as Example 59, with corresponding Cypress coverage; all four suites passed in CI.
-- [ ] **Last task:** Evaluate a separate calculated-columns package and identify utilities that could be shared with the formula plugin. Inform the user when this task is reached.
+- [ ] **Second-to-last task:** Evaluate a separate calculated-columns package and identify utilities that could be shared with the formula plugin. Inform the user when this task is reached.
+- [ ] **Final task:** Audit the whole Formula Plugin for performance, DRY and lines of code, and reduce LOC where possible without losing behavior or coverage. This includes the large `slick-formula.scss` stylesheet, plus duplicated quote/reference scanners and regexes across the service, range, drag-fill and editor modules.
 
 ## Latest Update: Optional Package Styling (2026-11-14)
 - Moved Formula Editor, reference color, and Excel column-prefix CSS from the common theme into the formula plugin, preserving shared theme variables.
