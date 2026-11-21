@@ -1047,6 +1047,8 @@ describe('FormulaService', () => {
     expect(params.toDisplayFormula(items[2].total, items[2])).toBe('=A1*2');
     expect(params.toStoredFormula('=A2+A1', items[2])).toBe('=REF(COLUMN("price"),ROW("c"))+REF(COLUMN("price"),ROW("b"))');
     expect(params.toStoredFormula('=A3', items[2])).toBe('=#REF!');
+    expect(params.validateFormula('=A1/0', items[2])).toBe(FORMULA_ERROR.DIV0);
+    expect(params.validateFormula('=A1*2', items[2])).toBeUndefined();
     expect(service.getEvaluatedCellValue('c', 'total', items[2].total, undefined)).toBe(14);
 
     rows = [items[2]];
