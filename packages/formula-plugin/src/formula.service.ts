@@ -609,7 +609,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   }
 
   protected containsDirectExcelReference(formula: string): boolean {
-    const referenceRegex = /(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?:\s*:\s*\$?[A-Z]{1,3}\$?\d+)?(?![A-Za-z0-9_])/gi;
+    const referenceRegex = /(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?:\s*:\s*\$?[A-Z]{1,3}\$?\d+)?(?![A-Za-z0-9_]|\s*\()/gi;
     let found = false;
     this.transformFormulaOutsideQuotedStrings(formula, (segment) => {
       found ||= referenceRegex.test(segment);
@@ -623,7 +623,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     const previousFlags = this._formulaReferenceAbsoluteFlagsByKey.get(key) ?? [];
     const flags: FormulaReferenceAbsoluteFlags[] = [];
     const tokens =
-      /REF\(\s*COLUMN\("(?:\\.|[^"\\])*"\)\s*,\s*ROW\("(?:\\.|[^"\\])*"\)\s*\)|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_])/gi;
+      /REF\(\s*COLUMN\("(?:\\.|[^"\\])*"\)\s*,\s*ROW\("(?:\\.|[^"\\])*"\)\s*\)|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_]|\s*\()/gi;
     const expanded = expandFormulaRanges(this.normalizeFormulaRangeDimensions(formula), (row) => !rowIds || rowIds[row] !== undefined);
     expanded.replace(tokens, (token) => {
       if (/^REF\(/i.test(token)) {
@@ -657,7 +657,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     }
 
     const tokens =
-      /REF\(\s*COLUMN\("(?:\\.|[^"\\])*"\)\s*,\s*ROW\("(?:\\.|[^"\\])*"\)\s*\)|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_])/gi;
+      /REF\(\s*COLUMN\("(?:\\.|[^"\\])*"\)\s*,\s*ROW\("(?:\\.|[^"\\])*"\)\s*\)|"(?:\\.|[^"\\])*"|'(?:\\.|[^"\\])*'|(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_]|\s*\()/gi;
     let flagIndex = 0;
     return formula.replace(tokens, (token) => {
       if (/^REF\(/i.test(token)) {
@@ -875,7 +875,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     }
 
     const a1ReferenceRegex =
-      /(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+\s*:\s*\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_])|(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_])/gi;
+      /(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+\s*:\s*\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_])|(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_]|\s*\()/gi;
     const remapEndpoint = (token: string): string => {
       const parsed = parseExcelReferenceCell(token);
       /* v8 ignore if - the A1 token regex guarantees that parsing succeeds */
@@ -1017,7 +1017,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       });
       return `[${values.join(',')}]`;
     }).replace(
-      /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|(?<![A-Za-z0-9_])\$?([A-Z]{1,3})\$?(\d+)(?![A-Za-z0-9_])/gi,
+      /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|(?<![A-Za-z0-9_])\$?([A-Z]{1,3})\$?(\d+)(?![A-Za-z0-9_]|\s*\()/gi,
       (match, colName: string, rowNumber: string) => {
         if (!colName) {
           return match;
@@ -1070,6 +1070,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         const syntax = this.transformFormulaOutsideQuotedStrings(this.normalizeFormulaSyntax(arg), (segment) =>
           segment
             .replace(/\$?[A-Z]{1,3}\$?\d+\s*:\s*\$?[A-Z]{1,3}\$?\d+/gi, '1')
+            .replace(/\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_]|\s*\()/gi, '1')
             .replace(/#(?:CIRCREF!|PARSE!|REF!|DIV\/0!|VALUE!|NAME\?|NUM!|NULL!|ERROR!|N\/A)/gi, '1')
             .replace(/<>/g, '!=')
             .replace(/(?<![<>=!])=(?!=)/g, '==')
@@ -1784,7 +1785,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     formula = expandFormulaRanges(formula, (row) => !invalidRowAsError || rowIds[row] !== undefined);
 
     const a1ReferenceRegex =
-      /(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+\s*:\s*\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_])|(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_])/gi;
+      /(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+\s*:\s*\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_])|(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_]|\s*\()/gi;
     return this.transformFormulaOutsideQuotedStrings(formula, (segment) =>
       segment.replace(a1ReferenceRegex, (reference) => {
         const [startToken, endToken] = reference.split(':', 2);

@@ -215,6 +215,41 @@ describe('FormulaService', () => {
     ).toBe('CONCAT("single ""quote""", "escaped ""quote""", ("line"&CHAR(10)&"next"), "A", "A1")');
   });
 
+  it('evaluates, stores and exports custom functions whose names resemble A1 references', () => {
+    const items = [{ id: 'a', value: 100, total: '' }];
+    const columns: Column[] = [
+      { id: 'value', field: 'value' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const service = new FormulaService({
+      autoAssignEditor: false,
+      customFunctions: { LOG10: (value: number) => Math.log10(value), A1: (value: number) => value * 2 },
+    });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    service.setFormula('a', 'total', '=LOG10(100)+A1(3)+value');
+
+    expect(service.getFormula('a', 'total')).toBe('=LOG10(100)+A1(3)+value');
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe('#NAME?');
+
+    service.setFormula('a', 'total', '=LOG10(100)+A1(3)');
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe(8);
+    expect(
+      service.getExcelFormula({
+        rowId: 'a',
+        columnId: 'total',
+        columnIds: ['value', 'total'],
+        rowIds: ['a'],
+        excelRowOffset: 1,
+      } as any)
+    ).toBe('LOG10(100)+A1(3)');
+
+    service.setFormula('a', 'total', '=IF(TRUE,LOG10(100),0)');
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe(2);
+
+    service.setFormula('a', 'total', '=LOG10');
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe('#REF!');
+  });
+
   it('compares text without case sensitivity, including references and IF conditions', () => {
     const items = [{ id: 'a', value: 'Apple', total: '' }];
     const columns: Column[] = [

@@ -220,7 +220,7 @@ function getFormulaOrRawValue(
 /** Shift relative A1 references while leaving quoted literals untouched. */
 // fallow-ignore-next-line unused-export
 export function translateFormulaReferences(formula: string, rowDelta: number, columnDelta: number): string {
-  const referenceRegex = /(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?:\s*:\s*\$?[A-Z]{1,3}\$?\d+)?(?![A-Za-z0-9_])/gi;
+  const referenceRegex = /(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?:\s*:\s*\$?[A-Z]{1,3}\$?\d+)?(?![A-Za-z0-9_]|\s*\()/gi;
   return transformFormulaOutsideQuotedStrings(formula, (segment) =>
     segment.replace(referenceRegex, (reference) =>
       reference

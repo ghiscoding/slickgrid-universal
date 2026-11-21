@@ -1,6 +1,7 @@
 # Formula Editor Plugin Progress
 
 ## Handoff update (2026-11-20)
+- A1-shaped custom functions such as `LOG10` and `A1` are no longer parsed, highlighted or drag-filled as cell references when followed by `(`. Bare `LOG10` remains a valid cell reference. Added editor, service, lazy-IF, export and drag-fill regressions; all 180 Formula Plugin tests pass with 100% statement and line coverage. Next: reference coloring inside strings and partial identifiers.
 - Excel export now converts grid string literals to Excel syntax: single-quoted text becomes double-quoted text, quotes are doubled, Unicode and backslash escapes are decoded, and control characters use `CHAR(...)`. Quoted helper-sheet names remain unchanged. Added service and range regressions; all 177 Formula Plugin tests pass with 100% statement and line coverage. Next: custom function names that resemble A1 references.
 - Filtered and paged grids now use displayed row numbers for editor A1 references, highlights and drag-fill, as grouped grids already did. References to hidden records keep their stable form and evaluation still uses dataset identities. Added a service regression and updated all five formula guides. Next: Excel export string-literal syntax.
 - Second audit: added its findings to the checklist. Removed the unreachable top-level memo check and unused memo flag; all 174 Formula Plugin tests pass with 100% statement and line coverage, verifying the three earlier audit fixes below. `_evaluationMemo` and `resetEvaluationMemo()` remain as invalidation hooks for the planned render-pass cache.
@@ -252,7 +253,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
   - [x] Remove the unreachable top-level memo check and unused memo flag left by per-evaluation memoization; restore 100% line coverage.
   - [x] Filtered or paged ungrouped grids map editor A1 rows, highlights and evaluation through unfiltered dataset order instead of displayed rows.
   - [x] Excel export emits single-quoted strings and backslash escapes verbatim; convert string literals to Excel's doubled-quote syntax.
-  - [ ] Custom function names resembling A1 references (for example `LOG10`) are evaluated as cell references.
+  - [x] Custom function names resembling A1 references (for example `LOG10`) are evaluated as cell references.
   - [ ] Editor reference coloring and highlights match text inside quoted strings and partial identifiers (for example `SUMA1`).
   - [ ] Ctrl/Cmd+C and Ctrl/Cmd+X ignore the text selection and copy or clear the whole formula.
   - [ ] Escape with the autocomplete open also cancels the edit.
@@ -278,7 +279,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Replicate the Formula Editor and function guides in all four framework documentation sets.
 - [x] Replicate Vanilla Example 48 to all framework wrappers as Example 59, with corresponding Cypress coverage; all four suites passed in CI.
 - [ ] **Second-to-last task:** Evaluate a separate calculated-columns package and identify utilities that could be shared with the formula plugin. Inform the user when this task is reached.
-- [ ] **Final task:** Audit the whole Formula Plugin for performance, DRY and lines of code, and reduce LOC where possible without losing behavior or coverage. This includes the large `slick-formula.scss` stylesheet, plus duplicated quote/reference scanners and regexes across the service, range, drag-fill and editor modules.
+- [ ] **Final task:** Audit the whole Formula Plugin for performance, DRY and lines of code, and reduce LOC where possible without losing behavior or coverage. This includes the large `slick-formula.scss` stylesheet, plus duplicated quote/reference scanners and A1/reference regex patterns across the service, range, drag-fill and editor modules.
 
 ## Latest Update: Optional Package Styling (2026-11-14)
 - Moved Formula Editor, reference color, and Excel column-prefix CSS from the common theme into the formula plugin, preserving shared theme variables.

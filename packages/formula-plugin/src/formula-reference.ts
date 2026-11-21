@@ -66,7 +66,7 @@ export class FormulaReferenceColorCache {
 }
 
 // Match complete or incomplete ranges (D1:D4, D1:D, D1:) before single cells.
-const FORMULA_REFERENCE_TOKEN_PATTERN = String.raw`\$?[A-Z]{1,3}\$?\d+\s*:\s*(?:\$?[A-Z]{1,3}\$?\d*)?|\$?[A-Z]{1,3}\$?\d+`;
+const FORMULA_REFERENCE_TOKEN_PATTERN = String.raw`(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+\s*:\s*(?:\$?[A-Z]{1,3}\$?\d*)?(?![A-Za-z0-9_])|(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_]|\s*\()`;
 
 export function createFormulaReferenceTokenRegex(): RegExp {
   return new RegExp(FORMULA_REFERENCE_TOKEN_PATTERN, 'gi');

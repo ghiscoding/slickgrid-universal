@@ -42,6 +42,18 @@ describe('formula reference utilities', () => {
     ]);
   });
 
+  it('does not treat A1-shaped function names as references', () => {
+    expect(buildFormulaReferenceColorInfos('=LOG10(100)+A1')).toEqual([
+      {
+        ref: 'A1',
+        colorIdx: 0,
+        colorClass: 'formula-cell-color-1',
+        cells: [{ row: 0, cell: 0 }],
+      },
+    ]);
+    expect(buildFormulaReferenceColorInfos('=LOG10').map(({ ref }) => ref)).toEqual(['LOG10']);
+  });
+
   it('should convert Excel column names and indexes through one shared implementation', () => {
     expect(getExcelColumnNameByIndex(0)).toBe('');
     expect(getExcelColumnNameByIndex(28)).toBe('AB');

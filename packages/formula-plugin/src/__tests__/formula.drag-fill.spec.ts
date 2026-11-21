@@ -1,9 +1,13 @@
 import { SlickRange } from '@slickgrid-universal/common';
 import type { Column } from '@slickgrid-universal/common';
 import { describe, expect, it, vi } from 'vitest';
-import { getFillSeriesValue, handleFormulaDragFill, type FormulaDragFillContext } from '../formula.drag-fill.js';
+import { getFillSeriesValue, handleFormulaDragFill, translateFormulaReferences, type FormulaDragFillContext } from '../formula.drag-fill.js';
 
 describe('formula drag-fill', () => {
+  it('shifts references without changing A1-shaped function names', () => {
+    expect(translateFormulaReferences('=LOG10(A1)+A1(2)', 1, 1)).toBe('=LOG10(B2)+A1(2)');
+  });
+
   it('should copy one value, continue numeric ranges, and repeat mixed ranges', () => {
     expect(getFillSeriesValue([4], 3)).toBe(4);
     expect(getFillSeriesValue([1, 3], 4)).toBe(9);
