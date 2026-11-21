@@ -1585,6 +1585,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
           const reference = references.get(upperIdent);
           const value = unwrapFormulaReference(reference);
           const referenceLiteral = isFormulaReference(reference) && isFormulaLiteralText(reference.value);
+          if (value === FORMULA_ERROR.REF && !referenceLiteral) {
+            return value;
+          }
           return !allowCountErrorReferences && !referenceLiteral && isFormulaErrorCode(value) ? value : reference;
         }
         if (matchParen('(')) {
@@ -1597,7 +1600,12 @@ export class FormulaService implements ExternalResource, FormulaProvider {
               while (true) {
                 const value = parseExpression();
                 if (isFormulaErrorCode(value)) {
-                  if (!allowCountErrorReferences || value === FORMULA_ERROR.PARSE || value === FORMULA_ERROR.CIRCREF) {
+                  if (
+                    !allowCountErrorReferences ||
+                    value === FORMULA_ERROR.PARSE ||
+                    value === FORMULA_ERROR.CIRCREF ||
+                    value === FORMULA_ERROR.REF
+                  ) {
                     // Consume this function's remaining tokens so an enclosing COUNT/COUNTA
                     // can handle the error as one complete argument.
                     skipToClosing('(', ')');
