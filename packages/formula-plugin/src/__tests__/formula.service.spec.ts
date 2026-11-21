@@ -18,6 +18,16 @@ describe('FormulaService', () => {
     warnSpy.mockRestore();
   });
 
+  it('requires an argument for aggregate and concatenation functions', () => {
+    const service = new FormulaService({ autoAssignEditor: false });
+    const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
+    for (const name of ['SUM', 'PRODUCT', 'MIN', 'MAX', 'AVERAGE', 'MEDIAN', 'CONCAT', 'CONCATENATE']) {
+      expect(evaluate(`=${name}()`)).toBe(FORMULA_ERROR.VALUE);
+    }
+    expect(evaluate('=SUM(1)')).toBe(1);
+    expect(evaluate('=CONCAT("")')).toBe('');
+  });
+
   it('preserves quoted text through reference resolution, operator normalization and export', () => {
     const items = [
       { id: 'a', value: 'A1', total: '' },

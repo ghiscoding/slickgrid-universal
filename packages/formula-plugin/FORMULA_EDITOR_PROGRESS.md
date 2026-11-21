@@ -1,8 +1,9 @@
 # Formula Editor Plugin Progress
 
 ## Handoff update (2026-11-20)
-- Vue Example 59 mirrors the Vanilla formula controls, column definitions and workbook configuration; the user reports its copied Cypress suite passes, with issues remaining only in Aurelia. The Aurelia Vite reload plugin now ignores changes to non-module files such as Cypress downloads; its suite needs another run to verify the remaining failures.
-- Replicated the Formula Editor and function guides in all four framework documentation sets, linked them from the Excel export guides, and corrected the outdated `SUMIF` range description. Framework Example 59 demos remain open; framework Example 48 and its Cypress specs cover the Hybrid Selection Model.
+- Audited remaining coercion, date and function-argument behavior. Aggregates and concatenation now reject missing arguments; focused unit tests were added but still need to be run. The remaining gaps are tracked in the checklist.
+- The user reports that all four framework wrappers and their Formula Editor Cypress suites passed in CI. The Aurelia Vite reload plugin ignores changes to non-module files such as Cypress downloads.
+- Replicated the Formula Editor and function guides in all four framework documentation sets, linked them from the Excel export guides, and corrected the outdated `SUMIF` range description. Framework Example 59 covers Formula Editor; framework Example 48 covers the Hybrid Selection Model.
 - Example 48 includes a separate formula grid without selection. Cypress verifies the prerequisite warning and CSS reference highlights and cleanup; all 48 Example 48 tests passed.
 - Double-click fill was rejected as a product direction; retain drag-fill and do not treat double-click fill as remaining work.
 - Formula autocomplete now ignores quoted text and replaces the complete function name when selecting a suggestion from its middle. All 47 Example 48 Cypress tests and 163 Formula Plugin unit tests passed.
@@ -218,9 +219,10 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Audit and correct comparisons between logical, numeric and text values, including chained comparisons and blank references. Logical values remain numeric in arithmetic.
 - [x] Validate required argument counts for `COUNT`, `COUNTA` and `COUNTBLANK`.
 - [x] Count valid date values in `COUNT`, including references and date-function results.
-- [ ] Audit remaining operator and conditional-function coercion, dates and other function argument counts.
+- [x] Audit remaining operator and conditional-function coercion, dates and function argument counts; identify the remaining gaps below.
+- [ ] Correct the audited coercion and error-handling gaps: handle error values appropriately in `COUNT`/`COUNTA`, align `IF` and arithmetic text coercion, and define consistent date handling in operators and numeric functions. Verify function argument upper limits against the supported Excel behavior.
 - [x] Consolidate argument, quote and nesting scans shared by lazy `IF` evaluation and `SUMIF` range normalization; preserve existing parsing behavior and coverage.
-- [ ] Smoke-test formula integration and the optional stylesheet in all framework demos. Vue passed its Cypress suite and the user reported issues only in Aurelia; verify the Aurelia fixes.
+- [x] Smoke-test formula integration and the optional stylesheet in all framework demos; all four framework Cypress suites passed in CI.
 - [x] Complete the pnpm formula-plugin package build; package exports, custom Sass, five theme builds and version alignment are verified.
 - [x] Install the packed Formula Plugin in an isolated offline consumer with local workspace overrides; verify JavaScript and CSS exports resolve.
 - [x] Verify a clean install of the packed Formula Plugin with production dependencies from npm and no workspace overrides; resolve JavaScript, CSS and Sass exports.
@@ -235,7 +237,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Support custom and read-only formula columns independently of Formula Editor; document and test `onBeforeEditCell` cancellation.
 - [x] Decide whether an optional strict selection-prerequisite mode is needed: retain warning-only behavior and CSS fallback.
 - [x] Replicate the Formula Editor and function guides in all four framework documentation sets.
-- [ ] Replicate Vanilla Example 48 to all framework wrappers as Example 59, with corresponding Cypress coverage.
+- [x] Replicate Vanilla Example 48 to all framework wrappers as Example 59, with corresponding Cypress coverage; all four suites passed in CI.
 - [ ] **Last task:** Evaluate a separate calculated-columns package and identify utilities that could be shared with the formula plugin. Inform the user when this task is reached.
 
 ## Latest Update: Optional Package Styling (2026-11-14)

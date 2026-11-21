@@ -186,12 +186,14 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
     return new Date(now.getFullYear(), now.getMonth(), now.getDate());
   };
   const CONCAT = (...args: unknown[]) =>
-    flattenFormulaFunctionArgs(args)
-      .map((arg) => {
-        const value = unwrapFormulaReference(arg);
-        return typeof value === 'boolean' ? (value ? 'TRUE' : 'FALSE') : String(value ?? '');
-      })
-      .join('');
+    !args.length
+      ? FORMULA_ERROR.VALUE
+      : flattenFormulaFunctionArgs(args)
+          .map((arg) => {
+            const value = unwrapFormulaReference(arg);
+            return typeof value === 'boolean' ? (value ? 'TRUE' : 'FALSE') : String(value ?? '');
+          })
+          .join('');
   const COUNT = (...args: unknown[]) =>
     !args.length
       ? FORMULA_ERROR.VALUE
@@ -324,6 +326,9 @@ function flattenFormulaFunctionArgs(args: unknown[]): unknown[] {
 
 /** Aggregate functions treat referenced text and booleans differently from literal arguments. */
 function aggregateNumbers(args: unknown[]): number[] | string {
+  if (!args.length) {
+    return FORMULA_ERROR.VALUE;
+  }
   const values: number[] = [];
   const visit = (arg: unknown, fromRange = false): boolean => {
     if (Array.isArray(arg)) {

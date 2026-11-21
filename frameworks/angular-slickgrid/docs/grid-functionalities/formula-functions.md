@@ -46,7 +46,7 @@ Current built-ins include:
 
 `ROUND(number, digits)` requires both arguments, matching Excel. A negative digit count rounds to the left of the decimal point; halfway values round away from zero. `MOD` uses the divisor's sign and returns `#DIV/0!` for zero. `SQRT` returns `#NUM!` for negative inputs. These scalar math functions return `#VALUE!` for invalid arguments.
 
-`POWER` requires two numeric arguments. A zero base with a negative exponent returns `#DIV/0!`; zero to the zero power, invalid roots and overflow return `#NUM!`. `RAND`, `RANDOM`, `RAN`, `NOW`, `TODAY` and `NA` accept no arguments. `IF` accepts two or three arguments. Invalid argument counts return `#VALUE!` in the grid.
+`SUM`, `PRODUCT`, `MIN`, `MAX`, `AVERAGE`, `MEDIAN`, `CONCAT` and `CONCATENATE` require at least one argument. `POWER` requires two numeric arguments. A zero base with a negative exponent returns `#DIV/0!`; zero to the zero power, invalid roots and overflow return `#NUM!`. `RAND`, `RANDOM`, `RAN`, `NOW`, `TODAY` and `NA` accept no arguments. `IF` accepts two or three arguments. Invalid argument counts return `#VALUE!` in the grid.
 
 For Excel export, the built-in `RANDOM` and `RAN` aliases are written as `RAND`, and `CONCATENATE` is written as `CONCAT` so range arguments retain the same behavior. Custom functions overriding an alias retain their name; export them using the custom-function configuration if needed. `CONCAT` requires a compatible Excel version.
 

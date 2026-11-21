@@ -48,14 +48,14 @@ describe('createFormulaFunctionRegistry', () => {
     expect(registry.get('SUM')?.('')).toBe(FORMULA_ERROR.VALUE);
     expect(registry.get('PRODUCT')?.(2, '3', true)).toBe(6);
     expect(registry.get('MIN')?.(6, '2', 8)).toBe(2);
-    expect(registry.get('MIN')?.()).toBe(0);
+    expect(registry.get('MIN')?.()).toBe(FORMULA_ERROR.VALUE);
     expect(registry.get('MAX')?.(6, '2', 8)).toBe(8);
-    expect(registry.get('MAX')?.()).toBe(0);
+    expect(registry.get('MAX')?.()).toBe(FORMULA_ERROR.VALUE);
     expect(registry.get('AVERAGE')?.(2, 4, '6')).toBe(4);
-    expect(registry.get('AVERAGE')?.()).toBe(FORMULA_ERROR.DIV0);
+    expect(registry.get('AVERAGE')?.()).toBe(FORMULA_ERROR.VALUE);
     expect(registry.get('MEDIAN')?.(10, 2, 6, 8)).toBe(7);
     expect(registry.get('MEDIAN')?.(1, 2, 3)).toBe(2);
-    expect(registry.get('MEDIAN')?.()).toBe(FORMULA_ERROR.NUM);
+    expect(registry.get('MEDIAN')?.()).toBe(FORMULA_ERROR.VALUE);
     expect(registry.get('POWER')?.('2', 3)).toBe(8);
     expect(registry.get('SUM')?.({ foo: 1 } as any, 2)).toBe(FORMULA_ERROR.VALUE);
   });
@@ -98,6 +98,10 @@ describe('createFormulaFunctionRegistry', () => {
     expect(registry.get('IF')?.(false, 'yes', 'no')).toBe('no');
     expect(registry.get('CONCAT')?.('a', ['b', 'c'], null, undefined, 1)).toBe('abc1');
     expect(registry.get('CONCAT')?.(true, formulaReference(false), [true, null])).toBe('TRUEFALSETRUE');
+    for (const name of ['SUM', 'PRODUCT', 'CONCAT', 'CONCATENATE']) {
+      expect(registry.get(name)?.()).toBe(FORMULA_ERROR.VALUE);
+    }
+    expect(registry.get('CONCAT')?.('')).toBe('');
   });
 
   it('should evaluate count functions with numeric and blank semantics', () => {
