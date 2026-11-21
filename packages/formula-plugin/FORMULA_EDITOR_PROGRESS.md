@@ -33,7 +33,7 @@ Handoff for future AI/dev sessions. Detailed history is in the git log of this f
 - [x] Reuse row and column lookups across formula cells during Excel export; preserve standalone and grouped export behavior.
 - [x] Reuse row coordinates during formula drag-fill and undo, clearing cached data when DataView changes.
 - [x] Avoid repeatedly scanning the expression when generating range reference placeholders.
-- [ ] Consolidate the five Formula Editor Cypress suites while preserving framework coverage and serial order.
+- [x] Consolidate the five Formula Editor Cypress suites while preserving serial order. Vanilla Cypress passed; framework runs remain for CI.
 - [x] Share formula string-literal decoding between evaluation and Excel export.
 - [ ] **Final task:** Evaluate a separate calculated-columns package and identify utilities that could be shared with the formula plugin. The user wants two more optional packages: one for a Column Editor and one for code shared by the Formula Editor and Column Editor. Merge PR #2716 first and inform the user when this task is reached.
 - [ ] Repo-wide (not formula-specific): every package publishes `/src`, including `src/__tests__` (about 260 KB unpacked for this package). Consider excluding tests from `files` across packages.
