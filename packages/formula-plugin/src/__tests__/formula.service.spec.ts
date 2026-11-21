@@ -28,6 +28,57 @@ describe('FormulaService', () => {
     expect(evaluate('=CONCAT("")')).toBe('');
   });
 
+  it('ignores error cells in COUNT and counts them in COUNTA without hiding other errors', () => {
+    const items = [
+      { id: 'a', value: 4 },
+      { id: 'b', value: '=1/0' },
+      { id: 'c', value: null },
+    ];
+    const columns: Column[] = [{ id: 'value', field: 'value', allowFormula: true }];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
+    expect(evaluate('=COUNT(A1:A3)')).toBe(1);
+    expect(evaluate('=COUNTA(A1:A3)')).toBe(2);
+    expect(evaluate('=COUNT(A2)')).toBe(0);
+    expect(evaluate('=COUNTA(A2)')).toBe(1);
+    expect(evaluate('=SUM(A1:A3)')).toBe(FORMULA_ERROR.DIV0);
+    expect(evaluate('=A2+1')).toBe(FORMULA_ERROR.DIV0);
+    expect(evaluate('=COUNT(SUM(A2))')).toBe(0);
+    expect(evaluate('=COUNT(A2+1,1/0,2)')).toBe(1);
+    expect(evaluate('=COUNTA(A2+1,1/0,2)')).toBe(3);
+    expect(evaluate('=COUNT(1/0+1,2)')).toBe(1);
+    expect(evaluate('=COUNT(NA())')).toBe(0);
+    expect(evaluate('=COUNT(A1:A3)+A2')).toBe(FORMULA_ERROR.DIV0);
+    service.registerCustomFunction('COUNT', () => 10);
+    expect(evaluate('=COUNT(A2)')).toBe(FORMULA_ERROR.DIV0);
+  });
+
+  it('rejects empty or nonnumeric text consistently in arithmetic operators', () => {
+    const service = new FormulaService({ autoAssignEditor: false });
+    const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
+    for (const expression of ['1-""', '1*""', '1/""', '""^2', '""%', '+""', '-""', '"x"^2']) {
+      expect(evaluate(`=${expression}`)).toBe(FORMULA_ERROR.VALUE);
+    }
+    expect(evaluate('=2*"3"')).toBe(6);
+    expect(evaluate('=2^"3"')).toBe(8);
+    expect(evaluate('=1/0')).toBe(FORMULA_ERROR.DIV0);
+  });
+
+  it('uses spreadsheet logical conditions and numeric dates in formulas', () => {
+    const items = [{ id: 'a', value: new Date(2024, 0, 1, 12) }];
+    const columns: Column[] = [{ id: 'value', field: 'value' }];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
+    expect(evaluate('=IF("FALSE",1,2)')).toBe(2);
+    expect(evaluate('=IF("text",1,2)')).toBe(FORMULA_ERROR.VALUE);
+    expect(evaluate('=IF(0,1,2)')).toBe(2);
+    expect(evaluate('=SUM(A1)')).toBe(45292.5);
+    expect(evaluate('=A1=45292.5')).toBe(true);
+    expect(evaluate('=A1*2')).toBe(90585);
+  });
+
   it('preserves quoted text through reference resolution, operator normalization and export', () => {
     const items = [
       { id: 'a', value: 'A1', total: '' },
@@ -724,7 +775,7 @@ describe('FormulaService', () => {
     expect(flagService.getEvaluatedCellValue('r', 'value', '=2', 0)).toBe(FORMULA_ERROR.VALUE);
     flagService.setFormula('r', 'value', '=Z1');
     expect(flagService.getEvaluatedCellValue('r', 'value', '=Z1', 0)).toBe(FORMULA_ERROR.REF);
-    expect((flagService as any).evaluateExpressionWithParser('"x"^2', new Map())).toBe(FORMULA_ERROR.NUM);
+    expect((flagService as any).evaluateExpressionWithParser('"x"^2', new Map())).toBe(FORMULA_ERROR.VALUE);
   });
 
   it('should keep special column IDs as own highlight hash keys', () => {

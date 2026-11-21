@@ -15,10 +15,12 @@ import type {
   SlickGrid,
 } from '@slickgrid-universal/common';
 import { createDomElement, Formatters, SlickEventHandler } from '@slickgrid-universal/common';
-import { FORMULA_ERROR, isFormulaErrorCode, type FormulaErrorCode } from './formula-errors.js';
+import { FORMULA_ERROR, isFormulaErrorCode } from './formula-errors.js';
 import {
   calculateFormulaPower,
   createFormulaFunctionRegistry,
+  formulaDateToSerial,
+  formulaLogicalCondition,
   formulaReference,
   unwrapFormulaReference,
   type FormulaCallback,
@@ -1001,7 +1003,6 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       return FORMULA_ERROR.REF;
     }
 
-    let firstErrorCode: FormulaErrorCode | undefined;
     const references = new Map<string, unknown>();
     let referenceSequence = 0;
     const referenceLiteral = (value: unknown, row?: number) => {
@@ -1028,10 +1029,6 @@ export class FormulaService implements ExternalResource, FormulaProvider {
           return match;
         }
         const rangeValues = this.resolveExcelRangeValues(startCol, Number(startRow), endCol, Number(endRow), context);
-        const errorInRange = rangeValues.find((value) => isFormulaErrorCode(value));
-        if (isFormulaErrorCode(errorInRange) && !firstErrorCode) {
-          firstErrorCode = errorInRange;
-        }
         const width = Math.abs(getExcelColumnIndexByName(startCol.toUpperCase()) - getExcelColumnIndexByName(endCol.toUpperCase())) + 1;
         const firstRow = Math.min(Number(startRow), Number(endRow));
         return `[${rangeValues.map((value, index) => referenceLiteral(value, firstRow + Math.floor(index / width))).join(',')}]`;
@@ -1044,9 +1041,6 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         const value = cell
           ? this.resolveExcelReferenceValue(getExcelColumnNameByIndex(cell.cell + 1), cell.row + 1, context)
           : FORMULA_ERROR.REF;
-        if (isFormulaErrorCode(value) && !firstErrorCode) {
-          firstErrorCode = value;
-        }
         return referenceLiteral(value, cell?.row);
       });
       return `[${values.join(',')}]`;
@@ -1057,16 +1051,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
           return match;
         }
         const resolved = this.resolveExcelReferenceValue(colName, Number(rowNumber), context);
-        if (isFormulaErrorCode(resolved) && !firstErrorCode) {
-          firstErrorCode = resolved;
-        }
         return referenceLiteral(resolved);
       }
     );
-
-    if (firstErrorCode) {
-      return firstErrorCode;
-    }
 
     const jsExpression = this.transformFormulaOutsideQuotedStrings(expressionWithValues, (segment) =>
       segment
@@ -1125,7 +1112,11 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         if (isFormulaErrorCode(condition)) {
           return condition;
         }
-        const selected = condition ? args[1] : (args[2] ?? 'FALSE');
+        const logicalCondition = formulaLogicalCondition(condition);
+        if (typeof logicalCondition !== 'boolean') {
+          return logicalCondition;
+        }
+        const selected = logicalCondition ? args[1] : (args[2] ?? 'FALSE');
         return this.evaluateFormulaExpression(selected, context);
       });
       result += expression.slice(previous, match.index) + `${name}()`;
@@ -1263,11 +1254,22 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     pushToken('eof', '');
 
     let cursor = 0;
+    let allowCountErrorReferences = false;
     const peek = () => tokens[cursor];
     const consume = () => tokens[cursor++];
     const matchOperator = (...ops: string[]) => peek().type === 'operator' && ops.includes(peek().value);
     const matchParen = (p: '(' | ')') => peek().type === 'paren' && peek().value === p;
     const matchBracket = (b: '[' | ']') => peek().type === 'bracket' && peek().value === b;
+    const toNumber = (value: unknown): number => {
+      value = unwrapFormulaReference(value);
+      if (Array.isArray(value) || (typeof value === 'string' && !value.trim())) {
+        return NaN;
+      }
+      if (value instanceof Date) {
+        return formulaDateToSerial(value);
+      }
+      return Number(value);
+    };
 
     const parseExpression = (): unknown => parseComparison();
 
@@ -1280,6 +1282,18 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         const op = consume().value;
         let right = unwrapFormulaReference(parseConcatenation());
         left = unwrapFormulaReference(left);
+        if (isFormulaErrorCode(left)) {
+          return left;
+        }
+        if (left instanceof Date) {
+          left = formulaDateToSerial(left);
+        }
+        if (right instanceof Date) {
+          right = formulaDateToSerial(right);
+        }
+        if ((typeof left === 'number' && Number.isNaN(left)) || (typeof right === 'number' && Number.isNaN(right))) {
+          return FORMULA_ERROR.VALUE;
+        }
         if (left === null) {
           left = typeof right === 'string' ? '' : typeof right === 'boolean' ? false : 0;
         }
@@ -1335,6 +1349,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         consume();
         const right = unwrapFormulaReference(parseAdditive());
         left = unwrapFormulaReference(left);
+        if (isFormulaErrorCode(left)) {
+          return left;
+        }
         if (isFormulaErrorCode(right)) {
           return right;
         }
@@ -1353,6 +1370,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         const op = consume().value;
         const right = unwrapFormulaReference(parseMultiplicative());
         left = unwrapFormulaReference(left);
+        if (isFormulaErrorCode(left)) {
+          return left;
+        }
         if (isFormulaErrorCode(right)) {
           return right;
         }
@@ -1377,6 +1397,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         const op = consume().value;
         const right = unwrapFormulaReference(parsePower());
         left = unwrapFormulaReference(left);
+        if (isFormulaErrorCode(left)) {
+          return left;
+        }
         if (isFormulaErrorCode(right)) {
           return right;
         }
@@ -1384,10 +1407,15 @@ export class FormulaService implements ExternalResource, FormulaProvider {
           left = 1;
           continue;
         }
-        if (op === '/' && Number(right) === 0) {
+        const leftNumber = toNumber(left);
+        const rightNumber = toNumber(right);
+        if (Number.isNaN(leftNumber) || Number.isNaN(rightNumber)) {
+          return FORMULA_ERROR.VALUE;
+        }
+        if (op === '/' && rightNumber === 0) {
           return FORMULA_ERROR.DIV0;
         }
-        left = op === '*' ? (left as any) * (right as any) : (left as any) / (right as any);
+        left = op === '*' ? leftNumber * rightNumber : leftNumber / rightNumber;
         if (typeof left === 'number' && !Number.isFinite(left)) {
           return Number.isNaN(left) ? FORMULA_ERROR.VALUE : FORMULA_ERROR.NUM;
         }
@@ -1404,10 +1432,19 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         consume();
         const right = unwrapFormulaReference(parsePostfix());
         left = unwrapFormulaReference(left);
+        if (isFormulaErrorCode(left)) {
+          return left;
+        }
         if (isFormulaErrorCode(right)) {
           return right;
         }
-        left = syntaxOnly ? 1 : calculateFormulaPower(Number(left), Number(right));
+        const leftNumber = toNumber(left);
+        const rightNumber = toNumber(right);
+        left = syntaxOnly
+          ? 1
+          : Number.isNaN(leftNumber) || Number.isNaN(rightNumber)
+            ? FORMULA_ERROR.VALUE
+            : calculateFormulaPower(leftNumber, rightNumber);
         if (isFormulaErrorCode(left)) {
           return left;
         }
@@ -1422,7 +1459,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       }
       while (matchOperator('%')) {
         consume();
-        value = syntaxOnly ? 1 : Number(unwrapFormulaReference(value)) / 100;
+        value = syntaxOnly ? 1 : toNumber(value) / 100;
         if (typeof value === 'number' && Number.isNaN(value)) {
           return FORMULA_ERROR.VALUE;
         }
@@ -1437,7 +1474,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         if (isFormulaErrorCode(unary)) {
           return unary;
         }
-        const numeric = syntaxOnly ? 1 : Number(unary);
+        const numeric = syntaxOnly ? 1 : toNumber(unary);
         return Number.isNaN(numeric) ? FORMULA_ERROR.VALUE : numeric;
       }
       if (matchOperator('-')) {
@@ -1446,7 +1483,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         if (isFormulaErrorCode(unary)) {
           return unary;
         }
-        const numeric = syntaxOnly ? 1 : Number(unary);
+        const numeric = syntaxOnly ? 1 : toNumber(unary);
         return Number.isNaN(numeric) ? FORMULA_ERROR.VALUE : -numeric;
       }
       return parsePrimary();
@@ -1469,24 +1506,65 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         const ident = consume().value;
         const upperIdent = ident.toUpperCase();
         if (references.has(upperIdent)) {
-          return references.get(upperIdent);
+          const reference = references.get(upperIdent);
+          const value = unwrapFormulaReference(reference);
+          return !allowCountErrorReferences && isFormulaErrorCode(value) ? value : reference;
         }
         if (matchParen('(')) {
           consume();
           const args: unknown[] = [];
-          if (!matchParen(')')) {
-            while (true) {
-              const value = parseExpression();
-              if (isFormulaErrorCode(value)) {
-                return value;
+          const previousAllowCountErrorReferences = allowCountErrorReferences;
+          allowCountErrorReferences = (upperIdent === 'COUNT' || upperIdent === 'COUNTA') && !this._customFunctions.has(upperIdent);
+          try {
+            if (!matchParen(')')) {
+              while (true) {
+                const value = parseExpression();
+                if (isFormulaErrorCode(value)) {
+                  if (!allowCountErrorReferences || value === FORMULA_ERROR.PARSE || value === FORMULA_ERROR.CIRCREF) {
+                    // Consume this function's remaining tokens so an enclosing COUNT/COUNTA
+                    // can handle the error as one complete argument.
+                    let depth = 0;
+                    while (peek().type !== 'eof') {
+                      if (matchParen(')') && depth === 0) {
+                        consume();
+                        break;
+                      }
+                      if (matchParen('(')) {
+                        depth++;
+                      }
+                      if (matchParen(')')) {
+                        depth--;
+                      }
+                      consume();
+                    }
+                    return value;
+                  }
+                  // The failed expression may still have tokens after the error.
+                  // Skip to this argument's comma or closing parenthesis.
+                  let depth = 0;
+                  while (peek().type !== 'eof') {
+                    if (depth === 0 && (peek().type === 'comma' || matchParen(')'))) {
+                      break;
+                    }
+                    if (matchParen('(') || matchBracket('[')) {
+                      depth++;
+                    }
+                    if (matchParen(')') || matchBracket(']')) {
+                      depth--;
+                    }
+                    consume();
+                  }
+                }
+                args.push(value);
+                if (peek().type === 'comma') {
+                  consume();
+                  continue;
+                }
+                break;
               }
-              args.push(value);
-              if (peek().type === 'comma') {
-                consume();
-                continue;
-              }
-              break;
             }
+          } finally {
+            allowCountErrorReferences = previousAllowCountErrorReferences;
           }
 
           if (!matchParen(')')) {
@@ -1901,6 +1979,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   }
 
   protected static addFormulaValues(left: unknown, right: unknown): unknown {
+    if (left instanceof Date && right instanceof Date) {
+      return formulaDateToSerial(left) + formulaDateToSerial(right);
+    }
     if (left instanceof Date && typeof right === 'number') {
       return FormulaService.addDays(left, right);
     }
@@ -1918,7 +1999,10 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       return FormulaService.addDays(left, -right);
     }
     if (left instanceof Date && right instanceof Date) {
-      return (left.getTime() - right.getTime()) / (1000 * 60 * 60 * 24);
+      return formulaDateToSerial(left) - formulaDateToSerial(right);
+    }
+    if ((typeof left === 'string' && !left.trim()) || (typeof right === 'string' && !right.trim())) {
+      return NaN;
     }
     return (left as any) - (right as any);
   }

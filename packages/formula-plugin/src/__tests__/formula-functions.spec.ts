@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { FORMULA_ERROR } from '../formula-errors.js';
-import { createFormulaFunctionRegistry, formulaReference } from '../formula-functions.js';
+import { createFormulaFunctionRegistry, formulaDateToSerial, formulaReference } from '../formula-functions.js';
 
 describe('createFormulaFunctionRegistry', () => {
   it('supports spreadsheet math functions and function aliases', () => {
@@ -104,6 +104,20 @@ describe('createFormulaFunctionRegistry', () => {
     expect(registry.get('CONCAT')?.('')).toBe('');
   });
 
+  it('limits the number of arguments without limiting the size of a range', () => {
+    const registry = createFormulaFunctionRegistry(new Map());
+    const values = Array(255).fill(1);
+    for (const name of ['SUM', 'PRODUCT', 'MIN', 'MAX', 'AVERAGE', 'MEDIAN', 'SUMPRODUCT', 'COUNT', 'COUNTA']) {
+      expect(registry.get(name)?.(...values)).not.toBe(FORMULA_ERROR.VALUE);
+      expect(registry.get(name)?.(...values, 1)).toBe(FORMULA_ERROR.VALUE);
+    }
+    expect(registry.get('SUM')?.(Array(256).fill(1))).toBe(256);
+    for (const name of ['CONCAT', 'CONCATENATE']) {
+      expect(registry.get(name)?.(...Array(253).fill('a'))).toHaveLength(253);
+      expect(registry.get(name)?.(...Array(254).fill('a'))).toBe(FORMULA_ERROR.VALUE);
+    }
+  });
+
   it('should evaluate count functions with numeric and blank semantics', () => {
     const registry = createFormulaFunctionRegistry(new Map());
 
@@ -200,6 +214,31 @@ describe('createFormulaFunctionRegistry', () => {
     expect(typeof rand).toBe('number');
     expect((rand as number) >= 0 && (rand as number) <= 1).toBe(true);
     expect(registry.get('NA')?.()).toBe(FORMULA_ERROR.NA);
+  });
+
+  it('converts dates to Excel serial values in numeric functions', () => {
+    const registry = createFormulaFunctionRegistry(new Map());
+    const date = new Date(2024, 0, 1, 12);
+    expect(formulaDateToSerial(new Date(1900, 0, 1))).toBe(1);
+    expect(formulaDateToSerial(new Date(1900, 1, 28))).toBe(59);
+    expect(formulaDateToSerial(new Date(1900, 2, 1))).toBe(61);
+    expect(formulaDateToSerial(date)).toBe(45292.5);
+    expect(Number.isNaN(formulaDateToSerial(new Date(NaN)))).toBe(true);
+    expect(Number.isNaN(formulaDateToSerial(new Date(1899, 11, 31)))).toBe(true);
+    expect(registry.get('SUM')?.(formulaReference(date))).toBe(45292.5);
+    expect(registry.get('AVERAGE')?.([formulaReference(date)])).toBe(45292.5);
+    expect(registry.get('ABS')?.(date)).toBe(45292.5);
+    expect(registry.get('SUMPRODUCT')?.([formulaReference(date)], [2])).toBe(90585);
+    expect(registry.get('SUMIF')?.([date], date, [2])).toBe(2);
+  });
+
+  it('coerces IF conditions to logical values rather than using JavaScript truthiness', () => {
+    const conditional = createFormulaFunctionRegistry(new Map()).get('IF')!;
+    expect(conditional('FALSE', 1, 2)).toBe(2);
+    expect(conditional('true', 1, 2)).toBe(1);
+    expect(conditional(0, 1, 2)).toBe(2);
+    expect(conditional(-1, 1, 2)).toBe(1);
+    expect(conditional('text', 1, 2)).toBe(FORMULA_ERROR.VALUE);
   });
 
   it('validates fixed-arity built-ins and reports invalid powers', () => {

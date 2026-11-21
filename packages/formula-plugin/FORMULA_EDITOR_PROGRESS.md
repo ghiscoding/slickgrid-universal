@@ -1,6 +1,7 @@
 # Formula Editor Plugin Progress
 
 ## Handoff update (2026-11-20)
+- Implemented corrections for referenced error cells in `COUNT`/`COUNTA`, arithmetic and `IF` coercion, numeric date serial conversion, and argument limits. Added regressions, including error expressions in `COUNT`/`COUNTA`; tests and coverage still need to be run, and date/export edge cases need review.
 - Audited remaining coercion, date and function-argument behavior. Aggregates and concatenation now reject missing arguments; focused unit tests were added but still need to be run. The remaining gaps are tracked in the checklist.
 - The user reports that all four framework wrappers and their Formula Editor Cypress suites passed in CI. The Aurelia Vite reload plugin ignores changes to non-module files such as Cypress downloads.
 - Replicated the Formula Editor and function guides in all four framework documentation sets, linked them from the Excel export guides, and corrected the outdated `SUMIF` range description. Framework Example 59 covers Formula Editor; framework Example 48 covers the Hybrid Selection Model.
@@ -220,7 +221,8 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Validate required argument counts for `COUNT`, `COUNTA` and `COUNTBLANK`.
 - [x] Count valid date values in `COUNT`, including references and date-function results.
 - [x] Audit remaining operator and conditional-function coercion, dates and function argument counts; identify the remaining gaps below.
-- [ ] Correct the audited coercion and error-handling gaps: handle error values appropriately in `COUNT`/`COUNTA`, align `IF` and arithmetic text coercion, and define consistent date handling in operators and numeric functions. Verify function argument upper limits against the supported Excel behavior.
+- [x] Implement the initial audited fixes for error values in `COUNT`/`COUNTA`, `IF` and arithmetic text coercion, numeric Excel 1900 date serials, and function argument limits; add regression tests.
+- [ ] Validate those formula fixes and full line coverage; review nested error expressions and date/export edge cases.
 - [x] Consolidate argument, quote and nesting scans shared by lazy `IF` evaluation and `SUMIF` range normalization; preserve existing parsing behavior and coverage.
 - [x] Smoke-test formula integration and the optional stylesheet in all framework demos; all four framework Cypress suites passed in CI.
 - [x] Complete the pnpm formula-plugin package build; package exports, custom Sass, five theme builds and version alignment are verified.

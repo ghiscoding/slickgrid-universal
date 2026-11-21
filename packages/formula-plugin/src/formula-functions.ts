@@ -21,6 +21,43 @@ export function unwrapFormulaReference(value: unknown): unknown {
   return isFormulaReference(value) ? value.value : value;
 }
 
+/** Convert a local JavaScript date to the Excel 1900 date system, including its leap-year compatibility day. */
+export function formulaDateToSerial(date: Date): number {
+  const year = date.getFullYear();
+  if (!Number.isFinite(date.getTime()) || year < 1900 || year > 9999) {
+    return NaN;
+  }
+  const day = Date.UTC(year, date.getMonth(), date.getDate());
+  const serial = (day - Date.UTC(1899, 11, 31)) / 86400000;
+  const time = ((date.getHours() * 60 + date.getMinutes()) * 60 + date.getSeconds()) * 1000 + date.getMilliseconds();
+  return serial + (serial >= 60 ? 1 : 0) + time / 86400000;
+}
+
+export function formulaLogicalCondition(value: unknown): boolean | string {
+  value = unwrapFormulaReference(value);
+  if (value instanceof Date) {
+    value = formulaDateToSerial(value);
+  }
+  if (typeof value === 'boolean') {
+    return value;
+  }
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value !== 0;
+  }
+  if (value === null || value === undefined) {
+    return false;
+  }
+  if (typeof value === 'string') {
+    if (value.toUpperCase() === 'TRUE') {
+      return true;
+    }
+    if (value.toUpperCase() === 'FALSE') {
+      return false;
+    }
+  }
+  return FORMULA_ERROR.VALUE;
+}
+
 export function calculateFormulaPower(base: number, exponent: number): number | string {
   if (base === 0 && exponent < 0) {
     return FORMULA_ERROR.DIV0;
@@ -52,7 +89,8 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
     if (args.length < 2 || args.length > 3) {
       return FORMULA_ERROR.VALUE;
     }
-    return args[0] ? args[1] : (args[2] ?? false);
+    const condition = formulaLogicalCondition(args[0]);
+    return typeof condition === 'boolean' ? (condition ? args[1] : (args[2] ?? false)) : condition;
   };
   const SUM = (...args: unknown[]) => {
     const values = aggregateNumbers(args);
@@ -63,7 +101,7 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
     return Array.isArray(values) ? values.reduce((acc, value) => acc * value, 1) : values;
   };
   const SUMPRODUCT = (...args: unknown[]) => {
-    if (!args.length) {
+    if (!args.length || args.length > 255) {
       return FORMULA_ERROR.VALUE;
     }
 
@@ -83,7 +121,8 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
     for (let i = 0; i < first.values.length; i++) {
       let product = 1;
       for (let j = 0; j < arrays.length; j++) {
-        const value = unwrapFormulaReference(arrays[j].values[i]);
+        const rawValue = unwrapFormulaReference(arrays[j].values[i]);
+        const value = rawValue instanceof Date ? formulaDateToSerial(rawValue) : rawValue;
         product *=
           typeof value === 'number' && Number.isFinite(value)
             ? value
@@ -186,7 +225,7 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
     return new Date(now.getFullYear(), now.getMonth(), now.getDate());
   };
   const CONCAT = (...args: unknown[]) =>
-    !args.length
+    !args.length || args.length > 253
       ? FORMULA_ERROR.VALUE
       : flattenFormulaFunctionArgs(args)
           .map((arg) => {
@@ -195,7 +234,7 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
           })
           .join('');
   const COUNT = (...args: unknown[]) =>
-    !args.length
+    !args.length || args.length > 255
       ? FORMULA_ERROR.VALUE
       : args.reduce<number>(
           (count, arg) =>
@@ -212,7 +251,7 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
           0
         );
   const COUNTA = (...args: unknown[]) =>
-    !args.length
+    !args.length || args.length > 255
       ? FORMULA_ERROR.VALUE
       : flattenFormulaFunctionArgs(args).filter((value) =>
           isFormulaReference(value)
@@ -246,7 +285,8 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
     const length = Math.min(criteriaValues.length, sumValues.length);
     let sum = 0;
     for (let i = 0; i < length; i++) {
-      const value = unwrapFormulaReference(sumValues[i]);
+      const rawValue = unwrapFormulaReference(sumValues[i]);
+      const value = rawValue instanceof Date ? formulaDateToSerial(rawValue) : rawValue;
       if (matches(criteriaValues[i]) && typeof value === 'number' && Number.isFinite(value)) {
         sum += value;
       }
@@ -295,6 +335,8 @@ function numericScalarArguments(args: unknown[], count: number): number[] | stri
     const value = unwrapFormulaReference(arg);
     if (value === null || value === undefined) {
       numbers.push(0);
+    } else if (value instanceof Date && Number.isFinite(formulaDateToSerial(value))) {
+      numbers.push(formulaDateToSerial(value));
     } else if (typeof value === 'number' && Number.isFinite(value)) {
       numbers.push(value);
     } else if (typeof value === 'boolean') {
@@ -326,7 +368,7 @@ function flattenFormulaFunctionArgs(args: unknown[]): unknown[] {
 
 /** Aggregate functions treat referenced text and booleans differently from literal arguments. */
 function aggregateNumbers(args: unknown[]): number[] | string {
-  if (!args.length) {
+  if (!args.length || args.length > 255) {
     return FORMULA_ERROR.VALUE;
   }
   const values: number[] = [];
@@ -335,7 +377,8 @@ function aggregateNumbers(args: unknown[]): number[] | string {
       return arg.every((item) => visit(item, true));
     }
     const reference = isFormulaReference(arg);
-    const value = unwrapFormulaReference(arg);
+    const rawValue = unwrapFormulaReference(arg);
+    const value = rawValue instanceof Date ? formulaDateToSerial(rawValue) : rawValue;
     if (reference || fromRange) {
       if (typeof value === 'number' && Number.isFinite(value)) {
         values.push(value);
@@ -384,9 +427,17 @@ function toFormulaArray(value: unknown): unknown[] {
 function createFormulaCriteriaMatcher(input: unknown): (value: unknown) => boolean {
   const reference = isFormulaReference(input);
   const rawCriteria = unwrapFormulaReference(input);
-  const criteria = reference && (rawCriteria === null || rawCriteria === undefined) ? 0 : rawCriteria;
+  const criteria =
+    reference && (rawCriteria === null || rawCriteria === undefined)
+      ? 0
+      : rawCriteria instanceof Date
+        ? formulaDateToSerial(rawCriteria)
+        : rawCriteria;
   if (typeof criteria === 'number' || typeof criteria === 'boolean') {
-    return (value) => unwrapFormulaReference(value) === criteria;
+    return (value) => {
+      const unwrapped = unwrapFormulaReference(value);
+      return (unwrapped instanceof Date ? formulaDateToSerial(unwrapped) : unwrapped) === criteria;
+    };
   }
 
   const criteriaText = String(criteria ?? '');
@@ -399,7 +450,8 @@ function createFormulaCriteriaMatcher(input: unknown): (value: unknown) => boole
   const rightText = hasWildcard ? operandText.toLowerCase() : pattern.map((token) => token ?? '').join('');
 
   return (inputValue: unknown) => {
-    const value = unwrapFormulaReference(inputValue);
+    const rawValue = unwrapFormulaReference(inputValue);
+    const value = rawValue instanceof Date ? formulaDateToSerial(rawValue) : rawValue;
     if (operandText === '' && (operator === '=' || operator === '<>')) {
       const isBlank = value === null || value === undefined || value === '';
       return operator === '=' ? isBlank : !isBlank;
