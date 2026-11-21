@@ -34,6 +34,8 @@ export class FormulaCellEditor implements Editor {
   protected _gridContainerElm?: HTMLElement;
   protected _blurRestoreTimer?: ReturnType<typeof setTimeout>;
   protected _isDraggingGridRefSelection = false;
+  protected _isComposing = false;
+  protected _compositionStartValue = '';
   protected _isOpenedByTabKey = false;
   protected _isDestroyed = false;
   protected _isExitingEditor = false;
@@ -49,6 +51,8 @@ export class FormulaCellEditor implements Editor {
   protected _isSyncingReferenceFromCaret = false;
   protected _isSelectionModelHighlightActive = false;
   protected _plainTextValue = ''; // Keep plain text in sync with DOM for reliable copy/paste
+  protected _undoStack: Array<{ value: string; caret: number }> = [];
+  protected _redoStack: Array<{ value: string; caret: number }> = [];
   protected _formulaRefColorCache: FormulaReferenceColorCache = new FormulaReferenceColorCache();
   protected _bindEventService: BindingEventService = new BindingEventService();
   protected _debug = false;
@@ -75,6 +79,8 @@ export class FormulaCellEditor implements Editor {
     this.args.container.appendChild(this._editorElm);
 
     this._bindEventService.bind(this._editorElm, 'input', this.handleInput.bind(this));
+    this._bindEventService.bind(this._editorElm, 'compositionstart', this.handleCompositionStart.bind(this));
+    this._bindEventService.bind(this._editorElm, 'compositionend', this.handleCompositionEnd.bind(this));
     this._bindEventService.bind(this._editorElm, 'paste', this.handlePaste.bind(this) as EventListener);
     this._bindEventService.bind(this._editorElm, 'keydown', this.handleKeydown.bind(this) as EventListener);
     this._bindEventService.bind(this._editorElm, 'keyup', this.handleEditorKeyUp.bind(this));
@@ -118,6 +124,8 @@ export class FormulaCellEditor implements Editor {
     this._originalValue = displayValue;
     this._plainTextValue = this._originalValue; // Keep in sync
     this._editorElm.textContent = this._originalValue;
+    this._undoStack = [];
+    this._redoStack = [];
 
     // Build cache first so colors are assigned correctly (this also applies colors to grid)
     this.buildFormulaReferenceColorCache();
@@ -148,11 +156,22 @@ export class FormulaCellEditor implements Editor {
   }
 
   protected handleInput(): void {
+    const nextValue = (this._editorElm.textContent || '').replace(/\u00a0/g, ' ');
+    if (this._isComposing) {
+      this._plainTextValue = nextValue;
+      this.publishFormulaInput();
+      return;
+    }
+    this.processInputChange(this._plainTextValue, nextValue);
+  }
+
+  protected processInputChange(previousValue: string, nextValue: string): void {
+    if (previousValue !== nextValue) {
+      this._undoStack.push({ value: previousValue, caret: Math.min(this.getCaretOffset(), previousValue.length) });
+      this._redoStack = [];
+    }
     this._isValueTouched = true;
-
-    // Extract plain text from DOM (may contain styled spans after renderTokens)
-    this._plainTextValue = (this._editorElm.textContent || '').replace(/\u00a0/g, ' ');
-
+    this._plainTextValue = nextValue;
     this.clearReferenceSelectionHighlight();
 
     this.buildFormulaReferenceColorCache();
@@ -162,16 +181,33 @@ export class FormulaCellEditor implements Editor {
     this.publishFormulaInput();
   }
 
+  protected handleCompositionStart(): void {
+    this._isComposing = true;
+    this._compositionStartValue = this._plainTextValue;
+  }
+
+  protected handleCompositionEnd(): void {
+    this._isComposing = false;
+    const value = (this._editorElm.textContent || '').replace(/\u00a0/g, ' ');
+    this.processInputChange(this._compositionStartValue, value);
+  }
+
   protected handlePaste(event: ClipboardEvent): void {
     event.preventDefault();
     const text = event.clipboardData?.getData('text/plain') || '';
+    const previousValue = this._plainTextValue;
+    let inputHandled = false;
+    const inputListener = () => {
+      inputHandled = true;
+    };
+    this._editorElm.addEventListener('input', inputListener, { once: true });
     document.execCommand('insertText', false, text);
-    this._plainTextValue = (this._editorElm.textContent || '').replace(/\u00a0/g, ' ');
-    this.buildFormulaReferenceColorCache();
-    this.renderTokens();
-    this.syncReferenceSelectionFromCaret();
-    this.updateAutocomplete();
-    this.publishFormulaInput();
+    this._editorElm.removeEventListener('input', inputListener);
+    if (!inputHandled) {
+      const caret = this.getCaretOffset();
+      this.processInputChange(previousValue, `${previousValue.slice(0, caret)}${text}${previousValue.slice(caret)}`);
+      this.restoreCaretOffset(caret + text.length);
+    }
   }
 
   protected handleFocusIn(): void {
@@ -224,6 +260,15 @@ export class FormulaCellEditor implements Editor {
       return;
     }
 
+    if ((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === 'z') {
+      const stack = event.shiftKey ? this._redoStack : this._undoStack;
+      if (stack.length) {
+        this.stopKeyboardEvent(event);
+        this.applyInputHistory(event.shiftKey);
+      }
+      return;
+    }
+
     // Handle copy/cut to ensure we copy plain text only, not HTML spans
     if ((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === 'c') {
       this.stopKeyboardEvent(event);
@@ -241,6 +286,8 @@ export class FormulaCellEditor implements Editor {
         // Fallback for older browsers
       });
       const value = (this._editorElm.textContent || '').replace(/\u00a0/g, ' ');
+      this._undoStack.push({ value, caret: start });
+      this._redoStack = [];
       this._plainTextValue = `${value.slice(0, start)}${value.slice(end)}`;
       this._editorElm.textContent = this._plainTextValue;
       this._isValueTouched = true;
@@ -365,6 +412,20 @@ export class FormulaCellEditor implements Editor {
     }
     event.stopPropagation();
     event.stopImmediatePropagation();
+  }
+
+  protected applyInputHistory(redo: boolean): void {
+    const source = redo ? this._redoStack : this._undoStack;
+    const target = redo ? this._undoStack : this._redoStack;
+    const state = source.pop()!;
+    target.push({ value: this._plainTextValue, caret: this.getCaretOffset() });
+    this._plainTextValue = state.value;
+    this._editorElm.textContent = state.value;
+    this._isValueTouched = true;
+    this.buildFormulaReferenceColorCache();
+    this.renderTokens();
+    this.restoreCaretOffset(state.caret);
+    this.publishFormulaInput();
   }
 
   protected restoreEditorAfterRejectedCommit(): void {

@@ -4,6 +4,75 @@ import { FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY } from '../formula-reference.js';
 import { FormulaCellEditor } from '../formula.cellEditor.js';
 
 describe('FormulaCellEditor', () => {
+  it('preserves composition and provides formula-local undo and redo', () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    const publish = vi.fn();
+    const editor = new FormulaCellEditor({
+      column: { field: 'total', editor: { params: { onFormulaInputChange: publish } } },
+      container,
+      item: { total: '=A1' },
+      grid: {
+        getContainerNode: () => container,
+        getColumns: () => [{ id: 'a' }],
+        getDataLength: () => 1,
+        setCellCssStyles: vi.fn(),
+        removeCellCssStyles: vi.fn(),
+      },
+    } as any);
+    editor.loadValue({ total: '=A1' });
+    const input = (editor as any)._editorElm as HTMLElement;
+
+    input.dispatchEvent(new CompositionEvent('compositionstart'));
+    input.appendChild(document.createTextNode('かな'));
+    input.dispatchEvent(new InputEvent('input', { bubbles: true }));
+    expect(input.querySelector('.formula-token')).toBeTruthy();
+    expect(editor.serializeValue()).toBe('=A1かな');
+    input.dispatchEvent(new CompositionEvent('compositionend'));
+
+    (editor as any).handleKeydown(new KeyboardEvent('keydown', { key: 'z', ctrlKey: true, cancelable: true }));
+    expect(editor.serializeValue()).toBe('=A1');
+    (editor as any).handleKeydown(new KeyboardEvent('keydown', { key: 'z', ctrlKey: true, shiftKey: true, cancelable: true }));
+    expect(editor.serializeValue()).toBe('=A1かな');
+
+    editor.destroy();
+    container.remove();
+  });
+
+  it('processes a browser paste input only once', () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    const publish = vi.fn();
+    const editor = new FormulaCellEditor({
+      column: { field: 'total', editor: { params: { onFormulaInputChange: publish } } },
+      container,
+      item: { total: '=A1' },
+      grid: {
+        getContainerNode: () => container,
+        getColumns: () => [{ id: 'a' }],
+        getDataLength: () => 1,
+      },
+    } as any);
+    editor.loadValue({ total: '=A1' });
+    const input = (editor as any)._editorElm as HTMLElement;
+    Object.defineProperty(document, 'execCommand', {
+      configurable: true,
+      value: vi.fn(() => {
+        input.appendChild(document.createTextNode('+B1'));
+        input.dispatchEvent(new InputEvent('input', { bubbles: true }));
+        return true;
+      }),
+    });
+
+    (editor as any).handlePaste({ preventDefault: vi.fn(), clipboardData: { getData: () => '+B1' } });
+    expect(editor.serializeValue()).toBe('=A1+B1');
+    expect(publish).toHaveBeenCalledTimes(1);
+
+    delete (document as any).execCommand;
+    editor.destroy();
+    container.remove();
+  });
+
   it('styles and highlights references only outside quoted text and identifiers', () => {
     const container = document.createElement('div');
     document.body.appendChild(container);
