@@ -206,6 +206,9 @@ export function getFormulaRangeWidth(members: string[]): number {
 
 /** Rewrite COUNTA of helper ranges using source-cell presence, including formulas returning empty text. */
 export function rewriteExcelHelperCounta(formula: string, helperRanges: ReadonlyMap<string, () => string>): string {
+  if (helperRanges.size === 0) {
+    return formula;
+  }
   let output = '';
   let index = 0;
   while (index < formula.length) {
@@ -266,13 +269,10 @@ export function rewriteExcelHelperCounta(formula: string, helperRanges: Readonly
       break;
     }
     index++;
-    const terms = args.map((arg) => {
-      const trimmed = arg.trim();
-      return helperRanges.get(trimmed)?.() ?? `COUNTA(${rewriteExcelHelperCounta(arg, helperRanges)})`;
-    });
+    const rewrittenArgs = args.map((arg) => rewriteExcelHelperCounta(arg, helperRanges));
     output += args.some((arg) => helperRanges.has(arg.trim()))
-      ? `(${terms.join('+')})`
-      : `${match[0]}${args.map((arg) => rewriteExcelHelperCounta(arg, helperRanges)).join(',')})`;
+      ? `(${args.map((arg, index) => helperRanges.get(arg.trim())?.() ?? `COUNTA(${rewrittenArgs[index]})`).join('+')})`
+      : `${match[0]}${rewrittenArgs.join(',')})`;
   }
   return output;
 }

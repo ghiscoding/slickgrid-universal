@@ -1070,12 +1070,13 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     }
 
     const references = new Map<string, unknown>();
+    const occupiedIdentifiers = new Set((normalizedSyntax.match(/[A-Za-z_][A-Za-z0-9_]*/g) ?? []).map((identifier) => identifier.toUpperCase()));
     let referenceSequence = 0;
     const referenceLiteral = (value: unknown) => {
       let name: string;
       do {
         name = `__FORMULA_CELL_${referenceSequence++}`;
-      } while (normalizedSyntax.toUpperCase().includes(name));
+      } while (occupiedIdentifiers.has(name));
       const normalizedValue = isFormulaLiteralText(value)
         ? value
         : value === FORMULA_EMPTY_RESULT

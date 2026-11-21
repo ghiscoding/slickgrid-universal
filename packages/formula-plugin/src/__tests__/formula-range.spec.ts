@@ -59,4 +59,18 @@ describe('stable formula ranges', () => {
       `(COUNTA("a""b")+COUNTA('a''b'!A1)+SUM('Formula References'!$A$4:$A$6))`
     );
   });
+
+  it('processes nested COUNTA arguments once when helper ranges exist', () => {
+    const helpers = new Map([['helper', () => 'SUM(A1:A2)']]);
+    let lookups = 0;
+    const originalGet = helpers.get.bind(helpers);
+    helpers.get = (key) => {
+      lookups++;
+      return originalGet(key);
+    };
+    const formula = `${'COUNTA('.repeat(16)}A1${')'.repeat(16)}`;
+    expect(rewriteExcelHelperCounta(formula, helpers)).toBe(formula);
+    expect(lookups).toBeLessThan(100);
+    expect(rewriteExcelHelperCounta(formula, new Map())).toBe(formula);
+  });
 });

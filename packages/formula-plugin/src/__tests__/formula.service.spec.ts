@@ -195,6 +195,7 @@ describe('FormulaService', () => {
     expect(evaluate('=IF("A1 × TRUE"="A1 × TRUE",3,0)')).toBe(3);
     expect(evaluate('="unterminated')).toBe('#PARSE!');
     expect(evaluate('=CONCAT("hello A1", SUM(A1:A2))')).toBe('hello A10');
+    expect(evaluate('=CONCAT("__FORMULA_CELL_0", A1)')).toBe('__FORMULA_CELL_0A1');
     expect(evaluate('="REF(COLUMN(\'value\'),ROW(1))"')).toBe("REF(COLUMN('value'),ROW(1))");
     expect(evaluate(`='REF(COLUMN("value"),ROW(1))'`)).toBe('REF(COLUMN("value"),ROW(1))');
     expect(evaluate('=1;2')).toBe('#PARSE!');
