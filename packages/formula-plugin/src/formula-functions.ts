@@ -154,14 +154,14 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
     if (!Array.isArray(values)) {
       return values;
     }
-    return values.length ? Math.min(...values) : 0;
+    return values.length ? values.reduce((minimum, value) => (value < minimum ? value : minimum)) : 0;
   };
   const MAX = (...args: unknown[]) => {
     const values = aggregateNumbers(args);
     if (!Array.isArray(values)) {
       return values;
     }
-    return values.length ? Math.max(...values) : 0;
+    return values.length ? values.reduce((maximum, value) => (value > maximum ? value : maximum)) : 0;
   };
   const AVERAGE = (...args: unknown[]) => {
     const values = aggregateNumbers(args);

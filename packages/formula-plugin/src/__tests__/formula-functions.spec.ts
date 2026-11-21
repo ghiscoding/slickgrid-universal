@@ -120,6 +120,15 @@ describe('createFormulaFunctionRegistry', () => {
     }
   });
 
+  it('handles multiple large ranges in MIN and MAX without spreading values', () => {
+    const registry = createFormulaFunctionRegistry(new Map());
+    const first = Array.from({ length: 150_000 }, (_, index) => index);
+    const second = Array.from({ length: 150_000 }, (_, index) => index - 150_000);
+
+    expect(registry.get('MIN')?.(first, second)).toBe(-150_000);
+    expect(registry.get('MAX')?.(first, second)).toBe(149_999);
+  });
+
   it('should evaluate count functions with numeric and blank semantics', () => {
     const registry = createFormulaFunctionRegistry(new Map());
 

@@ -253,7 +253,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
   - [x] Dataset synchronization can retain formulas after their source cells become plain values.
   - [x] Literal text resembling a formula error is treated as an error.
   - [x] `COUNT` and `COUNTA` can swallow structurally missing A1 references.
-  - [ ] `MIN` and `MAX` can overflow the call stack for multiple large ranges.
+  - [x] `MIN` and `MAX` can overflow the call stack for multiple large ranges.
   - [ ] Numeric literals in scientific notation are rejected.
   - [ ] Drag-fill clamps references that cross the first row or column instead of returning `#REF!`.
 - [ ] Fix the second audit findings (2026-11-20), committing and validating each separately:
