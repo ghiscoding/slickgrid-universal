@@ -11,10 +11,10 @@ When providing a custom pagination component as a `customPaginationComponent`, t
 
 ##### Custom Pagination Component
 
-Create a Custom Pagination Component that requires the following functions, your class will be instantiated and the `init()` will contain all the references to the Services. The `render()` will also be called with the grid container DOM element which is important to either prepend or append your Custom Pagination to the grid.
+Create a Custom Pagination Component that requires the following functions, your class will be instantiated and the `init()` will contain all the references to the Services. The `renderPagination()` will also be called with the grid container DOM element which is important to either prepend or append your Custom Pagination to the grid.
 
 ```ts
-import type { BasePaginationComponent, PaginationService, PubSubService, SlickGrid } from '@slickgrid-universal/common';
+import type { BasePaginationComponent, PaginationService, PubSubService, SlickGrid, TranslaterService } from '@slickgrid-universal/common';
 
 export class CustomPager implements BasePaginationComponent {
   /** initialize the custom pagination class */
@@ -24,7 +24,7 @@ export class CustomPager implements BasePaginationComponent {
   dispose() {}
 
   /** render the custom pagination */
-  render(containerElm: HTMLElement) {}
+  renderPagination(containerElm: HTMLElement) {}
 }
 ```
 
