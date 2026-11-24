@@ -1,6 +1,5 @@
 import { FORMULA_ERROR } from './formula-errors.js';
-
-export type FormulaCallback = (...args: any[]) => unknown;
+import type { FormulaCallback } from './interfaces/index.js';
 
 const referenceTag: unique symbol = Symbol('formula reference');
 export interface FormulaReferenceValue {

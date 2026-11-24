@@ -1,4 +1,4 @@
-import type { GridOption } from './gridOption.interface.js';
+import type { ExcelExportStartContext, GridOption } from '@slickgrid-universal/common';
 
 export interface FormulaExcelExportContext {
   columnId: number | string;
@@ -43,19 +43,11 @@ export interface FormulaExcelCustomFunctionExport {
   };
 }
 
-/** Optional interface that a formula external resource can implement. */
-export interface FormulaProvider {
-  /** Opt in to grouped worksheet position mapping. */
-  supportsGroupedFormulaExport?: boolean;
-  /**
-   * Return an Excel-ready formula for a given row/column cell.
-   * Formula should be returned without the leading `=`.
-   */
-  getExcelFormula?: (context: FormulaExcelExportContext) => string | undefined;
-
-  /** Return workbook-level defined names to register before writing worksheet formulas. */
-  getExcelDefinedNames?: () => FormulaExcelDefinedNameExport[];
-
-  /** Return workbook-level custom functions to register before writing worksheet formulas. */
-  getExcelCustomFunctions?: () => FormulaExcelCustomFunctionExport[];
+/** Per-export state, created by `onExcelExportStart` and released by `onExcelExportEnd`. */
+export interface FormulaExcelExportState {
+  context: Omit<FormulaExcelExportContext, 'columnId' | 'dataRowIdx' | 'rowId'>;
+  workbook: ExcelExportStartContext['workbook'];
+  sheet: ExcelExportStartContext['sheet'];
+  rangeSheet?: ExcelExportStartContext['sheet'];
+  rangeCache: Map<string, string>;
 }

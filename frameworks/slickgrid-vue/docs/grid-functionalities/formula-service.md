@@ -137,7 +137,7 @@ Formula reference storage:
 - the editor displays familiar Excel A1 references such as `C1` and `D1:D3`
 - committed formulas are stored with stable column and row identities, for example `REF(COLUMN("price"),ROW("a_01"))`
 - this keeps references aligned when columns are reordered or hidden and when rows are sorted
-- `ExcelExportService` converts the stable references back to native Excel A1 formulas using the exported column and row order
+- during Excel export, `FormulaService` converts the stable references back to native Excel A1 formulas using the exported column and row order (via the `ExcelExportCellProvider` hooks called by `ExcelExportService`, so grids without formulas do not ship this export code)
 
 Formula column letters follow the complete column order, including hidden columns. Hiding a column leaves a gap in the visible header letters, and references continue to point to the hidden data. A range spanning hidden columns includes their values. Mouse selection, reference highlighting and drag-fill use those same column positions; drag-fill skips hidden destination columns.
 

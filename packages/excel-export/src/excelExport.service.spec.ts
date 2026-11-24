@@ -2784,20 +2784,8 @@ describe('ExcelExportService', () => {
       expect((service as any)._regularCellExcelFormats.title.getDataValueParser).toBe(parserSpy);
     });
 
-    it('readRegularRowData should export formula metadata when a formula provider is registered', () => {
-      const sharedServiceStub = {
-        externalRegisteredResources: [
-          {
-            pluginName: 'FormulaService',
-            hasFormula: vi.fn().mockReturnValue(true),
-            getExcelFormula: vi.fn().mockReturnValue('B2*C2'),
-          },
-        ],
-      };
-      container.registerInstance('SharedService', sharedServiceStub);
-
+    it('readRegularRowData should use the first cell value supplied by an ExcelExportCellProvider and keep the column style by default', () => {
       service.init(gridStub, container);
-
       const localColumns = [{ id: 'total', field: 'total', width: 100, type: 'number' }] as unknown as Column[];
       (service as any)._excelExportOptions = { htmlDecode: true, autoDetectCellFormat: true };
       (service as any)._workbook = new Workbook();
@@ -2807,209 +2795,57 @@ describe('ExcelExportService', () => {
       const strFmt = (service as any)._stylesheet.createFormat({ format: '@' });
       const numFmt = (service as any)._stylesheet.createFormat({ format: '0' });
       (service as any)._stylesheetFormats = { boldFormat: boldFmt, stringFormat: strFmt, numberFormat: numFmt };
-      (service as any)._formulaProvider = (sharedServiceStub.externalRegisteredResources as any[])[0];
-      (service as any)._formulaColumnIds = ['total'];
-      (service as any)._formulaRowIds = ['id_1'];
+      const getExcelExportCellValue = vi.fn().mockReturnValueOnce({ value: 'B2*C2', metadata: { type: 'formula' } });
+      (service as any)._cellProviders = [{ getExcelExportCellValue: vi.fn() }, { getExcelExportCellValue }];
 
       const metadataCache = (service as any).preCalculateColumnMetadata(localColumns);
       const output = (service as any).readRegularRowData(localColumns, 0, { id: 'id_1', total: 0 }, 0, metadataCache);
+      const nextOutput = (service as any).readRegularRowData(localColumns, 1, { id: 'id_2', total: 5 }, 1, metadataCache);
 
-      expect(output[0]).toEqual(expect.objectContaining({ value: 'B2*C2', metadata: expect.objectContaining({ type: 'formula' }) }));
+      expect(output[0]).toEqual({ value: 'B2*C2', metadata: { type: 'formula', style: expect.any(Number) } });
+      expect(getExcelExportCellValue).toHaveBeenCalledWith({ id: 'id_1', total: 0 }, localColumns[0], 0);
+      expect(nextOutput[0]).not.toEqual(expect.objectContaining({ value: 'B2*C2' }));
     });
 
-    it('getCellFormulaForExcel should handle provider results and invalid rows', () => {
-      service.init(gridStub, container);
-      const provider = { getExcelFormula: vi.fn().mockReturnValue('=A1') };
-      (service as any)._formulaProvider = provider;
-
-      expect((service as any).getCellFormulaForExcel({ id: 'row-1' }, { id: 'total' }, 0)).toBe('A1');
-
-      provider.getExcelFormula.mockReturnValue(123);
-      expect((service as any).getCellFormulaForExcel({ id: 'row-1' }, { id: 'total' }, 0)).toBeUndefined();
-      expect((service as any).getCellFormulaForExcel({}, { id: 'total' }, 0)).toBeUndefined();
-
-      (service as any)._hasGroupedItems = true;
-      expect((service as any).getCellFormulaForExcel({ id: 'row-1' }, { id: 'total' }, 0)).toBeUndefined();
-    });
-
-    it('should map grouped data rows to worksheet positions before requesting formulas', async () => {
-      service.init(gridStub, container);
-      const svc = service as any;
-      const provider = { supportsGroupedFormulaExport: true, getExcelFormula: vi.fn().mockReturnValue('B4') };
-      const rows = [{ __group: true }, { id: 'a' }, { __groupTotals: true }, { id: 'b' }, { getItem: () => null }, null];
-      svc._dataView = { getLength: () => rows.length, getItem: (row: number) => rows[row] };
-      svc._sheet = { data: [[]] };
-      svc._stylesheetFormats = { boldFormat: { id: 1 } };
-      vi.spyOn(svc, 'getColumns').mockReturnValue([{ id: 'value', field: 'value' }]);
-      vi.spyOn(svc, 'findFormulaProvider').mockReturnValue(provider);
-      vi.spyOn(svc, 'registerFormulaProviderWorkbookArtifacts').mockImplementation(() => undefined);
-      vi.spyOn(svc, 'getAllDataRowIds').mockReturnValue(['a', 'b']);
-      vi.spyOn(svc, 'preCalculateColumnMetadata').mockReturnValue(new Map());
-      vi.spyOn(svc, 'cacheRegularCellExcelFormats').mockImplementation(() => undefined);
-      vi.spyOn(svc, 'getColumnHeaderData').mockImplementation(() => {
-        svc._hasGroupedItems = true;
-        return ['group', 'value'];
-      });
-      vi.spyOn(svc, 'pushAllGridRowDataToArrayAsync').mockResolvedValue([]);
-
-      await svc.getDataOutputAsync();
-      expect(svc._formulaGroupedRows).toEqual(
-        new Map([
-          ['a', 4],
-          ['b', 6],
-        ])
-      );
-      expect(svc.getCellFormulaForExcel({ id: 'a' }, { id: 'value' }, 1)).toBe('B4');
-      expect(provider.getExcelFormula).toHaveBeenCalledWith(
-        expect.objectContaining({
-          groupedColumnOffset: 1,
-          groupedRowPositions: new Map([
-            ['a', 4],
-            ['b', 6],
-          ]),
-        })
-      );
-    });
-
-    it('exports disjoint helper ranges with deduplication, sheet naming and workbook lifecycle', async () => {
-      service.init(gridStub, container);
-      const svc = service as any;
+    it('should call ExcelExportCellProvider start/end hooks with the export context', async () => {
+      const columns = [
+        { id: 'value', field: 'value', width: 100 },
+        { id: 'skip', field: 'skip', excludeFromExport: true },
+      ] as Column[];
       const provider = {
-        getExcelFormula: ({ registerFormulaRange, registerFormulaPresenceRange }: any) =>
-          `SUM(${registerFormulaRange(['B4', 'B8'])})+SUM(${registerFormulaPresenceRange(['B4', 'B8'])})`,
+        onExcelExportStart: vi.fn(),
+        getExcelExportCellValue: vi.fn(),
+        onExcelExportEnd: vi.fn(({ workbook }) => workbook.addWorksheet(workbook.createWorksheet({ name: 'Helper' }))),
       };
-      vi.spyOn(svc, 'getDataOutputAsync').mockImplementation(() => {
-        svc._workbook.addWorksheet(svc._workbook.createWorksheet({ name: 'Existing' }));
-        svc._formulaProvider = provider;
-        svc._formulaColumnIds = ['value'];
-        svc._formulaRowIds = ['a'];
-        const formula = svc.getCellFormulaForExcel({ id: 'a' }, { id: 'value' }, 0);
-        expect(svc.registerFormulaRange(['B4', 'B8'])).toBe("'Formula References 2'!$A$1:$A$2");
-        expect(svc.registerFormulaRange(['B4', 'B8'], true)).toBe("'Formula References 2'!$A$3:$A$4");
-        return Promise.resolve([[{ value: formula, metadata: { type: 'formula' } }]]);
-      });
-      await service.exportToExcel({ ...mockExportExcelOptions, sheetName: 'Formula References', useStreamingExport: false });
-      expect(svc._workbook.worksheets.map((sheet: any) => sheet.name)).toEqual(['Existing', 'Formula References', 'Formula References 2']);
-      expect(svc._formulaRangeSheet.data).toEqual([
-        [{ value: `IF(ISBLANK('Formula References'!B4),"",'Formula References'!B4)`, metadata: { type: 'formula' } }],
-        [{ value: `IF(ISBLANK('Formula References'!B8),"",'Formula References'!B8)`, metadata: { type: 'formula' } }],
-        [{ value: `--NOT(ISBLANK('Formula References'!B4))`, metadata: { type: 'formula' } }],
-        [{ value: `--NOT(ISBLANK('Formula References'!B8))`, metadata: { type: 'formula' } }],
-      ]);
-      expect(svc.registerFormulaRange(['B4', 'C4', 'B8', 'C8'], false, 2)).toBe("'Formula References 2'!$A$5:$B$6");
-      expect(svc.registerFormulaRange(['B4'], false, 0)).toBe('#REF!');
-      expect(svc.registerFormulaRange(['B4'], false, 2)).toBe('#REF!');
-      expect(svc.registerFormulaRange(['B4'], false, 16385)).toBe('#REF!');
-      expect(svc._formulaRangeSheet.data[4].map((cell: any) => cell.value)).toEqual([
-        `IF(ISBLANK('Formula References'!B4),"",'Formula References'!B4)`,
-        `IF(ISBLANK('Formula References'!C4),"",'Formula References'!C4)`,
-      ]);
-      expect(svc.registerFormulaRange(['B4', 'C4', 'B8', 'C8'], false, 2)).toBe("'Formula References 2'!$A$5:$B$6");
-      svc._sheet.name = "User's data";
-      expect(svc.registerFormulaRange(['C9'])).toBe("'Formula References 2'!$A$7:$A$7");
-      expect(svc._formulaRangeSheet.data[6][0].value).toBe(`IF(ISBLANK('User''s data'!C9),"",'User''s data'!C9)`);
-      svc._formulaRangeSheet.data.length = 1048576;
-      expect(svc.registerFormulaRange(['Z99'])).toBe('#REF!');
-      service.dispose();
-      expect(svc._formulaRangeSheet).toBeUndefined();
-      expect(svc._formulaRangeCache.size).toBe(0);
-    });
-
-    it('findFormulaProvider should return undefined when enableFormulas is false', () => {
-      const sharedServiceStub = {
-        externalRegisteredResources: [
-          {
-            pluginName: 'FormulaService',
-            hasFormula: vi.fn().mockReturnValue(true),
-            getExcelFormula: vi.fn().mockReturnValue('B2*C2'),
-          },
-        ],
-      };
-      container.registerInstance('SharedService', sharedServiceStub);
-      const previousEnableFormulas = mockGridOptions.enableFormulas;
-      mockGridOptions.enableFormulas = false;
+      container.registerInstance('SharedService', { externalRegisteredResources: [{ pluginName: 'Other' }, provider] });
+      vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columns);
+      vi.spyOn(dataViewStub, 'getLength').mockReturnValue(1);
+      vi.spyOn(dataViewStub, 'getItem').mockReturnValue({ id: 0, value: 1 });
+      const customExcelHeader = vi.fn((_workbook, sheet) => sheet.data.push([{ value: 'Title' }]));
+      mockGridOptions.excelExportOptions = { customExcelHeader };
+      const svc = service as any;
 
       try {
         service.init(gridStub, container);
-        expect((service as any).findFormulaProvider()).toBeUndefined();
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
       } finally {
-        mockGridOptions.enableFormulas = previousEnableFormulas;
+        delete mockGridOptions.excelExportOptions;
       }
-    });
 
-    it('findFormulaProvider should skip unrelated resources and tolerate missing registrations', () => {
-      const sharedServiceStub = { externalRegisteredResources: [{ pluginName: 'OtherService' }, { getExcelFormula: vi.fn() }] };
-      container.registerInstance('SharedService', sharedServiceStub);
-      service.init(gridStub, container);
-      expect((service as any).findFormulaProvider()).toBe(sharedServiceStub.externalRegisteredResources[1]);
+      expect(provider.onExcelExportStart).toHaveBeenCalledWith({
+        workbook: svc._workbook,
+        sheet: svc._sheet,
+        columns: [columns[0]],
+        dataStartRow: 3,
+        hasGroupedItems: false,
+      });
+      expect(provider.getExcelExportCellValue).toHaveBeenCalledWith({ id: 0, value: 1 }, columns[0], 0);
+      expect(provider.onExcelExportEnd).toHaveBeenCalledWith({ workbook: svc._workbook, sheet: svc._sheet });
+      expect(svc._workbook.worksheets.map((sheet: any) => sheet.name)).toEqual(['Sheet1', 'Helper']);
 
-      (service as any)._sharedService = { externalRegisteredResources: undefined };
-      expect((service as any).findFormulaProvider()).toBeUndefined();
-    });
-
-    it('registerFormulaProviderWorkbookArtifacts should register workbook defined names and custom functions when supported', () => {
-      service.init(gridStub, container);
-
-      const addDefinedName = vi.fn();
-      const addCustomFunction = vi.fn();
-      (service as any)._workbook = {
-        addDefinedName,
-        addCustomFunction,
-      };
-      (service as any)._formulaProvider = {
-        getExcelDefinedNames: () => [{ name: 'MY_RANGE', refersTo: 'Sheet1!$B$2:$C$100' }],
-        getExcelCustomFunctions: () => [{ name: 'CUSTOMSUM', args: ['values'], body: 'SUM(values)' }],
-      };
-
-      (service as any).registerFormulaProviderWorkbookArtifacts();
-
-      expect(addDefinedName).toHaveBeenCalledWith('MY_RANGE', 'Sheet1!$B$2:$C$100', undefined);
-      expect(addCustomFunction).toHaveBeenCalledWith('CUSTOMSUM', ['values'], 'SUM(values)', undefined);
-    });
-
-    it('registerFormulaProviderWorkbookArtifacts should ignore incomplete artifacts', () => {
-      service.init(gridStub, container);
-      const addDefinedName = vi.fn();
-      const addCustomFunction = vi.fn();
-      (service as any)._workbook = { addDefinedName, addCustomFunction };
-      (service as any)._formulaProvider = {
-        getExcelDefinedNames: () => [
-          { name: '', refersTo: 'Sheet1!A1' },
-          { name: 'VALID', refersTo: 'Sheet1!A1' },
-        ],
-        getExcelCustomFunctions: () => [
-          { name: 'MISSING_BODY', args: ['values'], body: '' },
-          { name: 'VALIDFN', args: ['values'], body: 'SUM(values)' },
-        ],
-      };
-
-      (service as any).registerFormulaProviderWorkbookArtifacts();
-
-      expect(addDefinedName).toHaveBeenCalledTimes(1);
-      expect(addCustomFunction).toHaveBeenCalledTimes(1);
-    });
-
-    it('getAllDataRowIds should retain only defined row identifiers', () => {
-      service.init(gridStub, container);
-      vi.spyOn(dataViewStub, 'getLength').mockReturnValue(3);
-      vi.spyOn(dataViewStub, 'getItem').mockImplementation((index: number) => [{ id: 'a' }, { id: null }, { id: 'c' }][index] as any);
-
-      expect((service as any).getAllDataRowIds()).toEqual(['a', 'c']);
-    });
-
-    it('handles minimal formula providers, pre-header row offsets and data views without length', () => {
-      service.init(gridStub, container);
-      const svc = service as any;
-      svc._workbook = new Workbook();
-      svc._formulaProvider = { getExcelFormula: vi.fn() };
-      expect(() => svc.registerFormulaProviderWorkbookArtifacts()).not.toThrow();
-
-      svc._sheet = { data: [] };
-      svc._hasColumnTitlePreHeader = true;
-      expect(svc.getExcelDataStartRowOffset()).toBe(3);
-
-      svc._dataView = { getItem: vi.fn() };
-      expect(svc.getAllDataRowIds()).toEqual([]);
+      svc._sharedService = null;
+      await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
+      expect(svc._cellProviders).toEqual([]);
     });
 
     it('efficientYield should use scheduler.postTask when available', async () => {

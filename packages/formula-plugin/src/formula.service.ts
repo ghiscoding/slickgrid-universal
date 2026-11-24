@@ -3,12 +3,11 @@ import type {
   Column,
   ColumnEditor,
   ContainerService,
+  ExcelExportCellProvider,
+  ExcelExportEndContext,
+  ExcelExportStartContext,
   ExternalResource,
   Formatter,
-  FormulaExcelCustomFunctionExport,
-  FormulaExcelDefinedNameExport,
-  FormulaExcelExportContext,
-  FormulaProvider,
   OnCellChangeEventArgs,
   OnDragReplaceCellsEventArgs,
   SlickDataView,
@@ -27,7 +26,6 @@ import {
   isFormulaLiteralText,
   isFormulaReference,
   unwrapFormulaReference,
-  type FormulaCallback,
 } from './formula-functions.js';
 import {
   compactFormulaRange,
@@ -49,10 +47,24 @@ import {
   parseExcelReferenceCell,
   transformFormulaOutsideQuotedStrings,
 } from './formula-reference.js';
-import { FormulaCellEditor, type FormulaEditorParams } from './formula.cellEditor.js';
+import { FormulaCellEditor } from './formula.cellEditor.js';
 import { handleFormulaDragFill } from './formula.drag-fill.js';
-
-export type { FormulaCallback } from './formula-functions.js';
+import type {
+  FormulaCallback,
+  FormulaCellSnapshot,
+  FormulaCustomFunctionDefinition,
+  FormulaCustomFunctionInput,
+  FormulaDependency,
+  FormulaEditorParams,
+  FormulaEvaluationContext,
+  FormulaExcelCustomFunctionExport,
+  FormulaExcelDefinedNameExport,
+  FormulaExcelExportContext,
+  FormulaExcelExportState,
+  FormulaReferenceAbsoluteFlags,
+  FormulaServiceOption,
+  FormulaStoreSnapshot,
+} from './interfaces/index.js';
 
 const FORMULA_EMPTY_RESULT = Symbol('formula empty result');
 const formulaRowIndexes = new WeakMap<ReadonlyArray<string | undefined>, Map<string, number>>();
@@ -73,54 +85,6 @@ const FORMULA_STABLE_REF_TOKEN_REGEX =
 const FORMULA_FLAG_TOKEN_REGEX =
   /REF\(\s*COLUMN\("(?:\\.|[^"\\])*"\)\s*,\s*ROW\("(?:\\.|[^"\\])*"\)\s*\)|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_]|\s*\()/gi;
 
-export interface FormulaCustomFunctionParams {
-  values: unknown[];
-}
-
-export interface FormulaCustomFunctionDefinition {
-  func: FormulaCallback | ((params: FormulaCustomFunctionParams) => unknown);
-}
-
-export type FormulaCustomFunctionInput = FormulaCallback | FormulaCustomFunctionDefinition;
-
-export interface FormulaServiceOption {
-  /** Defaults to true, auto-attach FormulaCellEditor on columns having allowFormula=true. */
-  autoAssignEditor?: boolean;
-
-  /** Optional default editor params merged with per-column editor params. */
-  editorParams?: FormulaEditorParams;
-
-  /** Defaults to true, prepend Excel-like column letters in header while editing formulas. */
-  enableExcelHeaderPrefix?: boolean;
-
-  /** Optional function callbacks available during formula evaluation (e.g. MYFUNC(A1, B1)). */
-  customFunctions?: Record<string, FormulaCustomFunctionInput>;
-
-  /** Optional Excel workbook-level names to register at export time. */
-  excelDefinedNames?: FormulaExcelDefinedNameExport[];
-
-  /** Optional Excel workbook-level custom function definitions for export. */
-  excelCustomFunctions?: FormulaExcelCustomFunctionExport[];
-
-  /** Defaults to true, sync initial formulas from dataset rows into internal formula store. Ignored when `formulaDataSource` is provided. */
-  autoSyncFormulasFromDataset?: boolean;
-
-  /** Optional external formula storage, loaded at init and notified when a formula is set or removed. */
-  formulaDataSource?: FormulaDataSource;
-}
-
-/** External formula storage; formulas are exchanged in the stable `REF(COLUMN(),ROW())` form. */
-export interface FormulaDataSource {
-  getFormula: (rowId: number | string, columnId: number | string) => string | undefined;
-  setFormula: (rowId: number | string, columnId: number | string, formula: string | undefined) => void;
-}
-
-interface FormulaDependency {
-  key: string;
-  memoKey: string;
-  formula: string;
-}
-
 /** Thrown past the nesting limit so the outermost nested evaluation resolves the dependency first. */
 class FormulaDeferral {
   constructor(public dependency: FormulaDependency) {}
@@ -128,36 +92,12 @@ class FormulaDeferral {
 
 const FORMULA_MAX_NESTED_DEPTH = 64;
 
-interface FormulaEvaluationContext {
-  visited: Set<string>;
-  memo: Map<string, unknown>;
-  preserveLiteral?: boolean;
-}
-
-export interface FormulaReferenceAbsoluteFlags {
-  column: boolean;
-  row: boolean;
-}
-
-/** Serializable formula and its reference locks, independent of the current grid layout. */
-export interface FormulaCellSnapshot {
-  version: 1;
-  formula: string;
-  referenceFlags: FormulaReferenceAbsoluteFlags[];
-}
-
-export interface FormulaStoreSnapshot {
-  version: 1;
-  cells: Array<FormulaCellSnapshot & { rowId: number | string; columnId: number | string }>;
-}
-
 /**
  * Optional formula service storing formulas by row/column and exposing export helpers.
  * This MVP focuses on formula storage and Excel conversion support.
  */
-export class FormulaService implements ExternalResource, FormulaProvider {
+export class FormulaService implements ExternalResource, ExcelExportCellProvider {
   readonly pluginName = 'FormulaService';
-  readonly supportsGroupedFormulaExport = true;
 
   protected _grid!: SlickGrid;
   protected _dataView!: SlickDataView;
@@ -186,6 +126,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   protected _formulaRefreshGeneration = 0;
   protected _formulaRefreshScheduled = false;
   protected _eventHandler: SlickEventHandler = new SlickEventHandler();
+  protected _excelExport?: FormulaExcelExportState;
 
   protected static readonly FORMULA_EVAL_FORMATTER_FLAG = '__formulaEvalFormatter';
 
@@ -324,6 +265,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     this._columnById.clear();
     this._customFunctions.clear();
     this._originalColumnNamesById.clear();
+    this._excelExport = undefined;
   }
 
   clearFormulaReferenceHighlights(): void {
@@ -866,6 +808,130 @@ export class FormulaService implements ExternalResource, FormulaProvider {
 
   getCustomFunction(functionName: string): FormulaCallback | undefined {
     return this._customFunctions.get(functionName.toUpperCase());
+  }
+
+  /** ExcelExportService hook: register workbook artifacts and precompute row/column lookups for the export. */
+  onExcelExportStart({ workbook, sheet, columns, dataStartRow, hasGroupedItems }: ExcelExportStartContext): void {
+    this._excelExport = undefined;
+    const gridOptions = this._grid?.getOptions?.();
+    if (!gridOptions || gridOptions.enableFormulas === false) {
+      return;
+    }
+
+    for (const { name, refersTo, scope } of this.getExcelDefinedNames()) {
+      workbook.addDefinedName(name, refersTo, scope);
+    }
+    for (const { name, args, body, options } of this.getExcelCustomFunctions()) {
+      workbook.addCustomFunction(name, args, body, options);
+    }
+
+    const datasetIdPropertyName = this.getDatasetIdPropertyName();
+    const rowIds: Array<number | string> = [];
+    const groupedRowPositions = new Map<string, number>();
+    let excelRow = dataStartRow;
+    for (let row = 0, length = this._dataView.getLength?.() ?? 0; row < length; row++) {
+      const item = this._dataView.getItem(row);
+      const rowId = item?.[datasetIdPropertyName] as number | string | undefined;
+      const hasRowId = rowId !== undefined && rowId !== null;
+      if (hasRowId) {
+        rowIds.push(rowId);
+      }
+      // grouped exports write every row except row detail/tree placeholders (objects exposing their own getItem)
+      if (hasGroupedItems && item && !Object.prototype.hasOwnProperty.call(item, 'getItem')) {
+        if (hasRowId) {
+          groupedRowPositions.set(String(rowId), excelRow);
+        }
+        excelRow++;
+      }
+    }
+
+    const columnIds = columns.map((column) => column.id);
+    const lookupColumnIds = columnIds.map(String);
+    const lookupRowIds = rowIds.map(String);
+    this._excelExport = {
+      workbook,
+      sheet,
+      rangeCache: new Map(),
+      context: {
+        columnIds,
+        datasetIdPropertyName,
+        excelRowOffset: dataStartRow,
+        gridOptions,
+        rowIds,
+        referenceLookups: {
+          columnIds: lookupColumnIds,
+          columnIndexes: new Map(lookupColumnIds.map((id, index) => [id, index] as const).reverse()),
+          rowIds: lookupRowIds,
+          rowIndexes: new Map(lookupRowIds.map((id, index) => [id, index])),
+        },
+        groupedRowPositions: hasGroupedItems ? groupedRowPositions : undefined,
+        groupedColumnOffset: hasGroupedItems ? 1 : undefined,
+        registerFormulaRange: (references, width) => this.registerExcelFormulaRange(references, false, width),
+        registerFormulaPresenceRange: (references, width) => this.registerExcelFormulaRange(references, true, width),
+      },
+    };
+  }
+
+  /** ExcelExportService hook: export formula cells as Excel formulas. */
+  getExcelExportCellValue(item: any, columnDef: Column, dataRowIdx: number): { value: string; metadata: { type: 'formula' } } | undefined {
+    const state = this._excelExport;
+    const rowId = item?.[state?.context.datasetIdPropertyName ?? 'id'] as number | string | undefined;
+    if (!state || rowId === undefined || rowId === null) {
+      return undefined;
+    }
+    const formula = this.getExcelFormula({ ...state.context, columnId: columnDef.id, dataRowIdx, rowId });
+    return formula === undefined ? undefined : { value: formula, metadata: { type: 'formula' } };
+  }
+
+  /** ExcelExportService hook: append the helper sheet (when used) after the data sheet and release export state. */
+  onExcelExportEnd({ workbook }: ExcelExportEndContext): void {
+    if (this._excelExport?.rangeSheet) {
+      workbook.addWorksheet(this._excelExport.rangeSheet);
+    }
+    this._excelExport = undefined;
+  }
+
+  /** Keep disjoint references in one range argument (via a helper sheet), including for SUMIF and custom functions. */
+  protected registerExcelFormulaRange(references: string[], presence = false, width = 1): string {
+    const state = this._excelExport!;
+    const key = `${presence ? 'presence:' : 'values:'}${width}:${references.join(',')}`;
+    const cached = state.rangeCache.get(key);
+    if (cached) {
+      return cached;
+    }
+    if (!state.rangeSheet) {
+      const names = new Set([state.sheet.name, ...state.workbook.worksheets.map((sheet) => sheet.name)]);
+      let name = 'Formula References';
+      for (let suffix = 2; names.has(name); suffix++) {
+        name = `Formula References ${suffix}`;
+      }
+      state.rangeSheet = state.workbook.createWorksheet({ name });
+    }
+    const sheet = state.rangeSheet;
+    const height = references.length / width;
+    if (
+      !Number.isInteger(width) ||
+      width < 1 ||
+      width > 16384 ||
+      !Number.isInteger(height) ||
+      height < 1 ||
+      sheet.data.length + height > 1048576
+    ) {
+      return FORMULA_ERROR.REF;
+    }
+    const firstRow = sheet.data.length + 1;
+    const sourceName = state.sheet.name.replace(/'/g, "''");
+    for (let row = 0; row < height; row++) {
+      sheet.data.push(
+        references.slice(row * width, (row + 1) * width).map((reference) => {
+          const source = `'${sourceName}'!${reference}`;
+          return { value: presence ? `--NOT(ISBLANK(${source}))` : `IF(ISBLANK(${source}),"",${source})`, metadata: { type: 'formula' } };
+        })
+      );
+    }
+    const range = `'${sheet.name}'!$A$${firstRow}:$${getExcelColumnNameByIndex(width)}$${sheet.data.length}`;
+    state.rangeCache.set(key, range);
+    return range;
   }
 
   getExcelDefinedNames(): FormulaExcelDefinedNameExport[] {

@@ -1,7 +1,8 @@
 import { SlickRange } from '@slickgrid-universal/common';
 import type { Column } from '@slickgrid-universal/common';
 import { describe, expect, it, vi } from 'vitest';
-import { getFillSeriesValue, handleFormulaDragFill, translateFormulaReferences, type FormulaDragFillContext } from '../formula.drag-fill.js';
+import { getFillSeriesValue, handleFormulaDragFill, translateFormulaReferences } from '../formula.drag-fill.js';
+import type { FormulaDragFillContext } from '../interfaces/index.js';
 
 describe('formula drag-fill', () => {
   it('shifts references without changing A1-shaped function names', () => {

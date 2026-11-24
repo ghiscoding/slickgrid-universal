@@ -1,5 +1,5 @@
 import { Aggregators, Formatters, SlickDataView, SlickEvent, SlickRange } from '@slickgrid-universal/common';
-import type { Column, FormulaExcelExportContext } from '@slickgrid-universal/common';
+import type { Column } from '@slickgrid-universal/common';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { FORMULA_ERROR } from '../formula-errors.js';
 import { formulaDateToSerial } from '../formula-functions.js';
@@ -7,6 +7,7 @@ import { FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY } from '../formula-reference.js';
 import { FormulaCellEditor } from '../formula.cellEditor.js';
 import { translateFormulaReferences } from '../formula.drag-fill.js';
 import { FormulaService } from '../formula.service.js';
+import type { FormulaExcelExportContext } from '../interfaces/index.js';
 
 describe('FormulaService', () => {
   let warnSpy: ReturnType<typeof vi.spyOn>;
@@ -1910,6 +1911,157 @@ describe('FormulaService', () => {
     expect(customFunctions).toEqual([{ name: 'CUSTOMSUM', args: ['values'], body: 'SUM(values)' }]);
     expect(definedNames).not.toBe((service as any)._options.excelDefinedNames);
     expect(customFunctions).not.toBe((service as any)._options.excelCustomFunctions);
+  });
+
+  describe('Excel export hooks', () => {
+    const createWorkbookStub = () => {
+      const workbook: any = {
+        worksheets: [] as any[],
+        addDefinedName: vi.fn(),
+        addCustomFunction: vi.fn(),
+        addWorksheet: vi.fn((sheet: any) => workbook.worksheets.push(sheet)),
+        createWorksheet: vi.fn(({ name }: { name: string }) => ({ name, data: [] as any[] })),
+      };
+      return workbook;
+    };
+    const createExportService = (rows: any[], gridOptions: any = { datasetIdPropertyName: 'id' }) => {
+      const service = new FormulaService({
+        excelDefinedNames: [{ name: 'MY_RANGE', refersTo: 'Sheet1!$B$2:$C$100' }],
+        excelCustomFunctions: [{ name: 'CUSTOMSUM', args: ['values'], body: 'SUM(values)' }],
+      });
+      (service as any)._grid = { getOptions: () => gridOptions };
+      (service as any)._dataView = { getLength: () => rows.length, getItem: (row: number) => rows[row] };
+      return service;
+    };
+
+    it('should register workbook artifacts, precompute lookups and export formula cells', () => {
+      const service = createExportService([{ id: 'a' }, { id: null }, { id: 'b' }]);
+      const getExcelFormulaSpy = vi.spyOn(service, 'getExcelFormula').mockReturnValueOnce('A2*2').mockReturnValueOnce(undefined);
+      const workbook = createWorkbookStub();
+      const sheet = { name: 'Sheet1', data: [] };
+      const columns = [{ id: 'value' }, { id: 'total' }] as Column[];
+
+      service.onExcelExportStart({ workbook, sheet, columns, dataStartRow: 2, hasGroupedItems: false } as any);
+
+      expect(workbook.addDefinedName).toHaveBeenCalledWith('MY_RANGE', 'Sheet1!$B$2:$C$100', undefined);
+      expect(workbook.addCustomFunction).toHaveBeenCalledWith('CUSTOMSUM', ['values'], 'SUM(values)', undefined);
+      expect(service.getExcelExportCellValue({ id: 'a' }, columns[1], 0)).toEqual({ value: 'A2*2', metadata: { type: 'formula' } });
+      expect(getExcelFormulaSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          columnId: 'total',
+          columnIds: ['value', 'total'],
+          dataRowIdx: 0,
+          excelRowOffset: 2,
+          rowId: 'a',
+          rowIds: ['a', 'b'],
+          groupedRowPositions: undefined,
+          groupedColumnOffset: undefined,
+          referenceLookups: expect.objectContaining({
+            rowIndexes: new Map([
+              ['a', 0],
+              ['b', 1],
+            ]),
+          }),
+        })
+      );
+      expect(service.getExcelExportCellValue({ id: 'b' }, columns[1], 1)).toBeUndefined();
+      expect(service.getExcelExportCellValue({}, columns[1], 2)).toBeUndefined();
+
+      service.onExcelExportEnd({ workbook, sheet } as any);
+      expect(workbook.addWorksheet).not.toHaveBeenCalled();
+      expect(service.getExcelExportCellValue({ id: 'a' }, columns[1], 0)).toBeUndefined();
+    });
+
+    it('should map grouped data rows to worksheet positions', () => {
+      const rows = [{ __group: true }, { id: 'a' }, { __groupTotals: true }, { id: 'b' }, { getItem: () => null }, null];
+      const service = createExportService(rows);
+      const getExcelFormulaSpy = vi.spyOn(service, 'getExcelFormula').mockReturnValue('B4');
+
+      service.onExcelExportStart({
+        workbook: createWorkbookStub(),
+        sheet: { name: 'Sheet1', data: [[]] },
+        columns: [{ id: 'value' }],
+        dataStartRow: 3,
+        hasGroupedItems: true,
+      } as any);
+
+      expect(service.getExcelExportCellValue({ id: 'a' }, { id: 'value' } as Column, 1)).toEqual({ value: 'B4', metadata: { type: 'formula' } });
+      expect(getExcelFormulaSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          groupedColumnOffset: 1,
+          groupedRowPositions: new Map([
+            ['a', 4],
+            ['b', 6],
+          ]),
+        })
+      );
+    });
+
+    it('should stay inert when formulas are disabled or the service is not initialized', () => {
+      const workbook = createWorkbookStub();
+      const context = { workbook, sheet: { name: 'Sheet1', data: [] }, columns: [], dataStartRow: 2, hasGroupedItems: false } as any;
+      const disabledService = createExportService([{ id: 'a' }], { enableFormulas: false });
+      disabledService.onExcelExportStart(context);
+      new FormulaService().onExcelExportStart(context);
+
+      expect(workbook.addDefinedName).not.toHaveBeenCalled();
+      expect(disabledService.getExcelExportCellValue({ id: 'a' }, { id: 'value' } as Column, 0)).toBeUndefined();
+    });
+
+    it('should export disjoint helper ranges with deduplication, sheet naming and limits', () => {
+      const service = createExportService([{ id: 'a' }]);
+      const workbook = createWorkbookStub();
+      workbook.worksheets.push({ name: 'Existing' });
+      const sheet = { name: 'Formula References', data: [] as any[] };
+      vi.spyOn(service, 'getExcelFormula').mockImplementation(
+        ({ registerFormulaRange, registerFormulaPresenceRange }: any) =>
+          `SUM(${registerFormulaRange(['B4', 'B8'])})+SUM(${registerFormulaPresenceRange(['B4', 'B8'])})`
+      );
+      service.onExcelExportStart({ workbook, sheet, columns: [{ id: 'value' }], dataStartRow: 2, hasGroupedItems: false } as any);
+      const register = (references: string[], presence?: boolean, width?: number) => (service as any).registerExcelFormulaRange(references, presence, width);
+
+      expect(service.getExcelExportCellValue({ id: 'a' }, { id: 'value' } as Column, 0)?.value).toBe(
+        "SUM('Formula References 2'!$A$1:$A$2)+SUM('Formula References 2'!$A$3:$A$4)"
+      );
+      const rangeSheet = (service as any)._excelExport.rangeSheet;
+      expect(rangeSheet.data).toEqual([
+        [{ value: `IF(ISBLANK('Formula References'!B4),"",'Formula References'!B4)`, metadata: { type: 'formula' } }],
+        [{ value: `IF(ISBLANK('Formula References'!B8),"",'Formula References'!B8)`, metadata: { type: 'formula' } }],
+        [{ value: `--NOT(ISBLANK('Formula References'!B4))`, metadata: { type: 'formula' } }],
+        [{ value: `--NOT(ISBLANK('Formula References'!B8))`, metadata: { type: 'formula' } }],
+      ]);
+      expect(register(['B4', 'B8'])).toBe("'Formula References 2'!$A$1:$A$2");
+      expect(register(['B4', 'C4', 'B8', 'C8'], false, 2)).toBe("'Formula References 2'!$A$5:$B$6");
+      expect(register(['B4'], false, 0)).toBe('#REF!');
+      expect(register(['B4'], false, 2)).toBe('#REF!');
+      expect(register(['B4'], false, 16385)).toBe('#REF!');
+      expect(rangeSheet.data[4].map((cell: any) => cell.value)).toEqual([
+        `IF(ISBLANK('Formula References'!B4),"",'Formula References'!B4)`,
+        `IF(ISBLANK('Formula References'!C4),"",'Formula References'!C4)`,
+      ]);
+      sheet.name = "User's data";
+      expect(register(['C9'])).toBe("'Formula References 2'!$A$7:$A$7");
+      expect(rangeSheet.data[6][0].value).toBe(`IF(ISBLANK('User''s data'!C9),"",'User''s data'!C9)`);
+      rangeSheet.data.length = 1048576;
+      expect(register(['Z99'])).toBe('#REF!');
+
+      service.onExcelExportEnd({ workbook, sheet } as any);
+      expect(workbook.worksheets.map((worksheet: any) => worksheet.name)).toEqual(['Existing', 'Formula References 2']);
+      expect((service as any)._excelExport).toBeUndefined();
+    });
+
+    it('should release export state on dispose', () => {
+      const service = createExportService([]);
+      service.onExcelExportStart({
+        workbook: createWorkbookStub(),
+        sheet: { name: 'Sheet1', data: [] },
+        columns: [],
+        dataStartRow: 2,
+        hasGroupedItems: false,
+      } as any);
+      service.dispose();
+      expect((service as any)._excelExport).toBeUndefined();
+    });
   });
 
   it('should auto-assign FormulaCellEditor on allowFormula columns without explicit model', () => {

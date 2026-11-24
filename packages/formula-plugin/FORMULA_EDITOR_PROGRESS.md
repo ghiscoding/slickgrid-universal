@@ -17,7 +17,7 @@ Handoff for future AI/dev sessions. Detailed history is in the git log of this f
 
 ## Scope Decisions
 - Kept: grouping (grouped references, `createGroupingAggregator`, grouped Excel export with the Formula References helper sheet), wildcard criteria, `NA()`, `#NUM!`/`#NULL!`/`#N/A`, Excel 1900 date serials.
-- Removed: `SUMPRODUCT`, `SUMIF` sum-range resizing, unused `renderFormulaReferenceHighlights`/`extractExcelReferences`, the `debug` editor param, and `hasFormula`/`getFormula` from `FormulaProvider`.
+- Removed: `SUMPRODUCT`, `SUMIF` sum-range resizing, unused `renderFormulaReferenceHighlights`/`extractExcelReferences`, the `debug` editor param, and `hasFormula`/`getFormula` from the export provider contract. Formula-specific Excel export logic (row/column lookups, grouped row positions, the Formula References helper sheet, workbook names/functions) lives in `FormulaService` through generic `ExcelExportCellProvider` hooks, so `excel-export` stays small for grids without formulas.
 - Rejected: whole-row reference picking (needs a row-number column first), whole-column drag-handle expansion, double-click fill, colored resize handles, a strict selection-prerequisite mode, and replacing the contenteditable autocomplete.
 
 ## Key Constraints

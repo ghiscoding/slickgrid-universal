@@ -1,4 +1,4 @@
-import type { Column, OnDragReplaceCellsEventArgs, SlickDataView, SlickGrid, SlickRange } from '@slickgrid-universal/common';
+import type { Column, OnDragReplaceCellsEventArgs, SlickGrid, SlickRange } from '@slickgrid-universal/common';
 import { SlickSelectionUtils } from '@slickgrid-universal/common';
 import { FORMULA_ERROR } from './formula-errors.js';
 import {
@@ -8,38 +8,7 @@ import {
   setFormulaObjectProperty,
   transformFormulaOutsideQuotedStrings,
 } from './formula-reference.js';
-
-/** Internal callbacks used by FormulaService to keep storage and display concerns in the service. */
-export interface FormulaDragFillContext {
-  grid: SlickGrid;
-  dataView: SlickDataView;
-  getDatasetIdPropertyName: () => string;
-  getFormula: (rowId: number | string, columnId: number | string) => string | undefined;
-  setFormula: (rowId: number | string, columnId: number | string, formula?: string | null) => void;
-  toStoredFormula: (formula: string) => string;
-  toDisplayFormulaForCell: (formula: string, rowId: number | string, columnId: number | string) => string;
-  applyFormulaChanges?: (apply: () => void) => void;
-}
-
-type FormulaFillDirection = 'horizontal' | 'vertical';
-
-interface FormulaFillTarget {
-  direction: FormulaFillDirection;
-  range: SlickRange;
-}
-
-interface FormulaFillChange {
-  row: number;
-  cell: number;
-  rowId: number | string;
-  column: Column;
-  item: any;
-  field: string;
-  previousValue: unknown;
-  previousFormula?: string;
-  nextValue: unknown;
-  nextFormula?: string | null;
-}
+import type { FormulaDragFillContext, FormulaFillChange, FormulaFillDirection, FormulaFillTarget } from './interfaces/index.js';
 
 /** Fill formula cells through the same target-range semantics as the spreadsheet drag-fill example. */
 export function handleFormulaDragFill(args: OnDragReplaceCellsEventArgs, context: FormulaDragFillContext): void {

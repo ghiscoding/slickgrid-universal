@@ -1,22 +1,10 @@
+import type { FormulaGridCell, FormulaReferenceColorInfo, FormulaReferenceCssHash, FormulaReferenceToken } from './interfaces/index.js';
+
 const FORMULA_TOKEN_COLOR_COUNT = 10;
 /** Maximum number of cells expanded for one formula reference range. */
 export const FORMULA_MAX_REFERENCE_CELLS = 100_000;
 /** Shared grid CSS overlay key used while formula references are highlighted. */
 export const FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY = 'formula-reference-highlights';
-
-export interface FormulaGridCell {
-  row: number;
-  cell: number;
-}
-
-export interface FormulaReferenceColorInfo {
-  ref: string;
-  colorIdx: number;
-  colorClass: string;
-  cells: FormulaGridCell[];
-}
-
-export type FormulaReferenceCssHash = Record<number, Record<number | string, string>>;
 
 /** Shared reference/color state used by FormulaCellEditor and FormulaService. */
 export class FormulaReferenceColorCache {
@@ -86,12 +74,6 @@ export function createFormulaA1ReferenceRegex(): RegExp {
     `${FORMULA_REFERENCE_BOUNDARY_START}(?:${FORMULA_A1_RANGE_PATTERN}|${FORMULA_A1_CELL_PATTERN})${FORMULA_REFERENCE_BOUNDARY_END}`,
     'gi'
   );
-}
-
-export interface FormulaReferenceToken {
-  ref: string;
-  start: number;
-  end: number;
 }
 
 /** Transform only formula text outside quoted string literals. */
