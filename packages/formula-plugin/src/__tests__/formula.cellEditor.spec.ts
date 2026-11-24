@@ -1,6 +1,6 @@
 import { SlickRange, type EditorArguments } from '@slickgrid-universal/common';
 import { describe, expect, it, vi } from 'vitest';
-import { FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY } from '../formula-reference.js';
+import { findFormulaReferenceTokens, FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY } from '../formula-reference.js';
 import { FormulaCellEditor } from '../formula.cellEditor.js';
 
 describe('FormulaCellEditor', () => {
@@ -98,7 +98,7 @@ describe('FormulaCellEditor', () => {
       0: { d: 'formula-cell-color-1' },
     });
     const referenceStart = input.textContent!.lastIndexOf('D1');
-    expect((editor as any).getFormulaReferenceTokenRanges(input.textContent!)).toEqual([{ start: referenceStart, end: referenceStart + 2 }]);
+    expect(findFormulaReferenceTokens(input.textContent!)).toEqual([{ ref: 'D1', start: referenceStart, end: referenceStart + 2 }]);
 
     editor.destroy();
     container.remove();

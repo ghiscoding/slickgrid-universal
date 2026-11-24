@@ -35,6 +35,7 @@ Handoff for future AI/dev sessions. Detailed history is in the git log of this f
 - [x] Avoid repeatedly scanning the expression when generating range reference placeholders.
 - [x] Consolidate the five Formula Editor Cypress suites while preserving serial order. Vanilla Cypress passed; framework runs remain for CI.
 - [x] Share formula string-literal decoding between evaluation and Excel export.
+- [x] Final audit: one shared quoted-string pattern and scanner (fixes the Excel `COUNTA` helper rewrite treating `\"` as a string end), the function registry is copied only for lazy `IF`, column ids are reused by nested evaluations, references resolve by column index with one cell key each, sticky-regex tokenizer, and shared parser operand/error helpers. Benchmark of 3,000 formula cells went from about 253 ms to 182 ms.
 - [ ] **Final task:** Evaluate a separate calculated-columns package and identify utilities that could be shared with the formula plugin. The user wants two more optional packages: one for a Column Editor and one for code shared by the Formula Editor and Column Editor. Merge PR #2716 first and inform the user when this task is reached.
 
 ## Fast Verification

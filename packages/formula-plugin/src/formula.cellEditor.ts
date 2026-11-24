@@ -10,6 +10,7 @@ import {
   normalizeFormulaReferenceToken,
   parseExcelReferenceCell,
   setFormulaObjectProperty,
+  skipFormulaString,
 } from './formula-reference.js';
 import type { FormulaEditorParams } from './interfaces/index.js';
 
@@ -304,7 +305,7 @@ export class FormulaCellEditor implements Editor {
 
     if (isShortcut && !event.shiftKey && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
       const text = this.getPlainTextValue();
-      const tokenRanges = this.getFormulaReferenceTokenRanges(text);
+      const tokenRanges = findFormulaReferenceTokens(text);
       if (tokenRanges.length > 0) {
         this.stopEvent(event);
 
@@ -805,10 +806,6 @@ export class FormulaCellEditor implements Editor {
     this._editorElm.scrollLeft = offset === 0 ? 0 : this._editorElm.scrollWidth;
   }
 
-  protected getFormulaReferenceTokenRanges(text: string): Array<{ start: number; end: number }> {
-    return findFormulaReferenceTokens(text).map(({ start, end }) => ({ start, end }));
-  }
-
   protected restoreCaretOffset(offset: number): void {
     if (this._isDestroyed || !this._editorElm?.isConnected) {
       return;
@@ -926,22 +923,15 @@ export class FormulaCellEditor implements Editor {
   }
 
   protected isInsideQuotedText(text: string): boolean {
-    let quote = '';
     for (let i = 0; i < text.length; i++) {
-      const char = text[i];
-      if (quote && char === '\\') {
-        i++;
-      } else if (quote && char === quote) {
-        if (text[i + 1] === quote) {
-          i++;
-        } else {
-          quote = '';
+      if (text[i] === '"' || text[i] === "'") {
+        i = skipFormulaString(text, i) - 1;
+        if (i < 0) {
+          return true;
         }
-      } else if (!quote && (char === '"' || char === "'")) {
-        quote = char;
       }
     }
-    return !!quote;
+    return false;
   }
 
   protected ensureAutocompleteElement(): void {

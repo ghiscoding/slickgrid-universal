@@ -285,6 +285,7 @@ describe('FormulaService', () => {
     service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
     const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
     expect(evaluate('=IF("FALSE",1,2)')).toBe(2);
+    expect(evaluate('="a(IF"&IF(TRUE,"b","c")')).toBe('a(IFb');
     expect(evaluate('=IF("text",1,2)')).toBe(FORMULA_ERROR.VALUE);
     expect(evaluate('=IF(0,1,2)')).toBe(2);
     expect(evaluate('=SUM(A1)')).toBe(45292.5);
@@ -3442,14 +3443,14 @@ describe('FormulaService', () => {
     service.init(gridStub);
 
     const context = { visited: new Set<string>(), memo: new Map<string, unknown>() };
-    expect((service as any).resolveExcelReferenceValue('?', 1, context)).toBe(FORMULA_ERROR.REF);
-    expect((service as any).resolveExcelReferenceValue('A', 0, context)).toBe(FORMULA_ERROR.REF);
-    expect((service as any).resolveExcelReferenceValue('B', 1, context)).toBe(FORMULA_ERROR.REF);
-    expect((service as any).resolveExcelReferenceValue('A', 2, context)).toBe(FORMULA_ERROR.REF);
+    expect((service as any).resolveExcelReferenceValue(-1, 1, context)).toBe(FORMULA_ERROR.REF);
+    expect((service as any).resolveExcelReferenceValue(0, 0, context)).toBe(FORMULA_ERROR.REF);
+    expect((service as any).resolveExcelReferenceValue(1, 1, context)).toBe(FORMULA_ERROR.REF);
+    expect((service as any).resolveExcelReferenceValue(0, 2, context)).toBe(FORMULA_ERROR.REF);
     expect((service as any).resolveExcelRangeValues('?', 1, 'A', 1, context)).toEqual([]);
 
     context.visited.add((service as any).buildStoreKey(1, 'value'));
-    expect((service as any).resolveExcelReferenceValue('A', 1, context)).toBe(FORMULA_ERROR.CIRCREF);
+    expect((service as any).resolveExcelReferenceValue(0, 1, context)).toBe(FORMULA_ERROR.CIRCREF);
     expect((service as any).getCellRawValue('missing', 'value')).toBeUndefined();
     expect((service as any).getCellRawValue(1, 'missing')).toBeUndefined();
 

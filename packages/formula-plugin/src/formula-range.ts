@@ -1,64 +1,70 @@
-import { FORMULA_MAX_REFERENCE_CELLS, getExcelColumnNameByIndex, parseExcelReferenceCell } from './formula-reference.js';
+import {
+  FORMULA_MAX_REFERENCE_CELLS,
+  FORMULA_QUOTED_STRING_PATTERN,
+  getExcelColumnNameByIndex,
+  parseExcelReferenceCell,
+  skipFormulaString,
+} from './formula-reference.js';
+
+const FORMULA_A1_RANGE_TOKEN_REGEX = new RegExp(
+  String.raw`${FORMULA_QUOTED_STRING_PATTERN}|(?<![\w])\$?[A-Z]{1,3}\$?\d+\s*:\s*\$?[A-Z]{1,3}\$?\d+(?![\w])`,
+  'gi'
+);
+const FORMULA_RANGE_MEMBER_PATTERN = String.raw`REF\(COLUMN\("(?:\\.|[^"\\])*"\),ROW\("(?:\\.|[^"\\])*"\)\)|\$?[A-Z]{1,3}\$?\d+|#REF!`;
+const FORMULA_REFRANGE_TOKEN_REGEX = new RegExp(
+  `${FORMULA_QUOTED_STRING_PATTERN}|REFRANGE\\(((?:(?:${FORMULA_RANGE_MEMBER_PATTERN})(?:,|(?=\\))))+)\\)`,
+  'gi'
+);
+const FORMULA_RANGE_MEMBER_REGEX = new RegExp(FORMULA_RANGE_MEMBER_PATTERN, 'gi');
 
 /** Expand rectangles before storing identities. Structural rows are excluded by the caller. */
 export function expandFormulaRanges(formula: string, isDataRow: (row: number) => boolean = () => true): string {
-  return formula.replace(
-    /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|(?<![\w])\$?[A-Z]{1,3}\$?\d+\s*:\s*\$?[A-Z]{1,3}\$?\d+(?![\w])/gi,
-    (token) => {
-      if (/^["']/.test(token)) {
-        return token;
-      }
-      const [first, last] = token.split(':').map((part) => part.trim());
-      const start = parseExcelReferenceCell(first)!;
-      const end = parseExcelReferenceCell(last)!;
-      if (!start || !end) {
-        return token;
-      }
-      const minRow = Math.min(start.row, end.row);
-      const maxRow = Math.max(start.row, end.row);
-      const minCell = Math.min(start.cell, end.cell);
-      const maxCell = Math.max(start.cell, end.cell);
-      if ((maxRow - minRow + 1) * (maxCell - minCell + 1) > FORMULA_MAX_REFERENCE_CELLS) {
-        return '#REF!';
-      }
-      const members: string[] = [];
-      for (let row = minRow; row <= maxRow; row++) {
-        if (!isDataRow(row)) {
-          continue;
-        }
-        for (let cell = minCell; cell <= maxCell; cell++) {
-          const columnFlags = cell === end.cell && (start.cell !== end.cell || row === end.row) ? last : first;
-          const rowFlags = row === end.row && (start.row !== end.row || cell === end.cell) ? last : first;
-          members.push(
-            `${columnFlags.startsWith('$') ? '$' : ''}${getExcelColumnNameByIndex(cell + 1)}${/\$\d+$/.test(rowFlags) ? '$' : ''}${row + 1}`
-          );
-        }
-      }
-      return members.length ? `REFRANGE(${members.join(',')})` : '#REF!';
+  return formula.replace(FORMULA_A1_RANGE_TOKEN_REGEX, (token) => {
+    if (/^["']/.test(token)) {
+      return token;
     }
-  );
+    const [first, last] = token.split(':').map((part) => part.trim());
+    const start = parseExcelReferenceCell(first)!;
+    const end = parseExcelReferenceCell(last)!;
+    if (!start || !end) {
+      return token;
+    }
+    const minRow = Math.min(start.row, end.row);
+    const maxRow = Math.max(start.row, end.row);
+    const minCell = Math.min(start.cell, end.cell);
+    const maxCell = Math.max(start.cell, end.cell);
+    if ((maxRow - minRow + 1) * (maxCell - minCell + 1) > FORMULA_MAX_REFERENCE_CELLS) {
+      return '#REF!';
+    }
+    const members: string[] = [];
+    for (let row = minRow; row <= maxRow; row++) {
+      if (!isDataRow(row)) {
+        continue;
+      }
+      for (let cell = minCell; cell <= maxCell; cell++) {
+        const columnFlags = cell === end.cell && (start.cell !== end.cell || row === end.row) ? last : first;
+        const rowFlags = row === end.row && (start.row !== end.row || cell === end.cell) ? last : first;
+        members.push(
+          `${columnFlags.startsWith('$') ? '$' : ''}${getExcelColumnNameByIndex(cell + 1)}${/\$\d+$/.test(rowFlags) ? '$' : ''}${row + 1}`
+        );
+      }
+    }
+    return members.length ? `REFRANGE(${members.join(',')})` : '#REF!';
+  });
 }
 
 export function parseFormulaFunctionArguments(formula: string, openIndex: number): { args: string[]; end: number } | undefined {
   const args: string[] = [];
   let start = openIndex + 1;
   let depth = 0;
-  let quote = '';
 
   for (let index = start; index < formula.length; index++) {
     const char = formula[index];
-    if (quote) {
-      if (char === '\\') {
-        index++;
-      } else if (char === quote) {
-        if (formula[index + 1] === quote) {
-          index++;
-        } else {
-          quote = '';
-        }
+    if (char === '"' || char === "'") {
+      index = skipFormulaString(formula, index) - 1;
+      if (index < 0) {
+        return undefined;
       }
-    } else if (char === '"' || char === "'") {
-      quote = char;
     } else if (char === '(' || char === '[') {
       depth++;
     } else if (char === ')' && depth === 0) {
@@ -168,12 +174,8 @@ function toExcelFormulaString(value: string): string {
 
 /** REFRANGE is an internal, ordered reference list; strings and stable REF arguments are preserved. */
 export function mapFormulaRanges(formula: string, map: (members: string[]) => string): string {
-  return formula.replace(
-    /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|REFRANGE\(((?:(?:REF\(COLUMN\("(?:\\.|[^"\\])*"\),ROW\("(?:\\.|[^"\\])*"\)\)|\$?[A-Z]{1,3}\$?\d+|#REF!)(?:,|(?=\))))+)\)/gi,
-    (token, members: string | undefined) =>
-      members === undefined
-        ? token
-        : map(members.match(/REF\(COLUMN\("(?:\\.|[^"\\])*"\),ROW\("(?:\\.|[^"\\])*"\)\)|\$?[A-Z]{1,3}\$?\d+|#REF!/gi)!)
+  return formula.replace(FORMULA_REFRANGE_TOKEN_REGEX, (token, members: string | undefined) =>
+    members === undefined ? token : map(members.match(FORMULA_RANGE_MEMBER_REGEX)!)
   );
 }
 
@@ -219,18 +221,10 @@ export function rewriteExcelHelperCounta(formula: string, helperRanges: Readonly
   while (index < formula.length) {
     const char = formula[index];
     if (char === '"' || char === "'") {
-      const quote = char;
-      const start = index++;
-      while (index < formula.length) {
-        if (formula[index++] === quote) {
-          if (formula[index] === quote) {
-            index++;
-          } else {
-            break;
-          }
-        }
-      }
-      output += formula.slice(start, index);
+      const end = skipFormulaString(formula, index);
+      const next = end < 0 ? formula.length : end;
+      output += formula.slice(index, next);
+      index = next;
       continue;
     }
     const match = /[cC]/.test(char) ? formula.slice(index).match(/^COUNTA\s*\(/i) : null;
@@ -244,19 +238,11 @@ export function rewriteExcelHelperCounta(formula: string, helperRanges: Readonly
     let depth = 0;
     let argumentStart = index;
     const args: string[] = [];
-    let quote = '';
     for (; index < formula.length; index++) {
       const current = formula[index];
-      if (quote) {
-        if (current === quote) {
-          if (formula[index + 1] === quote) {
-            index++;
-          } else {
-            quote = '';
-          }
-        }
-      } else if (current === '"' || current === "'") {
-        quote = current;
+      if (current === '"' || current === "'") {
+        const end = skipFormulaString(formula, index);
+        index = (end < 0 ? formula.length : end) - 1;
       } else if (current === '(') {
         depth++;
       } else if (current === ')' && depth > 0) {

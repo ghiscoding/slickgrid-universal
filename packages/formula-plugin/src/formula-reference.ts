@@ -53,6 +53,25 @@ export class FormulaReferenceColorCache {
   }
 }
 
+/** Quoted formula string literal with backslash escapes (doubled delimiters match as adjacent literals). */
+export const FORMULA_QUOTED_STRING_PATTERN: string = String.raw`"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'`;
+
+/** Return the index after the quoted string starting at `start` (backslash escapes and doubled delimiters), or -1 when unterminated. */
+export function skipFormulaString(formula: string, start: number): number {
+  const quote = formula[start];
+  for (let index = start + 1; index < formula.length; index++) {
+    if (formula[index] === '\\') {
+      index++;
+    } else if (formula[index] === quote) {
+      if (formula[index + 1] !== quote) {
+        return index + 1;
+      }
+      index++;
+    }
+  }
+  return -1;
+}
+
 const FORMULA_A1_CELL_PATTERN = String.raw`\$?[A-Z]{1,3}\$?\d+`;
 const FORMULA_A1_RANGE_PATTERN = String.raw`${FORMULA_A1_CELL_PATTERN}\s*:\s*${FORMULA_A1_CELL_PATTERN}`;
 const FORMULA_REFERENCE_BOUNDARY_START = String.raw`(?<![A-Za-z0-9_])`;
@@ -78,7 +97,7 @@ export function createFormulaA1ReferenceRegex(): RegExp {
 
 /** Transform only formula text outside quoted string literals. */
 export function transformFormulaOutsideQuotedStrings(formula: string, transform: (segment: string) => string): string {
-  const quotedTextRegex = /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/g;
+  const quotedTextRegex = new RegExp(FORMULA_QUOTED_STRING_PATTERN, 'g');
   let result = '';
   let previousEnd = 0;
   let match: RegExpExecArray | null;
@@ -112,21 +131,8 @@ export function findFormulaReferenceTokens(formula: string): FormulaReferenceTok
     }
 
     addSegment(segmentStart, index);
-    index++;
-    while (index < formula.length) {
-      if (formula[index] === '\\') {
-        index += 2;
-      } else if (formula[index] === quote) {
-        if (formula[index + 1] === quote) {
-          index += 2;
-        } else {
-          index++;
-          break;
-        }
-      } else {
-        index++;
-      }
-    }
+    const end = skipFormulaString(formula, index);
+    index = end < 0 ? formula.length : end;
     segmentStart = index;
   }
   addSegment(segmentStart, formula.length);

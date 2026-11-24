@@ -41,6 +41,7 @@ import {
   createFormulaA1RangeRegex,
   createFormulaA1ReferenceRegex,
   FORMULA_MAX_REFERENCE_CELLS,
+  FORMULA_QUOTED_STRING_PATTERN,
   FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY,
   getExcelColumnIndexByName,
   getExcelColumnNameByIndex,
@@ -80,10 +81,35 @@ function indexOfFormulaRowId(rowIds: ReadonlyArray<string | undefined>, rowId: s
   return indexes.get(rowId) ?? -1;
 }
 // Quoted text is matched first so references inside strings are skipped by String.replace callbacks.
-const FORMULA_STABLE_REF_TOKEN_REGEX =
-  /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|REF\(\s*COLUMN\(("(?:\\.|[^"\\])*")\)\s*,\s*ROW\(("(?:\\.|[^"\\])*")\)\s*\)/gi;
-const FORMULA_FLAG_TOKEN_REGEX =
-  /REF\(\s*COLUMN\("(?:\\.|[^"\\])*"\)\s*,\s*ROW\("(?:\\.|[^"\\])*"\)\s*\)|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_]|\s*\()/gi;
+/** Match quoted strings first, so String.replace callbacks can return them untouched and skip references inside text. */
+const quotedOr = (pattern: string) => new RegExp(`${FORMULA_QUOTED_STRING_PATTERN}|${pattern}`, 'gi');
+const FORMULA_STABLE_REF_PATTERN = String.raw`REF\(\s*COLUMN\(("(?:\\.|[^"\\])*")\)\s*,\s*ROW\(("(?:\\.|[^"\\])*")\)\s*\)`;
+const FORMULA_STABLE_REF_TOKEN_REGEX = quotedOr(FORMULA_STABLE_REF_PATTERN);
+const FORMULA_FLAG_TOKEN_REGEX = quotedOr(
+  String.raw`${FORMULA_STABLE_REF_PATTERN}|(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_]|\s*\()`
+);
+const FORMULA_A1_RANGE_VALUE_REGEX = quotedOr(
+  String.raw`(?<![A-Za-z0-9_])\$?([A-Z]{1,3})\$?(\d+)\s*:\s*\$?([A-Z]{1,3})\$?(\d+)(?![A-Za-z0-9_])`
+);
+const FORMULA_A1_CELL_VALUE_REGEX = quotedOr(String.raw`(?<![A-Za-z0-9_])\$?([A-Z]{1,3})\$?(\d+)(?![A-Za-z0-9_]|\s*\()`);
+const FORMULA_LAZY_IF_PATTERN = `${FORMULA_QUOTED_STRING_PATTERN}|(?<![A-Za-z0-9_])IF\\s*\\(`;
+const FORMULA_STABLE_REF_RANGE_REGEX = quotedOr(
+  String.raw`REF\(COLUMN\("[^"]+"\),ROW\("[^"]+"\)\)\s*:\s*REF\(COLUMN\("[^"]+"\),ROW\("[^"]+"\)\)`
+);
+const FORMULA_NUMBER_TOKEN_REGEX = /(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?/iy;
+const FORMULA_IDENTIFIER_TOKEN_REGEX = /[A-Za-z_][A-Za-z0-9_]*/y;
+const FORMULA_NUMERIC_ROW_REF_REGEX = quotedOr(String.raw`REF\(\s*COLUMN\("([^"]+)"\)\s*,\s*ROW\((\d+)\)\s*\)`);
+
+/** Wrap a formatter output (element or text) in a new element. */
+function wrapFormattedValue(tagName: 'div' | 'span', className: string, value: unknown): HTMLElement {
+  const elm = createDomElement(tagName, { className });
+  if (value instanceof HTMLElement) {
+    elm.appendChild(value);
+  } else {
+    elm.textContent = value === null || value === undefined ? '' : String(value);
+  }
+  return elm;
+}
 
 /** Thrown past the nesting limit so the outermost nested evaluation resolves the dependency first. */
 class FormulaDeferral {
@@ -118,6 +144,8 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
   protected _dataItemsCache?: any[];
   protected _rowIdsCache?: string[];
   protected _evaluationRowIdsCache?: string[];
+  /** Column ids read once per top-level evaluation and reused by its nested cell evaluations. */
+  protected _evaluationColumnIds: string[] = [];
   protected _isBulkLoading = false;
   protected _nestedDepth = 0;
   protected _columnById: Map<string, Column> = new Map<string, Column>();
@@ -209,8 +237,8 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
     if (!column?.allowFormula || !item || isFormulaEditor) {
       return;
     }
-    const rowId = item[this.getDatasetIdPropertyName()] as number | string | undefined;
-    if (rowId === undefined || rowId === null) {
+    const rowId = this.getItemRowId(item);
+    if (rowId === undefined) {
       return;
     }
     const value = item[String(column.field ?? column.id)];
@@ -411,10 +439,11 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
     fallbackValue?: T
   ): unknown {
     const hasCurrentCellValue = arguments.length >= 4;
-    const liveValue = hasCurrentCellValue ? currentCellValueOrFallbackValue : this.getCellRawValue(rowId, columnId);
-    const safeFallbackValue = (hasCurrentCellValue ? fallbackValue : (currentCellValueOrFallbackValue as T | undefined)) as T | undefined;
+    const storeKey = this.buildStoreKey(rowId, columnId);
     const rowStoredValue = this.getCellRawValue(rowId, columnId);
-    const storedFormula = this.getFormula(rowId, columnId);
+    const liveValue = hasCurrentCellValue ? currentCellValueOrFallbackValue : rowStoredValue;
+    const safeFallbackValue = (hasCurrentCellValue ? fallbackValue : (currentCellValueOrFallbackValue as T | undefined)) as T | undefined;
+    const storedFormula = this._formulaStore.get(storeKey);
 
     const normalizedStoredFormula =
       typeof storedFormula === 'string' && storedFormula.trim().startsWith('=') ? storedFormula.trim() : undefined;
@@ -426,8 +455,7 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
     // dataset still contains a legacy A1 value. This prevents a reorder from making
     // the live cell value override the ID-based formula in the store.
     const storedFormulaIsStable =
-      !!normalizedStoredFormula &&
-      (/\bREF\(\s*COLUMN\(/i.test(normalizedStoredFormula) || this._restoredFormulaKeys.has(this.buildStoreKey(rowId, columnId)));
+      !!normalizedStoredFormula && (/\bREF\(\s*COLUMN\(/i.test(normalizedStoredFormula) || this._restoredFormulaKeys.has(storeKey));
     const formula = storedFormulaIsStable
       ? normalizedStoredFormula
       : normalizedLiveFormula && normalizedLiveFormula !== normalizedStoredFormula
@@ -439,12 +467,12 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
     }
 
     const memo = this.getOrCreateEvaluationMemo();
-    const memoKey = this.buildEvaluationMemoKey(rowId, columnId, formula);
+    const memoKey = this.buildEvaluationMemoKey(storeKey, formula);
     if (this.containsBuiltInVolatileFunction(formula) && memo.has(memoKey)) {
       return memo.get(memoKey);
     }
     const evaluated = this.evaluateFormulaExpression(formula, {
-      visited: new Set<string>([this.buildStoreKey(rowId, columnId)]),
+      visited: new Set<string>([storeKey]),
       memo,
     });
 
@@ -757,10 +785,10 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
         aggregator.init(item, isTreeAggregator);
       },
       accumulate: (item, isTreeParent) => {
-        const rowId = item?.[this.getDatasetIdPropertyName()];
+        const rowId = this.getItemRowId(item);
         const value = item?.[aggregator.field];
         const resolvedItem =
-          rowId == null
+          rowId === undefined
             ? item
             : {
                 ...item,
@@ -1085,8 +1113,8 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
     return JSON.stringify([String(rowId), String(columnId)]);
   }
 
-  protected buildEvaluationMemoKey(rowId: number | string, columnId: number | string, formula: string): string {
-    return JSON.stringify([this.buildStoreKey(rowId, columnId), formula.trim()]);
+  protected buildEvaluationMemoKey(storeKey: string, formula: string): string {
+    return JSON.stringify([storeKey, formula.trim()]);
   }
 
   protected containsBuiltInVolatileFunction(formula: string): boolean {
@@ -1152,6 +1180,11 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
     return this._grid?.getOptions?.().datasetIdPropertyName ?? 'id';
   }
 
+  /** Row id of a data item, `undefined` when missing or null. */
+  protected getItemRowId(item: any): number | string | undefined {
+    return item?.[this.getDatasetIdPropertyName()] ?? undefined;
+  }
+
   protected evaluateFormulaExpression(formula: string, context: FormulaEvaluationContext): unknown {
     const normalized = formula.trim().startsWith('=') ? formula.trim().slice(1) : formula.trim();
     if (!normalized) {
@@ -1160,12 +1193,15 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
     if (this.hasUnsafeFormulaSyntax(normalized)) {
       return FORMULA_ERROR.PARSE;
     }
-    const formulaFunctions = new Map(this.getFormulaFunctionRegistry());
-    const lazyExpression = this._customFunctions.has('IF') ? normalized : this.replaceLazyIfCalls(normalized, context, formulaFunctions);
+    // the registry is only copied when lazy IF wrappers are registered for this expression
+    const registry = this.getFormulaFunctionRegistry();
+    const hasLazyIf = !this._customFunctions.has('IF') && /(?<![A-Za-z0-9_])IF\s*\(/i.test(normalized);
+    const formulaFunctions = hasLazyIf ? new Map(registry) : registry;
+    const lazyExpression = hasLazyIf ? this.replaceLazyIfCalls(normalized, context, formulaFunctions) : normalized;
     const normalizedSyntax = this.normalizeFormulaSyntax(
       this.replaceRefFunctionsWithA1Refs(
         lazyExpression,
-        ((this._grid?.getColumns?.() as Column[] | undefined) || []).map((col) => String(col.id)),
+        this._nestedDepth > 0 ? this._evaluationColumnIds : (this._evaluationColumnIds = this.getFormulaColumnIds()),
         (this._evaluationRowIdsCache ??= this.getDataItems().map((item) => String(item?.[this.getDatasetIdPropertyName()] ?? ''))),
         1
       )
@@ -1199,7 +1235,7 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
     };
 
     const expressionWithRanges = normalizedSyntax.replace(
-      /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|(?<![A-Za-z0-9_])\$?([A-Z]{1,3})\$?(\d+)\s*:\s*\$?([A-Z]{1,3})\$?(\d+)(?![A-Za-z0-9_])/gi,
+      FORMULA_A1_RANGE_VALUE_REGEX,
       (match, startCol: string, startRow: string, endCol: string, endRow: string) => {
         if (!startCol) {
           return match;
@@ -1212,22 +1248,17 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
     const expressionWithValues = mapFormulaRanges(expressionWithRanges, (members) => {
       const values = members.map((member) => {
         const cell = parseExcelReferenceCell(member);
-        const value = cell
-          ? this.resolveExcelReferenceValue(getExcelColumnNameByIndex(cell.cell + 1), cell.row + 1, context)
-          : FORMULA_ERROR.REF;
+        const value = cell ? this.resolveExcelReferenceValue(cell.cell, cell.row + 1, context) : FORMULA_ERROR.REF;
         return referenceLiteral(value);
       });
       return `[${values.join(',')}]`;
-    }).replace(
-      /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|(?<![A-Za-z0-9_])\$?([A-Z]{1,3})\$?(\d+)(?![A-Za-z0-9_]|\s*\()/gi,
-      (match, colName: string, rowNumber: string) => {
-        if (!colName) {
-          return match;
-        }
-        const resolved = this.resolveExcelReferenceValue(colName, Number(rowNumber), context);
-        return referenceLiteral(resolved);
+    }).replace(FORMULA_A1_CELL_VALUE_REGEX, (match, colName: string, rowNumber: string) => {
+      if (!colName) {
+        return match;
       }
-    );
+      const resolved = this.resolveExcelReferenceValue(getExcelColumnIndexByName(colName.toUpperCase()), Number(rowNumber), context);
+      return referenceLiteral(resolved);
+    });
 
     const jsExpression = transformFormulaOutsideQuotedStrings(expressionWithValues, (segment) =>
       segment
@@ -1254,7 +1285,7 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
 
   /** Defer built-in IF branches until the parser evaluates the containing expression. */
   protected replaceLazyIfCalls(expression: string, context: FormulaEvaluationContext, functions: Map<string, FormulaCallback>): string {
-    const token = /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|(?<![A-Za-z0-9_])IF\s*\(/gi;
+    const token = new RegExp(FORMULA_LAZY_IF_PATTERN, 'gi');
     let result = '';
     let previous = 0;
     let match: RegExpExecArray | null;
@@ -1342,24 +1373,15 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
         continue;
       }
 
-      if (/\d|\./.test(ch)) {
-        const numberValue = src.slice(i).match(/^(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?/i)?.[0];
-        if (!numberValue) {
+      const wordRegex = /\d|\./.test(ch) ? FORMULA_NUMBER_TOKEN_REGEX : /[A-Za-z_]/.test(ch) ? FORMULA_IDENTIFIER_TOKEN_REGEX : undefined;
+      if (wordRegex) {
+        wordRegex.lastIndex = i;
+        const word = wordRegex.exec(src)?.[0];
+        if (!word) {
           return FORMULA_ERROR.PARSE;
         }
-        i += numberValue.length;
-        pushToken('number', numberValue);
-        continue;
-      }
-
-      if (/[A-Za-z_]/.test(ch)) {
-        let ident = ch;
-        i++;
-        while (i < src.length && /[A-Za-z0-9_]/.test(src[i])) {
-          ident += src[i];
-          i++;
-        }
-        pushToken('identifier', ident);
+        i += word.length;
+        pushToken(wordRegex === FORMULA_NUMBER_TOKEN_REGEX ? 'number' : 'identifier', word);
         continue;
       }
 
@@ -1433,6 +1455,16 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
       isLiteral: isLiteralFormulaValue(value),
       value: unwrapFormulaReference(value),
     });
+    /** Unwrap both operands of a binary operator; `error` is the first non-literal error operand. */
+    const unwrapBinaryOperands = (leftValue: unknown, rightValue: unknown) => {
+      const leftOperand = unwrapFormulaOperand(leftValue);
+      const rightOperand = unwrapFormulaOperand(rightValue);
+      const isError = (operand: { isLiteral: boolean; value: unknown }) => !operand.isLiteral && isFormulaErrorCode(operand.value);
+      const error = isError(leftOperand) ? leftOperand.value : isError(rightOperand) ? rightOperand.value : undefined;
+      return { left: leftOperand.value, right: rightOperand.value, error };
+    };
+    const finiteOrError = (value: unknown): unknown =>
+      typeof value === 'number' && !Number.isFinite(value) ? (Number.isNaN(value) ? FORMULA_ERROR.VALUE : FORMULA_ERROR.NUM) : value;
 
     const parseExpression = (): unknown => parseComparison();
 
@@ -1512,17 +1544,11 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
       }
       while (matchOperator('&')) {
         consume();
-        const rightOperand = unwrapFormulaOperand(parseAdditive());
-        const leftOperand = unwrapFormulaOperand(left);
-        const right = rightOperand.value;
-        left = leftOperand.value;
-        if (!leftOperand.isLiteral && isFormulaErrorCode(left)) {
-          return left;
+        const operands = unwrapBinaryOperands(left, parseAdditive());
+        if (operands.error !== undefined) {
+          return operands.error;
         }
-        if (!rightOperand.isLiteral && isFormulaErrorCode(right)) {
-          return right;
-        }
-        const concatenated = `${formulaTextValue(left)}${formulaTextValue(right)}`;
+        const concatenated = `${formulaTextValue(operands.left)}${formulaTextValue(operands.right)}`;
         left = isFormulaErrorCode(concatenated) ? formulaLiteralText(concatenated) : concatenated;
       }
       return left;
@@ -1535,23 +1561,19 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
       }
       while (matchOperator('+', '-')) {
         const op = consume().value;
-        const rightOperand = unwrapFormulaOperand(parseMultiplicative());
-        const leftOperand = unwrapFormulaOperand(left);
-        const right = rightOperand.value;
-        left = leftOperand.value;
-        if (!leftOperand.isLiteral && isFormulaErrorCode(left)) {
+        const { left: leftValue, right, error } = unwrapBinaryOperands(left, parseMultiplicative());
+        if (error !== undefined) {
+          return error;
+        }
+        left = finiteOrError(
+          syntaxOnly
+            ? 1
+            : op === '+'
+              ? FormulaService.addFormulaValues(leftValue, right)
+              : FormulaService.subtractFormulaValues(leftValue, right)
+        );
+        if (isFormulaErrorCode(left)) {
           return left;
-        }
-        if (!rightOperand.isLiteral && isFormulaErrorCode(right)) {
-          return right;
-        }
-        left = syntaxOnly
-          ? 1
-          : op === '+'
-            ? FormulaService.addFormulaValues(left, right)
-            : FormulaService.subtractFormulaValues(left, right);
-        if (typeof left === 'number' && !Number.isFinite(left)) {
-          return Number.isNaN(left) ? FORMULA_ERROR.VALUE : FORMULA_ERROR.NUM;
         }
       }
       return left;
@@ -1564,31 +1586,25 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
       }
       while (matchOperator('*', '/')) {
         const op = consume().value;
-        const rightOperand = unwrapFormulaOperand(parsePower());
-        const leftOperand = unwrapFormulaOperand(left);
-        const right = rightOperand.value;
-        left = leftOperand.value;
-        if (!leftOperand.isLiteral && isFormulaErrorCode(left)) {
-          return left;
-        }
-        if (!rightOperand.isLiteral && isFormulaErrorCode(right)) {
-          return right;
+        const operands = unwrapBinaryOperands(left, parsePower());
+        if (operands.error !== undefined) {
+          return operands.error;
         }
         if (syntaxOnly) {
           left = 1;
           continue;
         }
-        const leftNumber = toNumber(left);
-        const rightNumber = toNumber(right);
+        const leftNumber = toNumber(operands.left);
+        const rightNumber = toNumber(operands.right);
         if (Number.isNaN(leftNumber) || Number.isNaN(rightNumber)) {
           return FORMULA_ERROR.VALUE;
         }
         if (op === '/' && rightNumber === 0) {
           return FORMULA_ERROR.DIV0;
         }
-        left = op === '*' ? leftNumber * rightNumber : leftNumber / rightNumber;
-        if (typeof left === 'number' && !Number.isFinite(left)) {
-          return Number.isNaN(left) ? FORMULA_ERROR.VALUE : FORMULA_ERROR.NUM;
+        left = finiteOrError(op === '*' ? leftNumber * rightNumber : leftNumber / rightNumber);
+        if (isFormulaErrorCode(left)) {
+          return left;
         }
       }
       return left;
@@ -1601,18 +1617,12 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
       }
       while (matchOperator('^')) {
         consume();
-        const rightOperand = unwrapFormulaOperand(parsePostfix());
-        const leftOperand = unwrapFormulaOperand(left);
-        const right = rightOperand.value;
-        left = leftOperand.value;
-        if (!leftOperand.isLiteral && isFormulaErrorCode(left)) {
-          return left;
+        const operands = unwrapBinaryOperands(left, parsePostfix());
+        if (operands.error !== undefined) {
+          return operands.error;
         }
-        if (!rightOperand.isLiteral && isFormulaErrorCode(right)) {
-          return right;
-        }
-        const leftNumber = toNumber(left);
-        const rightNumber = toNumber(right);
+        const leftNumber = toNumber(operands.left);
+        const rightNumber = toNumber(operands.right);
         left = syntaxOnly
           ? 1
           : Number.isNaN(leftNumber) || Number.isNaN(rightNumber)
@@ -1641,25 +1651,14 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
     };
 
     const parseUnary = (): unknown => {
-      if (matchOperator('+')) {
-        consume();
+      if (matchOperator('+', '-')) {
+        const negate = consume().value === '-';
         const operand = unwrapFormulaOperand(parseUnary());
-        const unary = operand.value;
-        if (!operand.isLiteral && isFormulaErrorCode(unary)) {
-          return unary;
+        if (!operand.isLiteral && isFormulaErrorCode(operand.value)) {
+          return operand.value;
         }
-        const numeric = syntaxOnly ? 1 : toNumber(unary);
-        return Number.isNaN(numeric) ? FORMULA_ERROR.VALUE : numeric;
-      }
-      if (matchOperator('-')) {
-        consume();
-        const operand = unwrapFormulaOperand(parseUnary());
-        const unary = operand.value;
-        if (!operand.isLiteral && isFormulaErrorCode(unary)) {
-          return unary;
-        }
-        const numeric = syntaxOnly ? 1 : toNumber(unary);
-        return Number.isNaN(numeric) ? FORMULA_ERROR.VALUE : -numeric;
+        const numeric = syntaxOnly ? 1 : toNumber(operand.value);
+        return Number.isNaN(numeric) ? FORMULA_ERROR.VALUE : negate ? -numeric : numeric;
       }
       return parsePrimary();
     };
@@ -1767,11 +1766,7 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
             (upperIdent === 'CONCAT' || upperIdent === 'CONCATENATE') && isFormulaErrorCode(result) && args.some(isFormulaLiteralText)
               ? formulaLiteralText(result)
               : result;
-          return typeof wrappedResult === 'number' && !Number.isFinite(wrappedResult)
-            ? Number.isNaN(wrappedResult)
-              ? FORMULA_ERROR.VALUE
-              : FORMULA_ERROR.NUM
-            : wrappedResult;
+          return finiteOrError(wrappedResult);
         }
 
         if (upperIdent === 'TRUE') {
@@ -1973,9 +1968,8 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
       return formula;
     }
 
-    formula = formula.replace(
-      /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|REF\(COLUMN\("[^"]+"\),ROW\("[^"]+"\)\)\s*:\s*REF\(COLUMN\("[^"]+"\),ROW\("[^"]+"\)\)/gi,
-      (token) => (token.startsWith('REF(') ? this.replaceRefFunctionsWithA1Refs(token, columnIds, rowIds) : token)
+    formula = formula.replace(FORMULA_STABLE_REF_RANGE_REGEX, (token) =>
+      token.startsWith('REF(') ? this.replaceRefFunctionsWithA1Refs(token, columnIds, rowIds) : token
     );
     if (invalidRowAsError) {
       formula = transformFormulaOutsideQuotedStrings(formula, (segment) =>
@@ -2051,23 +2045,20 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
       return `${excelColName}${excelRowNumber}`;
     });
 
-    return withNamedRowRefs.replace(
-      /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|REF\(\s*COLUMN\("([^"]+)"\)\s*,\s*ROW\((\d+)\)\s*\)/gi,
-      (match, columnId: string, rowNumber: string) => {
-        if (!columnId) {
-          return match;
-        }
-        const columnIdx = columnIds.indexOf(String(columnId));
-        const rowIdx = Number(rowNumber);
-        if (columnIdx < 0 || Number.isNaN(rowIdx)) {
-          return FORMULA_ERROR.REF;
-        }
-
-        const excelColName = getExcelColumnNameByIndex(columnIdx + 1);
-        const excelRowNumber = rowIdx + excelRowOffset - 1;
-        return `${excelColName}${excelRowNumber}`;
+    return withNamedRowRefs.replace(FORMULA_NUMERIC_ROW_REF_REGEX, (match, columnId: string, rowNumber: string) => {
+      if (!columnId) {
+        return match;
       }
-    );
+      const columnIdx = columnIds.indexOf(String(columnId));
+      const rowIdx = Number(rowNumber);
+      if (columnIdx < 0 || Number.isNaN(rowIdx)) {
+        return FORMULA_ERROR.REF;
+      }
+
+      const excelColName = getExcelColumnNameByIndex(columnIdx + 1);
+      const excelRowNumber = rowIdx + excelRowOffset - 1;
+      return `${excelColName}${excelRowNumber}`;
+    });
   }
 
   protected normalizeCustomFunctionInput(functionInput: FormulaCustomFunctionInput): FormulaCallback | undefined {
@@ -2126,8 +2117,7 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
 
     for (let rowNumber = minRowNumber; rowNumber <= maxRowNumber; rowNumber++) {
       for (let colIdx = minColIdx; colIdx <= maxColIdx; colIdx++) {
-        const colName = getExcelColumnNameByIndex(colIdx + 1);
-        rangeValues.push(this.resolveExcelReferenceValue(colName, rowNumber, context));
+        rangeValues.push(this.resolveExcelReferenceValue(colIdx, rowNumber, context));
       }
     }
 
@@ -2181,8 +2171,8 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
     return new Date(result.getTime() + (days - wholeDays) * 24 * 60 * 60 * 1000);
   }
 
-  protected resolveExcelReferenceValue(colName: string, rowNumber: number, context: FormulaEvaluationContext): unknown {
-    const colIdx = getExcelColumnIndexByName(colName.toUpperCase());
+  /** Resolve one cell by 0-based column index and 1-based row number, evaluating (and memoizing) nested formulas. */
+  protected resolveExcelReferenceValue(colIdx: number, rowNumber: number, context: FormulaEvaluationContext): unknown {
     if (colIdx < 0 || Number.isNaN(rowNumber) || rowNumber < 1) {
       return FORMULA_ERROR.REF;
     }
@@ -2199,16 +2189,16 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
     const columnId = column.id as number | string;
     const field = (column.field ?? column.id) as string;
     const rawValue = item[field as keyof typeof item];
-    const storedFormula = this.getFormula(rowId, columnId);
+    const key = this.buildStoreKey(rowId, columnId);
+    const storedFormula = this._formulaStore.get(key);
 
     if (storedFormula || (typeof rawValue === 'string' && rawValue.trim().startsWith('='))) {
-      const key = this.buildStoreKey(rowId, columnId);
       if (context.visited.has(key)) {
         return FORMULA_ERROR.CIRCREF;
       }
 
       const nestedFormula = storedFormula ?? rawValue;
-      const nestedMemoKey = this.buildEvaluationMemoKey(rowId, columnId, nestedFormula);
+      const nestedMemoKey = this.buildEvaluationMemoKey(key, nestedFormula);
       if (context.memo.has(nestedMemoKey)) {
         const cached = context.memo.get(nestedMemoKey);
         return cached === '' ? FORMULA_EMPTY_RESULT : cached;
@@ -2351,14 +2341,12 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
       }
 
       mergedParams.toDisplayFormula = (formula: string, item?: any) => {
-        const rowId = item?.[this.getDatasetIdPropertyName()] as number | string | undefined;
-        return rowId === undefined || rowId === null
-          ? this.toDisplayFormula(formula)
-          : this.toDisplayFormulaForCell(formula, rowId, column.id, true);
+        const rowId = this.getItemRowId(item);
+        return rowId === undefined ? this.toDisplayFormula(formula) : this.toDisplayFormulaForCell(formula, rowId, column.id, true);
       };
       mergedParams.toStoredFormula = (formula: string, item?: any) => {
-        const rowId = item?.[this.getDatasetIdPropertyName()] as number | string | undefined;
-        const existing = rowId == null ? undefined : this.getFormula(rowId, column.id);
+        const rowId = this.getItemRowId(item);
+        const existing = rowId === undefined ? undefined : this.getFormula(rowId, column.id);
         if (existing && formula === this.toDisplayFormulaForCell(existing, rowId!, column.id, true)) {
           return existing;
         }
@@ -2366,20 +2354,20 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
         const storedFormula = groupedRows
           ? this.convertA1ReferencesToStableRefs(formula, this.getFormulaColumnIds(), groupedRows, true)
           : this.toStoredFormula(formula);
-        if (rowId !== undefined && rowId !== null && this.containsDirectExcelReference(formula)) {
+        if (rowId !== undefined && this.containsDirectExcelReference(formula)) {
           this.captureFormulaReferenceAbsoluteFlags(this.buildStoreKey(rowId, column.id), formula, groupedRows);
         }
         return storedFormula;
       };
       mergedParams.onFormulaCommit = (formula: string, item?: any) => {
-        const rowId = item?.[this.getDatasetIdPropertyName()] as number | string | undefined;
-        if (rowId !== undefined && rowId !== null) {
+        const rowId = this.getItemRowId(item);
+        if (rowId !== undefined) {
           this.setFormula(rowId, column.id, formula);
         }
       };
       mergedParams.validateFormula ??= (formula: string, item?: any) => {
-        const rowId = item?.[this.getDatasetIdPropertyName()] as number | string | undefined;
-        return rowId === undefined || rowId === null ? undefined : this.getFormulaValidationError(formula, rowId, column.id);
+        const rowId = this.getItemRowId(item);
+        return rowId === undefined ? undefined : this.getFormulaValidationError(formula, rowId, column.id);
       };
 
       const formulaValueFormatter = this.buildFormulaValueFormatter(column);
@@ -2394,7 +2382,7 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
           const formattedValue = basePipelineFormatter ? basePipelineFormatter(row, cell, value, columnDef, dataContext, grid) : value;
           const baseValue = formattedValue === undefined ? value : formattedValue;
           const dataItem = dataContext ?? this._dataView?.getItem?.(row);
-          const rowId = dataItem?.[this.getDatasetIdPropertyName()] as number | string | undefined;
+          const rowId = this.getItemRowId(dataItem);
           const field = String(columnDef?.field ?? columnDef?.id ?? column.field ?? column.id);
           const formula = rowId === undefined ? undefined : (this.getFormula(rowId, column.id) ?? dataItem?.[field]);
           const hasFormulaError =
@@ -2403,13 +2391,8 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
             if (!hasFormulaError) {
               return renderedValue;
             }
-            const errorElm = createDomElement('span', { className: 'formula-error' });
+            const errorElm = wrapFormattedValue('span', 'formula-error', renderedValue);
             errorElm.title = `Formula error: ${String(baseValue)}`;
-            if (renderedValue instanceof HTMLElement) {
-              errorElm.appendChild(renderedValue);
-            } else {
-              errorElm.textContent = renderedValue === null || renderedValue === undefined ? '' : String(renderedValue);
-            }
             return errorElm;
           };
 
@@ -2427,13 +2410,7 @@ export class FormulaService implements ExternalResource, ExcelExportCellProvider
             return withFormulaErrorTooltip(baseValue);
           }
 
-          const divElm = createDomElement('div', { className: 'editing-field' });
-          if (baseValue instanceof HTMLElement) {
-            divElm.appendChild(baseValue);
-          } else {
-            divElm.textContent = baseValue === null || baseValue === undefined ? '' : String(baseValue);
-          }
-          return withFormulaErrorTooltip(divElm);
+          return withFormulaErrorTooltip(wrapFormattedValue('div', 'editing-field', baseValue));
         };
         (wrappedFormatter as any).__formulaAutoEditableWrapped = true;
         (wrappedFormatter as any).__formulaAutoEditableBaseFormatter = basePipelineFormatter;

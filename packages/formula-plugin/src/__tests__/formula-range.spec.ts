@@ -5,6 +5,7 @@ import {
   getFormulaRangeWidth,
   mapFormulaRanges,
   normalizeExcelFormulaStrings,
+  parseFormulaFunctionArguments,
   rewriteExcelHelperCounta,
 } from '../formula-range.js';
 
@@ -59,6 +60,13 @@ describe('stable formula ranges', () => {
     expect(rewriteExcelHelperCounta(`COUNTA("a""b",'a''b'!A1,${helper})`, helpers)).toBe(
       `(COUNTA("a""b")+COUNTA('a''b'!A1)+SUM('Formula References'!$A$4:$A$6))`
     );
+    expect(parseFormulaFunctionArguments('IF("a,1)', 2)).toBeUndefined();
+    // backslash-escaped quotes stay inside the string literal
+    expect(rewriteExcelHelperCounta(`CONCAT("a\\"COUNTA(${helper})",COUNTA(${helper}))`, helpers)).toBe(
+      `CONCAT("a\\"COUNTA(${helper})",(SUM('Formula References'!$A$4:$A$6)))`
+    );
+    expect(rewriteExcelHelperCounta(`COUNTA("a\\",${helper})`, helpers)).toBe(`COUNTA("a\\",${helper})`);
+    expect(rewriteExcelHelperCounta(`"unterminated COUNTA(${helper})`, helpers)).toBe(`"unterminated COUNTA(${helper})`);
   });
 
   it('processes nested COUNTA arguments once when helper ranges exist', () => {
