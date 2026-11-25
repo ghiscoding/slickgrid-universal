@@ -51,7 +51,7 @@
     "dequal": "catalog:"
   },
   "peerDependencies": {
-    "svelte": "^5.0.0"
+    "svelte": ">=5.0.0"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts"

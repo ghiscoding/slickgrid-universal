@@ -31,10 +31,10 @@
     "tslib": "catalog:"
   },
   "peerDependencies": {
-    "svelte": "^5.0.0"
+    "svelte": ">=5.0.0"
   },
   "devDependencies": {
-    "svelte": "^5.0.0",
+    "svelte": "catalog:",
     "typescript": "catalog:"
   }
 }

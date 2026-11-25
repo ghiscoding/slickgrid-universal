@@ -32,7 +32,7 @@
     "bootstrap": "catalog:",
     "i18next": "catalog:",
     "slickgrid-svelte": "workspace:*",
-    "svelte": "^5.0.0"
+    "svelte": "catalog:"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "catalog:",
