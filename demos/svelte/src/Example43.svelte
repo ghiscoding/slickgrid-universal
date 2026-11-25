@@ -9,12 +9,12 @@
     type SlickgridSvelteInstance,
   } from 'slickgrid-svelte';
 
-  let isEditable = false;
+  let isEditable = $state(false);
   const excelExportService = new ExcelExportService();
-  let gridOptions: GridOption;
-  let columns: Column[] = [];
-  let dataset: any[] = [];
-  let showSubTitle = true;
+  let gridOptions: GridOption = $state.raw({});
+  let columns: Column[] = $state.raw([]);
+  let dataset: any[] = $state.raw([]);
+  let showSubTitle = $state(true);
   let showEmployeeId = true;
   let grid: SlickgridSvelteInstance;
   let metadata: ItemMetadata | Record<number, ItemMetadata> = {
@@ -495,10 +495,15 @@
 {#if showSubTitle}
   <div class="subtitle">
     <p class="italic example-details">
-      <b>NOTES</b>: <code>rowspan</code> is an opt-in feature, because of its small performance cost (it maps row metadata), and requires
-      <code>enableCellRowSpan</code> to be enabled. <code>colspan</code> and <code>rowspan</code> use DataView item metadata and are based on
-      row indexes; sorting, filtering, paging, and column reordering do not update the spans automatically. This demo disables those features.
-      Freezing columns or rows that intersect a span can also cause problems.
+      <b>NOTES</b>: <code>rowspan</code> is an opt-in feature, because of its small perf hit (it needs to loop through all row metadatas to
+      map all rowspan), and requires the <code>enableCellRowSpan</code> grid option to be enabled to work properly. The
+      <code>colspan</code>/<code>rowspan</code> are both using DataView item metadata and are both based on row indexes and will
+      <b>not</b> keep the row in sync with the data. It is really up to you the user to update the metadata logic of how and where the cells
+      should span when a side effect kicks in. (i.e: Filtering/Sorting/Paging/Column Reorder... will <b>not</b> change/update the spanning
+      in the grid by itself and that is why they these features are all disabled in this example). Also, column/row freezing (pinning) are
+      also not supported, or at least not recommended unless you know exactly what you're doing (like in this demo here because we know our
+      pinning doesn't intersect)! Any freezing column/row that could intersect with a <code>colspan</code>/<code>rowspan</code>
+      <b>will cause problems</b>.
     </p>
   </div>
 {/if}
@@ -539,7 +544,8 @@
   >Show/Hide EmployeeID</button
 >
 <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon mx-1" onclick={toggleEditing} data-test="toggle-editing">
-  <span class="mdi mdi-pencil-outline"></span> Toggle Editing: <span id="isEditable" class="text-italic">{isEditable}</span>
+  <span class="mdi mdi-pencil-outline"></span>
+  <span>Toggle Editing: <span id="isEditable" class="text-italic">{isEditable}</span></span>
 </button>
 <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="export-excel-btn" onclick={exportToExcel}>
   <i class="mdi mdi-file-excel-outline text-success"></i> Export to Excel

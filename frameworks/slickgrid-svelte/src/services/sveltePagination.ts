@@ -9,9 +9,15 @@ export interface SveltePaginationProps {
   translaterService?: TranslaterService;
 }
 
-/** Adapt a Svelte component to SlickGrid's pagination lifecycle. */
+const adapters = new WeakMap<Component<SveltePaginationProps>, typeof BasePaginationComponent>();
+
+/** Adapt a Svelte component to SlickGrid's pagination lifecycle (the adapter class is created once per component). */
 export function createSveltePagination(component: Component<SveltePaginationProps>): typeof BasePaginationComponent {
-  return class SveltePagination implements BasePaginationComponent {
+  const cached = adapters.get(component);
+  if (cached) {
+    return cached;
+  }
+  const adapter = class SveltePagination implements BasePaginationComponent {
     protected props!: SveltePaginationProps;
     protected instance?: Record<string, any>;
     protected target?: HTMLElement;
@@ -44,4 +50,6 @@ export function createSveltePagination(component: Component<SveltePaginationProp
       this.target = undefined;
     }
   };
+  adapters.set(component, adapter);
+  return adapter;
 }

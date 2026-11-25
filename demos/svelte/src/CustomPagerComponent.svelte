@@ -2,10 +2,9 @@
   import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
   import type { PaginationMetadata, PaginationService, SlickGrid, SveltePaginationProps } from 'slickgrid-svelte';
 
-  export let paginationService: PaginationService;
-  export let eventPubSubService: BasePubSubService;
+  let { paginationService, eventPubSubService }: Pick<SveltePaginationProps, 'paginationService' | 'eventPubSubService'> = $props();
 
-  let currentPagination: PaginationMetadata = {} as PaginationMetadata;
+  let currentPagination: PaginationMetadata = $state({} as PaginationMetadata);
   let grid: SlickGrid;
   let rootElement: HTMLDivElement;
   let subscription: any;
@@ -47,8 +46,8 @@
     paginationService.goToPreviousPage(event);
   }
 
-  $: leftDisabled = currentPagination.pageNumber === 1 || currentPagination.totalItems === 0;
-  $: rightDisabled = currentPagination.pageNumber === currentPagination.pageCount || currentPagination.totalItems === 0;
+  const leftDisabled = $derived(currentPagination.pageNumber === 1 || currentPagination.totalItems === 0);
+  const rightDisabled = $derived(currentPagination.pageNumber === currentPagination.pageCount || currentPagination.totalItems === 0);
 </script>
 
 <div bind:this={rootElement}>

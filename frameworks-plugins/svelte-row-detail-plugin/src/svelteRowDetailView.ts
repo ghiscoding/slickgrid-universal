@@ -90,7 +90,10 @@ export class SvelteRowDetailView extends SlickRowDetailView {
       }
       this.rowOptions.onRowBackToViewportRange?.(event, args);
     });
-    this.eventHandler.subscribe(grid.onColumnsReordered, () => this.redrawAll());
+    this.eventHandler.subscribe(grid.onColumnsReordered, () => this.redrawAll(false));
+    if (this.gridOptions.enableSelection || this.gridOptions.enableCheckboxSelector) {
+      this.eventHandler.subscribe(grid.onSelectedRowsChanged, () => this.redrawAll(false));
+    }
     this.eventHandler.subscribe(grid.onSort, () => this.disposeAll());
     this.eventHandler.subscribe(grid.onRendered, () => this.redrawDetached());
     this._subscriptions.push(
@@ -102,7 +105,7 @@ export class SvelteRowDetailView extends SlickRowDetailView {
           'onGridMenuClearAllFilters',
           'onGridMenuClearAllSorting',
         ],
-        () => this.redrawAll()
+        () => this.redrawAll(true)
       )
     );
   }
@@ -128,7 +131,7 @@ export class SvelteRowDetailView extends SlickRowDetailView {
     }
   }
 
-  protected renderComponent(item: any, component: Component<any>): void {
+  protected renderComponent(item: any, component: Component<any>, flush = true): void {
     const id = item?.[this.itemIdField];
     const container = this._grid.getContainerNode().getElementsByClassName(`row-detail-${id}`)[0] as HTMLElement | undefined;
     if (!container) {
@@ -147,7 +150,10 @@ export class SvelteRowDetailView extends SlickRowDetailView {
       target: element,
       props: { model: item, addon: this, grid: this._grid, dataView: this.dataView, parentRef: this.rowOptions.parentRef },
     });
-    flushSync();
+    // effects (e.g. onMount) only run on flush, batched callers flush once after rendering all their views
+    if (flush) {
+      flushSync();
+    }
     this._views.set(id, { item, element, component: view, rendered: true });
   }
 
@@ -198,55 +204,69 @@ export class SvelteRowDetailView extends SlickRowDetailView {
     }
   }
 
-  protected redrawView(item: any): void {
+  protected redrawView(item: any, flush = true): void {
     const view = this._views.get(item?.[this.itemIdField]);
     const component = item?.[`${this._keyPrefix}detailViewLoaded`] ? this.rowOptions.viewComponent : this.rowOptions.preloadComponent;
     if (view?.component && this.rowOptions.keepComponentAlive && view.item === item && this.reattachView(view)) {
       return;
     } else if (component) {
-      this.renderComponent(item, component);
+      this.renderComponent(item, component, flush);
     }
   }
 
-  protected redrawAll(): void {
+  protected redrawAll(forceRedraw: boolean): void {
     clearTimeout(this._renderTimer);
     this._renderTimer = setTimeout(() => {
       this.resetRenderedRows();
       for (const view of Array.from(this._views.values())) {
-        this.redrawView(view.item);
+        if (forceRedraw || !view.rendered || !view.element.isConnected) {
+          // keep a placeholder so the view is re-created when its panel is back in the DOM
+          forceRedraw && this.disposeView(view.item, true, false);
+          this.redrawView(view.item, false);
+        }
       }
+      flushSync();
     });
   }
 
   protected redrawDetached(): void {
+    const renderedRange = this._views.size ? this._grid.getRenderedRange() : undefined;
+    if (!renderedRange) {
+      return;
+    }
+    let hasRedrawn = false;
     for (const view of Array.from(this._views.values())) {
-      const rowIndex = this.dataView.getRowById(view.item?.[this.itemIdField]);
-      const renderedRange = this._grid.getRenderedRange();
+      const itemId = view.item?.[this.itemIdField];
+      const rowIndex = this.dataView.getRowById(itemId);
       if (
         rowIndex === undefined ||
-        !renderedRange ||
         rowIndex < renderedRange.top ||
         rowIndex > renderedRange.bottom ||
-        !this._renderedViewportRowIds.has(view.item?.[this.itemIdField]) ||
+        !this._renderedViewportRowIds.has(itemId) ||
         (view.rendered && view.element.isConnected)
       ) {
         continue;
       }
-      this.redrawView(view.item);
+      this.redrawView(view.item, false);
+      hasRedrawn = true;
+    }
+    if (hasRedrawn) {
+      flushSync();
     }
   }
 
   /** Dispose of an individual mounted view while leaving the row-detail plugin active. */
-  disposeViewByItem(item: any, removeFromArray = true): void {
-    this.disposeView(item, removeFromArray);
+  disposeViewByItem(item: any, removeFromArray = false): void {
+    this.disposeView(item, true, removeFromArray);
   }
 
   disposeAllViewComponents(): void {
     this.disposeAll();
   }
 
-  redrawAllViewComponents(): void {
-    this.redrawAll();
+  /** Redraw the expanded row detail components, `forceRedraw` also re-creates the ones that are currently rendered. */
+  redrawAllViewComponents(forceRedraw = false): void {
+    this.redrawAll(forceRedraw);
   }
 
   getAddonInstance(): SvelteRowDetailView {

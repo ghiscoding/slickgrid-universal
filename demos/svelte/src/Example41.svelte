@@ -11,9 +11,9 @@
   let dragHelper: HTMLElement | null = null;
   let dragRows: number[] = [];
   let dragMode = '';
-  let showSubTitle = true;
+  let showSubTitle = $state(true);
   let grid: SlickgridSvelteInstance;
-  let dataset: any[] = [];
+  let dataset: any[] = $state.raw(mockData());
 
   const columns: Column[] = [
     { id: 'name', name: 'Name', field: 'name', width: 300, cssClass: 'cell-title' },
@@ -137,7 +137,6 @@
     grid = instance;
   }
 
-  dataset = mockData();
   const events = { onDragInit: handleOnDragInit, onDragStart: handleOnDragStart, onDrag: handleOnDrag, onDragEnd: handleOnDragEnd };
 </script>
 
@@ -149,7 +148,7 @@
     ><a
       style="font-size: 18px"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example41.vue"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example41.svelte"
       ><span class="mdi mdi-link-variant"></span> code</a
     ></span
   >
@@ -165,13 +164,13 @@
     <ul>
       <li>Click to select, Ctrl-click to toggle selection(s).</li>
       <li>Drag one or more rows by the handle icon (1st column) to reorder.</li>
-      <li>Drag one or more rows by selection (2nd or 3rd column) to the recycle bin to delete.</li>
+      <li>Drag one or more rows by selection (2nd or 3rd column) and drag to the recycle bin to delete.</li>
     </ul>
   </h6>{/if}
 <div class="row">
   <div class="col">
-    <SlickgridSvelte gridId="grid2" {columns} options={gridOptions} {dataset} {events} onSvelteGridCreated={gridReady}>
-      <div slot="header" class="grid-header"><span>Santa's TODO list:</span></div>
+    <SlickgridSvelte gridId="grid41" {columns} options={gridOptions} {dataset} {events} onSvelteGridCreated={gridReady}>
+      {#snippet header()}<div class="grid-header"><span>Santa's TODO list:</span></div>{/snippet}
     </SlickgridSvelte>
     <div class="col"><div id="dropzone" class="recycle-bin mt-4">Recycle Bin</div></div>
   </div>

@@ -31,33 +31,24 @@
 
   const FAKE_SERVER_DELAY = 250;
   const NB_ITEMS = 1200;
-  let gridOptions: GridOption;
-  let detailViewRowCount = 9;
-  let columns: Column<Item>[] = [];
-  let dataset: Item[] = [];
+  let detailViewRowCount = $state(9);
   let isDarkMode = false;
-  let showSubTitle = true;
-  let toastMessage = '';
-  let toastType = 'info';
-  const parentRef = {
-    showFlashMessage: (message: string, type = 'info') => {
-      toastMessage = message;
-      toastType = type;
-    },
-  };
-  let serverWaitDelay = FAKE_SERVER_DELAY; // server simulation with default of 250ms but 50ms for Cypress tests
+  let showSubTitle = $state(true);
+  let serverWaitDelay = $state(FAKE_SERVER_DELAY); // server simulation with default of 250ms but 50ms for Cypress tests
   let grid: SlickgridSvelteInstance;
-
   let rowDetailInstance: any;
+
+  const columns = defineColumns();
+  let gridOptions = $state.raw<GridOption>(defineGridOptions());
+  let dataset = $state.raw<Item[]>(getData(NB_ITEMS));
 
   onDestroy(() => {
     document.querySelector('.panel-wm-content')?.classList.remove('dark-mode');
     document.querySelector<HTMLElement>('#demo-container')?.setAttribute('data-bs-theme', 'light');
   });
 
-  /* Define grid Options and Columns */
-  function defineGrid() {
-    columns = [
+  function defineColumns(): Column<Item>[] {
+    return [
       {
         id: 'title',
         name: 'Title',
@@ -146,8 +137,10 @@
         },
       },
     ];
+  }
 
-    gridOptions = {
+  function defineGridOptions(): GridOption {
+    return {
       autoResize: {
         container: '#demo-container',
         rightPadding: 10,
@@ -178,7 +171,6 @@
 
         // ViewModel Template to load when row detail data is ready
         viewComponent: Example47Detail as any,
-        parentRef,
       },
       selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
@@ -241,7 +233,7 @@
     grid.filterService.setSortColumnIcons([{ columnId: 'duration', sortAsc: true }]);
     grid.dataView.setGrouping({
       getter: 'duration',
-      formatter: (g) => `Duration: ${g.value} <span class="text-primary">(${g.count} items)</span>`,
+      formatter: (g) => `Duration: ${g.value} <span style="color:green">(${g.count} items)</span>`,
       comparer: (a, b) => {
         return SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc);
       },
@@ -332,7 +324,7 @@
 
   function toggleSubTitle() {
     showSubTitle = !showSubTitle;
-    queueMicrotask(() => grid.resizerService.resizeGrid());
+    queueMicrotask(() => grid.resizerService.resizeGrid(0));
   }
 
   function gridReady(instance: SlickgridSvelteInstance) {
@@ -340,9 +332,6 @@
     rowDetailInstance = instance.extensionService.getExtensionInstanceByName('rowDetailView');
     groupByDuration(); // group by duration on page load
   }
-
-  defineGrid();
-  dataset = getData(NB_ITEMS);
 </script>
 
 <svelte:head><title>Example 47 - Row Detail View + Grouping</title></svelte:head>
@@ -369,10 +358,10 @@
   >
 </h2>
 {#if showSubTitle}<div class="subtitle">
-    Provide ability for Row Detail to work with Grouping. See the <a
-      href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/row-detail"
+    Provide ability for Row Detail to work with Grouping, see (<a
+      href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/row-detail"
       target="_blank">Wiki docs</a
-    >.
+    >)
   </div>{/if}
 <div class="row">
   <div class="col-sm-12 d-flex gap-1 align-items-center flex-wrap">
@@ -420,4 +409,3 @@
 </div>
 <hr />
 <SlickgridSvelte gridId="grid47" options={gridOptions} {columns} {dataset} onSvelteGridCreated={gridReady} />
-{#if toastMessage}<div class={`toast show text-bg-${toastType}`} role="alert">{toastMessage}</div>{/if}

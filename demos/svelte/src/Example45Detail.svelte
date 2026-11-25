@@ -1,23 +1,23 @@
 <script lang="ts">
   import { SlickgridSvelte, type Column, type GridOption, type GridState, type SlickgridSvelteInstance } from 'slickgrid-svelte';
-  import { onMount } from 'svelte';
+  import { onMount, untrack } from 'svelte';
   import type { Distributor } from './data/example45.model.js';
 
-  export let model: Distributor;
-  export let parentRef: any;
-  export let addon: any;
-  let innerGrid: SlickgridSvelteInstance;
-  let showGrid = false;
-  const innerGridClass = `row-detail-inner-${model.id}`;
-  const stateKey = `gridstate_row-detail-${model.id}`;
+  let { model }: { model: Distributor } = $props();
+  // the row detail is mounted once per item, so the initial model is all the inner grid needs
+  const initialModel = untrack(() => model);
+  let innerGrid: SlickgridSvelteInstance | undefined;
+  let showGrid = $state(false);
+  const innerGridClass = `row-detail-inner-${initialModel.id}`;
+  const stateKey = `gridstate_row-detail-${initialModel.id}`;
   let presets: GridState | undefined;
-  if (model.isUsingInnerGridStatePresets) {
+  if (initialModel.isUsingInnerGridStatePresets) {
     const stored = sessionStorage.getItem(stateKey);
     if (stored) {
       presets = JSON.parse(stored);
     }
   }
-  let columns: Column[] = [
+  const columns: Column[] = [
     { id: 'orderId', field: 'orderId', name: 'Order ID', filterable: true, sortable: true },
     { id: 'shipCity', field: 'shipCity', name: 'Ship City', filterable: true, sortable: true },
     { id: 'freight', field: 'freight', name: 'Freight', filterable: true, sortable: true, type: 'number' },
@@ -32,20 +32,11 @@
     datasetIdPropertyName: 'orderId',
     presets,
   };
-  let dataset = [...model.orderData];
+  const dataset = [...initialModel.orderData];
   onMount(() => (showGrid = true));
   function saveState() {
     if (model.isUsingInnerGridStatePresets && innerGrid?.gridStateService) {
       sessionStorage.setItem(stateKey, JSON.stringify(innerGrid.gridStateService.getCurrentGridState()));
-    }
-  }
-  function alertAssignee() {
-    alert(`Orders for ${model.companyName}`);
-  }
-  function deleteRow() {
-    if (confirm(`Are you sure that you want to delete ${model.companyName}?`)) {
-      addon?.collapseAll();
-      parentRef?.showFlashMessage?.(`Deleted row with ${model.companyName}`, 'danger');
     }
   }
 </script>

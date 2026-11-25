@@ -1,125 +1,258 @@
 <script lang="ts">
   import { SlickgridSvelte, type Column, type GridOption, type SlickgridSvelteInstance } from 'slickgrid-svelte';
+  import { tick } from 'svelte';
+  import './example07.scss';
 
-  let grid1: SlickgridSvelteInstance;
-  let showSubTitle = true;
-  function toggleSubTitle() {
-    showSubTitle = !showSubTitle;
-    queueMicrotask(() => {
-      grid1?.resizerService?.resizeGrid();
-      grid2?.resizerService?.resizeGrid();
-    });
-  }
-  let grid2: SlickgridSvelteInstance;
-  let message = '';
-  const highlighted: Array<Record<string, boolean>> = [{}, {}];
-  function toggleHighlight(args: any, index: number) {
-    if (args.command !== 'toggle-highlight') {
-      return;
-    }
-    const id = String(args.column.id);
-    highlighted[index][id] = !highlighted[index][id];
-    args.button.cssClass = highlighted[index][id] ? 'mdi mdi-lightbulb-on text-danger' : 'mdi mdi-lightbulb-outline text-warning faded';
-    args.button.tooltip = highlighted[index][id] ? 'Remove highlight.' : 'Highlight negative numbers.';
-    (index === 0 ? grid1 : grid2).slickGrid.invalidate();
-  }
-  function makeColumns(index: number): Column[] {
-    return Array.from({ length: 10 }, (_, i) => ({
-      id: String(i),
-      name: i === 0 ? 'Resize me!' : i === 1 ? 'Hover me!' : `Column ${String.fromCharCode(65 + i)}`,
-      field: String(i),
-      sortable: true,
-      filterable: true,
-      width: i === 0 ? 70 : 100,
-      formatter: (_row, _cell, value, column) =>
-        highlighted[index][String(column.id)] && value < 0 ? `<div style="color:red; font-weight:bold;">${value}</div>` : value,
-      header: {
-        buttons:
-          i === 0
-            ? [
-                { cssClass: 'mdi mdi-message-text', tooltip: 'Tag', handler: () => (message = 'Tag') },
-                { cssClass: 'mdi mdi-forum-outline', tooltip: 'Comment', handler: () => (message = 'Comment') },
-                { cssClass: 'mdi mdi-information', tooltip: 'Info', handler: () => (message = 'Info') },
-                { cssClass: 'mdi mdi-help-circle', tooltip: 'Help', handler: () => (message = 'Help') },
-              ]
-            : [
-                {
-                  cssClass: i === 1 ? 'mdi mdi-help-circle' : 'mdi mdi-lightbulb-outline text-warning faded',
-                  command: 'toggle-highlight',
-                  showOnHover: i === 1,
-                  tooltip: i === 1 ? 'This button only appears on hover.' : 'Highlight negative numbers.',
-                  itemVisibilityOverride: () => i !== 4,
-                  itemUsabilityOverride: () => i !== 9,
-                  action: (_event: Event, args: any) =>
-                    console.log(`execute a callback action to "${args.command}" on ${args.column.name}`),
-                },
-              ],
-      },
-    }));
-  }
-  const columns1 = makeColumns(0);
-  const columns2 = makeColumns(1);
-  const dataset1 = Array.from({ length: 200 }, (_, id) =>
-    Object.fromEntries([['id', id], ...Array.from({ length: 10 }, (_v, col) => [String(col), ((id * 7 + col * 17) % 100) - 50])])
-  );
-  const dataset2 = dataset1.map((item) => ({ ...item }));
-  const base: GridOption = {
+  const NB_ITEMS = 200;
+  const columns1WithHighlightingById: Record<string, boolean> = {};
+  const columns2WithHighlightingById: Record<string, boolean> = {};
+
+  let showSubTitle = $state(true);
+  let svelteGrid1!: SlickgridSvelteInstance;
+  let svelteGrid2!: SlickgridSvelteInstance;
+
+  const gridOptions1: GridOption = {
     enableAutoResize: true,
-    autoResize: { container: '#demo-container', rightPadding: 10 },
-    gridHeight: 275,
-    enableCellNavigation: true,
     enableHeaderButton: true,
-    enableExcelCopyBuffer: true,
-  };
-  const options1: GridOption = {
-    ...base,
     enableHeaderMenu: false,
+    autoResize: {
+      container: '#demo-container',
+      rightPadding: 10,
+    },
     enableFiltering: false,
-    headerButton: { onCommand: (_event, args) => toggleHighlight(args, 0) },
+    enableExcelCopyBuffer: true,
+    excelCopyBufferOptions: {
+      onCopyCells: (e, args) => console.log('onCopyCells', e, args),
+      onPasteCells: (e, args) => console.log('onPasteCells', e, args),
+      onCopyCancelled: (e, args) => console.log('onCopyCancelled', e, args),
+    },
+    enableCellNavigation: true,
+    gridHeight: 275,
+    headerButton: {
+      // you can use the "onCommand" (in Grid Options) and/or the "action" callback (in Column Definition)
+      onCommand: (_e: any, args) => handleOnCommand(_e, args, 1),
+    },
   };
-  const options2: GridOption = {
-    ...base,
+
+  // grid 2 options, same as grid 1 + extras
+  const gridOptions2: GridOption = {
+    ...gridOptions1,
     enableHeaderMenu: true,
     enableFiltering: true,
-    headerButton: { onCommand: (_event, args) => toggleHighlight(args, 1) },
+    headerButton: {
+      onCommand: (_e: any, args) => handleOnCommand(_e, args, 2),
+    },
   };
+
+  const columns1 = defineColumns(1);
+  const columns2 = defineColumns(2);
+  const dataset1 = loadData(NB_ITEMS, columns1.length);
+  const dataset2 = loadData(NB_ITEMS, columns2.length);
+
+  function handleOnCommand(_e: Event, args: any, gridNo: 1 | 2) {
+    const column = args.column;
+    const button = args.button;
+    const command = args.command;
+
+    if (command === 'toggle-highlight') {
+      const columnsWithHighlightingById = gridNo === 1 ? columns1WithHighlightingById : columns2WithHighlightingById;
+      if (button.cssClass === 'mdi mdi-lightbulb-on text-danger') {
+        delete columnsWithHighlightingById[column.id];
+        button.cssClass = 'mdi mdi-lightbulb-outline text-warning faded';
+        button.tooltip = 'Highlight negative numbers.';
+      } else {
+        columnsWithHighlightingById[column.id] = true;
+        button.cssClass = 'mdi mdi-lightbulb-on text-danger';
+        button.tooltip = 'Remove highlight.';
+      }
+
+      if (gridNo === 1) {
+        svelteGrid1.slickGrid.invalidate();
+      } else {
+        svelteGrid2.slickGrid.invalidate();
+      }
+    }
+  }
+
+  function defineColumns(gridNo: 1 | 2) {
+    const cols: Column[] = [];
+
+    // Set up some test columns.
+    for (let i = 0; i < 10; i++) {
+      cols.push({
+        id: i,
+        name: 'Column ' + String.fromCharCode('A'.charCodeAt(0) + i),
+        field: i + '',
+        width: i === 0 ? 70 : 100, // have the 2 first columns wider
+        filterable: true,
+        sortable: true,
+        formatter: (_row, _cell, value, columnDef) => {
+          if (gridNo === 1 && columns1WithHighlightingById[columnDef.id] && value < 0) {
+            return `<div style="color:red; font-weight:bold;">${value}</div>`;
+          } else if (gridNo === 2 && columns2WithHighlightingById[columnDef.id] && value < 0) {
+            return `<div style="color:red; font-weight:bold;">${value}</div>`;
+          }
+          return value;
+        },
+        header: {
+          buttons: [
+            {
+              cssClass: 'mdi mdi-lightbulb-outline text-warning faded',
+              command: 'toggle-highlight',
+              tooltip: 'Highlight negative numbers.',
+              itemVisibilityOverride: (args) => {
+                // for example don't show the header button on column "E"
+                return args.column.name !== 'Column E';
+              },
+              itemUsabilityOverride: (args) => {
+                // for example the button usable everywhere except on last column ='J"
+                return args.column.name !== 'Column J';
+              },
+              action: (_e, args) => {
+                // you can use the "action" callback and/or subscribe to the "onCallback" event, they both have the same arguments
+                // do something
+                console.log(`execute a callback action to "${args.command}" on ${args.column.name}`);
+              },
+            },
+          ],
+        },
+      });
+    }
+
+    // Set multiple buttons on the first column to demonstrate overflow.
+    cols[0].name = 'Resize me!';
+    cols[0].header = {
+      buttons: [
+        {
+          cssClass: 'mdi mdi-message-text',
+          handler: () => {
+            alert('Tag');
+          },
+        },
+        {
+          cssClass: 'mdi mdi-forum-outline',
+          handler: () => {
+            alert('Comment');
+          },
+        },
+        {
+          cssClass: 'mdi mdi-information',
+          handler: () => {
+            alert('Info');
+          },
+        },
+        {
+          cssClass: 'mdi mdi-help-circle',
+          handler: () => {
+            alert('Help');
+          },
+        },
+      ],
+    };
+
+    // when floating to left, you might want to inverse the icon orders
+    if (gridNo === 2) {
+      cols[0].header?.buttons?.reverse();
+    }
+
+    // Set a button on the second column to demonstrate hover.
+    cols[1].name = 'Hover me!';
+    cols[1].header = {
+      buttons: [
+        {
+          cssClass: 'mdi mdi-help-circle',
+          showOnHover: true,
+          tooltip: 'This button only appears on hover.',
+          handler: () => {
+            alert('Help');
+          },
+        },
+      ],
+    };
+
+    return cols;
+  }
+
+  function loadData(count: number, columnCount: number) {
+    // mock a dataset
+    const mockDataset: any[] = [];
+    for (let i = 0; i < count; i++) {
+      const d: any = (mockDataset[i] = {});
+      d['id'] = i;
+      for (let j = 0; j < columnCount; j++) {
+        d[j] = Math.round(Math.random() * 10) - 5;
+      }
+    }
+    return mockDataset;
+  }
+
+  async function toggleSubTitle() {
+    showSubTitle = !showSubTitle;
+    await tick();
+    svelteGrid1.resizerService.resizeGrid();
+    svelteGrid2.resizerService.resizeGrid();
+  }
 </script>
 
 <h2>
-  Example 7: Header Button Plugin <span class="float-end fs-6"
-    ><a
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example07.svelte"
+  Example 7: Header Button Plugin
+  <span class="float-end">
+    <a
+      style="font-size: 18px"
       target="_blank"
-      rel="noreferrer"><i class="mdi mdi-link-variant"></i> code</a
-    ></span
-  >
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example07.svelte"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
   <button
     class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
     type="button"
-    aria-label="Toggle example details"
+    aria-label="Toggle example sub-title details"
     data-test="toggle-subtitle"
-    onclick={toggleSubTitle}><span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span></button
+    onclick={toggleSubTitle}
   >
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
 </h2>
-{#if showSubTitle}<p class="subtitle">
-    Click the lightbulb to highlight negative numbers. The first column demonstrates multiple buttons and overflow; the second shows a
-    button on hover. Grid 2 also enables filtering and the header menu.
-  </p>{/if}
-{#if message}<div class="alert alert-info py-1">{message}</div>{/if}
-<h3>Grid 1</h3>
+
+<div class="subtitle" class:hidden={!showSubTitle}>
+  This example demonstrates using the <b>SlickHeaderButtons</b> plugin to easily add buttons to colum headers. These buttons can be
+  specified directly in the column definition, and are very easy to configure and use. (<a
+    href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/header-menu-header-buttons"
+    target="_blank">Wiki docs</a
+  >)
+  <ul>
+    <li>Resize the 1st column to see all icon/command</li>
+    <li>Mouse hover the 2nd column to see it's icon/command</li>
+    <li>For all the other columns, click on top-right red circle icon to enable highlight of negative numbers.</li>
+    <li>Use override callback functions to change the properties of show/hide, enable/disable the menu or certain item(s) from the list</li>
+    <ol>
+      <li>These callbacks are: "itemVisibilityOverride", "itemUsabilityOverride"</li>
+      <li>for example the "Column E" does not show the header button via "itemVisibilityOverride"</li>
+      <li>for example the "Column J" header button is displayed but it not usable via "itemUsabilityOverride"</li>
+    </ol>
+  </ul>
+</div>
+
+<h5>Grid 1</h5>
+
 <SlickgridSvelte
   gridId="grid7-1"
   columns={columns1}
-  options={options1}
+  options={gridOptions1}
   dataset={dataset1}
-  onSvelteGridCreated={(instance) => (grid1 = instance)}
+  onSvelteGridCreated={(instance) => (svelteGrid1 = instance)}
 />
-<hr />
-<h3>Grid 2</h3>
+
+<br />
+
+<h5>Grid 2 - <span class="subtitle">with both Header Buttons & Menus</span></h5>
+
 <SlickgridSvelte
   gridId="grid7-2"
   columns={columns2}
-  options={options2}
+  options={gridOptions2}
   dataset={dataset2}
-  onSvelteGridCreated={(instance) => (grid2 = instance)}
+  onSvelteGridCreated={(instance) => (svelteGrid2 = instance)}
 />

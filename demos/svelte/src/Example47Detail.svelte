@@ -1,8 +1,8 @@
 <script lang="ts">
-  export let model: any;
-  export let addon: any;
-  export let dataView: any;
-  export let parentRef: any;
+  import { format } from '@formkit/tempo';
+  import { showToast } from './utilities.js';
+
+  let { model, addon, dataView }: { model: any; addon: any; dataView: any } = $props();
 
   function alertAssignee() {
     alert(
@@ -12,14 +12,18 @@
 
   function deleteRow() {
     if (confirm(`Are you sure that you want to delete ${model.title}?`)) {
+      // you first need to collapse all rows (via the 3rd party addon instance)
       addon?.collapseAll();
+
+      // then you can delete the item from the dataView
       dataView?.deleteItem(model.id);
-      parentRef?.showFlashMessage?.(`Deleted row with ${model.title}`, 'danger');
+
+      showToast(`Deleted row with ${model.title}`, 'danger');
     }
   }
 
   function showNotification() {
-    parentRef?.showFlashMessage?.(`We just called Parent Method from the Row Detail Child Component on ${model.title}`, 'info');
+    showToast(`We just called Parent Method from the Row Detail Child Component on ${model.title}`, 'info');
   }
 </script>
 
@@ -36,10 +40,10 @@
   </div>
   <div class="row">
     <div class="col-3 detail-label">
-      <span class="detail-field-label">Start:</span> <span>{model.start ? new Date(model.start).toISOString().slice(0, 10) : ''}</span>
+      <span class="detail-field-label">Start:</span> <span>{model.start ? format(model.start, 'YYYY-MM-DD') : ''}</span>
     </div>
     <div class="col-3 detail-label">
-      <span class="detail-field-label">Finish:</span> <span>{model.finish ? new Date(model.finish).toISOString().slice(0, 10) : ''}</span>
+      <span class="detail-field-label">Finish:</span> <span>{model.finish ? format(model.finish, 'YYYY-MM-DD') : ''}</span>
     </div>
     <div class="col-3 detail-label">
       <span class="detail-field-label">Effort Driven:</span> <i class:mdi={model.effortDriven} class:mdi-check={model.effortDriven}></i>

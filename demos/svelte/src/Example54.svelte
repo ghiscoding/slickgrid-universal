@@ -1,27 +1,22 @@
 <script lang="ts">
   import { WebMcpService, type SlickGridState } from '@slickgrid-universal/web-mcp';
   import { SlickgridSvelte, type Column, type GridOption, type SlickgridSvelteInstance } from 'slickgrid-svelte';
-  import { onDestroy, onMount } from 'svelte';
-
-  type Ref<T> = T;
-  const ref = <T,>(value?: T): T => value as T;
 
   const NB_ITEMS = 2000;
   const PRIORITIES = ['Low', 'Medium', 'High', 'Critical'];
   const STATUSES = ['Todo', 'In Progress', 'Done', 'Blocked'];
 
-  let gridOptions = ref<GridOption>();
-  let columns: Ref<Column[]> = ref([]);
-  let dataset = ref<any[]>([]);
-  let showSubTitle = true;
-  let textResult = ref('');
+  let gridOptions: GridOption = $state.raw({});
+  let columns: Column[] = $state.raw([]);
+  // mock some data (different in each dataset)
+  let dataset: any[] = $state.raw(loadData(NB_ITEMS));
+  let showSubTitle = $state(true);
+  let textResult = $state('');
   const mcpService = new WebMcpService();
   let svelteGrid!: SlickgridSvelteInstance;
 
   defineGrid();
 
-  // mock some data (different in each dataset)
-  dataset = loadData(NB_ITEMS);
   showOutput(
     '// Click a button above to inspect or manipulate the grid via the MCP service API.\n// In a real WebMCP-capable browser, an AI assistant calls these same methods automatically.'
   );

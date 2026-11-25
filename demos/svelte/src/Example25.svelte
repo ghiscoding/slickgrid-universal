@@ -112,11 +112,11 @@
     },
   ];
 
-  let dataset: any[] = [];
-  let grid: SlickgridSvelteInstance;
-  let showSubtitle = true;
-  let processing = false;
-  let status = { text: '', class: '' };
+  const dataset: any[] = [];
+  let grid!: SlickgridSvelteInstance;
+  let showSubtitle = $state(true);
+  let processing = $state(false);
+  let status = $state({ text: '', class: '' });
 
   const options: GridOption = {
     autoResize: { container: '#demo-container', rightPadding: 10 },
@@ -137,7 +137,7 @@
       options: { datasetName: 'countries' },
       preProcess: () => displaySpinner(true),
       process: (query: string) => getCountries(query),
-      postProcess: (result: GraphqlResult<Country>) => displaySpinner(false),
+      postProcess: () => displaySpinner(false),
     } as GraphqlServiceApi,
   };
 
@@ -204,13 +204,42 @@
 </h2>
 {#if showSubtitle}
   <div class="subtitle">
-    This example loads country and language data with a GraphQL query, then applies filtering and sorting locally without pagination.
+    Use basic GraphQL query with any external public APIs (<a
+      href="https://ghiscoding.gitbook.io/svelte-slickgrid/backend-services/graphql"
+      target="_blank"
+      rel="noreferrer">Wiki docs</a
+    >).
+    <ul>
+      <li>
+        This Examples uses a Public GraphQL API that you can find at this link
+        <a href="https://countries.trevorblades.com/" target="_blank" rel="noreferrer">https://countries.trevorblades.com/</a>
+      </li>
+      <li>Compare to the regular and default GraphQL implementation, you will find the following differences</li>
+      <ul>
+        <li>
+          There are no Pagination and we only use GraphQL <b>once</b> to load the data, then we use the grid as a regular local in-memory grid
+        </li>
+        <li>
+          We enabled the following 2 flags "useLocalFiltering" and "useLocalSorting" to use regular (in memory) DataView filtering/sorting
+        </li>
+      </ul>
+      <li>
+        NOTE - This Example calls multiple GraphQL queries, this is <b>ONLY</b> for demo purposes, you would typically only call 1 query (which
+        is what GraphQL is good at)
+      </li>
+      <li>
+        This example is mainly to demo the use of GraphqlService to build the query and retrieve the data but also to demo how to mix that
+        with local (in-memory) Filtering/Sorting strategies
+      </li>
+    </ul>
   </div>
 {/if}
 <div class="row">
   <div class="col-xs-6 col-sm-3">
     <div class={status.class} role="alert" data-test="status">
-      <strong>Status: </strong>{status.text}{#if processing}<i class="mdi mdi-sync mdi-spin"></i>{/if}
+      <strong>Status: </strong>
+      {status.text}
+      <span hidden={!processing}><i class="mdi mdi-sync mdi-spin"></i></span>
     </div>
   </div>
 </div>

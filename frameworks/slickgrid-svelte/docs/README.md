@@ -5,7 +5,7 @@ This documentation covers the Svelte 5 wrapper and the shared SlickGrid Universa
 ## Start here
 
 - [Quick start](getting-started/quick-start.md) — install the wrapper, add a grid, and update its data.
-- [Wrapper API](getting-started/wrapper-api.md) — props, bindings, slots, and lifecycle.
+- [Wrapper API](getting-started/wrapper-api.md) — props, bindings, snippets, and lifecycle.
 - [Events](events/svelte-events.md) — handle grid events from Svelte.
 - [Localization](localization/svelte-i18n.md) — connect i18next or a custom translate service.
 - [Custom Svelte components](column-functionalities/svelte-components.md) — build component-based editors and filters.

@@ -33,21 +33,21 @@ Available themes include `slickgrid-theme-default`, `slickgrid-theme-bootstrap`,
 <script lang="ts">
   import { SlickgridSvelte, type Column, type GridOption, type SlickgridSvelteInstance } from 'slickgrid-svelte';
 
-  let columns: Column[] = [
+  const columns: Column[] = [
     { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 120 },
     { id: 'duration', name: 'Duration', field: 'duration', sortable: true, minWidth: 90 },
   ];
-  let options: GridOption = {
+  const options: GridOption = {
     enableAutoResize: false,
     gridHeight: 320,
     gridWidth: 800,
     enableFiltering: true,
   };
-  let dataset = [
+  let dataset = $state.raw([
     { id: 1, title: 'Task 1', duration: 5 },
     { id: 2, title: 'Task 2', duration: 8 },
-  ];
-  let grid: SlickgridSvelteInstance | undefined;
+  ]);
+  let grid = $state<SlickgridSvelteInstance>();
 
   function gridCreated(instance: SlickgridSvelteInstance) {
     grid = instance;
@@ -74,7 +74,7 @@ Each grid needs a unique `gridId`, and every data item needs a unique ID. The gr
 
 Reassign `columns`, `options`, `dataset`, `datasetHierarchical`, or `paginationOptions` to notify the wrapper of changes. Mutating an existing array or object in place does not trigger its Svelte update handling.
 
-The wrapper creates the grid when the component mounts and disposes it when the component is destroyed. Use `bind:instances` or `onSvelteGridCreated` to access the SlickGrid and its services. See the [wrapper API](wrapper-api.md) for all props, events, and slots.
+The wrapper creates the grid when the component mounts and disposes it when the component is destroyed. Use `bind:instances` or `onSvelteGridCreated` to access the SlickGrid and its services. See the [wrapper API](wrapper-api.md) for all props, events, and snippets.
 
 ## Use the demo as a reference
 

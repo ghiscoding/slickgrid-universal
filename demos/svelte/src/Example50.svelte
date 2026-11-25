@@ -24,40 +24,43 @@
     address: string;
   }
 
-  let gridOptions1: GridOption;
-  let gridOptions2: GridOption;
-  let columns1: Column[] = [];
-  let columns2: Column[] = [];
-  let dataset1: Customer[] = [];
-  let dataset2: OrderData[] = [];
-  let selectedName = '';
-  let svelteGrid1: SlickgridSvelteInstance;
+  let selectedName = $state('');
+  let svelteGrid1: SlickgridSvelteInstance | undefined;
 
-  function defineGrids() {
-    columns1 = [
-      { id: 'name', name: 'Customer Name', field: 'name', sortable: true, minWidth: 100, filterable: true },
-      { id: 'company', name: 'Company Name', field: 'company', minWidth: 100, sortable: true },
-      { id: 'address', name: 'Address', field: 'address', sortable: true, minWidth: 100 },
-      { id: 'country', name: 'Country', field: 'country', sortable: true },
-    ];
-    gridOptions1 = { gridHeight: 225, gridWidth: 800, rowHeight: 33, enableSelection: true, selectionOptions: { selectionType: 'row' } };
-    columns2 = [
-      { id: 'orderId', field: 'orderId', name: 'Order ID', sortable: true, width: 50 },
-      { id: 'freight', field: 'freight', name: 'Freight', sortable: true, width: 50, type: 'number', formatter: Formatters.dollar },
-      { id: 'name', field: 'name', name: 'Ship Company', sortable: true },
-      { id: 'city', field: 'city', name: 'Ship City', sortable: true, width: 60 },
-      { id: 'country', field: 'country', name: 'Ship Country', sortable: true, width: 60 },
-      { id: 'address', field: 'address', name: 'Ship Address', sortable: true },
-    ];
-    gridOptions2 = {
-      gridWidth: 950,
-      autoResize: { autoHeight: true, minHeight: 150 },
-      enableSorting: true,
-      rowHeight: 38,
-      enableCellNavigation: true,
-      datasetIdPropertyName: 'orderId',
-    };
-  }
+  const columns1: Column[] = [
+    { id: 'name', name: 'Customer Name', field: 'name', sortable: true, minWidth: 100, filterable: true },
+    { id: 'company', name: 'Company Name', field: 'company', minWidth: 100, sortable: true },
+    { id: 'address', name: 'Address', field: 'address', sortable: true, minWidth: 100 },
+    { id: 'country', name: 'Country', field: 'country', sortable: true },
+  ];
+  const columns2: Column[] = [
+    { id: 'orderId', field: 'orderId', name: 'Order ID', sortable: true, width: 50 },
+    { id: 'freight', field: 'freight', name: 'Freight', sortable: true, width: 50, type: 'number', formatter: Formatters.dollar },
+    { id: 'name', field: 'name', name: 'Ship Company', sortable: true },
+    { id: 'city', field: 'city', name: 'Ship City', sortable: true, width: 60 },
+    { id: 'country', field: 'country', name: 'Ship Country', sortable: true, width: 60 },
+    { id: 'address', field: 'address', name: 'Ship Address', sortable: true },
+  ];
+
+  const gridOptions1: GridOption = {
+    enableAutoResize: false,
+    gridHeight: 225,
+    gridWidth: 800,
+    rowHeight: 33,
+    enableSelection: true,
+    selectionOptions: { selectionType: 'row' },
+  };
+  const gridOptions2: GridOption = {
+    gridWidth: 950,
+    autoResize: { autoHeight: true, minHeight: 150 },
+    enableSorting: true,
+    rowHeight: 38,
+    enableCellNavigation: true,
+    datasetIdPropertyName: 'orderId',
+  };
+
+  const dataset1 = mockMasterData();
+  let dataset2 = $state.raw<OrderData[]>([]);
 
   function gridReady(instance: SlickgridSvelteInstance) {
     svelteGrid1 = instance;
@@ -69,7 +72,7 @@
   function handleOnCellClicked(args: OnClickEventArgs) {
     const item = svelteGrid1?.slickGrid?.getDataItem(args.row) as Customer | undefined;
     if (item) {
-      svelteGrid1.slickGrid?.setSelectedRows([args.row]);
+      svelteGrid1?.slickGrid?.setSelectedRows([args.row]);
       dataset2 = mockDetailData(item);
       selectedName = `${item.name} - ${item.company}`;
     }
@@ -129,30 +132,36 @@
     };
     return orders[customer.id] ?? [];
   }
-
-  defineGrids();
-  dataset1 = mockMasterData();
 </script>
 
 <svelte:head><title>Example 50 - Master/Detail Grids</title></svelte:head>
+
 <h2>
-  Example 50: Master/Detail Grids <span class="float-end font18"
-    ><a target="_blank" href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example50.svelte"
-      ><span class="mdi mdi-link-variant"></span> code</a
-    ></span
-  >
+  Example 50: Master/Detail Grids
+  <span class="float-end font18">
+    see&nbsp;
+    <a target="_blank" href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example50.svelte">
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
 </h2>
+
 <h5>Master Grid</h5>
 <div class="grid-container1">
   <SlickgridSvelte
     gridId="grid50-1"
-    options={gridOptions1}
     columns={columns1}
+    options={gridOptions1}
     dataset={dataset1}
     onSvelteGridCreated={gridReady}
     onClick={(event) => handleOnCellClicked(event.detail.args)}
   />
 </div>
+
 <hr />
-<h5><span>Detail Grid - Orders for:</span> <span class="fst-italic text-secondary customer-detail">{selectedName}</span></h5>
-<SlickgridSvelte gridId="grid50-2" options={gridOptions2} columns={columns2} dataset={dataset2} />
+
+<h5>
+  <span>Detail Grid - Orders for:</span>
+  <span class="fst-italic text-secondary customer-detail">{selectedName}</span>
+</h5>
+<SlickgridSvelte gridId="grid50-2" columns={columns2} options={gridOptions2} dataset={dataset2} />

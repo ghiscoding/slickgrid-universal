@@ -15,10 +15,10 @@
   import { i18n } from './data/i18n.js';
 
   const NB_ITEMS = 1000;
-  let grid: SlickgridSvelteInstance;
-  let selectedLanguage = 'en';
-  let showSubtitle = true;
-  let darkMode = false;
+  let grid!: SlickgridSvelteInstance;
+  let darkMode = $state(false);
+  let selectedLanguage = $state('en');
+  let showSubtitle = $state(true);
   void i18n.changeLanguage('en');
 
   const actionFormatter: Formatter = (_row, _cell, _value, _column, dataContext) =>
@@ -30,7 +30,7 @@
     if (!value) {
       return '';
     }
-    const count = Number(value >= 3 ? 3 : value);
+    const count = +(value >= 3 ? 3 : value);
     const color = count === 3 ? 'red' : count === 2 ? 'orange' : 'yellow';
     return Array.from({ length: count }, () => `<i class="mdi mdi-star ${color}" aria-hidden="true"></i>`).join('');
   };
@@ -40,10 +40,12 @@
       return '';
     }
     const language = (slickGrid.getOptions() as GridOption).i18n;
-    const key = value >= 3 ? 'HIGH' : value === 2 ? 'MEDIUM' : 'LOW';
+    const count = +(value >= 3 ? 3 : value);
+    const key = count === 3 ? 'HIGH' : count === 2 ? 'MEDIUM' : 'LOW';
     return language?.t(key) ?? '';
   };
 
+  // custom translate Formatter (typically you would move that to a separate file, for separation of concerns)
   const taskTranslateFormatter: Formatter = (_row, _cell, value, _column, _item, slickGrid: SlickGrid) => {
     const language = (slickGrid.getOptions() as GridOption).i18n;
     return language?.t('TASK_X', { x: value }) ?? '';
@@ -67,6 +69,7 @@
       nameKey: 'PERCENT_COMPLETE',
       field: 'percentComplete',
       minWidth: 100,
+      exportWithFormatter: false,
       sortable: true,
       filterable: true,
       filter: { model: Filters.slider, operator: '>=' },
@@ -80,6 +83,7 @@
       nameKey: 'START',
       minWidth: 100,
       formatter: Formatters.dateIso,
+      outputType: 'dateIso',
       type: 'date',
       filterable: true,
       filter: { model: Filters.compoundDate },
@@ -90,6 +94,7 @@
       field: 'finish',
       nameKey: 'FINISH',
       formatter: Formatters.dateIso,
+      outputType: 'dateIso',
       type: 'date',
       minWidth: 100,
       filterable: true,
@@ -149,7 +154,7 @@
           {
             command: 'command2',
             title: 'Command 2',
-            action: () => undefined,
+            action: (_e: any, args: any) => console.log(args.dataContext, args.column),
             itemUsabilityOverride: (args: any) => !args.dataContext.completed,
           },
           { divider: true, command: '' },
@@ -243,7 +248,7 @@
       command === 'delete-row' &&
       confirm(`Do you really want to delete row ${args.row + 1} with ${i18n.t('TASK_X', { x: dataContext.id })}`)
     ) {
-      grid.gridService.deleteItemById(dataContext.id);
+      grid.dataView.deleteItem(dataContext.id);
     }
   }
 
@@ -292,7 +297,7 @@
               command: 'request-update',
               title: 'Request update from supplier',
               iconCssClass: 'mdi mdi-star',
-              tooltip: 'send an update request',
+              tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update',
             },
             'divider',
             {
@@ -310,13 +315,18 @@
           ],
         },
       ],
-      onBeforeMenuShow: (_event: any, args: any) => grid.slickGrid.setActiveCell(args.row, args.cell, false),
+      onBeforeMenuShow: (_event: any, args: any) => {
+        grid.slickGrid.setActiveCell(args.row, args.cell, false);
+        console.log('Before the global Context Menu is shown', args);
+      },
+      onBeforeMenuClose: (_event: any, args: any) => console.log('Global Context Menu is closing', args),
       onCommand: executeCommand,
     };
   }
 
   const options: GridOption = {
     autoResize: { container: '#demo-container', rightPadding: 10 },
+    darkMode: false,
     enableCellNavigation: true,
     enableFiltering: true,
     enableSorting: true,
@@ -327,13 +337,18 @@
     i18n,
     enableContextMenu: true,
     enableCellMenu: true,
-    cellMenu: { onCommand: executeCommand },
+    cellMenu: {
+      onCommand: executeCommand,
+      onBeforeMenuShow: (_event: any, args: any) => console.log('Before the Cell Menu is shown', args),
+      onBeforeMenuClose: (_event: any, args: any) => console.log('Cell Menu is closing', args),
+    },
     contextMenu: getContextMenuOptions(),
   };
 
   async function switchLanguage() {
-    selectedLanguage = selectedLanguage === 'en' ? 'fr' : 'en';
-    await i18n.changeLanguage(selectedLanguage);
+    const nextLanguage = selectedLanguage === 'en' ? 'fr' : 'en';
+    await i18n.changeLanguage(nextLanguage);
+    selectedLanguage = nextLanguage;
   }
 
   function toggleDarkMode() {
@@ -377,18 +392,105 @@
     onclick={toggleSubtitle}><i class="mdi mdi-information-outline"></i></button
   >
   <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" type="button" data-test="toggle-dark-mode" onclick={toggleDarkMode}
-    ><i class="mdi mdi-theme-light-dark"></i> Toggle Dark Mode</button
+    ><i class="mdi mdi-theme-light-dark"></i> <span>Toggle Dark Mode</span></button
   >
 </h2>
-{#if showSubtitle}<div class="subtitle">
-    This example demonstrates SlickGrid cell menus and context menus, including translated items, conditional commands, and nested submenus.
-  </div>{/if}
-<div class="row mb-2">
-  <div class="col">
-    <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="language-button" onclick={switchLanguage}
-      ><i class="mdi mdi-translate"></i> Switch Language</button
-    >
-    <b>Locale:</b> <span class="ms-1" style="font-style:italic" data-test="selected-locale">{selectedLanguage}.json</span>
+{#if showSubtitle}
+  <div class="subtitle">
+    Add Cell Menu and Context Menu
+    <ul>
+      <li>This example demonstrates 2 SlickGrid plugins</li>
+      <ol>
+        <li>
+          Using the <b>SlickCellMenu</b> plugin, often used for an Action Menu(s), 1 or more per grid (<a
+            href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/cell-menu"
+            target="_blank"
+            rel="noreferrer">Wiki docs</a
+          >).
+        </li>
+        <li>
+          Using the <b>SlickContextMenu</b> plugin, shown after a mouse right+click, only 1 per grid. (<a
+            href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/context-menu"
+            target="_blank"
+            rel="noreferrer">Wiki docs</a
+          >).
+        </li>
+      </ol>
+      <li>It will also "autoAdjustDrop" (bottom/top) and "autoAlignSide" (left/right) by default but could be turned off</li>
+      <li>Both plugins display an array of commands, with support for nested sub-menus.</li>
+      <li>There are 2 ways to execute a Command</li>
+      <ol>
+        <li>via onCommand (use a switch/case to parse command and do something with it)</li>
+        <li>via action callback (that can be defined on each command)</li>
+      </ol>
+      <li>
+        Use override callback functions to change the properties of show/hide, enable/disable the menu or certain item(s) from the list
+      </li>
+      <ol>
+        <li>These callbacks are: "menuUsabilityOverride", "itemVisibilityOverride", "itemUsabilityOverride"</li>
+        <li>... e.g. in the demo, the "Action" Cell Menu is only available when Priority is set to "High" via "menuUsabilityOverride"</li>
+        <li>... e.g. in the demo, the Context Menu is only available on the first 20 Tasks via "menuUsabilityOverride"</li>
+      </ol>
+    </ul>
   </div>
+{/if}
+<div class="grid24">
+  <div class="row locale">
+    <div class="col-12">
+      <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="language-button" onclick={switchLanguage}
+        ><i class="mdi mdi-translate"></i> Switch Language</button
+      >
+      <b>Locale:</b>
+      <span style="font-style:italic" data-test="selected-locale">{selectedLanguage}.json</span>
+    </div>
+  </div>
+
+  <SlickgridSvelte gridId="grid24" {columns} {options} {dataset} onSvelteGridCreated={ready} />
 </div>
-<SlickgridSvelte gridId="grid24" {columns} {options} {dataset} onSvelteGridCreated={ready} />
+
+<style>
+  :global(.grid24 .bold) {
+    font-weight: bold;
+  }
+  :global(.grid24 .grey) {
+    color: grey;
+  }
+  :global(.grid24 .orange) {
+    color: orange;
+  }
+  :global(.grid24 .red) {
+    color: red;
+  }
+  :global(.grid24 .yellow) {
+    color: rgb(255, 235, 52);
+  }
+  :global(.grid24 .pointer) {
+    cursor: pointer;
+  }
+  :global(.grid24 .cell-menu-dropdown-outline) {
+    border: 1px solid #a0a0a0;
+    border-radius: 4px;
+    width: max-content;
+    padding: 2px 14px;
+    cursor: pointer;
+  }
+  :global(.grid24 .cell-menu-dropdown-outline:hover:not(.disabled)) {
+    background-color: #a3a3a3;
+    color: #ffffff;
+  }
+  :global(.grid24 .cell-menu-dropdown-outline.disabled) {
+    color: #d4d4d4;
+    border: 1px solid #d8d8d8;
+  }
+  :global(.grid24 .slick-dark-mode .disabled) {
+    border: 1px solid #616161;
+    color: #686868;
+  }
+  :global(.grid24 .fake-hyperlink) {
+    cursor: pointer;
+    color: #08c;
+  }
+  :global(.grid24 .row.locale) {
+    margin-top: 5px;
+  }
+</style>

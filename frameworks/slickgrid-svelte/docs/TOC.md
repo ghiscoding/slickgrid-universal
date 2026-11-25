@@ -71,7 +71,7 @@
 * [Global Grid Options](grid-functionalities/global-options.md)
 * [Header Menu and Header Buttons](grid-functionalities/header-menu-header-buttons.md)
 * [Custom Menu Slots](grid-functionalities/menu-slots.md)
-* [Header and Footer Slots](getting-started/wrapper-api.md#slots)
+* [Header and Footer Snippets](getting-started/wrapper-api.md#snippets)
 * [Add, Update, or Highlight Items](grid-functionalities/add-update-highlight.md)
 * [Dynamic Row Metadata](grid-functionalities/dynamic-item-metadata.md)
 * [Pagination](grid-functionalities/pagination.md)

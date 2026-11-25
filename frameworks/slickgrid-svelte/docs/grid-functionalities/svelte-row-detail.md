@@ -44,7 +44,7 @@ The preload and detail components receive these props:
 
 ```svelte
 <script lang="ts">
-  export let model: { id: number; title: string; detail?: string };
+  let { model }: { model: { id: number; title: string; detail?: string } } = $props();
 </script>
 
 <div class="row-detail-content">

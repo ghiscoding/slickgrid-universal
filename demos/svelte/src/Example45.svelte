@@ -9,28 +9,27 @@
 
   const FAKE_SERVER_DELAY = 250;
   const NB_ITEMS = 995;
-  let gridOptions: GridOption;
-  let detailViewRowCount = 9;
-  let columns: Column[] = [];
-  let dataset: Distributor[] = [];
+  let detailViewRowCount = $state(9);
   let isDarkMode = false;
-  let isUsingAutoHeight = false;
-  let isUsingInnerGridStatePresets = false;
-  let isKeepingComponentAlive = false;
-  let showSubTitle = true;
-  let serverWaitDelay = FAKE_SERVER_DELAY; // server simulation with default of 250ms but 50ms for Cypress tests
+  let isUsingAutoHeight = $state(false);
+  let isUsingInnerGridStatePresets = $state(false);
+  let isKeepingComponentAlive = $state(false);
+  let showSubTitle = $state(true);
+  let serverWaitDelay = $state(FAKE_SERVER_DELAY); // server simulation with default of 250ms but 50ms for Cypress tests
   let grid: SlickgridSvelteInstance;
-
   let rowDetailInstance: SvelteRowDetailView;
+
+  const columns = defineColumns();
+  let gridOptions = $state.raw<GridOption>(defineGridOptions());
+  let dataset = $state.raw<Distributor[]>(getData(NB_ITEMS));
 
   onDestroy(() => {
     document.querySelector('.panel-wm-content')?.classList.remove('dark-mode');
     document.querySelector<HTMLElement>('#demo-container')?.setAttribute('data-bs-theme', 'light');
   });
 
-  /* Define grid Options and Columns */
-  function defineGrid() {
-    columns = [
+  function defineColumns(): Column[] {
+    return [
       {
         id: 'companyId',
         name: 'ID',
@@ -79,15 +78,19 @@
         filterable: true,
       },
     ];
+  }
 
-    gridOptions = {
+  function defineGridOptions(): GridOption {
+    return {
       autoResize: {
         container: '#demo-container',
         autoHeight: isUsingAutoHeight, // works with/without autoHeight
         bottomPadding: 20,
       },
+      autoHeight: false,
       enableFiltering: true,
       enableRowDetailView: true,
+      darkMode: isDarkMode,
       rowHeight: 33,
       externalResources: [SvelteRowDetailView],
       rowDetailView: {
@@ -159,11 +162,11 @@
   }
 
   function closeAllRowDetail() {
-    rowDetailInstance.collapseAll();
+    rowDetailInstance?.collapseAll();
   }
 
   function redrawAllRowDetail() {
-    rowDetailInstance.redrawAllViewComponents();
+    rowDetailInstance?.redrawAllViewComponents(true);
   }
 
   /** Just for demo purposes, we will simulate an async server call and return more details on the selected row item */
@@ -230,16 +233,13 @@
 
   function toggleSubTitle() {
     showSubTitle = !showSubTitle;
-    queueMicrotask(() => grid.resizerService.resizeGrid());
+    queueMicrotask(() => grid.resizerService.resizeGrid(0));
   }
 
   function gridReady(instance: SlickgridSvelteInstance) {
     grid = instance;
     rowDetailInstance = instance.extensionService.getExtensionInstanceByName('rowDetailView') as SvelteRowDetailView;
   }
-
-  defineGrid();
-  dataset = getData(NB_ITEMS);
 </script>
 
 <svelte:head><title>Example 45 - Row Detail with inner Grid</title></svelte:head>
@@ -268,8 +268,13 @@
 
 {#if showSubTitle}
   <div class="subtitle">
-    Add functionality to show extra information with a Row Detail View. This demo uses an inner grid and demonstrates how virtual scrolling
-    can recreate row-detail components. Inner-grid state presets and keeping the component alive can preserve state while scrolling.
+    Add functionality to show extra information with a Row Detail View, (<a
+      href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/row-detail"
+      target="_blank">Wiki docs</a
+    >), we'll use an inner grid inside our Row Detail Component. Note that because SlickGrid uses Virtual Scroll, the rows and row details
+    are often be re-rendered (when row is out of viewport range) and this means unmounting Row Detail Component which indirectly mean that
+    all component states (dynamic elements, forms, ...) will be disposed as well, however you can use Grid State/Presets to reapply previous
+    state whenever the row detail gets re-rendered when back to viewport.
   </div>
 {/if}
 
@@ -310,7 +315,12 @@
           data-test="use-inner-grid-state-presets"
           checked={isUsingInnerGridStatePresets}
           onclick={changeUsingInnerGridStatePresets}
-        /> Use Inner Grid State/Presets</label
+        />
+        <span
+          title="should we use Grid State/Presets to keep the inner grid state whenever Row Details are out and back to viewport and re-rendered"
+        >
+          Use Inner Grid State/Presets
+        </span></label
       >
       <label class="checkbox-inline control-label ms-2" for="keepComponentAlive"
         ><input
@@ -319,7 +329,10 @@
           data-test="keep-component-alive"
           checked={isKeepingComponentAlive}
           onclick={changeKeepingComponentAlive}
-        /> Keep Component Alive on Scroll</label
+        />
+        <span title="preserve component state (incl. nested grid sort/filters) when row scrolls out of viewport instead of destroying it">
+          Keep Component Alive on Scroll
+        </span></label
       >
       <label class="checkbox-inline control-label ms-2" for="useResizeAutoHeight"
         ><input

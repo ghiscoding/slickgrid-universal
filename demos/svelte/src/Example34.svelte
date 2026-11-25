@@ -16,16 +16,13 @@
   import { onMount } from 'svelte';
 
   const NB_ITEMS = 200;
-  let columns: Column[] = [];
-  let dataset: any[] = [];
-  let gridOptions: GridOption;
-  let isDarkMode = false;
-  let isFullScreen = false;
-  let highlightDuration = 150;
-  let minChangePerCycle = 0;
-  let maxChangePerCycle = 10;
-  let refreshRate = 75;
-  let showSubTitle = true;
+  let isDarkMode = $state(false);
+  let isFullScreen = $state(false);
+  let highlightDuration = $state(150);
+  let minChangePerCycle = $state(0);
+  let maxChangePerCycle = $state(10);
+  let refreshRate = $state(75);
+  let showSubTitle = $state(true);
   let grid: SlickgridSvelteInstance;
   let timer: ReturnType<typeof setTimeout> | undefined;
 
@@ -80,231 +77,242 @@
     return wrapper;
   };
 
-  function defineGrid() {
-    columns = [
-      {
-        id: 'currency',
-        name: 'Currency',
-        field: 'currency',
-        filterable: true,
-        sortable: true,
-        minWidth: 65,
-        width: 65,
-        formatter: currencyFormatter,
-        filter: {
-          model: Filters.singleSelect,
-          collection: [
-            { label: '', value: '' },
-            { label: 'CAD', value: 'CAD' },
-            { label: 'USD', value: 'USD' },
-          ],
-        },
-        grouping: {
-          getter: 'currency',
-          formatter: (group) =>
-            `Currency: <span style="color: var(--slick-primary-color); font-weight: bold;">${group.value}</span>  <span style="color: #659bff;">(${group.count} items)</span>`,
-          aggregators: [new Aggregators.Sum('amount')],
-          aggregateCollapsed: true,
-          collapsed: false,
-        },
+  const columns: Column[] = [
+    {
+      id: 'currency',
+      name: 'Currency',
+      field: 'currency',
+      filterable: true,
+      sortable: true,
+      minWidth: 65,
+      width: 65,
+      formatter: currencyFormatter,
+      filter: {
+        model: Filters.singleSelect,
+        collection: [
+          { label: '', value: '' },
+          { label: 'CAD', value: 'CAD' },
+          { label: 'USD', value: 'USD' },
+        ],
       },
-      { id: 'symbol', name: 'Symbol', field: 'symbol', filterable: true, sortable: true, minWidth: 65, width: 65 },
-      {
-        id: 'market',
-        name: 'Market',
-        field: 'market',
-        filterable: true,
-        sortable: true,
-        minWidth: 75,
-        width: 75,
-        grouping: {
-          getter: 'market',
-          formatter: (group) =>
-            `Market: <span style="color: var(--slick-primary-color); font-weight: bold;">${group.value}</span>  <span style="color: #659bff;">(${group.count} items)</span>`,
-          aggregators: [new Aggregators.Sum('amount')],
-          aggregateCollapsed: true,
-          collapsed: false,
-        },
+      grouping: {
+        getter: 'currency',
+        formatter: (group) =>
+          `Currency: <span style="color: var(--slick-primary-color); font-weight: bold;">${group.value}</span>  <span style="color: #659bff;">(${group.count} items)</span>`,
+        aggregators: [new Aggregators.Sum('amount')],
+        aggregateCollapsed: true,
+        collapsed: false,
       },
-      { id: 'company', name: 'Company', field: 'company', filterable: true, sortable: true, minWidth: 80, width: 130 },
-      {
-        id: 'trsnType',
-        name: 'Type',
-        field: 'trsnType',
-        filterable: true,
-        sortable: true,
-        minWidth: 60,
-        width: 60,
-        formatter: transactionTypeFormatter,
-        filter: {
-          model: Filters.singleSelect,
-          collection: [
-            { label: '', value: '' },
-            { label: 'Buy', value: 'Buy' },
-            { label: 'Sell', value: 'Sell' },
-          ],
-        },
-        grouping: {
-          getter: 'trsnType',
-          formatter: (group) =>
-            `Type: <span style="color: var(--slick-primary-color); font-weight: bold;">${group.value}</span>  <span style="color: #659bff;">(${group.count} items)</span>`,
-          aggregators: [new Aggregators.Sum('amount')],
-          aggregateCollapsed: true,
-          collapsed: false,
-        },
+    },
+    { id: 'symbol', name: 'Symbol', field: 'symbol', filterable: true, sortable: true, minWidth: 65, width: 65 },
+    {
+      id: 'market',
+      name: 'Market',
+      field: 'market',
+      filterable: true,
+      sortable: true,
+      minWidth: 75,
+      width: 75,
+      grouping: {
+        getter: 'market',
+        formatter: (group) =>
+          `Market: <span style="color: var(--slick-primary-color); font-weight: bold;">${group.value}</span>  <span style="color: #659bff;">(${group.count} items)</span>`,
+        aggregators: [new Aggregators.Sum('amount')],
+        aggregateCollapsed: true,
+        collapsed: false,
       },
-      {
-        id: 'priceChange',
-        name: 'Change',
-        field: 'priceChange',
-        filterable: true,
-        sortable: true,
-        minWidth: 80,
-        width: 80,
-        filter: { model: Filters.compoundInputNumber },
-        type: 'number',
-        formatter: Formatters.multiple,
-        params: { formatters: [Formatters.dollar, priceFormatter], maxDecimal: 2 },
+    },
+    { id: 'company', name: 'Company', field: 'company', filterable: true, sortable: true, minWidth: 80, width: 130 },
+    {
+      id: 'trsnType',
+      name: 'Type',
+      field: 'trsnType',
+      filterable: true,
+      sortable: true,
+      minWidth: 60,
+      width: 60,
+      formatter: transactionTypeFormatter,
+      filter: {
+        model: Filters.singleSelect,
+        collection: [
+          { label: '', value: '' },
+          { label: 'Buy', value: 'Buy' },
+          { label: 'Sell', value: 'Sell' },
+        ],
       },
-      {
-        id: 'price',
-        name: 'Price',
-        field: 'price',
-        filterable: true,
-        sortable: true,
-        minWidth: 70,
-        width: 70,
-        filter: { model: Filters.compoundInputNumber },
-        type: 'number',
-        formatter: Formatters.dollar,
-        params: { maxDecimal: 2 },
+      grouping: {
+        getter: 'trsnType',
+        formatter: (group) =>
+          `Type: <span style="color: var(--slick-primary-color); font-weight: bold;">${group.value}</span>  <span style="color: #659bff;">(${group.count} items)</span>`,
+        aggregators: [new Aggregators.Sum('amount')],
+        aggregateCollapsed: true,
+        collapsed: false,
       },
-      {
-        id: 'quantity',
-        name: 'Quantity',
-        field: 'quantity',
-        filterable: true,
-        sortable: true,
-        minWidth: 70,
-        width: 70,
-        filter: { model: Filters.compoundInputNumber },
-        type: 'number',
-      },
-      {
-        id: 'amount',
-        name: 'Amount',
-        field: 'amount',
-        filterable: true,
-        sortable: true,
-        minWidth: 70,
-        width: 60,
-        filter: { model: Filters.compoundInputNumber },
-        type: 'number',
-        formatter: Formatters.dollar,
-        params: { maxDecimal: 2 },
-        groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold,
-      },
-      {
-        id: 'historic',
-        name: 'Price History',
-        field: 'historic',
-        minWidth: 100,
-        width: 150,
-        maxWidth: 150,
-        formatter: historicSparklineFormatter,
-      },
-      {
-        id: 'execution',
-        name: 'Execution Timestamp',
-        field: 'execution',
-        filterable: true,
-        sortable: true,
-        minWidth: 125,
-        formatter: Formatters.dateTimeIsoAmPm,
-        exportWithFormatter: true,
-        type: 'dateTimeIsoAM_PM',
-        filter: { model: Filters.compoundDate },
-      },
-    ];
+    },
+    {
+      id: 'priceChange',
+      name: 'Change',
+      field: 'priceChange',
+      filterable: true,
+      sortable: true,
+      minWidth: 80,
+      width: 80,
+      filter: { model: Filters.compoundInputNumber },
+      type: 'number',
+      formatter: Formatters.multiple,
+      params: { formatters: [Formatters.dollar, priceFormatter], maxDecimal: 2 },
+    },
+    {
+      id: 'price',
+      name: 'Price',
+      field: 'price',
+      filterable: true,
+      sortable: true,
+      minWidth: 70,
+      width: 70,
+      filter: { model: Filters.compoundInputNumber },
+      type: 'number',
+      formatter: Formatters.dollar,
+      params: { maxDecimal: 2 },
+    },
+    {
+      id: 'quantity',
+      name: 'Quantity',
+      field: 'quantity',
+      filterable: true,
+      sortable: true,
+      minWidth: 70,
+      width: 70,
+      filter: { model: Filters.compoundInputNumber },
+      type: 'number',
+    },
+    {
+      id: 'amount',
+      name: 'Amount',
+      field: 'amount',
+      filterable: true,
+      sortable: true,
+      minWidth: 70,
+      width: 60,
+      filter: { model: Filters.compoundInputNumber },
+      type: 'number',
+      formatter: Formatters.dollar,
+      params: { maxDecimal: 2 },
+      groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold,
+    },
+    {
+      id: 'historic',
+      name: 'Price History',
+      field: 'historic',
+      minWidth: 100,
+      width: 150,
+      maxWidth: 150,
+      formatter: historicSparklineFormatter,
+    },
+    {
+      id: 'execution',
+      name: 'Execution Timestamp',
+      field: 'execution',
+      filterable: true,
+      sortable: true,
+      minWidth: 125,
+      formatter: Formatters.dateTimeIsoAmPm,
+      exportWithFormatter: true,
+      type: 'dateTimeIsoAM_PM',
+      filter: { model: Filters.compoundDate },
+    },
+  ];
 
-    gridOptions = {
-      autoResize: { container: '.trading-platform', autoHeight: false, rightPadding: 0, bottomPadding: 10 },
-      formatterOptions: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',' },
-      draggableGrouping: {
-        dropPlaceHolderText: 'Drop a column header here to group by any of these available columns: Currency, Market or Type',
-        deleteIconCssClass: 'mdi mdi-close color-danger',
-        sortAscIconCssClass: 'mdi mdi-arrow-up',
-        sortDescIconCssClass: 'mdi mdi-arrow-down',
-      },
-      enableDraggableGrouping: true,
-      createPreHeaderPanel: true,
-      darkMode: isDarkMode,
-      showPreHeaderPanel: true,
-      preHeaderPanelHeight: 40,
-      enableCellNavigation: true,
-      enableFiltering: true,
-      cellHighlightCssClass: 'changed',
-    };
-  }
+  const gridOptions: GridOption = {
+    autoResize: { container: '.trading-platform', autoHeight: false, rightPadding: 0, bottomPadding: 10 },
+    formatterOptions: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',' },
+    draggableGrouping: {
+      dropPlaceHolderText: 'Drop a column header here to group by any of these available columns: Currency, Market or Type',
+      deleteIconCssClass: 'mdi mdi-close color-danger',
+      sortAscIconCssClass: 'mdi mdi-arrow-up',
+      sortDescIconCssClass: 'mdi mdi-arrow-down',
+    },
+    enableDraggableGrouping: true,
+    createPreHeaderPanel: true,
+    darkMode: false,
+    showPreHeaderPanel: true,
+    preHeaderPanelHeight: 40,
+    enableCellNavigation: true,
+    enableFiltering: true,
+    cellHighlightCssClass: 'changed',
+  };
+
+  // the dataset is mutated in place by the simulation (via `dataView.updateItem`), it is never replaced
+  const dataset = getData();
 
   function getData() {
-    dataset = Array.from({ length: NB_ITEMS }, (_item, id) => {
+    const tmpData: any[] = [];
+    for (let i = 0; i < NB_ITEMS; i++) {
+      const randomPercent = Math.round(Math.random() * 100);
+      const randomLowQty = randomNumber(1, 50);
+      const randomHighQty = randomNumber(125, 255);
       const priceChange = randomNumber(-25, 35, false);
       const price = randomNumber(priceChange, 300);
+      const quantity = price < 5 ? randomHighQty : randomLowQty;
+      const amount = price * quantity;
+      const now = new Date();
+      now.setHours(9, 30, 0);
       const currency = Math.floor(Math.random() * 10) % 2 ? 'CAD' : 'USD';
       const company = faker.company.name();
-      const execution = new Date();
-      execution.setHours(9, 30, 0, 0);
-      return {
-        id,
+
+      tmpData[i] = {
+        id: i,
         currency,
         trsnType: Math.round(Math.random() * 100) % 2 ? 'Buy' : 'Sell',
         company,
         symbol: currency === 'CAD' ? company.substring(0, 3).toUpperCase() + '.TO' : company.substring(0, 4).toUpperCase(),
         market: currency === 'CAD' ? 'TSX' : price > 200 ? 'Nasdaq' : 'S&P 500',
+        duration: i % 33 === 0 ? null : Math.random() * 100 + '',
+        percentCompleteNumber: randomPercent,
         priceChange,
         price,
-        quantity: price < 5 ? randomNumber(125, 255) : randomNumber(1, 50),
-        amount: 0,
-        execution,
+        quantity,
+        amount,
+        execution: now,
         historic: [price],
       };
-    });
-    dataset.forEach((item) => (item.amount = item.price * item.quantity));
+    }
+    return tmpData;
   }
 
   function startSimulation() {
-    if (!grid?.dataView || !dataset.length) {
-      return;
-    }
     const numberOfUpdates = randomNumber(minChangePerCycle, maxChangePerCycle);
     for (let i = 0; i < numberOfUpdates; i++) {
+      const randomLowQty = randomNumber(1, 50);
+      const randomHighQty = randomNumber(125, 255);
       const rowNumber = Math.round(Math.random() * (dataset.length - 1));
-      const previous = dataset[rowNumber];
-      const item = { ...previous, historic: [...previous.historic] };
-      item.priceChange = randomNumber(-25, 25, false);
-      item.price = Math.max(0, item.price + item.priceChange);
-      item.quantity = item.price < 5 ? randomNumber(125, 255) : randomNumber(1, 50);
-      item.amount = item.price * item.quantity;
-      item.trsnType = Math.round(Math.random() * 100) % 2 ? 'Buy' : 'Sell';
-      item.execution = new Date();
-      item.historic.push(item.price);
-      item.historic = item.historic.slice(-20);
-      dataset[rowNumber] = item;
+      const priceChange = randomNumber(-25, 25, false);
+      const prevItem = dataset[rowNumber];
+      const itemTmp = { ...prevItem, historic: [...prevItem.historic] };
+      itemTmp.priceChange = priceChange;
+      itemTmp.price = itemTmp.price + priceChange < 0 ? 0 : itemTmp.price + priceChange;
+      itemTmp.quantity = itemTmp.price < 5 ? randomHighQty : randomLowQty;
+      itemTmp.amount = itemTmp.price * itemTmp.quantity;
+      itemTmp.trsnType = Math.round(Math.random() * 100) % 2 ? 'Buy' : 'Sell';
+      itemTmp.execution = new Date();
+      itemTmp.historic.push(itemTmp.price);
+      itemTmp.historic = itemTmp.historic.slice(-20); // keep a max of X historic values
+      dataset[rowNumber] = itemTmp;
 
-      renderCellHighlighting(item, findColumnById('priceChange'), item.priceChange);
-      if ((previous.priceChange < 0 && item.priceChange > 0) || (previous.priceChange > 0 && item.priceChange < 0)) {
-        renderCellHighlighting(item, findColumnById('price'), item.priceChange);
+      // highlight whichever cell is being changed
+      renderCellHighlighting(itemTmp, findColumnById('priceChange'), priceChange);
+      if ((prevItem.priceChange < 0 && itemTmp.priceChange > 0) || (prevItem.priceChange > 0 && itemTmp.priceChange < 0)) {
+        renderCellHighlighting(itemTmp, findColumnById('price'), priceChange);
       }
-      grid.dataView.updateItem(item.id, item);
+
+      // update the data, the cell highlight above will also render the row so there's no need to invalidate it
+      grid.dataView.updateItem(itemTmp.id, itemTmp);
     }
-    timer = setTimeout(startSimulation, Number(refreshRate) || 0);
+    timer = setTimeout(startSimulation, refreshRate || 0);
   }
 
   function stopSimulation() {
-    if (timer) {
-      clearTimeout(timer);
-    }
+    clearTimeout(timer);
     timer = undefined;
   }
 
@@ -312,25 +320,24 @@
     return columns.find((column) => column.field === field) as Column;
   }
 
-  function renderCellHighlighting(item: any, column: Column, change: number) {
-    if (!item || !column || !grid?.dataView) {
-      return;
+  function renderCellHighlighting(item: any, column: Column, priceChange: number) {
+    if (item && column) {
+      const row = grid.dataView.getRowByItem(item) as number;
+      if (row >= 0) {
+        const hash = { [row]: { [column.id]: priceChange >= 0 ? 'changed-gain' : 'changed-loss' } };
+        grid.slickGrid.setCellCssStyles(`highlight_${column.id}${row}`, hash);
+
+        // remove highlight after x amount of time
+        setTimeout(() => grid.slickGrid.removeCellCssStyles(`highlight_${column.id}${row}`), highlightDuration || 0);
+      }
     }
-    const row = grid.dataView.getRowByItem(item) as number;
-    if (row < 0) {
-      return;
-    }
-    grid.slickGrid.setCellCssStyles(`highlight_${column.id}${row}`, {
-      [row]: { [column.id]: change >= 0 ? 'changed-gain' : 'changed-loss' },
-    });
-    setTimeout(() => grid?.slickGrid?.removeCellCssStyles(`highlight_${column.id}${row}`), Number(highlightDuration) || 0);
   }
 
   function toggleFullScreen() {
     const container = document.querySelector('.trading-platform');
     isFullScreen = !isFullScreen;
     container?.classList.toggle('full-screen', isFullScreen);
-    grid?.resizerService.resizeGrid();
+    grid.resizerService.resizeGrid();
   }
 
   function toggleDarkMode() {
@@ -340,12 +347,12 @@
     if (demoContainer) {
       demoContainer.dataset.bsTheme = isDarkMode ? 'dark' : 'light';
     }
-    grid?.slickGrid?.setOptions({ darkMode: isDarkMode });
+    grid.slickGrid?.setOptions({ darkMode: isDarkMode });
   }
 
   function toggleSubTitle() {
     showSubTitle = !showSubTitle;
-    queueMicrotask(() => grid?.resizerService.resizeGrid());
+    requestAnimationFrame(() => grid?.resizerService.resizeGrid());
   }
 
   function randomNumber(min: number, max: number, floor = true) {
@@ -357,11 +364,9 @@
     grid = instance;
   }
 
-  defineGrid();
-  getData();
-
   onMount(() => {
-    timer = setTimeout(startSimulation, Number(refreshRate) || 0);
+    // the simulation starts once the grid is ready
+    timer = setTimeout(startSimulation, refreshRate || 0);
     return () => {
       stopSimulation();
       document.querySelector('.panel-wm-content')?.classList.remove('dark-mode');
@@ -381,7 +386,7 @@
     ><a
       style="font-size: 18px"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example34.vue"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example34.svelte"
       ><span class="mdi mdi-link-variant"></span> code</a
     ></span
   >

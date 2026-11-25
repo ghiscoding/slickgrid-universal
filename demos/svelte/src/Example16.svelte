@@ -1,13 +1,29 @@
 <script lang="ts">
   import { Filters, Formatters, SlickgridSvelte, type Column, type GridOption, type SlickgridSvelteInstance } from 'slickgrid-svelte';
 
-  let grid: SlickgridSvelteInstance;
-  let columns: Column[] = [
+  const NB_ITEMS = 500;
+  let grid: SlickgridSvelteInstance | undefined;
+  let hideSubTitle = $state(false);
+  let columns = $state.raw<Column[]>([
     { id: 'title', name: 'Title', field: 'title', filterable: true },
     { id: 'duration', name: 'Duration', field: 'duration', filterable: true, sortable: true },
     { id: '%', name: '% Complete', field: 'percentComplete', filterable: true, sortable: true },
-    { id: 'start', name: 'Start', field: 'start', filterable: true, sortable: true, filter: { model: Filters.compoundDate } },
-    { id: 'finish', name: 'Finish', field: 'finish', filterable: true, sortable: true, filter: { model: Filters.compoundDate } },
+    {
+      id: 'start',
+      name: 'Start',
+      field: 'start',
+      filterable: true,
+      sortable: true,
+      filter: { model: Filters.compoundDate },
+    },
+    {
+      id: 'finish',
+      name: 'Finish',
+      field: 'finish',
+      filterable: true,
+      sortable: true,
+      filter: { model: Filters.compoundDate },
+    },
     {
       id: 'effort-driven',
       name: 'Completed',
@@ -24,86 +40,158 @@
         model: Filters.singleSelect,
       },
     },
-  ];
-  let dataset = Array.from({ length: 500 }, (_v, i) => ({
-    id: i,
-    title: `Task ${i}`,
-    duration: `${Math.round(Math.random() * 25)} days`,
-    percentComplete: Math.round(Math.random() * 100),
-    start: '01/01/2009',
-    finish: '01/05/2009',
-    effortDriven: i % 5 === 0,
-  }));
-  let showSubTitle = true;
+  ]);
+  let dataset = $state.raw<any[]>(getData(NB_ITEMS));
   const options: GridOption = {
-    autoResize: { container: '#demo-container', rightPadding: 10 },
-    enableCellNavigation: true,
+    enableAutoResize: true,
+    autoResize: {
+      container: '#demo-container',
+      rightPadding: 10,
+    },
     enableSorting: true,
     enableFiltering: true,
     enableCheckboxSelector: true,
-    checkboxSelector: { columnIndexPosition: 1, hideInFilterHeaderRow: false, hideInColumnTitleRow: true },
+    checkboxSelector: {
+      hideSelectAllCheckbox: false, // hide the "Select All" from title bar
+      columnIndexPosition: 1,
+      // you can toggle these 2 properties to show the "select all" checkbox in different location
+      hideInFilterHeaderRow: false,
+      hideInColumnTitleRow: true,
+    },
     enableSelection: true,
-    selectionOptions: { selectActiveRow: false },
-    dataView: { syncGridSelection: true },
+    selectionOptions: {
+      // True (Single Selection), False (Multiple Selections)
+      selectActiveRow: false,
+    },
+    dataView: {
+      syncGridSelection: true, // enable this flag so that the row selection follows the row even if we move it to another position
+    },
     enableRowMoveManager: true,
     rowMoveManager: {
+      columnIndexPosition: 0,
+      // when using Row Move + Row Selection, you want to move only a single row and we will enable the following flags so it doesn't cancel row selection
       singleRowMove: true,
       disableRowSelection: true,
       cancelEditOnDrag: true,
       hideRowMoveShadow: false,
       width: 35,
-      columnIndexPosition: 0,
-      onAfterMoveRows: (_event: Event, args: any) => (dataset = args.updatedItems),
+      // you can provide your own `onBeforeMoveRows` and/or `onMoveRows` implementation
+      // or use the default implementation, however the default won't work with Tree Data
+      // onBeforeMoveRows: () => {},
+      // onMoveRows: () => {},
+      onAfterMoveRows: (_e, args) => {
+        // update dataset for the ms-select list to be updated
+        dataset = args.updatedItems;
+      },
+
+      // you can also override the usability of the rows, for example make every 2nd row the only moveable rows,
+      // usabilityOverride: (row, dataContext, grid) => dataContext.id % 2 === 1
     },
     showCustomFooter: true,
-    presets: { rowSelection: { dataContextIds: [1, 2, 6, 7] } },
+    presets: {
+      // you can presets row selection here as well, you can choose 1 of the following 2 ways of setting the selection
+      // by their index position in the grid (UI) or by the object IDs, the default is "dataContextIds" and if provided it will use it and disregard "gridRowIndexes"
+      // the RECOMMENDED is to use "dataContextIds" since that will always work even with Pagination, while "gridRowIndexes" is only good for 1 page
+      rowSelection: {
+        // gridRowIndexes: [2],       // the row position of what you see on the screen (UI)
+        dataContextIds: [1, 2, 6, 7], // (recommended) select by your data object IDs
+      },
+    },
   };
-  function ready(instance: SlickgridSvelteInstance) {
-    grid = instance;
-  }
-  function hideDurationColumnDynamically() {
-    grid.gridService.hideColumnById('duration');
-  }
-  function disableFilters() {
-    grid.filterService.disableFilterFunctionality(true);
-  }
-  function disableSorting() {
-    grid.sortService.disableSortFunctionality(true);
-  }
-  function toggleFilter() {
-    grid.filterService.toggleFilterFunctionality();
-  }
-  function toggleSorting() {
-    grid.sortService.toggleSortFunctionality();
-  }
-  function addEditDeleteColumns() {
-    if (columns[0]?.id === 'change-symbol') {
-      return;
+
+  function getData(count: number) {
+    // Set up some test columns.
+    const mockDataset: any[] = [];
+    for (let i = 0; i < count; i++) {
+      mockDataset[i] = {
+        id: i,
+        title: 'Task ' + i,
+        duration: Math.round(Math.random() * 25) + ' days',
+        percentComplete: Math.round(Math.random() * 100),
+        start: '01/01/2009',
+        finish: '01/05/2009',
+        effortDriven: i % 5 === 0,
+      };
     }
-    const makeAction = (id: string, icon: string, message: (args: any) => void): Column => ({
-      id,
-      field: 'id',
-      excludeFromColumnPicker: true,
-      excludeFromGridMenu: true,
-      excludeFromHeaderMenu: true,
-      formatter: Formatters.icon,
-      params: { iconCssClass: icon },
-      minWidth: 30,
-      maxWidth: 30,
-      onCellClick: (_e, args) => message(args),
-    });
-    columns = [
-      makeAction('change-symbol', 'mdi mdi-pencil pointer', (args) => alert(`Technically we should Edit "Task ${args.dataContext.id}"`)),
-      makeAction('delete-symbol', 'mdi mdi-trash-can pointer', (args) => {
-        if (confirm('Are you sure?')) {
-          grid.gridService.deleteItemById(args.dataContext.id);
-        }
-      }),
-      ...grid.gridService.getAllColumnDefinitions(),
-    ];
+    return mockDataset;
   }
+
+  function hideDurationColumnDynamically() {
+    // -- you can hide by one Id or multiple Ids:
+    // hideColumnById(id, options), hideColumnByIds([ids], options)
+    // you can also provide options, defaults are: { autoResizeColumns: true, triggerEvent: true, hideFromColumnPicker: false, hideFromGridMenu: false }
+
+    grid?.gridService.hideColumnById('duration');
+
+    // or with multiple Ids and extra options
+    // grid?.gridService.hideColumnByIds(['duration', 'finish'], { hideFromColumnPicker: true, hideFromGridMenu: false });
+  }
+
+  // Disable/Enable Filtering/Sorting functionalities
+  // --------------------------------------------------
+
+  function disableFilters() {
+    grid?.filterService.disableFilterFunctionality(true);
+  }
+
+  function disableSorting() {
+    grid?.sortService.disableSortFunctionality(true);
+  }
+
+  function addEditDeleteColumns() {
+    if (columns[0].id !== 'change-symbol') {
+      const newCols: Column[] = [
+        {
+          id: 'change-symbol',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          formatter: Formatters.icon,
+          params: { iconCssClass: 'mdi mdi-pencil pointer' },
+          minWidth: 30,
+          maxWidth: 30,
+          onCellClick: (_clickEvent, args) => {
+            alert(`Technically we should Edit "Task ${args.dataContext.id}"`);
+          },
+        },
+        {
+          id: 'delete-symbol',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          formatter: Formatters.icon,
+          params: { iconCssClass: 'mdi mdi-trash-can pointer' },
+          minWidth: 30,
+          maxWidth: 30,
+          onCellClick: (_e, args) => {
+            if (confirm('Are you sure?')) {
+              grid?.gridService.deleteItemById(args.dataContext.id);
+            }
+          },
+        },
+      ];
+
+      // use slice or spread reassign to column definitions to trigger dirty checking
+      const allColumns = grid?.gridService.getAllColumnDefinitions() || [];
+      columns = [...newCols, ...allColumns];
+    }
+  }
+
+  // or Toggle Filtering/Sorting functionalities
+  // ---------------------------------------------
+
+  function toggleFilter() {
+    grid?.filterService.toggleFilterFunctionality();
+  }
+
+  function toggleSorting() {
+    grid?.sortService.toggleSortFunctionality();
+  }
+
   function toggleSubTitle() {
-    showSubTitle = !showSubTitle;
+    hideSubTitle = !hideSubTitle;
     grid?.resizerService.resizeGrid(0);
   }
 </script>
@@ -121,30 +209,67 @@
   </span>
   <button
     class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+    type="button"
     data-test="toggle-subtitle"
     aria-label="Toggle example sub-title details"
-    onclick={toggleSubTitle}><i class="mdi mdi-information-outline"></i></button
+    onclick={toggleSubTitle}><span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span></button
   >
 </h2>
-{#if showSubTitle}<div class="subtitle">Drag the row handle to reorder rows. Selection stays with rows as they move.</div>{/if}
-<div class="row mb-2">
+
+{#if !hideSubTitle}
+  <div class="subtitle">
+    This example demonstrates using the <b>SlickRowMoveManager</b> plugin to easily move a row in the grid.<br />
+    <ul>
+      <li>Click to select, Ctrl+Click to toggle selection, Shift+Click to select a range.</li>
+      <li>Drag one or more rows by the handle (icon) to reorder</li>
+      <li>If you plan to use Row Selection + Row Move, then use "singleRowMove: true" and "disableRowSelection: true"</li>
+      <li>You can change "columnIndexPosition" to move the icon position of any extension (RowMove, RowDetail or RowSelector icon)</li>
+      <ul>
+        <li>You will also want to enable the DataView "syncGridSelection: true" to keep row selection even after a row move</li>
+      </ul>
+      <li>
+        If you plan to use only Row Move, then you could keep default values (or omit them completely) of "singleRowMove: false" and
+        "disableRowSelection: false"
+      </li>
+      <ul>
+        <li>
+          SingleRowMove has the name suggest will only move 1 row at a time, by default it will move any row(s) that are selected unless you
+          disable the flag
+        </li>
+      </ul>
+    </ul>
+  </div>
+{/if}
+
+<div class="row">
   <div class="col-sm-12">
-    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="hide-duration-btn" onclick={hideDurationColumnDynamically}
-      >Dynamically Hide "Duration"</button
-    >
-    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="disable-filters-btn" onclick={disableFilters}
-      >Disable Filters</button
-    >
-    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="disable-sorting-btn" onclick={disableSorting}
-      >Disable Sorting</button
-    >
-    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="toggle-filtering-btn" onclick={toggleFilter}
-      >Toggle Filtering</button
-    >
-    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="toggle-sorting-btn" onclick={toggleSorting}>Toggle Sorting</button>
-    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="add-crud-columns-btn" onclick={addEditDeleteColumns}
-      >Add Edit/Delete Columns</button
-    >
+    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="hide-duration-btn" onclick={hideDurationColumnDynamically}>
+      <i class="mdi mdi-eye-off-outline"></i>
+      Dynamically Hide "Duration"
+    </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="disable-filters-btn" onclick={disableFilters}>
+      <i class="mdi mdi-close"></i>
+      Disable Filters
+    </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="disable-sorting-btn" onclick={disableSorting}>
+      <i class="mdi mdi-close"></i>
+      Disable Sorting
+    </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="toggle-filtering-btn" onclick={toggleFilter}>
+      <i class="mdi mdi-swap-vertical"></i>
+      Toggle Filtering
+    </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="toggle-sorting-btn" onclick={toggleSorting}>
+      <i class="mdi mdi-swap-vertical"></i>
+      Toggle Sorting
+    </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="add-crud-columns-btn" onclick={addEditDeleteColumns}>
+      <i class="mdi mdi-shape-square-plus"></i>
+      Add Edit/Delete Columns
+    </button>
   </div>
 </div>
-<SlickgridSvelte gridId="grid16" {columns} {options} {dataset} onSvelteGridCreated={ready} />
+
+<br />
+
+<SlickgridSvelte gridId="grid16" {columns} {options} {dataset} onSvelteGridCreated={(instance) => (grid = instance)} />

@@ -2,14 +2,11 @@
   import { SlickgridSvelte, type Column, type GridOption, type SlickgridSvelteInstance } from 'slickgrid-svelte';
   import { onDestroy, onMount } from 'svelte';
 
-  type Ref<T> = T;
-  const ref = <T,>(value?: T): T => value as T;
-
   const NB_ITEMS = 300;
 
-  let gridOptions = ref<GridOption>();
-  let columns: Ref<Column[]> = ref([]);
-  let dataset: Ref<any[]> = ref([]);
+  let gridOptions = $state.raw<GridOption>();
+  let columns = $state.raw<Column[]>([]);
+  let dataset = $state.raw<any[]>([]);
   let previousBodyDir: string | null = null;
   let gridInstance: SlickgridSvelteInstance | undefined;
 
@@ -28,6 +25,7 @@
       document.body.removeAttribute('dir');
     }
   });
+
   function gridReady(svelteGrid: SlickgridSvelteInstance) {
     gridInstance = svelteGrid;
     svelteGrid.dataView.getItemMetadata = (row) => (row % 7 === 2 ? { columns: { 0: { colspan: 3 } } } : null);

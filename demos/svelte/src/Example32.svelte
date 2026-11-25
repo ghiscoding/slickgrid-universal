@@ -20,32 +20,22 @@
   } from 'slickgrid-svelte';
   import COUNTRIES_COLLECTION_URL from './data/countries.json?url';
 
-  interface Ref<T> {
-    value: T;
-  }
-  function ref<T>(value: T): Ref<T>;
-  function ref<T = any>(): Ref<T | undefined>;
-  function ref<T>(value?: T): Ref<T | undefined> {
-    return { value };
-  }
-
   const NB_ITEMS = 400;
-  const gridOptions = ref<GridOption>();
-  const columns: Ref<Column[]> = ref([]);
-  const dataset = ref<any[]>([]);
-  const editQueue = ref<any[]>([]);
-  const editedItems = ref<any>({});
-  const isUsingDefaultResize = ref(false);
-  const isGridEditable = ref(true);
-  const isMassSelectionDisabled = ref(true);
-  const complexityLevelList = ref([
+  const complexityLevelList = [
     { value: 0, label: 'Very Simple' },
     { value: 1, label: 'Simple' },
     { value: 2, label: 'Straightforward' },
     { value: 3, label: 'Complex' },
     { value: 4, label: 'Very Complex' },
-  ]);
-  let showSubTitle = true;
+  ];
+  let gridOptions: GridOption = $state.raw({});
+  let columns: Column[] = $state.raw([]);
+  let dataset: any[] = $state.raw([]);
+  let isUsingDefaultResize = $state(false);
+  let showSubTitle = $state(true);
+  let editQueue: any[] = [];
+  let editedItems: any = {};
+  let isGridEditable = true;
   let svelteGrid!: SlickgridSvelteInstance;
 
   const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
@@ -68,7 +58,7 @@
 
   /* Define grid Options and Columns */
   function defineGrid() {
-    columns.value = [
+    columns = [
       {
         id: 'title',
         name: 'Title',
@@ -199,15 +189,15 @@
         sortable: true,
         filterable: true,
         columnGroup: 'Analysis',
-        formatter: (_row, _cell, value) => complexityLevelList.value[value]?.label,
-        exportCustomFormatter: (_row, _cell, value) => complexityLevelList.value[value]?.label,
+        formatter: (_row, _cell, value) => complexityLevelList[value]?.label,
+        exportCustomFormatter: (_row, _cell, value) => complexityLevelList[value]?.label,
         filter: {
           model: Filters.multipleSelect,
-          collection: complexityLevelList.value,
+          collection: complexityLevelList,
         },
         editor: {
           model: Editors.singleSelect,
-          collection: complexityLevelList.value,
+          collection: complexityLevelList,
         },
       },
       {
@@ -385,7 +375,7 @@
     ];
 
     // add custom Header Menu to all columns except "Action"
-    columns.value.forEach((col) => {
+    columns.forEach((col) => {
       col.header = {
         menu: {
           commandItems: [
@@ -442,7 +432,7 @@
       };
     });
 
-    gridOptions.value = {
+    gridOptions = {
       editable: true,
       autoAddCustomEditorFormatter: customEditableInputFormatter,
       enableCellNavigation: true,
@@ -499,7 +489,7 @@
           ? editCommand.prevSerializedValue
           : [editCommand.prevSerializedValue];
         const serializedValues = Array.isArray(editCommand.serializedValue) ? editCommand.serializedValue : [editCommand.serializedValue];
-        const editorColumns = columns.value.filter((col) => col.editor !== undefined);
+        const editorColumns = columns.filter((col) => col.editor !== undefined);
 
         const modifiedColumns: Column[] = [];
         prevSerializedValues.forEach((_val, index) => {
@@ -508,7 +498,7 @@
 
           if (prevSerializedValue !== serializedValue) {
             const finalColumn = Array.isArray(editCommand.prevSerializedValue) ? editorColumns[index] : column;
-            editedItems.value[gridOptions.value!.datasetIdPropertyName || 'id'] = item; // keep items by their row indexes, if the row got edited twice then we'll keep only the last change
+            editedItems[gridOptions.datasetIdPropertyName || 'id'] = item; // keep items by their row indexes, if the row got edited twice then we'll keep only the last change
             svelteGrid.slickGrid.invalidate();
             editCommand.execute();
 
@@ -519,7 +509,7 @@
 
         // queued editor, so we'll push only 1 change at the end but with all columns modified
         // this way we can undo the entire row change (for example if user changes 3 field in the editor modal, then doing a undo last change will undo all 3 in 1 shot)
-        editQueue.value.push({ item, columns: modifiedColumns, editCommand });
+        editQueue.push({ item, columns: modifiedColumns, editCommand });
       },
       // when using the cellMenu, you can change some of the default options and all use some of the callback methods
       enableCellMenu: true,
@@ -528,20 +518,20 @@
 
   function handleDefaultResizeColumns() {
     // just for demo purposes, set it back to its original width
-    const columns = svelteGrid.slickGrid.getColumns() as Column[];
-    columns.forEach((col) => (col.width = col.originalWidth));
+    const gridColumns = svelteGrid.slickGrid.getColumns() as Column[];
+    gridColumns.forEach((col) => (col.width = col.originalWidth));
     svelteGrid.slickGrid.updateColumns();
     svelteGrid.slickGrid.autosizeColumns();
-    isUsingDefaultResize.value = true;
+    isUsingDefaultResize = true;
   }
 
   function handleNewResizeColumns() {
     svelteGrid.resizerService.resizeColumnsByCellContent(true);
-    isUsingDefaultResize.value = false;
+    isUsingDefaultResize = false;
   }
 
-  function handleOnSelectedRowIdsChanged(args: any) {
-    console.log('Selected Ids:', args.selectedRowIds);
+  function handleOnSelectedRowIdsChanged(event: CustomEvent<any>) {
+    console.log('Selected Ids:', event.detail.args.selectedRowIds);
   }
 
   function toggleGridEditReadonly() {
@@ -549,12 +539,9 @@
     undoAllEdits();
 
     // then change a single grid options to make the grid non-editable (readonly)
-    isGridEditable.value = !isGridEditable.value;
-    if (!isGridEditable.value) {
-      isMassSelectionDisabled.value = true;
-    }
+    isGridEditable = !isGridEditable;
     // dynamically change SlickGrid editable grid option
-    svelteGrid.slickGrid.setOptions({ editable: isGridEditable.value });
+    svelteGrid.slickGrid.setOptions({ editable: isGridEditable });
   }
 
   function removeUnsavedStylingFromCell(_item: any, column: Column, row: number) {
@@ -563,7 +550,7 @@
   }
 
   function removeAllUnsavedStylingFromCell() {
-    for (const lastEdit of editQueue.value) {
+    for (const lastEdit of editQueue) {
       const lastEditCommand = lastEdit?.editCommand;
       if (lastEditCommand) {
         // remove unsaved css class from that cell
@@ -599,19 +586,19 @@
 
   function saveAll() {
     // Edit Queue (array increases every time a cell is changed, regardless of item object)
-    console.log(editQueue.value);
+    console.log(editQueue);
 
     // Edit Items only keeps the merged data (an object with row index as the row properties)
     // if you change 2 different cells on 2 different cells then this editedItems will only contain 1 property
     // example: editedItems = { 0: { title: task 0, duration: 50, ... }}
     // ...means that row index 0 got changed and the final merged object is { title: task 0, duration: 50, ... }
-    console.log(editedItems.value);
-    // console.log(`We changed ${Object.keys(editedItems.value).length} rows`);
+    console.log(editedItems);
+    // console.log(`We changed ${Object.keys(editedItems).length} rows`);
 
     // since we saved, we can now remove all the unsaved color styling and reset our array/object
     removeAllUnsavedStylingFromCell();
-    editQueue.value = [];
-    editedItems.value = {};
+    editQueue = [];
+    editedItems = {};
   }
 
   function toggleAutoEdit(state: boolean) {
@@ -623,7 +610,7 @@
   }
 
   function undoLastEdit(showLastEditor = false) {
-    const lastEdit = editQueue.value.pop();
+    const lastEdit = editQueue.pop();
     const lastEditCommand = lastEdit?.editCommand;
     if (lastEdit && lastEditCommand && SlickGlobalEditorLock.cancelCurrentEdit()) {
       lastEditCommand.undo();
@@ -642,7 +629,7 @@
   }
 
   function undoAllEdits() {
-    for (const lastEdit of editQueue.value) {
+    for (const lastEdit of editQueue) {
       const lastEditCommand = lastEdit?.editCommand;
       if (lastEditCommand && SlickGlobalEditorLock.cancelCurrentEdit()) {
         lastEditCommand.undo();
@@ -654,7 +641,7 @@
       }
     }
     svelteGrid.slickGrid.invalidate(); // re-render the grid only after every cells got rolled back
-    editQueue.value = [];
+    editQueue = [];
   }
 
   function toggleSubTitle() {
@@ -662,7 +649,7 @@
     queueMicrotask(() => svelteGrid.resizerService.resizeGrid());
   }
 
-  function svelteGridReady(grid: SlickgridSvelteInstance) {
+  function gridReady(grid: SlickgridSvelteInstance) {
     svelteGrid = grid;
   }
 
@@ -872,11 +859,7 @@
   }
 
   defineGrid();
-  dataset.value = loadData(NB_ITEMS);
-
-  const gridEvents = {
-    onSelectedRowIdsChanged: (event: CustomEvent<any>) => handleOnSelectedRowIdsChanged(event.detail.args),
-  };
+  dataset = loadData(NB_ITEMS);
 </script>
 
 <h2>
@@ -899,24 +882,22 @@
   >
 </h2>
 {#if showSubTitle}<div class="subtitle">
-    This fixed-width demo compares the default autosize behavior with optional content-based column sizing.
+    The grid below uses the optional resize by cell content (with a fixed 950px for demo purposes), you can click on the 2 buttons to see
+    the difference. The "autosizeColumns" is really the default option used by SlickGrid-Universal, the resize by cell content is optional
+    because it requires to read the first thousand rows and do extra width calculation.
   </div>{/if}
 <h4 class="ms-3">Container Width (950px)</h4>
 <div class="row">
   <div class="ms-2 mb-2 me-2">
-    <div class="btn-group" role="group" aria-label="Resize columns">
-      <button
-        class:active={isUsingDefaultResize.value}
-        class="btn btn-sm btn-outline-secondary btn-icon"
-        data-test="autosize-columns-btn"
-        onclick={handleDefaultResizeColumns}><i class="mdi mdi-arrow-expand"></i> (default resize) by "autosizeColumns"</button
-      >
-      <button
-        class:active={!isUsingDefaultResize.value}
-        class="btn btn-sm btn-outline-secondary btn-icon"
-        data-test="resize-by-content-btn"
-        onclick={handleNewResizeColumns}><i class="mdi mdi-arrow-expand"></i> Resize by Cell Content</button
-      >
+    <div class="btn-group btn-group-toggle" data-bs-toggle="buttons">
+      <label class="btn btn-sm btn-outline-secondary btn-icon" class:active={isUsingDefaultResize} data-test="autosize-columns-btn">
+        <input type="radio" class="btn-check" name="options" checked={isUsingDefaultResize} onclick={handleDefaultResizeColumns} />
+        <i class="mdi mdi-arrow-expand"></i> (default resize) by "autosizeColumns"
+      </label>
+      <label class="btn btn-sm btn-outline-secondary btn-icon" class:active={!isUsingDefaultResize} data-test="resize-by-content-btn">
+        <input type="radio" class="btn-check" name="options" checked={!isUsingDefaultResize} onclick={handleNewResizeColumns} />
+        <i class="mdi mdi-arrow-expand"></i> Resize by Cell Content
+      </label>
     </div>
     <span class="ms-3 h5">Container Width (950px)</span>
   </div>
@@ -957,11 +938,11 @@
 <div id="smaller-container" style="width:950px">
   <SlickgridSvelte
     gridId="grid32"
-    columns={columns.value}
-    options={gridOptions.value}
-    dataset={dataset.value}
-    events={gridEvents}
-    onSvelteGridCreated={svelteGridReady}
+    {columns}
+    options={gridOptions}
+    {dataset}
+    onSelectedRowIdsChanged={handleOnSelectedRowIdsChanged}
+    onSvelteGridCreated={gridReady}
   />
 </div>
 

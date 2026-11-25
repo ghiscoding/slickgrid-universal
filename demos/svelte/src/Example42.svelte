@@ -12,8 +12,9 @@
   import CustomPagerComponent from './CustomPagerComponent.svelte';
 
   const NB_ITEMS = 5000;
-  let showSubTitle = true;
-  let pageSize = 50;
+  const DEFAULT_PAGE_SIZE = 50;
+  let showSubTitle = $state(true);
+  let pageSize = $state(DEFAULT_PAGE_SIZE);
   let grid: SlickgridSvelteInstance;
   const columns: Column[] = [
     {
@@ -107,7 +108,7 @@
     enableFiltering: true,
     customPaginationComponent: CustomPagerComponent,
     enablePagination: true,
-    pagination: { pageSize },
+    pagination: { pageSize: DEFAULT_PAGE_SIZE },
     rowHeight: 40,
   };
 
@@ -150,7 +151,7 @@
     ><a
       style="font-size: 18px"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example42.vue"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example42.svelte"
       ><span class="mdi mdi-link-variant"></span> code</a
     ></span
   >
@@ -163,7 +164,9 @@
   >
 </h2>
 {#if showSubTitle}<div class="subtitle">
-    You can create a custom pagination component using Svelte. The pager can be placed anywhere on the page.
+    You can create a Custom Pagination by passing a Svelte Custom Component and it must expose the <code>init</code>,
+    <code>renderPagination</code> and <code>dispose</code> functions. Any of the pagination controls could be moved anywhere on the page (for
+    example we purposely moved the page size away from the rest of the pagination elements).
   </div>{/if}
 <div>
   <span class="margin-15px"

@@ -2,11 +2,7 @@
   import { ExcelExportService } from '@slickgrid-universal/excel-export';
   import { PdfExportService } from '@slickgrid-universal/pdf-export';
   import { SlickgridSvelte, type Column, type GridOption, type SlickgridSvelteInstance } from 'slickgrid-svelte';
-  import { onDestroy, onMount } from 'svelte';
   import './example56.scss';
-
-  type Ref<T> = T;
-  const ref = <T,>(value?: T): T => value as T;
 
   const NB_ITEMS = 150;
 
@@ -17,10 +13,10 @@
     notes: string;
   }
 
-  let gridOptions = ref<GridOption>();
-  let columns: Ref<Column[]> = ref([]);
-  let dataset = ref<TaskItem[]>([]);
-  let isCompact = ref(false);
+  let gridOptions = $state.raw<GridOption>();
+  let columns = $state.raw<Column[]>([]);
+  let dataset = $state.raw<TaskItem[]>([]);
+  let isCompact = false; // only read by the row metadata provider, not by the template
   const excelExportService = new ExcelExportService();
   const pdfExportService = new PdfExportService();
   let svelteGrid!: SlickgridSvelteInstance;

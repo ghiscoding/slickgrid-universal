@@ -10,25 +10,21 @@
     type Metrics,
     type SlickgridSvelteInstance,
   } from 'slickgrid-svelte';
-  import { onDestroy, onMount } from 'svelte';
-
-  type Ref<T> = T;
-  const ref = <T,>(value?: T): T => value as T;
 
   const defaultPageSize = 20;
   const SQL_TABLE_NAME = 'users';
   const FAKE_SERVER_DELAY = 250;
 
-  let gridOptions = ref<GridOption>();
-  let columns: Ref<Column[]> = ref([]);
-  let dataset = ref<any[]>([]);
-  let metrics = ref<Metrics>({} as Metrics);
-  let showSubTitle = true;
-  let sqlQuery = ref('');
-  let processing = ref(false);
-  let status = ref({ text: 'processing...', class: '' });
-  let serverWaitDelay = ref(FAKE_SERVER_DELAY); // server simulation with default of 250ms but 50ms for Cypress tests
-  let sqlService = ref(new SqlService());
+  let gridOptions: GridOption = $state.raw({});
+  let columns: Column[] = $state.raw([]);
+  let dataset: any[] = $state.raw([]);
+  let metrics: Metrics = $state.raw({} as Metrics);
+  let showSubTitle = $state(true);
+  let sqlQuery = $state('');
+  let processing = $state(false);
+  let status = $state({ text: 'processing...', class: '' });
+  let serverWaitDelay = $state(FAKE_SERVER_DELAY); // server simulation with default of 250ms but 50ms for Cypress tests
+  const sqlService = new SqlService();
   let svelteGrid!: SlickgridSvelteInstance;
 
   defineGrid();
@@ -165,7 +161,7 @@
           metrics = result.metrics as Metrics;
           dataset = result.data;
           // update pagination totalItems to reflect backend total count
-          if (gridOptions?.pagination) {
+          if (gridOptions.pagination) {
             gridOptions.pagination.totalItems = result.metrics?.totalItemCount ?? 0;
           }
           if (svelteGrid) {

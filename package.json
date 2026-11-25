@@ -155,7 +155,7 @@
     "npm-run-all2": "catalog:",
     "oxlint": "catalog:",
     "prettier": "^3.9.10",
-    "prettier-plugin-svelte": "4.1.1",
+    "prettier-plugin-svelte": "^4.1.1",
     "remove-glob": "catalog:",
     "rxjs": "catalog:",
     "typescript": "catalog:",

@@ -8,61 +8,45 @@
     SortComparers,
     type AutocompleterOption,
     type Column,
-    type EditorArguments,
+    type EditCommand,
     type EditorValidator,
     type Formatter,
     type GridOption,
-    type OnEventArgs,
     type SlickgridSvelteInstance,
     type SliderOption,
     type VanillaCalendarOption,
   } from 'slickgrid-svelte';
   import SAMPLE_COLLECTION_DATA from './data/collection_100_numbers.json';
-  import prerequisiteCollection from './data/collection_100_numbers.json';
+  import SAMPLE_COLLECTION_DATA_URL from './data/collection_100_numbers.json?url';
   import COUNTRIES_COLLECTION from './data/countries.json';
   import COUNTRY_NAMES from './data/country_names.json';
   import { CustomInputEditor } from './data/custom-inputEditor.js';
   import { CustomInputFilter } from './data/custom-inputFilter.js';
-  import { createTasks } from './data/tasks.js';
   import fetchJsonp from './jsonp.js';
+  import { showToast } from './utilities.js';
 
-  let grid: SlickgridSvelteInstance;
-  let showSubTitle = true;
-  let dataset: any[] = createTasks(100).map((item) => {
-    const startYear = 2004 + (item.id % 12);
-    const finishYear = new Date().getFullYear() - 3 + ((item.id * 7) % 10);
-    const finishDate = new Date(finishYear, ((item.id * 5) % 11) + 1, (item.id * 13) % 29);
+  const NB_ITEMS = 100;
 
-    return {
-      ...item,
-      // Use the same Date values as the Angular example so the date editor opens on the row's date.
-      start: new Date(startYear, (item.id * 7) % 11, (item.id * 13) % 29),
-      finish: finishDate < new Date() ? '' : finishDate,
-      countryOfOrigin: item.id % 2 ? { code: 'CA', name: 'Canada' } : { code: 'US', name: 'United States' },
-      prerequisites: item.id % 2 === 0 && item.id > 0 && item.id < 12 ? [item.id, item.id - 1] : [],
-    };
-  });
-  let nextId = 100;
+  const commandQueue: EditCommand[] = [];
   let duplicateTitleHeaderCount = 1;
-  let alertWarning: any;
-  let autoEdit = true;
-  let autoCommit = false;
+  let svelteGrid: SlickgridSvelteInstance;
+  let alertWarning = $state('');
+  let updatedObject = $state<any>();
+  let showSubTitle = $state(true);
 
   // you can create custom validator to pass to an inline editor
-  const myCustomTitleValidator: EditorValidator = (value: any, _args?: EditorArguments) => {
+  const myCustomTitleValidator: EditorValidator = (value: any) => {
     // you can get the Editor Args which can be helpful, e.g. we can get the Translate Service from it
-    /*
-    const grid = args?.grid;
-    const gridOptions = (grid?.getOptions() ?? {}) as GridOption;
-    const translate = gridOptions.i18n;
-    const columnEditor = args?.column?.editor;
-    */
+    // const grid = args?.grid;
+    // const gridOptions = grid.getOptions() as GridOption;
+    // const i18n = gridOptions.i18n;
+
     if (value === null || value === undefined || !value.length) {
       return { valid: false, msg: 'This is a required field' };
     } else if (!/^Task\s\d+$/.test(value)) {
       return { valid: false, msg: 'Your title is invalid, it must start with "Task" followed by a number' };
       // OR use the Translate Service with your custom message
-      // return { valid: false, msg: translate.instant('YOUR_ERROR', { x: value }) };
+      // return { valid: false, msg: i18n.tr('YOUR_ERROR', { x: value }) };
     }
     return { valid: true, msg: '' };
   };
@@ -77,7 +61,7 @@
     return '';
   };
 
-  let columns: Column[] = [
+  let columns = $state.raw<Column[]>([
     {
       id: 'edit',
       field: 'id',
@@ -88,11 +72,13 @@
       params: { iconCssClass: 'mdi mdi-pencil pointer' },
       minWidth: 30,
       maxWidth: 30,
-      onCellClick: (_e: Event, args: OnEventArgs) => {
-        alertWarning = `Editing: ${args.dataContext.title}`;
-        grid.gridService.highlightRow(args.row, 1500);
-        grid.gridService.setSelectedRow(args.row);
-      },
+      // use onCellClick OR grid.onClick.subscribe which you can see down below
+      // onCellClick: (_e: Event, args: OnEventArgs) => {
+      //   console.log(args);
+      //   alertWarning = `Editing: ${args.dataContext.title}`;
+      //   svelteGrid.gridService.highlightRow(args.row, 1500);
+      //   svelteGrid.gridService.setSelectedRow(args.row);
+      // },
     },
     {
       id: 'delete',
@@ -104,11 +90,6 @@
       params: { iconCssClass: 'mdi mdi-trash-can pointer' },
       minWidth: 30,
       maxWidth: 30,
-      onCellClick: (_e: Event, args: OnEventArgs) => {
-        if (confirm('Are you sure?')) {
-          grid.gridService.deleteItemById(args.dataContext.id);
-        }
-      },
       // use onCellClick OR grid.onClick.subscribe which you can see down below
       /*
         onCellClick: (e: Event, args: OnEventArgs) => {
@@ -130,7 +111,7 @@
         validator: myCustomTitleValidator, // use a custom validator
       },
       minWidth: 100,
-      onCellChange: (_e: Event, args: OnEventArgs) => {
+      onCellChange: (_e, args) => {
         console.log(args);
         alertWarning = `Updated Title: ${args.dataContext.title}`;
       },
@@ -230,11 +211,10 @@
       name: 'Start',
       field: 'start',
       filterable: true,
-      // filter: { model: Filters.compoundDate },
+      filter: { model: Filters.compoundDate },
       formatter: Formatters.dateIso,
       sortable: true,
       minWidth: 100,
-      filter: { model: Filters.compoundDate },
       type: 'date',
       editor: {
         model: Editors.date,
@@ -245,11 +225,10 @@
       name: 'Finish',
       field: 'finish',
       filterable: true,
-      // filter: { model: Filters.compoundDate },
+      filter: { model: Filters.compoundDate },
       formatter: Formatters.dateIso,
       sortable: true,
       minWidth: 100,
-      filter: { model: Filters.compoundDate },
       type: 'date', // dataset cell input format
       // outputType: 'dateUs',   // date picker format
       saveOutputType: 'dateUtc', // save output date format
@@ -365,7 +344,6 @@
       },
       minWidth: 70,
     },
-    // { id: 'prerequisites', name: 'Prerequisites', field: 'prerequisites', sortable: true, filterable: true, minWidth: 100, formatter: (_row, _cell, value) => Array.isArray(value) ? value.map((id) => `Task ${id}`).join(', ') : '', editor: { model: Editors.multipleSelect, collectionAsync: Promise.resolve(prerequisiteCollection), customStructure: { label: 'label', value: 'value', labelPrefix: 'prefix' }, collectionOptions: { separatorBetweenTextLabels: ' ' } }, filter: { model: Filters.multipleSelect,
     {
       id: 'prerequisites',
       name: 'Prerequisites',
@@ -404,7 +382,7 @@
         model: Editors.multipleSelect,
       },
       filter: {
-        collectionAsync: Promise.resolve(prerequisiteCollection),
+        collectionAsync: fetch(SAMPLE_COLLECTION_DATA_URL),
         // collectionAsync: Promise.resolve(SAMPLE_COLLECTION_DATA),
         // collectionAsync: new Promise((resolve) => {
         //   setTimeout(() => {
@@ -431,77 +409,153 @@
         operator: 'IN_CONTAINS',
       },
     },
-  ];
-  const commands: Array<{ execute(): void; undo(): void; row: number; cell: number }> = [];
-  let options: GridOption = {
+  ]);
+
+  const options: GridOption = {
     asyncEditorLoading: false,
-    autoResize: { container: '#demo-container', rightPadding: 10 },
-    gridHeight: 400,
+    autoEdit: true,
+    autoCommitEdit: false,
+    autoResize: {
+      container: '#demo-container',
+      rightPadding: 10,
+    },
     editable: true,
-    autoEdit,
-    autoCommitEdit: autoCommit,
     enableCellNavigation: true,
     enableColumnPicker: true,
     enableExcelCopyBuffer: true,
     enableFiltering: true,
-    editCommandHandler: (_item, _column, command) => {
-      commands.push(command);
-      command.execute();
+    editCommandHandler: (_item, _column, editCommand) => {
+      commandQueue.push(editCommand);
+      editCommand.execute();
     },
   };
+
+  const dataset = mockData(NB_ITEMS);
+
+  /** Add a new row to the grid and refresh the Filter collection */
   function addItem() {
-    const item = createTasks(1, nextId++)[0];
-    const prerequisiteColumn = columns.find((column) => column.id === 'prerequisites');
-    const collectionItem = { value: item.id, label: item.id, prefix: 'Task', suffix: 'days' };
-    const collections = new Set([prerequisiteColumn?.editor?.collection, prerequisiteColumn?.filter?.collection]);
-    for (const collection of collections) {
-      if (Array.isArray(collection)) {
-        collection.push(collectionItem);
-      }
-    }
-    grid.gridService.addItem({ ...item, countryOfOrigin: { code: 'CA', name: 'Canada' } }, { highlightRow: false });
-  }
-  function deleteItem() {
-    const prerequisiteColumn = columns.find((column) => column.id === 'prerequisites');
-    const collection = prerequisiteColumn?.filter?.collection as Array<{ value: number }> | undefined;
-    const itemToDelete = collection?.reduce((highest, item) => (item.value > highest.value ? item : highest));
-    if (itemToDelete) {
-      grid.gridService.deleteItemById(itemToDelete.value);
-      const collections = new Set([prerequisiteColumn?.editor?.collection, prerequisiteColumn?.filter?.collection]);
-      for (const collection of collections) {
-        if (Array.isArray(collection)) {
-          const index = collection.findIndex((item: { value: number }) => item.value === itemToDelete.value);
-          if (index >= 0) {
-            collection.splice(index, 1);
-          }
+    // wrap into a timer to simulate a backend async call
+    setTimeout(() => {
+      const lastRowIndex = svelteGrid.dataView.getItemCount();
+      const newRows = mockData(1, lastRowIndex);
+
+      // at any time, we can poke the "collection" property and modify it
+      const requisiteColumnDef = columns.find((column) => column.id === 'prerequisites');
+      if (requisiteColumnDef) {
+        const collectionEditor = requisiteColumnDef.editor!.collection;
+        const collectionFilter = requisiteColumnDef.filter!.collection;
+
+        if (Array.isArray(collectionEditor) && Array.isArray(collectionFilter)) {
+          // add the new row to the grid
+          svelteGrid.gridService.addItem(newRows[0], { highlightRow: false });
+
+          // then refresh the Editor/Filter "collection", we have 2 ways of doing it
+
+          // 1- push to the "collection"
+          collectionEditor.push({ value: lastRowIndex, label: lastRowIndex, prefix: 'Task', suffix: 'days' });
+          collectionFilter.push({ value: lastRowIndex, label: lastRowIndex, prefix: 'Task', suffix: 'days' });
+
+          // OR 2- replace the entire "collection" is also supported
+          // requisiteColumnDef.filter.collection = [...collection, ...[{ value: lastRowIndex, label: lastRowIndex }]];
+          // requisiteColumnDef.editor.collection = [...collection, ...[{ value: lastRowIndex, label: lastRowIndex }]];
         }
       }
+    }, 250);
+  }
+
+  /** Delete last inserted row */
+  function deleteItem() {
+    const requisiteColumnDef = columns.find((column) => column.id === 'prerequisites');
+    if (requisiteColumnDef) {
+      const collectionEditor = requisiteColumnDef.editor!.collection;
+      const collectionFilter = requisiteColumnDef.filter!.collection;
+
+      if (Array.isArray(collectionEditor) && Array.isArray(collectionFilter)) {
+        // sort collection in descending order and take out last option from the collection
+        const selectCollectionObj = sortCollectionDescending(collectionEditor).pop();
+        sortCollectionDescending(collectionFilter).pop();
+        svelteGrid.gridService.deleteItemById(selectCollectionObj.value);
+      }
     }
   }
-  function undo() {
-    const command = commands.pop();
-    if (command && SlickGlobalEditorLock.cancelCurrentEdit()) {
-      command.undo();
-      // Undo is expected to reopen the edited cell even when autoEdit was turned off.
-      grid.slickGrid.gotoCell(command.row, command.cell, true);
+
+  function sortCollectionDescending(collection: any[]) {
+    return collection.sort((item1, item2) => item1.value - item2.value);
+  }
+
+  function mockData(itemCount: number, startingIndex = 0) {
+    // mock a dataset
+    const tempDataset: any[] = [];
+    for (let i = startingIndex; i < startingIndex + itemCount; i++) {
+      const randomYear = 2000 + randomBetween(4, 15);
+      const randomFinishYear = new Date().getFullYear() - 3 + Math.floor(Math.random() * 10); // use only years not lower than 3 years ago
+      const randomMonth = Math.floor(Math.random() * 11);
+      const randomDay = Math.floor(Math.random() * 29);
+      const randomPercent = Math.round(Math.random() * 100);
+      const randomFinish = new Date(randomFinishYear, randomMonth + 1, randomDay);
+
+      tempDataset.push({
+        id: i,
+        title: 'Task ' + i,
+        duration: Math.round(Math.random() * 100) + '',
+        percentComplete: randomPercent,
+        percentCompleteNumber: randomPercent,
+        start: new Date(randomYear, randomMonth, randomDay),
+        finish: randomFinish < new Date() ? '' : randomFinish, // make sure the random date is earlier than today
+        effortDriven: i % 5 === 0,
+        prerequisites: i % 2 === 0 && i !== 0 && i < 12 ? [i, i - 1] : [],
+        countryOfOrigin: i % 2 ? { code: 'CA', name: 'Canada' } : { code: 'US', name: 'United States' },
+        countryOfOriginName: i % 2 ? 'Canada' : 'United States',
+        cityOfOrigin: i % 2 ? 'Vancouver, BC, Canada' : 'Boston, MA, United States',
+      });
+    }
+    return tempDataset;
+  }
+
+  function randomBetween(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
+
+  function onCellChanged(_e: Event, args: any) {
+    console.log('onCellChange', args);
+    updatedObject = { ...args.item };
+  }
+
+  function onCellClicked(_e: Event, args: any) {
+    console.log('onCellClicked', args);
+    const metadata = svelteGrid.gridService.getColumnFromEventArguments(args);
+    console.log(metadata);
+
+    if (metadata.columnDef.id === 'edit') {
+      alertWarning = `open a modal window to edit: ${metadata.dataContext.title}`;
+
+      // highlight the row, to customize the color, you can change the SASS variable $row-highlight-background-color
+      svelteGrid.gridService.highlightRow(args.row, 1500);
+
+      // you could also select the row, when using "enableCellNavigation: true", it automatically selects the row
+      // svelteGrid.gridService.setSelectedRow(args.row);
+    } else if (metadata.columnDef.id === 'delete') {
+      if (confirm('Are you sure?')) {
+        svelteGrid.gridService.deleteItemById(metadata.dataContext.id);
+        alertWarning = `Deleted: ${metadata.dataContext.title}`;
+      }
     }
   }
-  function setAutoEdit(enabled: boolean) {
-    autoEdit = enabled;
-    options = { ...options, autoEdit };
+
+  function onValidationError(_e: Event, args: any) {
+    if (args.validationResults) {
+      showToast(args.validationResults.msg, 'danger');
+    }
   }
-  function toggleAutoCommit() {
-    autoCommit = !autoCommit;
-    options = { ...options, autoCommitEdit: autoCommit };
-  }
-  function toggleSubTitle() {
-    showSubTitle = !showSubTitle;
-    queueMicrotask(() => {
-      grid?.resizerService?.resizeGrid();
+
+  function changeAutoCommit() {
+    svelteGrid.slickGrid.setOptions({
+      autoCommitEdit: !svelteGrid.slickGrid.getOptions().autoCommitEdit,
     });
   }
+
   function dynamicallyAddTitleHeader() {
-    const newCol = {
+    const newCol: Column = {
       id: `title${duplicateTitleHeaderCount++}`,
       name: 'Title',
       field: 'title',
@@ -520,7 +574,24 @@
   }
 
   function dynamicallyRemoveLastColumn() {
-    columns = columns.slice(0, columns.length - 1);
+    columns = columns.slice(0, -1);
+  }
+
+  function setAutoEdit(autoEdit: boolean) {
+    svelteGrid.slickGrid.setOptions({ autoEdit });
+  }
+
+  function undo() {
+    const command = commandQueue.pop();
+    if (command && SlickGlobalEditorLock.cancelCurrentEdit()) {
+      command.undo();
+      svelteGrid.slickGrid.gotoCell(command.row, command.cell, false);
+    }
+  }
+
+  function toggleSubTitle() {
+    showSubTitle = !showSubTitle;
+    queueMicrotask(() => svelteGrid.resizerService.resizeGrid());
   }
 </script>
 
@@ -530,7 +601,6 @@
     <a
       style="font-size: 18px"
       target="_blank"
-      rel="noreferrer"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example03.svelte"
     >
       <span class="mdi mdi-link-variant"></span> code
@@ -546,80 +616,119 @@
     <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
   </button>
 </h2>
+
 <div class="subtitle" class:hidden={!showSubTitle}>
   Grid with Inline Editors and onCellClick actions (<a
     href="https://ghiscoding.gitbook.io/svelte-slickgrid/column-functionalities/editors"
-    target="_blank"
-    rel="noreferrer">Wiki docs</a
+    target="_blank">Wiki docs</a
   >).
   <ul>
-    <li>
-      Multiple Editors &amp; Filters are available: AutoComplete, Checkbox, Date, Slider, SingleSelect, MultipleSelect, Float, Text,
-      LongText... even Custom Editor
-    </li>
     <li>When using "enableCellNavigation: true", clicking on a cell will automatically make it active &amp; selected.</li>
-    <ul><li>If you don't want this behavior, then you should disable "enableCellNavigation"</li></ul>
+    <ul>
+      <li>If you don't want this behavior, then you should disable "enableCellNavigation"</li>
+    </ul>
     <li>Inline Editors requires "enableCellNavigation: true" (not sure why though)</li>
     <li>
-      Support Excel Copy Buffer (SlickGrid Copy Manager Plugin), enabled with "enableExcelCopyBuffer". It evaluates formatters when
-      exportWithFormatter is enabled.
+      Support Excel Copy Buffer (SlickGrid Copy Manager Plugin), you can use it by simply enabling "enableExcelCopyBuffer" flag. Note that
+      it will only evaluate Formatter when the "exportWithFormatter" flag is enabled (through "ExcelExportOptions" or "TextExportOptions" or
+      the column definition)
     </li>
     <li>
-      MultipleSelect &amp; SingleSelect Editors &amp; Filters can use a regular "collection" or "collectionAsync" to load it asynchronously
+      Support of "collectionAsync" is possible, click on "Clear Filters/Sorting" then add/delete item(s) and look at "Prerequisites" Select
+      Filter
     </li>
-    <ul>
-      <li>Click on "Add Item" and see the Editor/Filter or the "Prerequisites" column change</li>
-      <li>Any Editor/Filter with a "collection" can be changed dynamically later</li>
-    </ul>
   </ul>
 </div>
+
 <div class="row">
   <div class="col-sm-6">
-    <label for="radioTrue">autoEdit setting:</label>
+    <label class="me-1" for="radioTrue">autoEdit setting</label>
+    <br />
     <span id="radioAutoEdit">
-      <label class="radio-inline control-label" for="radioTrue">
-        <input type="radio" name="inlineRadioOptions" id="radioTrue" checked={autoEdit} onchange={() => setAutoEdit(true)} /> ON (single-click)
-      </label>
-      <label class="radio-inline control-label" for="radioFalse">
-        <input type="radio" name="inlineRadioOptions" id="radioFalse" checked={!autoEdit} onchange={() => setAutoEdit(false)} /> OFF (double-click)
-      </label>
-    </span>
-    <div class="row col-sm-12">
-      <span>
-        <button class="btn btn-outline-secondary btn-sm btn-icon" onclick={undo} data-test="undo-btn"
-          ><i class="mdi mdi-undo"></i> Undo last edit(s)</button
-        >
-        <label class="checkbox-inline control-label" for="autoCommitEdit">
-          <input type="checkbox" id="autoCommitEdit" data-test="auto-commit" checked={autoCommit} onchange={toggleAutoCommit} /> Auto Commit Edit
+      <div class="row flex">
+        <label class="radio-inline control-label me-1" for="radioTrue">
+          <input id="radioTrue" type="radio" name="inlineRadioOptions" checked onchange={() => setAutoEdit(true)} />
+          ON (single-click)
         </label>
-      </span>
-    </div>
+        <label class="radio-inline control-label" for="radioFalse">
+          <input id="radioFalse" type="radio" name="inlineRadioOptions" onchange={() => setAutoEdit(false)} /> OFF (double-click)
+        </label>
+      </div>
+      <div class="row col-sm-12">
+        <span>
+          <button class="btn btn-outline-secondary btn-sm btn-icon me-1" data-test="undo-btn" onclick={undo}>
+            <i class="mdi mdi-undo me-1" aria-hidden="true"></i>
+            Undo last edit(s)
+          </button>
+          <label class="checkbox-inline control-label" for="autoCommitEdit">
+            <input id="autoCommitEdit" type="checkbox" data-test="auto-commit" onclick={changeAutoCommit} />
+            Auto Commit Edit
+          </label>
+        </span>
+      </div>
+    </span>
     <div class="row" style="margin-top: 5px">
       <div class="col-sm-12">
-        <button class="btn btn-outline-secondary btn-sm btn-icon" onclick={() => grid.filterService.clearFilters()}>Clear Filters</button>
-        <button class="btn btn-outline-secondary btn-sm btn-icon" onclick={() => grid.sortService.clearSorting()}>Clear Sorting</button>
         <button
-          class="btn btn-sm btn-outline-primary"
-          data-test="add-item-btn"
-          onclick={addItem}
-          title="Clear Filters &amp; Sorting to see it better">Add item</button
+          class="btn btn-outline-secondary btn-sm btn-icon"
+          data-test="clear-filters"
+          onclick={() => svelteGrid.filterService.clearFilters()}
         >
-        <button class="btn btn-sm btn-outline-danger" data-test="delete-item-btn" onclick={deleteItem}>Delete item</button>
+          Clear Filters
+        </button>
+        <button
+          class="btn btn-outline-secondary btn-sm btn-icon mx-1"
+          data-test="clear-sorting"
+          onclick={() => svelteGrid.sortService.clearSorting()}
+        >
+          Clear Sorting
+        </button>
+        <button
+          class="btn btn-outline-primary btn-sm"
+          data-test="add-item-btn"
+          title="Clear Filters &amp; Sorting to see it better"
+          onclick={addItem}
+        >
+          Add item
+        </button>
+        <button class="btn btn-outline-danger btn-sm mx-1" data-test="delete-item-btn" onclick={deleteItem}>Delete item</button>
       </div>
     </div>
     <div class="row" style="margin-top: 5px">
       <div class="col-sm-12">
-        <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="add-title-column" onclick={dynamicallyAddTitleHeader}
-          ><i class="mdi mdi-shape-square-plus"></i> Dynamically Duplicate Title Column</button
+        <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="add-title-column" onclick={dynamicallyAddTitleHeader}>
+          <i class="mdi mdi-shape-square-plus me-1" aria-hidden="true"></i>
+          Dynamically Duplicate Title Column
+        </button>
+        <button
+          class="btn btn-outline-secondary btn-sm btn-icon mx-1"
+          data-test="remove-title-column"
+          onclick={dynamicallyRemoveLastColumn}
         >
-        <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="remove-title-column" onclick={dynamicallyRemoveLastColumn}
-          ><i class="mdi mdi-minus"></i> Dynamically Remove Last Column</button
-        >
+          <i class="mdi mdi-minus" aria-hidden="true"></i>
+          Dynamically Remove Last Column
+        </button>
       </div>
     </div>
   </div>
+
   <div class="col-sm-6">
-    {#if alertWarning}<div class="alert alert-warning"><strong>Updated Item:</strong> {alertWarning}</div>{/if}
+    {#if updatedObject}
+      <div class="alert alert-info"><strong>Updated Item:</strong> {JSON.stringify(updatedObject)}</div>
+    {/if}
+    {#if alertWarning}
+      <div class="alert alert-warning">{alertWarning}</div>
+    {/if}
   </div>
 </div>
-<SlickgridSvelte gridId="grid3" {columns} {options} {dataset} onSvelteGridCreated={(instance) => (grid = instance)} />
+
+<SlickgridSvelte
+  gridId="grid3"
+  {columns}
+  {options}
+  {dataset}
+  onCellChange={(event) => onCellChanged(event.detail.eventData, event.detail.args)}
+  onClick={(event) => onCellClicked(event.detail.eventData, event.detail.args)}
+  onValidationError={(event) => onValidationError(event.detail.eventData, event.detail.args)}
+  onSvelteGridCreated={(instance) => (svelteGrid = instance)}
+/>

@@ -29,7 +29,6 @@ describe('Example 11 - Add / Update / Highlight a Datagrid Item', () => {
   it('should delete first row Task 0 from the grid', () => {
     const expectedTasks = ['Task 1', 'Task 2', 'Task 3', 'Task 4'];
 
-    cy.window().then((win) => cy.stub(win, 'confirm').returns(true));
     cy.get('#grid11').find('.slick-row').first().children('.slick-cell:nth(0)').click();
 
     cy.get('#grid11')

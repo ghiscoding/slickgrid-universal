@@ -31,8 +31,7 @@ The component receives `grid`, `paginationService`, `eventPubSubService`, and op
   import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
   import type { PaginationService, SlickGrid, TranslaterService } from '@slickgrid-universal/common';
 
-  export let paginationService: PaginationService;
-  export let eventPubSubService: BasePubSubService;
+  let { paginationService, eventPubSubService }: { paginationService: PaginationService; eventPubSubService: BasePubSubService } = $props();
 
   export function init(
     _grid: SlickGrid,

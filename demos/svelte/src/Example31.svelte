@@ -16,40 +16,29 @@
   } from 'slickgrid-svelte';
   import Data from './data/customers_100.json';
 
-  interface Ref<T> {
-    value: T;
-  }
-  function ref<T>(value: T): Ref<T>;
-  function ref<T = any>(): Ref<T | undefined>;
-  function ref<T>(value?: T): Ref<T | undefined> {
-    return { value };
-  }
-
   const defaultPageSize = 20;
-  const gridOptions = ref<GridOption>();
-  const columns: Ref<Column[]> = ref([]);
-  const dataset = ref<any[]>([]);
-  const metrics = ref<Metrics>({} as Metrics);
-  const paginationOptions = ref<Pagination>();
-  const isCountEnabled = ref(true);
-  const isSelectEnabled = ref(false);
-  const isExpandEnabled = ref(false);
-  const odataVersion = ref(2);
-  const odataQuery = ref('');
-  const processing = ref(false);
-  const status = ref({ text: '', class: '' });
-  const isOtherGenderAdded = ref(false);
-  const genderCollection = ref([
+  const genderCollection = [
     { value: 'male', label: 'male' },
     { value: 'female', label: 'female' },
-  ]);
-  let showSubTitle = true;
+  ];
+  let gridOptions: GridOption = $state.raw({});
+  let columns: Column[] = $state.raw([]);
+  let dataset: any[] = $state.raw([]);
+  let paginationOptions: Pagination | undefined = $state.raw();
+  let isCountEnabled = $state(true);
+  let isSelectEnabled = $state(false);
+  let isExpandEnabled = $state(false);
+  let odataVersion = $state(2);
+  let odataQuery = $state('');
+  let status = $state({ text: '', class: '' });
+  let isOtherGenderAdded = $state(false);
+  let showSubTitle = $state(true);
+  let metrics = {} as Metrics;
   let svelteGrid!: SlickgridSvelteInstance;
-  let lastLoggedPaginationPage: number | undefined;
 
   /* Define grid Options and Columns */
   function defineGrid() {
-    columns.value = [
+    columns = [
       {
         id: 'name',
         name: 'Name',
@@ -67,12 +56,12 @@
         filterable: true,
         editor: {
           model: Editors.singleSelect,
-          // collection: genderCollection.value,
-          collectionAsync: of(genderCollection.value),
+          // collection: genderCollection,
+          collectionAsync: of(genderCollection),
         },
         filter: {
           model: Filters.singleSelect,
-          collectionAsync: of(genderCollection.value),
+          collectionAsync: of(genderCollection),
           collectionOptions: {
             addBlankEntry: true,
           },
@@ -82,7 +71,7 @@
       { id: 'category_name', name: 'Category', field: 'category/name', filterable: true, sortable: true },
     ];
 
-    gridOptions.value = {
+    gridOptions = {
       enableAutoResize: true,
       autoResize: {
         container: '#demo-container',
@@ -122,15 +111,15 @@
       backendServiceApi: {
         service: new GridOdataService(),
         options: {
-          enableCount: isCountEnabled.value, // add the count in the OData query, which will return a property named "__count" (v2) or "@odata.count" (v4)
-          enableSelect: isSelectEnabled.value,
-          enableExpand: isExpandEnabled.value,
-          version: odataVersion.value, // defaults to 2, the query string is slightly different between OData 2 and 4
+          enableCount: isCountEnabled, // add the count in the OData query, which will return a property named "__count" (v2) or "@odata.count" (v4)
+          enableSelect: isSelectEnabled,
+          enableExpand: isExpandEnabled,
+          version: odataVersion, // defaults to 2, the query string is slightly different between OData 2 and 4
         },
         preProcess: () => displaySpinner(true),
         process: (query) => getCustomerApiCall(query),
         postProcess: (response) => {
-          metrics.value = response.metrics;
+          metrics = response.metrics;
           displaySpinner(false);
           getCustomerCallback(response);
         },
@@ -141,7 +130,7 @@
 
   function addOtherGender() {
     const newGender = { value: 'other', label: 'other' };
-    const genderColumn = columns.value.find((column) => column.id === 'gender');
+    const genderColumn = columns.find((column) => column.id === 'gender');
 
     if (genderColumn) {
       let editorCollection = genderColumn.editor!.collection;
@@ -154,7 +143,7 @@
         // editorCollection.push(newGender);
 
         // 2. or replace the entire "collection"
-        genderColumn.editor!.collection = [...genderCollection.value, newGender];
+        genderColumn.editor!.collection = [...genderCollection, newGender];
         editorCollection = genderColumn.editor!.collection;
 
         // However, for the Filter only, we have to trigger an RxJS/Subject change with the new collection
@@ -167,31 +156,30 @@
     }
 
     // don't add it more than once
-    isOtherGenderAdded.value = true;
+    isOtherGenderAdded = true;
   }
 
   function displaySpinner(isProcessing: boolean) {
-    processing.value = isProcessing;
-    status.value = isProcessing
+    status = isProcessing
       ? { text: 'loading...', class: 'col-md-2 alert alert-warning' }
       : { text: 'finished!!', class: 'col-md-2 alert alert-success' };
   }
 
   function getCustomerCallback(data: any) {
     // totalItems property needs to be filled for pagination to work correctly
-    // however we need to force Vue to do a dirty check, doing a clone object will do just that
+    // however we need to pass a new object reference so that Svelte detects the change, doing a clone object will do just that
     let totalItemCount: number = data['totalRecordCount']; // you can use "totalRecordCount" or any name or "odata.count" when "enableCount" is set
-    if (isCountEnabled.value) {
-      totalItemCount = odataVersion.value === 4 ? data['@odata.count'] : data['d']['__count'];
+    if (isCountEnabled) {
+      totalItemCount = odataVersion === 4 ? data['@odata.count'] : data['d']['__count'];
     }
-    if (metrics.value) {
-      metrics.value.totalItemCount = totalItemCount;
+    if (metrics) {
+      metrics.totalItemCount = totalItemCount;
     }
 
     // once pagination totalItems is filled, we can update the dataset
-    paginationOptions.value = { ...gridOptions.value!.pagination, totalItems: totalItemCount } as Pagination;
-    dataset.value = odataVersion.value === 4 ? data.value : data.d.results;
-    odataQuery.value = data['query'];
+    paginationOptions = { ...gridOptions.pagination, totalItems: totalItemCount } as Pagination;
+    dataset = odataVersion === 4 ? data.value : data.d.results;
+    odataQuery = data['query'];
   }
 
   function getCustomerApiCall(query: string) {
@@ -342,18 +330,18 @@
 
       setTimeout(() => {
         const backendResult: any = { query };
-        if (!isCountEnabled.value) {
+        if (!isCountEnabled) {
           backendResult['totalRecordCount'] = countTotalItems;
         }
 
-        if (odataVersion.value === 4) {
+        if (odataVersion === 4) {
           backendResult['value'] = updatedData;
-          if (isCountEnabled.value) {
+          if (isCountEnabled) {
             backendResult['@odata.count'] = countTotalItems;
           }
         } else {
           backendResult['d'] = { results: updatedData };
-          if (isCountEnabled.value) {
+          if (isCountEnabled) {
             backendResult['d']['__count'] = countTotalItems;
           }
         }
@@ -376,13 +364,13 @@
     svelteGrid?.paginationService?.goToLastPage();
   }
 
+  let lastLoggedPaginationPage: number | undefined;
+
   /** Dispatched event of a Grid State Changed event */
   function gridStateChanged(gridStateChanges: GridStateChange) {
     const change = gridStateChanges.change;
     if (change?.type === 'pagination') {
-      const pageNumber = (change.newValues as any)?.pageNumber;
-      // Backend filtering briefly reports page 0 for an empty result before the updated count arrives.
-      // Keep this demo log focused on the stable page transition and suppress repeated page notifications.
+      const pageNumber = (change.newValues as Pagination)?.pageNumber;
       if (pageNumber === 0 || pageNumber === lastLoggedPaginationPage) {
         return;
       }
@@ -408,33 +396,33 @@
 
   function changeCountEnableFlag() {
     displaySpinner(true);
-    isCountEnabled.value = !isCountEnabled.value;
-    resetOptions({ enableCount: isCountEnabled.value });
+    isCountEnabled = !isCountEnabled;
+    resetOptions({ enableCount: isCountEnabled });
     return true;
   }
 
   function changeEnableSelectFlag() {
-    isSelectEnabled.value = !isSelectEnabled.value;
-    resetOptions({ enableSelect: isSelectEnabled.value });
+    isSelectEnabled = !isSelectEnabled;
+    resetOptions({ enableSelect: isSelectEnabled });
     return true;
   }
 
   function changeEnableExpandFlag() {
-    isExpandEnabled.value = !isExpandEnabled.value;
-    resetOptions({ enableExpand: isExpandEnabled.value });
+    isExpandEnabled = !isExpandEnabled;
+    resetOptions({ enableExpand: isExpandEnabled });
     return true;
   }
 
   function setOdataVersion(version: number) {
     displaySpinner(true);
-    odataVersion.value = version;
-    resetOptions({ version: odataVersion.value });
+    odataVersion = version;
+    resetOptions({ version: odataVersion });
     return true;
   }
 
   function resetOptions(options: Partial<OdataOption>) {
     displaySpinner(true);
-    const odataService = gridOptions.value!.backendServiceApi!.service as GridOdataService;
+    const odataService = gridOptions.backendServiceApi!.service as GridOdataService;
     odataService.updateOptions(options);
     odataService.clearFilters();
     svelteGrid?.filterService.clearFilters();
@@ -450,10 +438,6 @@
   }
 
   defineGrid();
-
-  const gridEvents = {
-    onGridStateChanged: (event: CustomEvent<GridStateChange>) => gridStateChanged(event.detail),
-  };
 </script>
 
 <h2>
@@ -475,7 +459,9 @@
     onclick={toggleSubTitle}><i class="mdi mdi-information-outline"></i></button
   >
 </h2>
-{#if showSubTitle}<div class="subtitle">Optionally use RxJS instead of Promises with OData or GraphQL backend service APIs.</div>{/if}
+{#if showSubTitle}<div class="subtitle">
+    Optionally use RxJS instead of Promises, you would typically use this with a Backend Service API (OData/GraphQL)
+  </div>{/if}
 <div class="row">
   <div class="col-md-12" aria-label="Basic Editing Commands">
     <button
@@ -493,7 +479,7 @@
     <button
       class="btn btn-outline-secondary btn-sm btn-icon mx-1"
       data-test="add-gender-button"
-      disabled={isOtherGenderAdded.value}
+      disabled={isOtherGenderAdded}
       onclick={addOtherGender}>Add Other Gender via RxJS</button
     >
   </div>
@@ -524,7 +510,7 @@
           type="radio"
           name="inlineRadioOptions"
           data-test="version2"
-          checked={odataVersion.value === 2}
+          checked={odataVersion === 2}
           value="2"
           onclick={() => setOdataVersion(2)}
         /> 2</label
@@ -534,50 +520,40 @@
           type="radio"
           name="inlineRadioOptions"
           data-test="version4"
-          checked={odataVersion.value === 4}
+          checked={odataVersion === 4}
           value="4"
           onclick={() => setOdataVersion(4)}
         /> 4</label
       ></span
     >
     <label class="checkbox-inline control-label ms-3" for="enableCount"
-      ><input id="enableCount" type="checkbox" data-test="enable-count" checked={isCountEnabled.value} onclick={changeCountEnableFlag} />
+      ><input id="enableCount" type="checkbox" data-test="enable-count" checked={isCountEnabled} onclick={changeCountEnableFlag} />
       <span class="ms-1 fw-bold">Enable Count</span> (add to OData query)</label
     >
     <label class="checkbox-inline control-label ms-3" for="enableSelect"
-      ><input
-        id="enableSelect"
-        type="checkbox"
-        data-test="enable-select"
-        checked={isSelectEnabled.value}
-        onclick={changeEnableSelectFlag}
-      /> <span class="ms-1 fw-bold">Enable Select</span> (add to OData query)</label
+      ><input id="enableSelect" type="checkbox" data-test="enable-select" checked={isSelectEnabled} onclick={changeEnableSelectFlag} />
+      <span class="ms-1 fw-bold">Enable Select</span> (add to OData query)</label
     >
     <label class="checkbox-inline control-label ms-3" for="enableExpand"
-      ><input
-        id="enableExpand"
-        type="checkbox"
-        data-test="enable-expand"
-        checked={isExpandEnabled.value}
-        onclick={changeEnableExpandFlag}
-      /> <span class="ms-1 fw-bold">Enable Expand</span> (add to OData query)</label
+      ><input id="enableExpand" type="checkbox" data-test="enable-expand" checked={isExpandEnabled} onclick={changeEnableExpandFlag} />
+      <span class="ms-1 fw-bold">Enable Expand</span> (add to OData query)</label
     >
   </div>
 </div>
 <div class="row mt-1">
   <div class="col-md-10">
     <div class="alert alert-info" data-test="alert-odata-query">
-      <strong>OData Query:</strong> <span data-test="odata-query-result">{odataQuery.value}</span>
+      <strong>OData Query:</strong> <span data-test="odata-query-result">{odataQuery}</span>
     </div>
   </div>
-  <div class={status.value.class} role="alert" data-test="status"><strong>Status: </strong>{status.value.text}</div>
+  <div class={status.class} role="alert" data-test="status"><strong>Status: </strong>{status.text}</div>
 </div>
 <SlickgridSvelte
   gridId="grid31"
-  columns={columns.value}
-  options={gridOptions.value}
-  dataset={dataset.value}
-  paginationOptions={paginationOptions.value}
-  events={gridEvents}
+  {columns}
+  options={gridOptions}
+  {dataset}
+  {paginationOptions}
+  onGridStateChanged={(event: CustomEvent<GridStateChange>) => gridStateChanged(event.detail)}
   onSvelteGridCreated={svelteGridReady}
 />

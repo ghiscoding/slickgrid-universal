@@ -4,10 +4,10 @@ Pass a flat array through the `dataset` prop. Each item must contain a unique ID
 
 ```svelte
 <script lang="ts">
-  let dataset = [
+  let dataset = $state.raw([
     { id: 1, title: 'Task 1' },
     { id: 2, title: 'Task 2' },
-  ];
+  ]);
 
   function refreshData() {
     dataset = loadLatestTasks();

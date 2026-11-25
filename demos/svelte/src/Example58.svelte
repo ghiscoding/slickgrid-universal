@@ -7,11 +7,7 @@
     type ItemMetadata,
     type SlickgridSvelteInstance,
   } from 'slickgrid-svelte';
-  import { onDestroy, onMount } from 'svelte';
   import './example58.scss';
-
-  type Ref<T> = T;
-  const ref = <T,>(value?: T): T => value as T;
 
   const MONTH_FIELDS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'] as const;
   const PERIOD_FIELDS = [...MONTH_FIELDS, 'q1', 'q2', 'q3', 'q4', 'ytd'] as const;
@@ -32,10 +28,10 @@
   const summaryAccountFormatter: Formatter<FinancialRow> = (_row, _cell, value, _column, item) =>
     item.summaryKind ? `<span class="financial-summary-label">${value}</span>` : value;
 
-  let gridOptions = ref<GridOption>();
-  let columns: Ref<Column[]> = ref([]);
-  let dataset: Ref<FinancialRow[]> = ref([]);
-  let subTitleStyle = ref('display: block');
+  let gridOptions = $state.raw<GridOption>();
+  let columns = $state.raw<Column[]>([]);
+  let dataset = $state.raw<FinancialRow[]>([]);
+  let showSubTitle = $state(true);
   let svelteGrid!: SlickgridSvelteInstance;
 
   defineGrid();
@@ -202,7 +198,7 @@
   }
 
   function toggleSubTitle() {
-    subTitleStyle = subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    showSubTitle = !showSubTitle;
     svelteGrid?.resizerService?.resizeGrid();
   }
 </script>
@@ -230,7 +226,7 @@
     </button>
   </h2>
 
-  <h6 class="italic content example-details" style:display={subTitleStyle === 'display: block' ? 'block' : 'none'}>
+  <h6 class="italic content example-details" style:display={showSubTitle ? 'block' : 'none'}>
     Financial report fixture for the sticky rows/columns design. Account, Q1–Q4, and YTD dock to whichever edge is closest after normal
     scrolling would clip them. Total Revenue, Total Expenses, and Net Profit also use two-sided stickiness and dock to whichever vertical
     edge is closest after they have been seen.

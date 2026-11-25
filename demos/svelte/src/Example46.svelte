@@ -10,6 +10,7 @@
     type GridOption,
     type SlickgridSvelteInstance,
   } from 'slickgrid-svelte';
+  import { showToast } from './utilities.js';
 
   interface Chapter {
     id: string;
@@ -25,13 +26,9 @@
     chapters?: ChapterTree[];
   }
 
-  let gridOptions: GridOption;
-  let columns: Column[] = [];
-  let datasetHierarchical: any[] = [];
-  let searchString = '';
-  let toastMessage = '';
-  let showSubTitle = true;
-  let serverApiDelay = 1000;
+  let searchString = $state('');
+  let showSubTitle = $state(true);
+  let serverApiDelay = $state(1000);
   let grid: SlickgridSvelteInstance;
 
   const coloredTextFormatter: Formatter = (_row: number, _cell: number, val: any, _column: Column, dataContext: Chapter) => {
@@ -44,9 +41,12 @@
     return val;
   };
 
-  /* Define grid Options and Columns */
-  function defineGrid() {
-    columns = [
+  const columns = defineColumns();
+  const gridOptions = defineGridOptions();
+  const datasetHierarchical = mockDataset();
+
+  function defineColumns(): Column[] {
+    return [
       {
         id: 'chapterName',
         name: 'Chapter',
@@ -101,8 +101,10 @@
         filter: { model: Filters.compoundDate },
       },
     ];
+  }
 
-    gridOptions = {
+  function defineGridOptions(): GridOption {
+    return {
       autoResize: {
         autoHeight: false,
         container: '#demo-container',
@@ -288,7 +290,7 @@
 
   function toggleSubTitle() {
     showSubTitle = !showSubTitle;
-    queueMicrotask(() => grid.resizerService.resizeGrid());
+    queueMicrotask(() => grid.resizerService.resizeGrid(0));
   }
 
   /** Generate a UUID version 4 RFC compliant */
@@ -311,14 +313,6 @@
   function gridReady(instance: SlickgridSvelteInstance) {
     grid = instance;
   }
-
-  function showToast(message: string, _kind = 'info') {
-    toastMessage = message;
-    setTimeout(() => (toastMessage = ''), 3000);
-  }
-
-  defineGrid();
-  datasetHierarchical = mockDataset();
 </script>
 
 <svelte:head><title>Example 46 - Tree Data with Lazy Loading</title></svelte:head>
@@ -327,7 +321,7 @@
   Example 46: Tree Data with Lazy Loading
   <small
     ><span class="mdi mdi-file-tree font-27px"></span> (from a Hierarchical Dataset -
-    <a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/tree-data-grid" target="_blank">Wiki</a>)</small
+    <a href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/tree-data-grid" target="_blank">Wiki</a>)</small
   >
   <span class="float-end"
     ><a
@@ -349,10 +343,19 @@
 {#if showSubTitle}
   <div class="subtitle">
     <ul>
-      <li>Lazy loading works with hierarchical tree data. Begin with the root collection and empty child arrays.</li>
-      <li>Parents need an empty child array (for example <code>chapters: []</code>) to be detected as parent nodes.</li>
-      <li>Expand All expands nodes already loaded; additional nodes are loaded when individually expanded.</li>
-      <li>Clicking the last <b>Chapter X</b> demonstrates an API call failure.</li>
+      <li>
+        Lazy Loading only works with Hierarchical Tree Data, also when creating a Lazy Tree Data grid, you would typically assign the
+        <code>data</code> as the root collection but with empty children items.
+      </li>
+      <li>
+        However please note that Parents do require the children arrays to be defined but can be left as empty arrays (e.g.
+        <code>chapters: []</code> in our example). Parents without empty children arrays defined <b>will not</b> be detected as parents.
+      </li>
+      <li>
+        Calling the "Expand All" command will <b>only</b> expand the nodes that were already lazily loaded (the other ones will remain as collapsed).
+        Aggregators will also be lazily calculated and aggregate only the data that it currently has loaded.
+      </li>
+      <li>In the example below, clicking on the last <b>"Chapter X"</b> will demo an API call failure</li>
     </ul>
   </div>
 {/if}
@@ -403,4 +406,3 @@
 <div id="grid-container" class="col-sm-12">
   <SlickgridSvelte gridId="grid46" options={gridOptions} {columns} {datasetHierarchical} onSvelteGridCreated={gridReady} />
 </div>
-{#if toastMessage}<div class="toast show" role="alert">{toastMessage}</div>{/if}

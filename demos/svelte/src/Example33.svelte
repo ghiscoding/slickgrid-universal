@@ -19,24 +19,12 @@
     type VanillaCalendarOption,
   } from 'slickgrid-svelte';
 
-  interface Ref<T> {
-    value: T;
-  }
-  function ref<T>(value: T): Ref<T>;
-  function ref<T = any>(): Ref<T | undefined>;
-  function ref<T>(value?: T): Ref<T | undefined> {
-    return { value };
-  }
-
   const NB_ITEMS = 1000;
-  const gridOptions = ref<GridOption>();
-  const columns: Ref<Column[]> = ref([]);
-  const dataset = ref<any[]>([]);
-  const editCommandQueue = ref<EditCommand[]>([]);
-  let serverApiDelay = 500;
-  const showLazyLoading = ref(false);
-  let showSubTitle = true;
-  let svelteGrid!: SlickgridSvelteInstance;
+  const editCommandQueue: EditCommand[] = [];
+  let serverApiDelay = $state(500);
+  let showLazyLoading = $state(false);
+  let showSubTitle = $state(true);
+  let svelteGrid: SlickgridSvelteInstance;
 
   const headerFormatter: Formatter = (_row, _cell, _value: any, column: Column) => {
     const tooltipTitle = 'Custom Tooltip - Header';
@@ -83,9 +71,12 @@
     return out;
   };
 
-  /* Define grid Options and Columns */
-  function defineGrid() {
-    columns.value = [
+  const dataset = $state.raw<any[]>(loadData(NB_ITEMS));
+  const columns = $state.raw<Column[]>(defineColumns());
+  const gridOptions = $state.raw<GridOption>(defineGridOptions());
+
+  function defineColumns(): Column[] {
+    return [
       {
         id: 'title',
         name: 'Title',
@@ -346,7 +337,7 @@
           // OR 2- use a Promise
           collectionAsync: new Promise<any>((resolve) => {
             setTimeout(() => {
-              resolve(Array.from(Array(dataset.value?.length).keys()).map((k) => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })));
+              resolve(Array.from(Array(dataset?.length).keys()).map((k) => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })));
             }, 500);
           }),
           customStructure: {
@@ -363,16 +354,16 @@
           // collectionAsync: fetch(SAMPLE_COLLECTION_DATA_URL),
           // collectionAsync: new Promise((resolve) => {
           //   setTimeout(() => {
-          //     resolve(Array.from(Array(dataset.value?.length).keys()).map((k) => ({ value: k, label: `Task ${k}` })));
+          //     resolve(Array.from(Array(dataset?.length).keys()).map((k) => ({ value: k, label: `Task ${k}` })));
           //   });
           // }),
           collectionLazy: () => {
-            showLazyLoading.value = true;
+            showLazyLoading = true;
 
             return new Promise((resolve) => {
               setTimeout(() => {
-                showLazyLoading.value = false;
-                resolve(Array.from(Array((dataset.value || []).length).keys()).map((k) => ({ value: k, label: `Task ${k}` })));
+                showLazyLoading = false;
+                resolve(Array.from(Array((dataset || []).length).keys()).map((k) => ({ value: k, label: `Task ${k}` })));
               }, serverApiDelay);
             });
           },
@@ -439,8 +430,11 @@
         },
       },
     ];
+  }
 
-    gridOptions.value = {
+  /* Define grid Options */
+  function defineGridOptions(): GridOption {
+    return {
       autoEdit: true, // true single click (false for double-click)
       autoCommitEdit: true,
       editable: true,
@@ -482,7 +476,7 @@
         hideInColumnTitleRow: true,
       },
       editCommandHandler: (_item: any, _column: Column, editCommand: EditCommand) => {
-        editCommandQueue.value.push(editCommand);
+        editCommandQueue.push(editCommand);
         editCommand.execute();
       },
       // when using the cellMenu, you can change some of the default options and all use some of the callback methods
@@ -589,9 +583,6 @@
   function svelteGridReady(grid: SlickgridSvelteInstance) {
     svelteGrid = grid;
   }
-
-  defineGrid();
-  dataset.value = loadData(NB_ITEMS);
 </script>
 
 <h2>
@@ -613,9 +604,21 @@
     onclick={toggleSubTitle}><i class="mdi mdi-information-outline"></i></button
   >
 </h2>
-{#if showSubTitle}<div class="subtitle">
-    This demo covers regular and custom tooltips, async tooltips, and tooltips in grid headers and filter rows.
-  </div>{/if}
+{#if showSubTitle}
+  <div class="subtitle">
+    This demo shows how to create Regular & Custom Tooltips (<a
+      href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/custom-tooltip"
+      target="_blank">Wiki docs</a
+    >)
+    <br />
+    <ul class="small">
+      <li>optionally parse regular [title] attributes and transform them into tooltips</li>
+      <li>create your own Custom Tooltip via a Custom Formatter</li>
+      <li>create an Async Custom Tooltip (Promise/Observable) to allowing fetching data from an API</li>
+      <li>optionally add Custom Tooltip on Column Header & Column Header-Row (filters)</li>
+    </ul>
+  </div>
+{/if}
 <div class="row">
   <div class="col" style="margin-bottom:20px">
     <label for="server-delay">Simulated Server Delay (ms): </label><input
@@ -641,14 +644,12 @@
       ><i class="mdi mdi-filter" title="icon tooltip for non-empty descriptions"></i><span>Filters Non-Empty Description</span></button
     >
   </div>
-  <div class="alert alert-info is-narrow col" class:invisible={!showLazyLoading.value} data-test="alert-lazy">
-    Lazy loading collection...
-  </div>
+  <div class="alert alert-info is-narrow col" class:invisible={!showLazyLoading} data-test="alert-lazy">Lazy loading collection...</div>
 </div>
-<SlickgridSvelte
-  gridId="grid33"
-  columns={columns.value}
-  options={gridOptions.value}
-  dataset={dataset.value}
-  onSvelteGridCreated={svelteGridReady}
-/>
+<SlickgridSvelte gridId="grid33" {columns} options={gridOptions} {dataset} onSvelteGridCreated={svelteGridReady} />
+
+<style>
+  :global(.slick-custom-tooltip) {
+    pointer-events: none;
+  }
+</style>

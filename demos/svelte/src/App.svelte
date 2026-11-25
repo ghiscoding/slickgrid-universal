@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, type Component } from 'svelte';
+  import { onMount, untrack, type Component } from 'svelte';
   import Example01 from './Example01.svelte';
   import Example38 from './Example38.svelte';
   import Example39 from './Example39.svelte';
@@ -80,17 +80,17 @@
     '!./Example39.svelte',
   ]);
 
-  let current = window.location.hash.match(/^#\/example(\d+)$/)?.[1] ?? (window.location.hash === '#/home' ? 'home' : '01');
-  let menuOpen = false;
-  let currentExampleComponent: Component | undefined;
-  let isLoadingExample = false;
-  let failedToLoadExample = false;
+  let current = $state(window.location.hash.match(/^#\/example(\d+)$/)?.[1] ?? (window.location.hash === '#/home' ? 'home' : '01'));
+  let menuOpen = $state(false);
+  let CurrentExample: Component | undefined = $state.raw();
+  let isLoadingExample = $state(false);
+  let failedToLoadExample = $state(false);
   let exampleLoadSequence = 0;
-  $: selected = examples.find((example) => example.id === current);
+  const selected = $derived(examples.find((example) => example.id === current));
 
   async function loadExampleComponent(exampleId: string) {
     const loadSequence = ++exampleLoadSequence;
-    currentExampleComponent = undefined;
+    CurrentExample = undefined;
     failedToLoadExample = false;
 
     if (exampleId === 'home') {
@@ -110,7 +110,7 @@
     try {
       const exampleModule = await moduleLoader();
       if (loadSequence === exampleLoadSequence) {
-        currentExampleComponent = exampleModule.default;
+        CurrentExample = exampleModule.default;
       }
     } catch (error) {
       console.error(`Failed to load Svelte example ${exampleId}`, error);
@@ -124,7 +124,10 @@
     }
   }
 
-  $: void loadExampleComponent(current);
+  $effect(() => {
+    const exampleId = current;
+    untrack(() => void loadExampleComponent(exampleId));
+  });
 
   function syncRoute() {
     const match = window.location.hash.match(/^#\/example(\d+)$/);
@@ -193,8 +196,8 @@
     <div id="demo-container" class:grid8={current === '08'}>
       {#if current === 'home'}
         <Home />
-      {:else if currentExampleComponent}
-        <svelte:component this={currentExampleComponent} />
+      {:else if CurrentExample}
+        <CurrentExample />
       {:else if isLoadingExample}
         <div>Loading...</div>
       {:else if failedToLoadExample}

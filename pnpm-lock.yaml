@@ -126,6 +126,9 @@ catalogs:
     svelte:
       specifier: ^5.59.1
       version: 5.59.1
+    svelte-check:
+      specifier: ^4.0.0
+      version: 4.7.8
     tslib:
       specifier: ^2.9.1
       version: 2.9.1
@@ -237,7 +240,7 @@ importers:
         specifier: ^3.9.10
         version: 3.9.10
       prettier-plugin-svelte:
-        specifier: 4.1.1
+        specifier: ^4.1.1
         version: 4.1.1(prettier@3.9.10)(svelte@5.59.1(@typescript-eslint/types@8.67.0))
       remove-glob:
         specifier: 'catalog:'
@@ -697,7 +700,7 @@ importers:
         specifier: 'catalog:'
         version: 1.107.1
       svelte-check:
-        specifier: ^4.0.0
+        specifier: 'catalog:'
         version: 4.7.8(picomatch@4.0.7)(svelte@5.59.1(@typescript-eslint/types@8.67.0))(typescript@6.0.3)
       typescript:
         specifier: 'catalog:'
@@ -1401,9 +1404,19 @@ importers:
       dequal:
         specifier: 'catalog:'
         version: 2.0.3
+    devDependencies:
+      '@sveltejs/package':
+        specifier: ^3.0.3
+        version: 3.0.3(svelte@5.59.1(@typescript-eslint/types@8.67.0))(typescript@6.0.3)
       svelte:
-        specifier: '>=5.0.0'
+        specifier: 'catalog:'
         version: 5.59.1(@typescript-eslint/types@8.67.0)
+      svelte-check:
+        specifier: 'catalog:'
+        version: 4.7.8(picomatch@4.0.7)(svelte@5.59.1(@typescript-eslint/types@8.67.0))(typescript@6.0.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
 
   frameworks/slickgrid-vue:
     dependencies:
@@ -4931,6 +4944,17 @@ packages:
     resolution: {integrity: sha512-VT3qmUb8pRV2QrZjd8iAmtg8lf4W0TIjZbvXtz5MKei/q96teWZgGJyyidJzOjzZzvdq616eSRVeMYIQChUTAQ==}
     engines: {node: '>= 18.0.0'}
 
+  '@sveltejs/package@3.0.3':
+    resolution: {integrity: sha512-aOEPwEPZfsWau3RvtEQCORKpfwlJNBmIPY34hvhO4ZwqQMSqvP+FQRLvlgHbSdXervl88SapjlFoMim+l8IAXQ==}
+    engines: {node: '>=22'}
+    hasBin: true
+    peerDependencies:
+      svelte: ^3.44.0 || ^4.0.0 || ^5.0.0-next.1
+      typescript: ^6.0.0
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   '@sveltejs/vite-plugin-svelte-inspector@5.0.2':
     resolution: {integrity: sha512-TZzRTcEtZffICSAoZGkPSl6Etsj2torOVrx6Uw0KpXxrec9Gg6jFWQ60Q3+LmNGfZSxHRCZL7vXVZIWmuV50Ig==}
     engines: {node: ^20.19 || ^22.12 || >=24}
@@ -5658,6 +5682,10 @@ packages:
     resolution: {integrity: sha512-TQMmc3w+5AxjpL8iIiwebF73dRDF4fBIieAqGn9RGCWaEVwQ6Fb2cGe31Yns0RRIzii5goJ1Y7xbMwo1TxMplw==}
     engines: {node: '>= 20.19.0'}
 
+  chokidar@6.0.0:
+    resolution: {integrity: sha512-Ec2Z7wpcKBiMpR7DxteoqS/sq5G5d2A4fpxzPv6+fD7xNNdrTghn7L11YwV5EN1B3i72Erc3XVT5FkWIDx90+A==}
+    engines: {node: '>= 22.22'}
+
   chownr@3.0.0:
     resolution: {integrity: sha512-+IxzY9BZOQd/XuYPRmrvEVjF/nqj5kgT4kEq7VofrDoM1MxoRjEWkrCC3EtLi59TVawxTAn+orJwFQcrqEN1+g==}
     engines: {node: '>=18'}
@@ -5943,6 +5971,9 @@ packages:
 
   decimal.js@10.6.0:
     resolution: {integrity: sha512-YpgQiITW3JXGntzdUmyUR1V812Hn8T1YVXhCu+wO3OpS4eU9l4YdD3qjyiKdV6mvV29zapkMeD390UVEf2lkUg==}
+
+  dedent-js@1.0.1:
+    resolution: {integrity: sha512-OUepMozQULMLUmhxS95Vudo0jb0UchLimi3+pQ2plj61Fcy8axbP9hbiD4Sz6DPqn6XG3kfmziVfQ1rSys5AJQ==}
 
   deep-extend@0.6.0:
     resolution: {integrity: sha512-LOHxIOaPYdHlJRtCQfDIVZtfw/ufM8+rVj649RIHzcm/vGwQRXFt6OPqIFWsm2XEMrNIEtWR64sY1LEKD2vAOA==}
@@ -7746,6 +7777,10 @@ packages:
     resolution: {integrity: sha512-9u/XQ1pvrQtYyMpZe7DXKv2p5CNvyVwzUB6uhLAnQwHMSgKMBR62lc7AHljaeteeHXn11XTAaLLUVZYVZyuRBQ==}
     engines: {node: '>= 20.19.0'}
 
+  readdirp@5.1.1:
+    resolution: {integrity: sha512-Kko+Y5XQ6fM+Ce3dq3m9YGxnacYZYl9cA1wZjaF3Vbry2L3i1qVg8+CAgNPsXRArPMUMCaOR7oa9Nqntc43JKA==}
+    engines: {node: '>= 20.19.0'}
+
   reflect-metadata@0.2.2:
     resolution: {integrity: sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q==}
 
@@ -8345,6 +8380,12 @@ packages:
     peerDependencies:
       svelte: ^4.0.0 || ^5.0.0-next.0
       typescript: ^5.0.0 || ^6.0.0
+
+  svelte2tsx@0.7.63:
+    resolution: {integrity: sha512-gRgz/V6wOx0NDZhm6OMD2VIh+/HrgZc3k6ibX93rkNPEkWNn/P3Uhb1fYCqOrimEUpQd8r65dhiHZIJXSQBeow==}
+    peerDependencies:
+      svelte: ^3.55 || ^4.0.0-next.0 || ^4.0 || ^5.0.0-next.0
+      typescript: ^4.9.4 || ^5.0.0 || ^6.0.0
 
   svelte@5.59.1:
     resolution: {integrity: sha512-ADG20W/jYSQut/79AavRRfbXQYebFKMVWT/xAbjVVZfZA4XzIoFfcpanEfYTyN+uWQUaPP+nstFx4qVKwEVnQQ==}
@@ -12430,6 +12471,15 @@ snapshots:
 
   '@sveltejs/load-config@0.2.3': {}
 
+  '@sveltejs/package@3.0.3(svelte@5.59.1(@typescript-eslint/types@8.67.0))(typescript@6.0.3)':
+    dependencies:
+      '@sveltejs/load-config': 0.2.3
+      chokidar: 6.0.0
+      svelte: 5.59.1(@typescript-eslint/types@8.67.0)
+      svelte2tsx: 0.7.63(svelte@5.59.1(@typescript-eslint/types@8.67.0))(typescript@6.0.3)
+    optionalDependencies:
+      typescript: 6.0.3
+
   '@sveltejs/vite-plugin-svelte-inspector@5.0.2(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.59.1(@typescript-eslint/types@8.67.0))(vite@8.3.6(@types/node@24.19.2)(esbuild@0.28.2)(less@4.8.1(supports-color@8.1.1))(sass-embedded@1.105.2)(sass@1.107.1)(yaml@2.9.1)))(svelte@5.59.1(@typescript-eslint/types@8.67.0))(vite@8.3.6(@types/node@24.19.2)(esbuild@0.28.2)(less@4.8.1(supports-color@8.1.1))(sass-embedded@1.105.2)(sass@1.107.1)(yaml@2.9.1))':
     dependencies:
       '@sveltejs/vite-plugin-svelte': 6.2.4(svelte@5.59.1(@typescript-eslint/types@8.67.0))(vite@8.3.6(@types/node@24.19.2)(esbuild@0.28.2)(less@4.8.1(supports-color@8.1.1))(sass-embedded@1.105.2)(sass@1.107.1)(yaml@2.9.1))
@@ -13215,6 +13265,10 @@ snapshots:
     dependencies:
       readdirp: 5.0.0
 
+  chokidar@6.0.0:
+    dependencies:
+      readdirp: 5.1.1
+
   chownr@3.0.0: {}
 
   chrome-remote-interface@0.33.3:
@@ -13512,6 +13566,8 @@ snapshots:
       supports-color: 8.1.1
 
   decimal.js@10.6.0: {}
+
+  dedent-js@1.0.1: {}
 
   deep-extend@0.6.0: {}
 
@@ -15459,6 +15515,8 @@ snapshots:
 
   readdirp@5.0.0: {}
 
+  readdirp@5.1.1: {}
+
   reflect-metadata@0.2.2: {}
 
   regenerator-runtime@0.13.11:
@@ -16065,6 +16123,13 @@ snapshots:
       typescript: 6.0.3
     transitivePeerDependencies:
       - picomatch
+
+  svelte2tsx@0.7.63(svelte@5.59.1(@typescript-eslint/types@8.67.0))(typescript@6.0.3):
+    dependencies:
+      dedent-js: 1.0.1
+      scule: 1.3.0
+      svelte: 5.59.1(@typescript-eslint/types@8.67.0)
+      typescript: 6.0.3
 
   svelte@5.59.1(@typescript-eslint/types@8.67.0):
     dependencies:

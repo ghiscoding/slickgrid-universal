@@ -9,13 +9,13 @@
     type SlickgridSvelteInstance,
   } from 'slickgrid-svelte';
 
-  let gridOptions: GridOption;
-  let columns: Column[] = [];
+  let gridOptions: GridOption = $state.raw({});
+  let columns: Column[] = $state.raw([]);
   let grid: SlickgridSvelteInstance;
-  let dataLn: number | string = 'loading...';
-  let scrollToRow = 100;
-  let dataset: any[] = [];
-  let showSubTitle = true;
+  let dataLn: number | string = $state('loading...');
+  let scrollToRow = $state(100);
+  let dataset: any[] = $state.raw([]);
+  let showSubTitle = $state(true);
   const metadata: Record<number, ItemMetadata> = {
     0: {
       columns: {
@@ -363,6 +363,7 @@
 
   function toggleSubTitle() {
     showSubTitle = !showSubTitle;
+    queueMicrotask(() => grid?.resizerService.resizeGrid(0));
   }
 
   function gridReady(instance: SlickgridSvelteInstance) {
@@ -399,22 +400,25 @@
 {#if showSubTitle}
   <div class="subtitle">
     <p class="italic example-details">
-      This page demonstrates <code>colspan</code> and <code>rowspan</code> using DataView item metadata. Operations that change row indexes or
-      column indexes require application code to recalculate span metadata.
+      This page demonstrates <code>colspan</code> & <code>rowspan</code> using DataView with item metadata. <b>Note</b>:
+      <code>colspan</code> & <code>rowspan</code> are rendered via row/cell indexes, any operations that could change these indexes (i.e. Filtering/Sorting/Paging/Column
+      Reorder) will require you to implement proper logic to recalculate these indexes (it becomes your responsability). This demo does not show
+      this because it is up to you to decide what to do when the span changes shape (i.e. you default to 3 rowspan but you filter a row in the
+      middle, how do you want to proceed?).
     </p>
     <p class="italic example-details">
-      <code>autoHeaderHeight</code> is enabled so the narrow <i>Revenue Growth</i> column wraps its header.
+      <code>autoHeaderHeight</code> is enabled: the narrow <i>Revenue Growth</i> column wraps its header and the grid measures the required height.
     </p>
   </div>
 {/if}
 
 <section class="row mb-2">
-  <div class="d-flex flex-wrap align-items-center">
+  <div class="d-flex">
     <button class="ms-1 btn btn-outline-secondary btn-sm" data-test="add-500-rows-btn" onclick={() => loadData(500)}>500 rows</button>
     <button class="ms-1 btn btn-outline-secondary btn-sm" data-test="add-5k-rows-btn" onclick={() => loadData(5000)}>5k rows</button>
     <button class="ms-1 btn btn-outline-secondary btn-sm" data-test="add-50k-rows-btn" onclick={() => loadData(50000)}>50k rows</button>
     <button class="mx-1 btn btn-outline-secondary btn-sm" data-test="add-50k-rows-btn" onclick={() => loadData(500000)}>500k rows</button>
-    <div class="mx-2"><span>data length: </span><span id="dataLn">{dataLn}</span></div>
+    <div class="mx-2"><label for="dataLn">data length: </label><span id="dataLn">{dataLn}</span></div>
     <button
       id="toggleSpans"
       class="ms-1 btn btn-outline-secondary btn-sm btn-icon mx-1"

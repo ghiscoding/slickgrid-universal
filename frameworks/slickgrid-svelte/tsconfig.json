@@ -6,8 +6,10 @@
     "strict": true,
     "skipLibCheck": true,
     "declaration": true,
-    "rootDir": "src",
-    "outDir": "dist"
+    "declarationMap": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "types": ["svelte"]
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "src/**/*.svelte"]
 }

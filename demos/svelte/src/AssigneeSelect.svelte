@@ -1,9 +1,11 @@
 <script lang="ts">
   import type { Assignee } from './data/assignee.model.js';
 
-  export let collection: Assignee[] = [];
-  export let selectedItem: Assignee | undefined;
-  export let onSelectedItemChanged: (item: Assignee | undefined) => void;
+  let {
+    collection = [],
+    selectedItem = $bindable(),
+    onSelectedItemChanged,
+  }: { collection?: Assignee[]; selectedItem?: Assignee; onSelectedItemChanged?: (item: Assignee | undefined) => void } = $props();
 
   let selectElm: HTMLSelectElement;
 

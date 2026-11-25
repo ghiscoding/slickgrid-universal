@@ -5,41 +5,55 @@
     Aggregators,
     decimalFormatted,
     Filters,
+    findItemInTreeStructure,
     Formatters,
     isNumber,
     SlickgridSvelte,
     type Column,
     type Formatter,
     type GridOption,
+    type SlickDataView,
     type SlickgridSvelteInstance,
   } from 'slickgrid-svelte';
 
   let grid: SlickgridSvelteInstance;
-  let excludeChildren = false;
-  let autoApproveParent = true;
-  let autoRecalcTotals = false;
-  let removeDisabled = true;
-  let lastInsertedId: number | undefined;
-  let searchString = '';
-  let showSubtitle = true;
-  let datasetHierarchical = makeDataset();
+  let datasetHierarchical: any[] = $state.raw(mockDataset());
+  let isExcludingChildWhenFiltering = $state(false);
+  let isAutoApproveParentItemWhenTreeColumnIsValid = $state(true);
+  let isAutoRecalcTotalsOnFilterChange = $state(false);
+  let isRemoveLastInsertedPopSongDisabled = $state(true);
+  let lastInsertedPopSongId: number | undefined;
+  let searchString = $state('');
+  let showSubTitle = $state(true);
 
   const treeFormatter: Formatter = (_row, _cell, value, _columnDef, dataContext, slickGrid) => {
-    if (value == null || !dataContext) {
+    const treeLevelPropName = slickGrid.getOptions()?.treeDataOptions?.levelPropName || '__treeLevel';
+    if (value === null || value === undefined || dataContext === undefined) {
       return '';
     }
-    const levelName = slickGrid.getOptions().treeDataOptions?.levelPropName || '__treeLevel';
-    const dataView = slickGrid.getData<any>();
+    const dataView = slickGrid.getData<SlickDataView>();
     const data = dataView.getItems();
-    const rowIndex = dataView.getIdxById(dataContext[dataView.getIdPropertyName() || 'id']);
-    const level = dataContext[levelName] ?? 0;
-    const escapedValue = `${value}`.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    const spacer = `<span class="display-inline-block width-${15 * level}px"></span>${addWhiteSpaces(5 * level)}`;
-    const nextItem = data[rowIndex + 1];
-    const hasChildren = dataContext.__hasChildren || nextItem?.[levelName] > level;
-    const folder = hasChildren ? `<i class="mdi font-22px ${dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'}"></i>` : '';
-    const toggleClass = hasChildren ? (dataContext.__collapsed ? 'collapsed' : 'expanded') : '';
-    return `<span class="hidden">.</span>${spacer} <span class="slick-tree-toggle ${toggleClass}" level="${level}"></span>${folder} ${fileIcon(`${value}`)} <span class="slick-tree-title">${escapedValue}</span>`;
+    const identifierPropName = dataView.getIdPropertyName() || 'id';
+    const idx = dataView.getIdxById(dataContext[identifierPropName]) as number;
+    const prefix = getFileIcon(value);
+    const treeLevel = dataContext[treeLevelPropName];
+    const exportIndentationLeadingChar = '.';
+
+    value = value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const spacer = `<span class="display-inline-block width-${15 * treeLevel}px"></span>`;
+    const indentSpacer = addWhiteSpaces(5 * treeLevel);
+    const spanValue = `<span class="slick-tree-title">${value}</span>`;
+
+    if (data[idx + 1]?.[treeLevelPropName] > data[idx][treeLevelPropName] || data[idx]['__hasChildren']) {
+      const folderPrefix = `<i class="mdi font-22px ${dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'}"></i>`;
+      if (dataContext.__collapsed) {
+        return `<span class="hidden">${exportIndentationLeadingChar}</span>${spacer}${indentSpacer} <span class="slick-tree-toggle collapsed" level="${treeLevel}"></span>${folderPrefix} ${prefix} ${spanValue}`;
+      } else {
+        return `<span class="hidden">${exportIndentationLeadingChar}</span>${spacer}${indentSpacer} <span class="slick-tree-toggle expanded" level="${treeLevel}"></span>${folderPrefix} ${prefix} ${spanValue}`;
+      }
+    } else {
+      return `<span class="hidden">${exportIndentationLeadingChar}</span>${spacer}${indentSpacer} <span class="slick-tree-toggle" level="${treeLevel}"></span>${prefix} ${spanValue}`;
+    }
   };
 
   const columns: Column[] = [
@@ -67,65 +81,92 @@
       excelExportOptions: { autoDetectCellFormat: false },
       filterable: true,
       filter: { model: Filters.compoundInputNumber },
-      formatter: (_row, _cell, value, column, dataContext) => {
+      formatter: (_row, _cell, value, column, dataContext, slickGrid) => {
+        // Tree Totals, if exists, will be found under `__treeTotals` prop
         if (dataContext?.__treeTotals !== undefined) {
-          const level = dataContext.__treeLevel ?? 0;
-          const sum = dataContext.__treeTotals.sum?.[column.field];
-          const avg = dataContext.__treeTotals.avg?.[column.field];
-          if (avg !== undefined && sum !== undefined) {
-            return `<span class="text-primary bold">sum: ${decimalFormatted(sum, 0, 2)} MB</span> / <span class="avg-total">avg: ${decimalFormatted(avg, 0, 2)} MB</span> <span class="total-suffix">(${level === 0 ? 'total' : 'sub-total'})</span>`;
-          }
-          if (sum !== undefined) {
-            return `<span class="text-primary bold">sum: ${decimalFormatted(sum, 0, 2)} MB</span> <span class="total-suffix">(${level === 0 ? 'total' : 'sub-total'})</span>`;
+          const fieldId = column.field;
+          const treeLevel = dataContext[slickGrid.getOptions()?.treeDataOptions?.levelPropName || '__treeLevel'];
+          const sumVal = dataContext?.__treeTotals?.['sum'][fieldId];
+          const avgVal = dataContext?.__treeTotals?.['avg'][fieldId];
+
+          if (avgVal !== undefined && sumVal !== undefined) {
+            return isNaN(sumVal)
+              ? ''
+              : `<span class="text-primary bold">sum: ${decimalFormatted(sumVal, 0, 2)} MB</span> / <span class="avg-total">avg: ${decimalFormatted(avgVal, 0, 2)} MB</span> <span class="total-suffix">(${treeLevel === 0 ? 'total' : 'sub-total'})</span>`;
+          } else if (sumVal !== undefined) {
+            return isNaN(sumVal)
+              ? ''
+              : `<span class="text-primary bold">sum: ${decimalFormatted(sumVal, 0, 2)} MB</span> <span class="total-suffix">(${treeLevel === 0 ? 'total' : 'sub-total'})</span>`;
           }
         }
+        // reaching this line means it's a regular dataContext without totals
         return !isNumber(value) ? '' : `${value} MB`;
       },
     },
   ];
 
+  // options are mutated then re-applied with `setOptions()` (never replaced), so a plain object is enough
   const options: GridOption = {
-    autoResize: { autoHeight: false, container: '#demo-container', rightPadding: 10 },
+    autoResize: {
+      autoHeight: false,
+      container: '#demo-container',
+      rightPadding: 10,
+    },
     enableAutoSizeColumns: true,
     enableAutoResize: true,
     enableExcelExport: true,
-    excelExportOptions: { exportWithFormatter: true, sanitizeDataExport: true },
+    excelExportOptions: {
+      exportWithFormatter: true,
+      sanitizeDataExport: true,
+    },
     externalResources: [new ExcelExportService()],
     enableCellNavigation: true,
     enableFiltering: true,
-    enableTreeData: true,
-    multiColumnSort: false,
+    enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
+    multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
     treeDataOptions: {
       columnId: 'file',
       childrenPropName: 'files',
-      excludeChildrenWhenFilteringTree: excludeChildren,
-      autoApproveParentItemWhenTreeColumnIsValid: autoApproveParent,
+      excludeChildrenWhenFilteringTree: false, // defaults to false
+
+      // skip any other filter criteria(s) if the column holding the Tree (file) passes its own filter criteria
+      // (e.g. filtering with "Files = music AND Size > 7", the row "Music" and children will only show up when this flag is enabled
+      // this flag only works with the other flag set to `excludeChildrenWhenFilteringTree: false`
+      autoApproveParentItemWhenTreeColumnIsValid: true,
+
+      // Aggregators are also supported and must always be an array even when single one is provided
       aggregators: [new Aggregators.Avg('size'), new Aggregators.Sum('size')],
-      autoRecalcTotalsOnFilterChange: autoRecalcTotals,
+
+      // should we auto-recalc Tree Totals (when using Aggregators) anytime a filter changes
+      // it is disabled by default for perf reason, by default it will only calculate totals on first load
+      autoRecalcTotalsOnFilterChange: false,
     },
+    // change header/cell row height for salesforce theme
     headerRowHeight: 35,
     rowHeight: 33,
     showCustomFooter: true,
-    presets: { treeData: { toggledItems: [{ itemId: 4, isCollapsed: true }] } },
+
+    // we can also preset collapsed items via Grid Presets (parentId: 4 => is the "pdf" folder)
+    presets: {
+      treeData: { toggledItems: [{ itemId: 4, isCollapsed: true }] },
+    },
   };
 
-  function fileIcon(value: string) {
+  function getFileIcon(value: string) {
+    let prefix = '';
     if (value.includes('.pdf')) {
-      return '<span class="mdi icon mdi-file-pdf-outline"></span>';
+      prefix = '<span class="mdi icon mdi-file-pdf-outline"></span>';
+    } else if (value.includes('.txt')) {
+      prefix = '<span class="mdi icon mdi-file-document-outline"></span>';
+    } else if (value.includes('.xls')) {
+      prefix = '<span class="mdi icon mdi-file-excel-outline"></span>';
+    } else if (value.includes('.mp3')) {
+      prefix = '<span class="mdi icon mdi-file-music-outline"></span>';
     }
-    if (value.includes('.txt')) {
-      return '<span class="mdi icon mdi-file-document-outline"></span>';
-    }
-    if (value.includes('.xls')) {
-      return '<span class="mdi icon mdi-file-excel-outline"></span>';
-    }
-    if (value.includes('.mp3')) {
-      return '<span class="mdi icon mdi-file-music-outline"></span>';
-    }
-    return '';
+    return prefix;
   }
 
-  function makeDataset() {
+  function mockDataset() {
     return [
       { id: 24, file: 'bucket-list.txt', dateModified: '2012-03-05T12:44:00.123Z', size: 0.5 },
       { id: 18, file: 'something.txt', dateModified: '2015-03-03T03:50:00.123Z', size: 90 },
@@ -202,192 +243,274 @@
   function ready(instance: SlickgridSvelteInstance) {
     grid = instance;
   }
-  function toggleSubtitle() {
-    showSubtitle = !showSubtitle;
+
+  function toggleSubTitle() {
+    showSubTitle = !showSubTitle;
     requestAnimationFrame(() => grid?.resizerService.resizeGrid());
   }
-  function updateTreeOption(
-    key: 'excludeChildrenWhenFilteringTree' | 'autoApproveParentItemWhenTreeColumnIsValid' | 'autoRecalcTotalsOnFilterChange',
-    value: boolean
-  ) {
-    options.treeDataOptions![key] = value;
+
+  function changeAutoApproveParentItem() {
+    isAutoApproveParentItemWhenTreeColumnIsValid = !isAutoApproveParentItemWhenTreeColumnIsValid;
+    options.treeDataOptions!.autoApproveParentItemWhenTreeColumnIsValid = isAutoApproveParentItemWhenTreeColumnIsValid;
     grid.slickGrid.setOptions(options);
-    if (key === 'autoRecalcTotalsOnFilterChange') {
-      grid.filterService.clearFilters();
-      grid.treeDataService.enableAutoRecalcTotalsFeature();
-    } else {
-      grid.filterService.refreshTreeDataFilters();
+    grid.filterService.refreshTreeDataFilters();
+  }
+
+  function changeAutoRecalcTotalsOnFilterChange() {
+    isAutoRecalcTotalsOnFilterChange = !isAutoRecalcTotalsOnFilterChange;
+    options.treeDataOptions!.autoRecalcTotalsOnFilterChange = isAutoRecalcTotalsOnFilterChange;
+    grid.slickGrid.setOptions(options);
+
+    // since it doesn't take current filters in consideration, we better clear them
+    grid.filterService.clearFilters();
+    grid.treeDataService.enableAutoRecalcTotalsFeature();
+  }
+
+  function changeExcludeChildWhenFiltering() {
+    isExcludingChildWhenFiltering = !isExcludingChildWhenFiltering;
+    options.treeDataOptions!.excludeChildrenWhenFilteringTree = isExcludingChildWhenFiltering;
+    grid.slickGrid.setOptions(options);
+    grid.filterService.refreshTreeDataFilters();
+  }
+
+  function clearSearch() {
+    searchString = '';
+    searchStringChanged('');
+  }
+
+  function searchStringChanged(val: string) {
+    searchString = val;
+    grid.filterService.updateFilters([{ columnId: 'file', searchTerms: [val] }], true, false, true);
+  }
+
+  /**
+   * A simple method to add a new item inside the first group that we find.
+   * After adding the item, it will sort by parent/child recursively
+   */
+  function addNewFile() {
+    const newId = grid.dataView.getLength() + 50;
+
+    // find first parent object and add the new item as a child
+    const tmpDatasetHierarchical = [...datasetHierarchical];
+    const popFolderItem = findItemInTreeStructure(tmpDatasetHierarchical, (x) => x.file === 'pop', 'files');
+
+    if (popFolderItem && Array.isArray(popFolderItem.files)) {
+      popFolderItem.files.push({
+        id: newId,
+        file: `pop-${newId}.mp3`,
+        dateModified: new Date(),
+        size: newId + 3,
+      });
+      lastInsertedPopSongId = newId;
+      isRemoveLastInsertedPopSongDisabled = false;
+
+      // overwrite hierarchical dataset which will also trigger a grid sort and rendering
+      datasetHierarchical = tmpDatasetHierarchical;
+
+      // scroll into the position, after insertion cycle, where the item was added
+      setTimeout(() => {
+        const rowIndex = grid.dataView.getRowById(popFolderItem.id) as number;
+        grid.slickGrid.scrollRowIntoView(rowIndex + 3);
+      }, 10);
     }
   }
-  function changeExcludeChildren(event: Event) {
-    excludeChildren = (event.currentTarget as HTMLInputElement).checked;
-    updateTreeOption('excludeChildrenWhenFilteringTree', excludeChildren);
+
+  function deleteFile() {
+    const tmpDatasetHierarchical = [...datasetHierarchical];
+    const popFolderItem = findItemInTreeStructure(datasetHierarchical, (x) => x.file === 'pop', 'files');
+    const songItemFound = findItemInTreeStructure(datasetHierarchical, (x) => x.id === lastInsertedPopSongId, 'files');
+
+    if (popFolderItem && songItemFound) {
+      const songIdx = popFolderItem.files.findIndex((f: any) => f.id === songItemFound.id);
+      if (songIdx >= 0) {
+        popFolderItem.files.splice(songIdx, 1);
+        lastInsertedPopSongId = undefined;
+        isRemoveLastInsertedPopSongDisabled = true;
+
+        // overwrite hierarchical dataset which will also trigger a grid sort and rendering
+        datasetHierarchical = tmpDatasetHierarchical;
+      }
+    }
   }
-  function changeAutoApprove(event: Event) {
-    autoApproveParent = (event.currentTarget as HTMLInputElement).checked;
-    updateTreeOption('autoApproveParentItemWhenTreeColumnIsValid', autoApproveParent);
-  }
-  function changeAutoRecalc(event: Event) {
-    autoRecalcTotals = (event.currentTarget as HTMLInputElement).checked;
-    updateTreeOption('autoRecalcTotalsOnFilterChange', autoRecalcTotals);
-  }
-  function searchChanged(value: string) {
-    searchString = value;
-    grid.filterService.updateFilters([{ columnId: 'file', searchTerms: value ? [value] : [] }], true, false, true);
-  }
-  function clearSearch() {
-    searchChanged('');
-  }
+
   function clearFilters() {
     grid.filterService.clearFilters();
-    searchString = '';
   }
+
   function collapseAll() {
     grid.treeDataService.toggleTreeDataCollapse(true);
   }
+
   function expandAll() {
     grid.treeDataService.toggleTreeDataCollapse(false);
   }
-  function findItem(node: any, predicate: (item: any) => boolean): any {
-    if (predicate(node)) {
-      return node;
-    }
-    for (const child of node.files ?? []) {
-      const found = findItem(child, predicate);
-      if (found) {
-        return found;
-      }
-    }
-    return undefined;
+
+  function logHierarchicalStructure() {
+    console.log('exploded array', grid.treeDataService.datasetHierarchical);
   }
-  function addNewFile() {
-    const folder = findItem(datasetHierarchical[0] ? { files: datasetHierarchical } : {}, (item) => item.file === 'pop');
-    if (!folder?.files) {
-      return;
-    }
-    const id = grid.dataView.getLength() + 50;
-    folder.files.push({ id, file: `pop-${id}.mp3`, dateModified: new Date(), size: id + 3 });
-    datasetHierarchical = [...datasetHierarchical];
-    lastInsertedId = id;
-    removeDisabled = false;
-    setTimeout(() => {
-      const row = grid.dataView.getRowById(folder.id);
-      if (row !== undefined) {
-        grid.slickGrid.scrollRowIntoView(row + 3);
-      }
-    }, 10);
-  }
-  function deleteFile() {
-    const folder = findItem({ files: datasetHierarchical }, (item) => item.file === 'pop');
-    const index = folder?.files?.findIndex((item: any) => item.id === lastInsertedId) ?? -1;
-    if (index >= 0) {
-      folder.files.splice(index, 1);
-      datasetHierarchical = [...datasetHierarchical];
-      lastInsertedId = undefined;
-      removeDisabled = true;
-    }
+
+  function logFlatStructure() {
+    console.log('flat array', grid.treeDataService.dataset);
   }
 </script>
 
 <h2>
-  Example 28: Tree Data with Aggregators <small
-    ><span class="mdi mdi-file-tree font-27px"></span> (from a Hierarchical Dataset -
-    <a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/tree-data-grid" target="_blank" rel="noreferrer">Wiki</a
+  Example 28: Tree Data with Aggregators
+  <small>
+    <span class="mdi mdi-file-tree font-27px"></span> (from a Hierarchical Dataset -
+    <a href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/tree-data-grid" target="_blank" rel="noreferrer">Wiki</a
     >)</small
   >
-  <span class="float-end"
-    ><a
-      style="font-size:18px"
+  <span class="float-end">
+    <a
+      style="font-size: 18px"
       target="_blank"
       rel="noreferrer"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example28.svelte"
-      ><i class="mdi mdi-link-variant"></i> code</a
-    ></span
-  >
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
   <button
     class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
     type="button"
-    data-test="toggle-subtitle"
     aria-label="Toggle example sub-title details"
-    onclick={toggleSubtitle}><i class="mdi mdi-information-outline"></i></button
+    data-test="toggle-subtitle"
+    onclick={toggleSubTitle}
   >
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
 </h2>
-{#if showSubtitle}<div class="subtitle">
+
+{#if showSubTitle}
+  <div class="subtitle">
     <ul>
-      <li>Hierarchical data supports nested files and folders, filtering, sorting and tree total aggregations.</li>
-      <li>Try the parent filter options and automatic total recalculation controls below.</li>
+      <li>It is assumed that your dataset will have Parent/Child references AND also Tree Level (indent) property.</li>
+      <ul>
+        <li>
+          If you do not have the Tree Level (indent), you could call "convertParentChildArrayToHierarchicalView()" then call
+          "convertHierarchicalViewToParentChildArray()"
+        </li>
+        <li>
+          You could also pass the result of "convertParentChildArrayToHierarchicalView()" to the "datasetHierarchical" prop as defined in
+          the next Hierarchical Example
+        </li>
+      </ul>
     </ul>
-  </div>{/if}
+  </div>
+{/if}
+
 <div class="row">
   <div class="col-md-7">
-    <button data-test="add-item-btn" class="btn btn-xs btn-icon btn-primary" onclick={addNewFile}
-      ><i class="mdi mdi-plus color-white"></i> Add New Pop Song</button
-    >
+    <button data-test="add-item-btn" class="btn btn-xs btn-icon btn-primary" onclick={addNewFile}>
+      <span class="mdi mdi-plus color-white"></span>
+      <span>Add New Pop Song</span>
+    </button>
     <button
       data-test="remove-item-btn"
       class="btn btn-outline-secondary btn-xs btn-icon mx-1"
-      disabled={removeDisabled}
-      onclick={deleteFile}><i class="mdi mdi-minus"></i> Remove Last Inserted Pop Song</button
+      disabled={isRemoveLastInsertedPopSongDisabled}
+      onclick={deleteFile}
     >
-    <button data-test="collapse-all-btn" class="btn btn-outline-secondary btn-xs btn-icon" onclick={collapseAll}
-      ><i class="mdi mdi-arrow-collapse"></i> Collapse All</button
+      <span class="mdi mdi-minus"></span>
+      <span>Remove Last Inserted Pop Song</span>
+    </button>
+    <button data-test="collapse-all-btn" class="btn btn-outline-secondary btn-xs btn-icon" onclick={collapseAll}>
+      <span class="mdi mdi-arrow-collapse"></span>
+      <span>Collapse All</span>
+    </button>
+    <button data-test="expand-all-btn" class="btn btn-outline-secondary btn-xs btn-icon mx-1" onclick={expandAll}>
+      <span class="mdi mdi-arrow-expand"></span>
+      <span>Expand All</span>
+    </button>
+    <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="clear-filters-btn" onclick={clearFilters}>
+      <span class="mdi mdi-close"></span>
+      <span>Clear Filters</span>
+    </button>
+    <button class="btn btn-outline-secondary btn-xs btn-icon" title="console.log of the Flat dataset" onclick={logFlatStructure}>
+      <span>Log Flat Structure</span>
+    </button>
+    <button
+      class="btn btn-outline-secondary btn-xs btn-icon mx-1"
+      title="console.log of the Hierarchical Tree dataset"
+      onclick={logHierarchicalStructure}
     >
-    <button data-test="expand-all-btn" class="btn btn-outline-secondary btn-xs btn-icon mx-1" onclick={expandAll}
-      ><i class="mdi mdi-arrow-expand"></i> Expand All</button
-    >
-    <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="clear-filters-btn" onclick={clearFilters}
-      ><i class="mdi mdi-close"></i> Clear Filters</button
-    >
+      <span>Log Hierarchical Structure</span>
+    </button>
   </div>
+
   <div class="col-md-5">
     <div class="input-group input-group-sm">
       <input
+        value={searchString}
         type="text"
         class="form-control search-string"
         placeholder="search value"
         autocomplete="off"
         data-test="search-string"
-        value={searchString}
-        oninput={(event) => searchChanged((event.currentTarget as HTMLInputElement).value)}
-      /><button
+        oninput={(event) => searchStringChanged(event.currentTarget.value)}
+      />
+      <button
         class="btn btn-sm btn-outline-secondary d-flex align-items-center"
         aria-label="Clear search"
         data-test="clear-search-string"
-        onclick={clearSearch}><i class="mdi mdi-close-thick"></i></button
+        onclick={clearSearch}
       >
+        <span class="icon mdi mdi-close-thick"></span>
+      </button>
     </div>
   </div>
 </div>
+
 <div>
-  <label class="checkbox-inline control-label ms-3" for="excludeChildWhenFiltering"
-    ><input
+  <label class="checkbox-inline control-label" for="excludeChildWhenFiltering" style="margin-left: 20px">
+    <input
       id="excludeChildWhenFiltering"
       type="checkbox"
       data-test="exclude-child-when-filtering"
-      checked={excludeChildren}
-      onchange={changeExcludeChildren}
-    /> Exclude Children when Filtering Tree</label
-  >
-  <label class="checkbox-inline control-label ms-3" for="autoApproveParentItem"
-    ><input
+      checked={isExcludingChildWhenFiltering}
+      onclick={changeExcludeChildWhenFiltering}
+    />
+    <span
+      title="for example if we filter the word 'pop' and we exclude children, then only the folder 'pop' will show up without any content unless we uncheck this flag"
+    >
+      Exclude Children when Filtering Tree
+    </span>
+  </label>
+  <label class="checkbox-inline control-label" for="autoApproveParentItem" style="margin-left: 20px">
+    <input
       id="autoApproveParentItem"
       type="checkbox"
       data-test="auto-approve-parent-item"
-      checked={autoApproveParent}
-      onchange={changeAutoApprove}
-    /> Skip Other Filter Criteria when Parent with Tree is valid</label
-  >
-  <label class="checkbox-inline control-label ms-3" for="autoRecalcTotalsOnFilterChange"
-    ><input
+      checked={isAutoApproveParentItemWhenTreeColumnIsValid}
+      onclick={changeAutoApproveParentItem}
+    />
+    <span
+      title="for example in this demo if we filter with 'music' and size '> 70' nothing will show up unless we have this flag enabled
+          because none of the files have both criteria at the same time, however the column with the tree 'file' does pass the filter criteria 'music'
+          and with this flag we tell the lib to skip any other filter(s) as soon as the with the tree (file in this demo) passes its own filter criteria"
+    >
+      Skip Other Filter Criteria when Parent with Tree is valid
+    </span>
+  </label>
+  <label class="checkbox-inline control-label" for="autoRecalcTotalsOnFilterChange" style="margin-left: 20px">
+    <input
       id="autoRecalcTotalsOnFilterChange"
       type="checkbox"
       data-test="auto-recalc-totals"
-      checked={autoRecalcTotals}
-      onchange={changeAutoRecalc}
-    /> auto-recalc Tree Data totals on filter changed</label
-  >
+      checked={isAutoRecalcTotalsOnFilterChange}
+      onclick={changeAutoRecalcTotalsOnFilterChange}
+    />
+    <span
+      title="Should we recalculate Tree Data Totals (when Aggregators are defined) while filtering? This feature is disabled by default."
+    >
+      auto-recalc Tree Data totals on filter changed
+    </span>
+  </label>
 </div>
+
 <br />
+
 <div id="grid-container" class="col-sm-12">
   <SlickgridSvelte gridId="grid28" {options} {columns} {datasetHierarchical} onSvelteGridCreated={ready} />
 </div>
@@ -416,7 +539,7 @@
   }
   :global(#grid28 .mdi-folder),
   :global(#grid28 .mdi-folder-open) {
-    color: orange;
+    color: #ffa500;
     opacity: 0.9;
   }
   :global(#grid28 .mdi-file-music-outline) {
@@ -427,7 +550,8 @@
     color: #1e9f75;
     opacity: 0.9;
   }
-  :global(#grid28 .mdi-file-document-outline) {
+  :global(#grid28 .mdi-file-document-outline),
+  :global(#grid28 .mdi-file-question-outline) {
     color: #686868;
     opacity: 0.9;
   }

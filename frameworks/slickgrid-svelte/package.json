@@ -28,8 +28,8 @@
   "type": "module",
   "exports": {
     ".": {
-      "svelte": "./src/index.ts",
       "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js",
       "default": "./dist/index.js"
     },
     "./package.json": "./package.json"
@@ -38,8 +38,9 @@
     "access": "public"
   },
   "scripts": {
-    "svelte:dev": "tsc -p tsconfig.json --watch",
-    "build": "tsc -p tsconfig.json && node scripts/copy-component.mjs"
+    "svelte:dev": "svelte-package -i src -o dist --watch",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "build": "pnpm check && svelte-package -i src -o dist"
   },
   "dependencies": {
     "@slickgrid-universal/common": "workspace:*",
@@ -52,6 +53,12 @@
   },
   "peerDependencies": {
     "svelte": ">=5.0.0"
+  },
+  "devDependencies": {
+    "@sveltejs/package": "^3.0.3",
+    "svelte": "catalog:",
+    "svelte-check": "catalog:",
+    "typescript": "catalog:"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts"

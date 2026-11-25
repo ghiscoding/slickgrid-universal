@@ -41,7 +41,7 @@
     "cypress": "catalog:",
     "cypress-real-events": "catalog:",
     "sass": "catalog:",
-    "svelte-check": "^4.0.0",
+    "svelte-check": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
   }

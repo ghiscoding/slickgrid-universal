@@ -2,11 +2,7 @@
   import { ExcelExportService } from '@slickgrid-universal/excel-export';
   import { PdfExportService } from '@slickgrid-universal/pdf-export';
   import { SlickgridSvelte, type Column, type GridOption, type SlickgridSvelteInstance } from 'slickgrid-svelte';
-  import { onDestroy, onMount } from 'svelte';
   import './example55.scss';
-
-  type Ref<T> = T;
-  const ref = <T,>(value?: T): T => value as T;
 
   const NB_ITEMS = 200;
 
@@ -18,15 +14,14 @@
     rowHeight: number;
   }
 
-  let gridOptions = ref<GridOption>();
-  let columns: Ref<Column[]> = ref([]);
-  let dataset = ref<StoryItem[]>([]);
+  let gridOptions: GridOption = $state.raw({});
+  let columns: Column[] = $state.raw([]);
+  let dataset: StoryItem[] = $state.raw(getData(NB_ITEMS));
   const excelExportService = new ExcelExportService();
   const pdfExportService = new PdfExportService();
   let svelteGrid!: SlickgridSvelteInstance;
 
   defineGrid();
-  dataset = getData(NB_ITEMS);
 
   function gridReady(grid: SlickgridSvelteInstance) {
     svelteGrid = grid;

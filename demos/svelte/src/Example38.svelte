@@ -15,69 +15,90 @@
   } from 'slickgrid-svelte';
   import customerData from './data/customers_100.json';
 
+  const CARET_HTML_ESCAPED = '%5E';
+  const PERCENT_HTML_ESCAPED = '%25';
   const backendService = new GridOdataService();
-  const columns: Column[] = [
-    { id: 'name', name: 'Name', field: 'name', sortable: true, filterable: true, filter: { model: Filters.compoundInput } },
-    {
-      id: 'gender',
-      name: 'Gender',
-      field: 'gender',
-      filterable: true,
-      sortable: true,
-      filter: {
-        model: Filters.singleSelect,
-        collection: [
-          { value: '', label: '' },
-          { value: 'male', label: 'male' },
-          { value: 'female', label: 'female' },
-        ],
-      },
-    },
-    { id: 'company', name: 'Company', field: 'company', filterable: true, sortable: true },
-    {
-      id: 'category_name',
-      name: 'Category',
-      field: 'category/name',
-      filterable: true,
-      sortable: true,
-      formatter: (_row, _cell, _value, _column, item) => item.category?.name || '',
-    },
-  ];
+  const columns = $state.raw<Column[]>(defineColumns());
+  const gridOptions = $state.raw<GridOption>(defineGridOptions());
 
-  let gridOptions: GridOption;
-  let dataset: any[] = [];
-  let metrics: Partial<Metrics> = {};
-  let tagDataClass = '';
-  let odataQuery = '';
-  let processing = false;
-  let errorStatus = '';
-  let status = { text: 'processing...', class: 'alert alert-danger' };
-  let showSubTitle = true;
+  let dataset = $state.raw<any[]>([]);
+  let metrics = $state<Partial<Metrics>>({});
+  let tagDataClass = $state('');
+  let odataQuery = $state('');
+  let processing = $state(false);
+  let errorStatus = $state('');
+  let status = $state.raw({ text: 'processing...', class: 'alert alert-danger' });
+  let showSubTitle = $state(true);
   let grid: SlickgridSvelteInstance;
-  $: metricsEndTime = metrics.endTime ? dateFormatter(metrics.endTime, 'DD MMM, h:mm:ss a') : '';
+  const metricsEndTime = $derived(metrics.endTime ? dateFormatter(metrics.endTime, 'DD MMM, h:mm:ss a') : '');
 
-  function displaySpinner(isProcessing: boolean, isError = false) {
-    processing = isProcessing;
-    status = isError
-      ? { text: 'ERROR!!!', class: 'alert alert-danger' }
-      : isProcessing
-        ? { text: 'loading', class: 'alert alert-warning' }
-        : { text: 'finished', class: 'alert alert-success' };
+  /* Define grid Options and Columns */
+  function defineColumns(): Column[] {
+    return [
+      {
+        id: 'name',
+        name: 'Name',
+        field: 'name',
+        sortable: true,
+        filterable: true,
+        filter: { model: Filters.compoundInput },
+      },
+      {
+        id: 'gender',
+        name: 'Gender',
+        field: 'gender',
+        filterable: true,
+        sortable: true,
+        filter: {
+          model: Filters.singleSelect,
+          collection: [
+            { value: '', label: '' },
+            { value: 'male', label: 'male' },
+            { value: 'female', label: 'female' },
+          ],
+        },
+      },
+      { id: 'company', name: 'Company', field: 'company', filterable: true, sortable: true },
+      {
+        id: 'category_name',
+        name: 'Category',
+        field: 'category/name',
+        filterable: true,
+        sortable: true,
+        formatter: (_row, _cell, _val, _colDef, dataContext) => dataContext['category']?.['name'] || '',
+      },
+    ];
   }
 
-  function defineGrid() {
-    gridOptions = {
+  function defineGridOptions(): GridOption {
+    return {
       enableAutoResize: true,
-      autoResize: { container: '#demo-container', rightPadding: 10 },
-      checkboxSelector: { hideInFilterHeaderRow: false, hideInColumnTitleRow: true },
+      autoResize: {
+        container: '#demo-container',
+        rightPadding: 10,
+      },
+      checkboxSelector: {
+        // you can toggle these 2 properties to show the "select all" checkbox in different location
+        hideInFilterHeaderRow: false,
+        hideInColumnTitleRow: true,
+      },
       enableCellNavigation: true,
       enableFiltering: true,
       enableCheckboxSelector: true,
       enableSelection: true,
       enableGrouping: true,
+      presets: {
+        // NOTE: pagination preset is NOT supported with infinite scroll
+        // filters: [{ columnId: 'gender', searchTerms: ['female'] }]
+      },
       backendServiceApi: {
         service: backendService,
-        options: { infiniteScroll: { fetchSize: 30 }, enableCount: true, version: 4 },
+        options: {
+          // enable infinite via Boolean OR via { fetchSize: number }
+          infiniteScroll: { fetchSize: 30 }, // or use true, in that case it would use default size of 25
+          enableCount: true,
+          version: 4,
+        },
         onError: (error: Error) => {
           errorStatus = error.message;
           displaySpinner(false, true);
@@ -92,8 +113,20 @@
           displaySpinner(false);
           getCustomerCallback(response);
         },
+        // we could use local in-memory Filtering (please note that it only filters against what is currently loaded)
+        // that is when we want to avoid reloading the entire dataset every time
+        // useLocalFiltering: true,
       } as OdataServiceApi,
     };
+  }
+
+  function displaySpinner(isProcessing: boolean, isError?: boolean) {
+    processing = isProcessing;
+    if (isError) {
+      status = { text: 'ERROR!!!', class: 'alert alert-danger' };
+    } else {
+      status = isProcessing ? { text: 'loading', class: 'alert alert-warning' } : { text: 'finished', class: 'alert alert-success' };
+    }
   }
 
   function getCustomerCallback(data: {
@@ -103,88 +136,263 @@
     query: string;
     value: any[];
   }) {
-    metrics.totalItemCount = data['@odata.count'];
+    // totalItems property needs to be filled for pagination to work correctly
+    const totalItemCount: number = data['@odata.count'];
+    metrics.totalItemCount = totalItemCount;
+
+    // even if we're not showing pagination, it is still used behind the scene to fetch next set of data (next page basically)
+    // once pagination totalItems is filled, we can update the dataset
+
+    // infinite scroll has an extra data property to determine if we hit an infinite scroll and there's still more data (in that case we need append data)
+    // or if we're on first data fetching (no scroll bottom ever occured yet)
     if (!data.infiniteScrollBottomHit) {
-      grid?.slickGrid?.scrollTo(0);
+      // initial load not scroll hit yet, full dataset assignment
+      grid.slickGrid?.scrollTo(0); // scroll back to top to avoid unwanted onScroll end triggered
       dataset = data.value;
       metrics.itemCount = data.value.length;
     } else {
-      grid?.dataView?.addItems(data.value);
+      // scroll hit, for better perf we can simply use the DataView directly for better perf (which is better compare to replacing the entire dataset)
+      grid.dataView?.addItems(data.value);
     }
-    odataQuery = data.query;
+
+    odataQuery = data['query'];
+
+    // NOTE: you can get currently loaded item count via the `onRowCountChanged`slick event, see `refreshMetrics()` below
+    // OR you could also calculate it yourself or get it via: `grid.dataView.getItemCount() === totalItemCount`
   }
 
   function getCustomerApiCall(query: string) {
+    // in your case, you will call your WebAPI function (wich needs to return a Promise)
+    // for the demo purpose, we will call a mock WebAPI function
     return getCustomerDataApiMock(query);
   }
 
+  /**
+   * This function is only here to mock a WebAPI call (since we are using a JSON file for the demo)
+   *  in your case the getCustomer() should be a WebAPI function returning a Promise
+   */
   function getCustomerDataApiMock(query: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const queryParts = query.split('&');
-      const top = Number(query.match(/\$top=(\d+)/)?.[1] ?? 30);
-      let skip = Number(query.match(/\$skip=(\d+)/)?.[1] ?? 0);
-      const orderBy = query.match(/\$orderby=([^&]+)/)?.[1] ?? '';
-      const filter = query.match(/\$filter=(.+)$/)?.[1] ?? '';
-      let rows = JSON.parse(JSON.stringify(customerData)) as any[];
-      if (orderBy.toLowerCase().includes('company')) {
-        reject(new Error('Server could not sort using the field "Company"'));
-        return;
-      }
-      if (filter.toLowerCase().includes('company')) {
-        reject(new Error('Server could not filter using the field "Company"'));
-        return;
+    // the mock is returning a Promise, just like a WebAPI typically does
+    return new Promise((resolve) => {
+      const queryParams = query.toLowerCase().split('&');
+      let top: number;
+      let skip = 0;
+      let orderBy = '';
+      let countTotalItems = 100;
+      const columnFilters = {};
+
+      for (const param of queryParams) {
+        if (param.includes('$top=')) {
+          top = +param.substring('$top='.length);
+          if (top === 50000) {
+            throw new Error('Server timed out retrieving 50,000 rows');
+          }
+        }
+        if (param.includes('$skip=')) {
+          skip = +param.substring('$skip='.length);
+        }
+        if (param.includes('$orderby=')) {
+          orderBy = param.substring('$orderby='.length);
+        }
+        if (param.includes('$filter=')) {
+          const filterBy = param.substring('$filter='.length).replace('%20', ' ');
+          if (filterBy.includes('matchespattern')) {
+            const regex = new RegExp(`matchespattern\\(([a-zA-Z]+),\\s'${CARET_HTML_ESCAPED}(.*?)'\\)`, 'i');
+            const filterMatch = filterBy.match(regex) || [];
+            const fieldName = filterMatch[1].trim();
+            (columnFilters as any)[fieldName] = { type: 'matchespattern', term: '^' + filterMatch[2].trim() };
+          }
+          if (filterBy.includes('contains')) {
+            const filterMatch = filterBy.match(/contains\(([a-zA-Z/]+),\s?'(.*?)'/);
+            const fieldName = filterMatch![1].trim();
+            (columnFilters as any)[fieldName] = { type: 'substring', term: filterMatch![2].trim() };
+          }
+          if (filterBy.includes('substringof')) {
+            const filterMatch = filterBy.match(/substringof\('(.*?)',\s([a-zA-Z/]+)/);
+            const fieldName = filterMatch![2].trim();
+            (columnFilters as any)[fieldName] = { type: 'substring', term: filterMatch![1].trim() };
+          }
+          for (const operator of ['eq', 'ne', 'le', 'lt', 'gt', 'ge']) {
+            if (filterBy.includes(operator)) {
+              const re = new RegExp(`([a-zA-Z ]*) ${operator} '(.*?)'`);
+              const filterMatch = re.exec(filterBy);
+              if (Array.isArray(filterMatch)) {
+                const fieldName = filterMatch[1].trim();
+                (columnFilters as any)[fieldName] = { type: operator, term: filterMatch[2].trim() };
+              }
+            }
+          }
+          if (filterBy.includes('startswith') && filterBy.includes('endswith')) {
+            const filterStartMatch = filterBy.match(/startswith\(([a-zA-Z ]*),\s?'(.*?)'/) || [];
+            const filterEndMatch = filterBy.match(/endswith\(([a-zA-Z ]*),\s?'(.*?)'/) || [];
+            const fieldName = filterStartMatch[1].trim();
+            (columnFilters as any)[fieldName] = {
+              type: 'starts+ends',
+              term: [filterStartMatch[2].trim(), filterEndMatch[2].trim()],
+            };
+          } else if (filterBy.includes('startswith')) {
+            const filterMatch = filterBy.match(/startswith\(([a-zA-Z ]*),\s?'(.*?)'/);
+            const fieldName = filterMatch![1].trim();
+            (columnFilters as any)[fieldName] = { type: 'starts', term: filterMatch![2].trim() };
+          } else if (filterBy.includes('endswith')) {
+            const filterMatch = filterBy.match(/endswith\(([a-zA-Z ]*),\s?'(.*?)'/);
+            const fieldName = filterMatch![1].trim();
+            (columnFilters as any)[fieldName] = { type: 'ends', term: filterMatch![2].trim() };
+          }
+
+          // simulate a backend error when trying to sort on the "Company" field
+          if (filterBy.includes('company')) {
+            throw new Error('Server could not filter using the field "Company"');
+          }
+        }
       }
 
-      const genderMatch = filter.match(/Gender\s+eq\s+'([^']+)'/i);
-      if (genderMatch) {
-        rows = rows.filter((row) => row.gender.toLowerCase() === genderMatch[1].toLowerCase());
+      // simulate a backend error when trying to sort on the "Company" field
+      if (orderBy.includes('company')) {
+        throw new Error('Server could not sort using the field "Company"');
       }
-      if (orderBy) {
-        const [fieldRaw, directionRaw] = orderBy.split(' ');
-        const field = fieldRaw.split('/').at(-1)?.toLowerCase() ?? '';
-        const direction = directionRaw?.toLowerCase() === 'desc' ? -1 : 1;
-        rows.sort((a, b) => direction * String(a[field] ?? a[fieldRaw] ?? '').localeCompare(String(b[field] ?? b[fieldRaw] ?? '')));
+
+      /// read the JSON and create a fresh copy of the data that we are free to modify
+      let data = customerData as unknown as {
+        name: string;
+        gender: string;
+        company: string;
+        id: string;
+        category: { id: string; name: string };
+      }[];
+      data = JSON.parse(JSON.stringify(data));
+
+      // Sort the data
+      if (orderBy?.length > 0) {
+        const orderByClauses = orderBy.split(',');
+        for (const orderByClause of orderByClauses) {
+          const orderByParts = orderByClause.split(' ');
+          const orderByField = orderByParts[0];
+
+          let selector = (obj: any): string => obj;
+          for (const orderByFieldPart of orderByField.split('/')) {
+            const prevSelector = selector;
+            selector = (obj: any) => {
+              return prevSelector(obj)[orderByFieldPart as any];
+            };
+          }
+
+          const sort = orderByParts[1] ?? 'asc';
+          switch (sort.toLocaleLowerCase()) {
+            case 'asc':
+              data = data.sort((a, b) => selector(a).localeCompare(selector(b)));
+              break;
+            case 'desc':
+              data = data.sort((a, b) => selector(b).localeCompare(selector(a)));
+              break;
+          }
+        }
       }
-      const totalCount = rows.length;
-      if (skip > rows.length) {
-        query = query.replace(`$skip=${skip}`, '');
-        skip = 0;
+
+      // Read the result field from the JSON response.
+      let firstRow = skip;
+      let filteredData = data;
+      if (columnFilters) {
+        for (const columnId in columnFilters) {
+          if (columnId in columnFilters) {
+            filteredData = filteredData.filter((column) => {
+              const filterType = (columnFilters as any)[columnId].type;
+              const searchTerm = (columnFilters as any)[columnId].term;
+              let colId = columnId;
+              if (columnId?.indexOf(' ') !== -1) {
+                const splitIds = columnId.split(' ');
+                colId = splitIds[splitIds.length - 1];
+              }
+              let filterTerm;
+              let col = column;
+              for (const part of colId.split('/')) {
+                filterTerm = (col as any)[part];
+                col = filterTerm;
+              }
+
+              if (filterTerm) {
+                const [term1, term2] = Array.isArray(searchTerm) ? searchTerm : [searchTerm];
+
+                switch (filterType) {
+                  case 'eq':
+                    return filterTerm.toLowerCase() === term1;
+                  case 'ne':
+                    return filterTerm.toLowerCase() !== term1;
+                  case 'le':
+                    return filterTerm.toLowerCase() <= term1;
+                  case 'lt':
+                    return filterTerm.toLowerCase() < term1;
+                  case 'gt':
+                    return filterTerm.toLowerCase() > term1;
+                  case 'ge':
+                    return filterTerm.toLowerCase() >= term1;
+                  case 'ends':
+                    return filterTerm.toLowerCase().endsWith(term1);
+                  case 'starts':
+                    return filterTerm.toLowerCase().startsWith(term1);
+                  case 'starts+ends':
+                    return filterTerm.toLowerCase().startsWith(term1) && filterTerm.toLowerCase().endsWith(term2);
+                  case 'substring':
+                    return filterTerm.toLowerCase().includes(term1);
+                  case 'matchespattern':
+                    return new RegExp((term1 as string).replace(new RegExp(PERCENT_HTML_ESCAPED, 'g'), '.*'), 'i').test(filterTerm);
+                }
+              }
+            });
+          }
+        }
+        countTotalItems = filteredData.length;
       }
-      const results = rows.slice(skip, skip + top);
-      const simulatedError = queryParts.some((part) => part.includes('$top=50000'));
-      if (simulatedError) {
-        reject(new Error('Server timed out retrieving 50,000 rows'));
-        return;
+
+      // make sure page skip is not out of boundaries, if so reset to first page & remove skip from query
+      if (firstRow > filteredData.length) {
+        query = query.replace(`$skip=${firstRow}`, '');
+        firstRow = 0;
       }
-      setTimeout(() => resolve({ query, value: results, '@odata.count': totalCount }), 150);
+      const updatedData = filteredData.slice(firstRow, firstRow + top!);
+
+      setTimeout(() => {
+        const backendResult: any = { query };
+        backendResult['value'] = updatedData;
+        backendResult['@odata.count'] = countTotalItems;
+
+        resolve(backendResult);
+      }, 150);
     });
   }
 
   function groupByGender() {
     grid?.dataView?.setGrouping({
       getter: 'gender',
-      formatter: (group) => `Gender: ${group.value} <span class="text-green">(${group.count} items)</span>`,
+      formatter: (g) => `Gender: ${g.value} <span class="text-green">(${g.count} items)</span>`,
       comparer: (a, b) => SortComparers.string(a.value, b.value),
       aggregators: [new Aggregators.Sum('gender')],
       aggregateCollapsed: false,
       lazyTotalsCalculation: true,
     } as Grouping);
-    grid?.slickGrid?.setSortColumns([{ columnId: 'duration', sortAsc: true }]);
-    grid?.slickGrid?.invalidate();
+
+    // you need to manually add the sort icon(s) in UI
+    grid?.slickGrid.setSortColumns([{ columnId: 'duration', sortAsc: true }]);
+    grid?.slickGrid.invalidate(); // invalidate all rows and re-render
   }
 
   function clearAllFiltersAndSorts() {
-    grid?.gridService.clearAllFiltersAndSorts();
+    if (grid?.gridService) {
+      grid.gridService.clearAllFiltersAndSorts();
+    }
   }
+
   function setFiltersDynamically() {
+    // we can Set Filters Dynamically (or different filters) afterward through the FilterService
     grid?.filterService.updateFilters([{ columnId: 'gender', searchTerms: ['female'] }]);
   }
+
   function setSortingDynamically() {
     grid?.sortService.updateSorting([{ columnId: 'name', direction: 'DESC' }]);
   }
 
-  function refreshMetrics(event: CustomEvent<{ args: OnRowCountChangedEventArgs }>) {
-    if (event.detail.args?.current >= 0) {
+  function refreshMetrics(args: OnRowCountChangedEventArgs) {
+    if (args?.current >= 0) {
       metrics.itemCount = grid.dataView?.getFilteredItemCount() || 0;
       tagDataClass = metrics.itemCount === metrics.totalItemCount ? 'fully-loaded' : 'partial-load';
     }
@@ -192,14 +400,12 @@
 
   function toggleSubTitle() {
     showSubTitle = !showSubTitle;
-    queueMicrotask(() => grid?.resizerService.resizeGrid());
+    queueMicrotask(() => grid.resizerService.resizeGrid());
   }
+
   function gridReady(instance: SlickgridSvelteInstance) {
     grid = instance;
   }
-
-  defineGrid();
-  const events = { onRowCountChanged: refreshMetrics };
 </script>
 
 <svelte:head><title>Example 38 - Infinite Scroll with OData</title></svelte:head>
@@ -211,7 +417,7 @@
       ><a
         style="font-size: 18px"
         target="_blank"
-        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example38.vue"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example38.svelte"
         ><span class="mdi mdi-link-variant"></span> code</a
       ></span
     >
@@ -223,35 +429,50 @@
       onclick={toggleSubTitle}><span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span></button
     >
   </h2>
-  {#if showSubTitle}<div class="subtitle">
+
+  {#if showSubTitle}
+    <div class="subtitle">
       <ul>
         <li>
-          Infinite scrolling lazy-loads server rows as the user reaches the bottom. Rows remain in memory as additional batches are
-          appended.
+          Infinite scrolling allows the grid to lazy-load rows from the server when reaching the scroll bottom (end) position. In its
+          simplest form, the more the user scrolls down, the more rows get loaded. If we reached the end of the dataset and there is no more
+          data to load, then we'll assume to have the entire dataset loaded in memory. This contrast with the regular Pagination approach
+          which will only hold a single page data at a time.
         </li>
-        <li>Notes</li>
+        <li>NOTES</li>
         <ol>
           <li>
-            <code>presets.pagination</code> is not supported with infinite scroll because the grid keeps the loaded rows from index zero.
+            <code>presets.pagination</code> is not supported with Infinite Scroll and will revert to the first page, simply because since we keep
+            appending data, we always have to start from index zero (no offset).
           </li>
-          <li>Pagination works behind the scenes to fetch each next batch.</li>
-          <li>Changing sorting or filtering resets the loaded rows to the first batch.</li>
+          <li>
+            Pagination is not shown BUT in fact, that is what is being used behind the scene whenever reaching the scroll end (fetching next
+            batch).
+          </li>
+          <li>
+            Also note that whenever the user changes the Sort(s)/Filter(s) it will always reset and go back to zero index (first page).
+          </li>
         </ol>
       </ul>
-    </div>{/if}
+    </div>
+  {/if}
 
   <div class="row">
     <div class="col-sm-3">
-      <div class="alert alert-danger" data-test="error-status" class:hidden={!errorStatus}>
+      <div class="alert alert-danger" class:hidden={!errorStatus} data-test="error-status">
         <em><strong>Backend Error:</strong> <span>{errorStatus}</span></em>
       </div>
     </div>
   </div>
+
   <div class="row">
     <div class="col-sm-2">
       <div class={status.class} role="alert" data-test="status">
         <strong>Status: </strong>
-        {status.text}<span hidden={!processing}><i class="mdi mdi-sync mdi-spin"></i></span>
+        {status.text}
+        <span hidden={!processing}>
+          <i class="mdi mdi-sync mdi-spin"></i>
+        </span>
       </div>
     </div>
     <div class="col-sm-10">
@@ -260,30 +481,48 @@
       </div>
     </div>
   </div>
+
   <div class="row">
     <div class="col-sm-12">
       <button
         class="btn btn-outline-secondary btn-sm btn-icon"
         data-test="clear-filters-sorting"
         title="Clear all Filters & Sorts"
-        onclick={clearAllFiltersAndSorts}><i class="mdi mdi-filter-remove-outline"></i> Clear all Filter & Sorts</button
+        onclick={clearAllFiltersAndSorts}
       >
-      <button class="btn btn-outline-secondary btn-sm mx-1" data-test="set-dynamic-filter" onclick={setFiltersDynamically}
-        >Set Filters Dynamically</button
-      >
-      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-sorting" onclick={setSortingDynamically}
-        >Set Sorting Dynamically</button
-      >
+        <i class="mdi mdi-filter-remove-outline"></i>
+        Clear all Filter & Sorts
+      </button>
+      <button class="btn btn-outline-secondary btn-sm mx-1" data-test="set-dynamic-filter" onclick={setFiltersDynamically}>
+        Set Filters Dynamically
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-sorting" onclick={setSortingDynamically}>
+        Set Sorting Dynamically
+      </button>
       <button class="btn btn-outline-secondary btn-sm mx-1" data-test="group-by-gender" onclick={groupByGender}>Group by Gender</button>
+
       <div class="mt-2" style="margin: 10px 0px">
-        <b>Metrics:</b><span
-          ><span>{metricsEndTime}</span> — <span data-test="itemCount">{metrics.itemCount ?? 0}</span> of
-          <span data-test="totalItemCount">{metrics.totalItemCount ?? 0}</span> items</span
-        ><span class={'badge rounded-pill text-bg-primary ' + tagDataClass} data-test="data-loaded-tag">All Data Loaded!!!</span>
+        <b>Metrics:</b>
+        <span>
+          <span>{metricsEndTime}</span> —
+          <span data-test="itemCount">{metrics.itemCount}</span>
+          of
+          <span data-test="totalItemCount">{metrics.totalItemCount}</span>
+          items
+        </span>
+        <span class="badge rounded-pill text-bg-primary {tagDataClass}" data-test="data-loaded-tag">All Data Loaded!!!</span>
       </div>
     </div>
   </div>
-  <SlickgridSvelte gridId="grid38" {columns} options={gridOptions} {dataset} {events} onSvelteGridCreated={gridReady} />
+
+  <SlickgridSvelte
+    gridId="grid38"
+    {columns}
+    options={gridOptions}
+    {dataset}
+    onRowCountChanged={(event: CustomEvent) => refreshMetrics(event.detail.args)}
+    onSvelteGridCreated={gridReady}
+  />
 </div>
 
 <style>

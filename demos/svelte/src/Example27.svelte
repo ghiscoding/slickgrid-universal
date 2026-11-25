@@ -141,16 +141,16 @@
     },
   };
 
-  let dataset: any[] = [];
-  let grid: SlickgridSvelteInstance;
-  let loadingClass = '';
+  let dataset = $state.raw<any[]>([]);
+  let grid!: SlickgridSvelteInstance;
+  let loadingClass = $state('');
   let isLargeDataset = false;
-  let hasNoExpandCollapseChanged = true;
+  let hasNoExpandCollapseChanged = $state(true);
   let treeToggleItems: TreeToggledItem[] = [];
-  let showSubtitle = true;
+  let showSubtitle = $state(true);
 
   function loadData(rowCount: number) {
-    isLargeDataset = rowCount > 5000;
+    isLargeDataset = rowCount > 5000; // we'll show a spinner when it's large, else don't show since it should be fast enough
     let indent = 0;
     const parents: number[] = [];
     const data: any[] = [];
@@ -159,6 +159,8 @@
       const randomMonth = Math.floor(Math.random() * 11);
       const randomDay = Math.floor(Math.random() * 29);
       let parentId: number | null;
+
+      // for demo & E2E testing purposes, "Task 0" is empty and "Task 1" is a parent of "Task 2" and "Task 3" (which also contains "Task 4")
       if (i === 1 || i === 0) {
         indent = 0;
         parents.pop();
@@ -188,6 +190,10 @@
     return data;
   }
 
+  /**
+   * A simple method to add a new item inside the first group that has children which is "Task 1"
+   * After adding the item, it will resort by parent/child recursively but keep current sort column
+   */
   function addNewRow() {
     const newId = grid.dataView.getItemCount();
     const parent = grid.dataView.getItemById(1);
@@ -205,6 +211,7 @@
     }
   }
   function updateFirstRow() {
+    // we MUST read the item from the DataView first (it includes the Tree Data props, like `__treeLevel`) and then update it
     const item = grid.dataView.getItemById<any>(0);
     grid.gridService.updateItem({
       ...item,
@@ -226,6 +233,12 @@
   }
   function dynamicallyChangeFilter() {
     grid.filterService.updateFilters([{ columnId: 'percentComplete', operator: '<', searchTerms: [40] }]);
+  }
+  function logFlatStructure() {
+    console.log('flat array', grid.treeDataService.dataset);
+  }
+  function logHierarchicalStructure() {
+    console.log('exploded array', grid.treeDataService.datasetHierarchical);
   }
   function setMaxVisibleDepthFromInput() {
     const input = document.querySelector<HTMLInputElement>('#maxVisibleDepthInput');
@@ -251,33 +264,26 @@
   }
   function showSpinner() {
     if (isLargeDataset) {
-      loadingClass = 'mdi mdi-loading mdi-spin font-24px color-alt-success';
+      loadingClass = 'mdi mdi-load mdi-spin-1s font-24px color-alt-success';
     }
   }
   function hideSpinner() {
-    setTimeout(() => (loadingClass = ''), 200);
+    setTimeout(() => (loadingClass = ''), 200); // delay the hide spinner a bit to avoid show/hide too quickly
+  }
+  function handleOnTreeFullToggleEnd(treeToggleExecution: TreeToggleStateChange) {
+    console.log('Tree Data changes', treeToggleExecution);
+    hideSpinner();
+  }
+  /** Whenever a parent is being toggled, we'll keep a reference of all of these changes so that we can reapply them whenever we want */
+  function handleOnTreeItemToggled(treeToggleExecution: TreeToggleStateChange) {
+    hasNoExpandCollapseChanged = false;
+    treeToggleItems = treeToggleExecution.toggledItems as TreeToggledItem[];
+    console.log('Tree Data changes', treeToggleExecution);
   }
   function toggleSubtitle() {
     showSubtitle = !showSubtitle;
     requestAnimationFrame(() => grid?.resizerService.resizeGrid());
   }
-  function ready(instance: SlickgridSvelteInstance) {
-    grid = instance;
-  }
-  const events = {
-    onBeforeFilterChange: showSpinner,
-    onFilterChanged: hideSpinner,
-    onBeforeFilterClear: showSpinner,
-    onFilterCleared: hideSpinner,
-    onBeforeSortChange: showSpinner,
-    onSortChanged: hideSpinner,
-    onTreeFullToggleStart: showSpinner,
-    onTreeFullToggleEnd: (event: CustomEvent<TreeToggleStateChange>) => hideSpinner(),
-    onTreeItemToggled: (event: CustomEvent<TreeToggleStateChange>) => {
-      hasNoExpandCollapseChanged = false;
-      treeToggleItems = event.detail.toggledItems as TreeToggledItem[];
-    },
-  };
 
   loadData(NB_ITEMS);
 </script>
@@ -285,7 +291,7 @@
 <h2>
   Example 27: Tree Data <small
     ><span class="mdi mdi-file-tree font-27px"></span> (from a flat dataset with <code>parentId</code> references -
-    <a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/tree-data-grid" target="_blank" rel="noreferrer">Wiki</a
+    <a href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/tree-data-grid" target="_blank" rel="noreferrer">Wiki</a
     >)</small
   >
   <span class="float-end"
@@ -305,16 +311,24 @@
     onclick={toggleSubtitle}><i class="mdi mdi-information-outline"></i></button
   >
 </h2>
-{#if showSubtitle}<div class="subtitle">
+{#if showSubtitle}
+  <div class="subtitle">
     <ul>
       <li>It is assumed that your dataset will have Parent/Child references AND also Tree Level (indent) property.</li>
       <ul>
-        <li>If you do not have the Tree Level (indent), you could convert the parent/child array to a hierarchical view first.</li>
-        <li>You could also pass the hierarchical result as the next example demonstrates.</li>
+        <li>
+          If you do not have the Tree Level (indent), you could call "convertParentChildArrayToHierarchicalView()" then call
+          "convertHierarchicalViewToParentChildArray()"
+        </li>
+        <li>
+          You could also pass the result of "convertParentChildArrayToHierarchicalView()" to "datasetHierarchical" as defined in the next
+          Hierarchical Example
+        </li>
       </ul>
     </ul>
-  </div>{/if}
-<div class="row mb-1">
+  </div>
+{/if}
+<div class="row" style="margin-bottom: 4px">
   <div class="col-md-12">
     <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-500-rows-btn" onclick={() => loadData(500)}>500 rows</button>
     <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="add-75k-rows-btn" onclick={() => loadData(75000)}
@@ -323,46 +337,62 @@
     <button class="btn btn-outline-secondary btn-xs btn-icon me-1" data-test="add-250k-rows-btn" onclick={() => loadData(250000)}
       >250k rows</button
     >
-    <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="change-filter-dynamically" onclick={dynamicallyChangeFilter}
-      ><i class="mdi mdi-filter-outline"></i> Dynamically Change Filter (% complete &lt; 40)</button
-    >
-    <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="collapse-all-noevent-btn" onclick={collapseAllWithoutEvent}
-      ><i class="mdi mdi-arrow-collapse"></i> Collapse All (without triggering event)</button
-    >
+    <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="change-filter-dynamically" onclick={dynamicallyChangeFilter}>
+      <span class="mdi mdi-filter-outline"></span>
+      <span>Dynamically Change Filter (% complete &lt; 40)</span>
+    </button>
+    <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="collapse-all-noevent-btn" onclick={collapseAllWithoutEvent}>
+      <span class="mdi mdi-arrow-collapse"></span>
+      <span>Collapse All (without triggering event)</span>
+    </button>
     <button
       class="btn btn-outline-secondary btn-xs btn-icon"
       data-test="dynamically-toggle-first-parent-btn"
-      onclick={dynamicallyToggledFirstParent}>Dynamically Toggle First Parent</button
+      onclick={dynamicallyToggledFirstParent}
     >
+      <span>Dynamically Toggle First Parent</span>
+    </button>
     <button
       data-test="reapply-toggled-items-btn"
       class="btn btn-outline-secondary btn-xs btn-icon mx-1"
       disabled={hasNoExpandCollapseChanged}
-      onclick={reapplyToggledItems}><i class="mdi mdi-history"></i> Reapply Previous Toggled Items</button
-    ><i class={loadingClass}></i>
+      onclick={reapplyToggledItems}
+    >
+      <span class="mdi mdi-history"></span>
+      <span>Reapply Previous Toggled Items</span>
+    </button>
+    <div class={loadingClass}></div>
   </div>
 </div>
+
 <div class="row">
   <div class="col-md-12">
-    <button data-test="add-item-btn" class="btn btn-primary btn-xs btn-icon" onclick={addNewRow}
-      ><i class="mdi mdi-plus color-white"></i> Add New Item to "Task 1" group</button
-    >
-    <button data-test="update-item-btn" class="btn btn-outline-secondary btn-xs btn-icon mx-1" onclick={updateFirstRow}
-      ><i class="mdi mdi-pencil"></i> Update 1st Row Item</button
-    >
-    <button data-test="collapse-all-btn" class="btn btn-outline-secondary btn-xs btn-icon" onclick={collapseAll}
-      ><i class="mdi mdi-arrow-collapse"></i> Collapse All</button
-    >
-    <button data-test="expand-all-btn" class="btn btn-outline-secondary btn-xs btn-icon mx-1" onclick={expandAll}
-      ><i class="mdi mdi-arrow-expand"></i> Expand All</button
-    >
-    <button class="btn btn-outline-secondary btn-xs btn-icon" onclick={() => console.log('flat dataset', grid.treeDataService.dataset)}
-      >Log Flat Structure</button
-    >
+    <button data-test="add-item-btn" class="btn btn-primary btn-xs btn-icon" onclick={addNewRow}>
+      <span class="mdi mdi-plus color-white"></span>
+      <span>Add New Item to "Task 1" group</span>
+    </button>
+    <button data-test="update-item-btn" class="btn btn-outline-secondary btn-xs btn-icon mx-1" onclick={updateFirstRow}>
+      <span class="icon mdi mdi-pencil"></span>
+      <span>Update 1st Row Item</span>
+    </button>
+    <button data-test="collapse-all-btn" class="btn btn-outline-secondary btn-xs btn-icon" onclick={collapseAll}>
+      <span class="mdi mdi-arrow-collapse"></span>
+      <span>Collapse All</span>
+    </button>
+    <button data-test="expand-all-btn" class="btn btn-outline-secondary btn-xs btn-icon mx-1" onclick={expandAll}>
+      <span class="mdi mdi-arrow-expand"></span>
+      <span>Expand All</span>
+    </button>
+    <button class="btn btn-outline-secondary btn-xs btn-icon" title="console.log of the Flat dataset" onclick={logFlatStructure}>
+      <span>Log Flat Structure</span>
+    </button>
     <button
       class="btn btn-outline-secondary btn-xs btn-icon mx-1"
-      onclick={() => console.log('hierarchical dataset', grid.treeDataService.datasetHierarchical)}>Log Hierarchical Structure</button
+      title="console.log of the Hierarchical Tree dataset"
+      onclick={logHierarchicalStructure}
     >
+      <span>Log Hierarchical Structure</span>
+    </button>
   </div>
   <div class="d-inline-block ms-2 mt-2">
     <div class="input-group input-group-sm mb-0">
@@ -372,23 +402,48 @@
         type="number"
         placeholder="Max Visible Depth (e.g. 1)"
         aria-label="Max Visible Depth"
-      /><button
+      />
+      <button
         class="btn btn-outline-secondary btn-xs btn-icon"
         data-test="set-max-visible-depth-btn"
         type="button"
-        onclick={setMaxVisibleDepthFromInput}><i class="mdi mdi-check"></i> Set</button
-      ><button
+        onclick={setMaxVisibleDepthFromInput}
+      >
+        <span class="mdi mdi-check" aria-hidden="true"></span>
+        Set
+      </button>
+      <button
         class="btn btn-outline-secondary btn-xs btn-icon"
         data-test="clear-max-visible-depth-btn"
         type="button"
-        onclick={clearMaxVisibleDepth}><i class="mdi mdi-close"></i> Clear</button
+        onclick={clearMaxVisibleDepth}
       >
+        <span class="mdi mdi-close" aria-hidden="true"></span>
+        Clear
+      </button>
     </div>
   </div>
 </div>
+
 <br />
+
 <div id="grid-container" class="col-sm-12">
-  <SlickgridSvelte gridId="grid27" {columns} {options} {dataset} {events} onSvelteGridCreated={ready} />
+  <SlickgridSvelte
+    gridId="grid27"
+    {columns}
+    {options}
+    {dataset}
+    onBeforeFilterChange={showSpinner}
+    onFilterChanged={hideSpinner}
+    onBeforeFilterClear={showSpinner}
+    onFilterCleared={hideSpinner}
+    onBeforeSortChange={showSpinner}
+    onSortChanged={hideSpinner}
+    onTreeFullToggleStart={showSpinner}
+    onTreeFullToggleEnd={(e) => handleOnTreeFullToggleEnd(e.detail)}
+    onTreeItemToggled={(e) => handleOnTreeItemToggled(e.detail)}
+    onSvelteGridCreated={(instance) => (grid = instance)}
+  />
 </div>
 
 <style>

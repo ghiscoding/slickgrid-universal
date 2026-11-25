@@ -1,43 +1,64 @@
 <script lang="ts">
-  import { SlickgridSvelte, type Column, type GridOption, type SlickgridSvelteInstance } from 'slickgrid-svelte';
+  import { Formatters, SlickgridSvelte, type Column, type GridOption, type SlickgridSvelteInstance } from 'slickgrid-svelte';
+  import { tick } from 'svelte';
   import { i18n } from './data/i18n.js';
-  import { createTasks } from './data/tasks.js';
+  import './example08.scss';
 
-  let grid: SlickgridSvelteInstance;
-  let showSubTitle = true;
-  function toggleSubTitle() {
-    showSubTitle = !showSubTitle;
-    queueMicrotask(() => {
-      grid?.resizerService?.resizeGrid();
-    });
-  }
-  let language = 'en';
+  const NB_ITEMS = 1000;
+
+  let showSubTitle = $state(true);
+  let selectedLanguage = $state('en');
+  let svelteGrid!: SlickgridSvelteInstance;
+
+  // always start with English for Cypress E2E tests to be consistent
   void i18n.changeLanguage('en');
+
   const columns: Column[] = [
-    { id: 'title', name: 'Title', nameKey: 'TITLE', field: 'title' },
-    { id: 'duration', name: 'Duration', nameKey: 'DURATION', field: 'duration', sortable: true },
-    { id: 'percentComplete', name: '% Complete', nameKey: 'PERCENT_COMPLETE', field: 'percentComplete', sortable: true },
-    { id: 'start', name: 'Start', nameKey: 'START', field: 'start' },
-    { id: 'finish', name: 'Finish', nameKey: 'FINISH', field: 'finish' },
-    { id: 'completed', name: 'Completed', nameKey: 'COMPLETED', field: 'completed' },
+    { id: 'title', name: 'Title', field: 'title', nameKey: 'TITLE' },
+    { id: 'duration', name: 'Duration', field: 'duration', nameKey: 'DURATION', sortable: true },
+    { id: 'percentComplete', name: '% Complete', field: 'percentComplete', nameKey: 'PERCENT_COMPLETE', sortable: true },
+    { id: 'start', name: 'Start', field: 'start', nameKey: 'START' },
+    { id: 'finish', name: 'Finish', field: 'finish', nameKey: 'FINISH' },
+    { id: 'completed', name: 'Completed', field: 'completed', nameKey: 'COMPLETED', formatter: Formatters.checkmarkMaterial },
   ];
-  columns.forEach((column) => {
-    column.header = {
+
+  columns.forEach((columnDef) => {
+    columnDef.header = {
       menu: {
         commandItems: [
+          // you can also add divider between commands (command is a required property but you can set it to empty string)
           { divider: true, command: '' },
+          // add Custom Header Menu Item Commands which will be appended to the existing internal custom items
+          // you cannot override an internal command but you can hide them and create your own
           {
-            command: 'help',
-            titleKey: 'HELP',
             iconCssClass: 'mdi mdi-help-circle',
+
+            // you can disable a command with certain logic
+            // HOWEVER note that if you use "itemUsabilityOverride" has precedence when it is defined
+            // disabled: (columnDef.id === 'completed'),
+
+            titleKey: 'HELP', // use "title" as plain string OR "titleKey" when using a translation key
+            command: 'help',
             tooltip: 'Need assistance?',
-            cssClass: 'bold',
-            textCssClass: 'blue',
-            itemVisibilityOverride: (args) => args.column.id !== 'percentComplete',
-            itemUsabilityOverride: (args) => args.column.id !== 'title' && args.column.id !== 'completed',
-            action: (_event, args) => console.log('execute an action on Help', args),
+            cssClass: 'bold', // container css class
+            textCssClass: columnDef.id === 'title' || columnDef.id === 'completed' ? '' : 'blue', // just the text css class
+            itemUsabilityOverride: (args) => {
+              // for example if we want to disable the "Help" command over the "Title" and "Completed" column
+              return !(args.column.id === 'title' || args.column.id === 'completed');
+            },
+            itemVisibilityOverride: (args) => {
+              // for example don't show Help on column "% Complete"
+              return args.column.id !== 'percentComplete';
+            },
+            action: (_e, args) => {
+              // you can use the "action" callback and/or subscribe to the "onCallback" event, they both have the same arguments
+              console.log('execute an action on Help', args);
+            },
           },
+          // you can use "divider" as a string too, but if you do then make sure it's the correct position in the list
+          // 'divider',
           {
+            // we can also have multiple nested sub-menus
             command: 'custom-actions',
             title: 'Hello',
             commandItems: [
@@ -45,7 +66,8 @@
               { command: 'hello-slickgrid', title: 'Hello SlickGrid' },
               {
                 command: 'sub-menu',
-                title: "Let's play",
+                title: `Let's play`,
+                cssClass: 'green',
                 subMenuTitle: 'choose your game',
                 subMenuTitleCssClass: 'text-italic salmon',
                 commandItems: [
@@ -86,75 +108,122 @@
       },
     };
   });
+
   const options: GridOption = {
-    autoResize: { container: '#demo-container', rightPadding: 10 },
-    gridHeight: 400,
+    enableAutoResize: true,
     enableHeaderMenu: true,
+    autoResize: {
+      container: '#demo-container',
+      rightPadding: 10,
+    },
+    enableFiltering: false,
     enableCellNavigation: true,
-    enableTranslate: true,
-    i18n,
     headerMenu: {
-      minWidth: 180,
       subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
-      onCommand: (_event, args) => {
-        const command = args.item?.command ?? args.command;
-        if (command.startsWith('hello-')) {
-          window.alert(args.item?.title);
-        } else if (command.startsWith('sport-')) {
-          window.alert('Just do it, play ' + args.item?.title);
-        } else if (command.startsWith('contact-')) {
-          window.alert('Command: ' + command);
-        } else if (command === 'help') {
-          window.alert('Please help!!!');
+      // you can use the "onCommand" (in Grid Options) and/or the "action" callback (in Column Definition)
+      onCommand: (_e, args) => {
+        // e.preventDefault(); // preventing default event would keep the menu open after the execution
+        const command = args.item?.command;
+        if (command.includes('hello-')) {
+          alert(args?.item.title);
+        } else if (command.includes('sport-')) {
+          alert('Just do it, play ' + args?.item?.title);
+        } else if (command.includes('contact-')) {
+          alert('Command: ' + args?.item?.command);
+        } else if (args.command === 'help') {
+          alert('Please help!!!');
         }
       },
     },
+    enableTranslate: true,
+    i18n,
   };
-  const dataset = createTasks(1000).map((item) => ({
-    ...item,
-    duration: `${item.duration % 26} days`,
-    start: '01/01/2009',
-    finish: '01/05/2009',
-    completed: item.id % 5 === 0,
-  }));
+
+  const dataset = getData(NB_ITEMS);
+
+  function getData(count: number) {
+    // Set up some test columns.
+    const mockDataset: any[] = [];
+    for (let i = 0; i < count; i++) {
+      mockDataset[i] = {
+        id: i,
+        title: 'Task ' + i,
+        duration: Math.round(Math.random() * 25) + ' days',
+        percentComplete: Math.round(Math.random() * 100),
+        start: '01/01/2009',
+        finish: '01/05/2009',
+        completed: i % 5 === 0,
+      };
+    }
+    return mockDataset;
+  }
+
   async function switchLanguage() {
-    language = language === 'en' ? 'fr' : 'en';
-    await i18n.changeLanguage(language);
+    const nextLanguage = selectedLanguage === 'en' ? 'fr' : 'en';
+    await i18n.changeLanguage(nextLanguage);
+    selectedLanguage = nextLanguage;
+  }
+
+  async function toggleSubTitle() {
+    showSubTitle = !showSubTitle;
+    await tick();
+    svelteGrid.resizerService.resizeGrid();
   }
 </script>
 
-<h2>
-  Example 8: Header Menu Plugin <span class="float-end fs-6"
-    ><a
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example08.svelte"
-      target="_blank"
-      rel="noreferrer"><i class="mdi mdi-link-variant"></i> code</a
-    ></span
-  >
-  <button
-    class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-    type="button"
-    aria-label="Toggle example details"
-    data-test="toggle-subtitle"
-    onclick={toggleSubTitle}><span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span></button
-  >
-</h2>
-{#if showSubTitle}<div class="subtitle">
-    This example demonstrates using the <b>SlickHeaderMenu</b> plugin to easily add menus to column headers.<br />These menus can be
-    specified directly in the column definition and support built-in commands, custom items, and visibility/usability callbacks. (<a
-      href="https://ghiscoding.gitbook.io/angular-slickgrid/grid-functionalities/header-menu-and-header-buttons"
-      target="_blank"
-      rel="noreferrer">Docs</a
+<div class="grid8">
+  <h2>
+    Example 8: Header Menu Plugin
+    <span class="float-end">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example08.svelte"
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
+    <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      aria-label="Toggle example sub-title details"
+      data-test="toggle-subtitle"
+      onclick={toggleSubTitle}
+    >
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </h2>
+
+  <div class="subtitle" class:hidden={!showSubTitle}>
+    This example demonstrates using the <b>SlickHeaderMenu</b> plugin to easily add menus to colum headers.<br />
+    These menus can be specified directly in the column definition, and are very easy to configure and use. (<a
+      href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/header-menu-header-buttons"
+      target="_blank">Wiki docs</a
     >)
     <ul>
-      <li>Default commands include hide column and sort ascending/descending</li>
-      <li>Hover over a column header to show its menu</li>
-      <li>Try sorting Duration and % Complete together</li>
-      <li>Try hiding columns and restoring them with the Column Picker</li>
+      <li>Now enabled by default in the Global Grid Options, it will add the default commands of (hide column, sort asc/desc)</li>
+      <li>Hover over any column header to see an arrow showing up on the right</li>
+      <li>Try Sorting (multi-sort) the 2 columns "Duration" and "% Complete" (the other ones are disabled)</li>
+      <li>Try hiding any columns (you use the "Column Picker" plugin by doing a right+click on the header to show the column back)</li>
+      <li>Note: The "Header Button" & "Header Menu" Plugins cannot be used at the same time</li>
+      <li>You can change the menu icon via SASS variables as shown in this demo (check all SASS variables)</li>
+      <li>
+        Use override callback functions to change the properties of show/hide, enable/disable the menu or certain item(s) from the list
+      </li>
+      <ol>
+        <li>These callbacks are: "itemVisibilityOverride", "itemUsabilityOverride"</li>
+        <li>for example if we want to disable the "Help" command over the "Title" and "Completed" column</li>
+        <li>for example don't show Help on column "% Complete"</li>
+      </ol>
     </ul>
-  </div>{/if}
-<button class="btn btn-outline-secondary btn-sm btn-icon" data-test="language-button" onclick={switchLanguage}
-  ><i class="mdi mdi-translate"></i> Switch Language</button
->
-<strong>Locale:</strong> <span style="font-style: italic" data-test="selected-locale">{language}.json</span>
-<SlickgridSvelte gridId="grid8" {columns} {options} {dataset} onSvelteGridCreated={(instance) => (grid = instance)} />
+  </div>
+
+  <button class="btn btn-outline-secondary btn-sm btn-icon me-1" data-test="language-button" onclick={switchLanguage}>
+    <i class="mdi mdi-translate"></i>
+    Switch Language
+  </button>
+  <b>Locale:</b>
+  <span class="ms-1 fst-italic" data-test="selected-locale"> {selectedLanguage + '.json'} </span>
+
+  <SlickgridSvelte gridId="grid8" {columns} {options} {dataset} onSvelteGridCreated={(instance) => (svelteGrid = instance)} />
+</div>

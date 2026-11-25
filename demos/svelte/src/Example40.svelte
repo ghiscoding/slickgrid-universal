@@ -66,14 +66,14 @@
       formatter: Formatters.checkmarkMaterial,
     },
   ];
-  let gridOptions: GridOption;
-  let dataset: any[] = [];
-  let metrics: Partial<Metrics> = {};
+  let gridOptions: GridOption = $state.raw({});
+  let dataset: any[] = $state.raw([]);
+  let metrics: Partial<Metrics> = $state({});
   let shouldResetOnSort = false;
-  let showSubTitle = true;
+  let showSubTitle = $state(true);
   let grid: SlickgridSvelteInstance;
   const excelExportService = new ExcelExportService();
-  $: metricsEndTime = metrics.endTime ? dateFormatter(metrics.endTime, 'DD MMM, h:mm:ss a') : '';
+  const metricsEndTime = $derived(metrics.endTime ? dateFormatter(metrics.endTime, 'DD MMM, h:mm:ss a') : '');
 
   function randomNumber(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -188,7 +188,7 @@
     ><a
       style="font-size: 18px"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example40.vue"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example40.svelte"
       ><span class="mdi mdi-link-variant"></span> code</a
     ></span
   >
@@ -202,8 +202,14 @@
 </h2>
 {#if showSubTitle}<div class="subtitle">
     <ul>
-      <li>Infinite scrolling loads additional rows when the grid reaches the scroll bottom.</li>
-      <li>Notes: <code>presets.pagination</code> is not supported with infinite scroll because data remains loaded from index zero.</li>
+      <li>
+        Infinite scrolling allows the grid to lazy-load rows from the server when reaching the scroll bottom (end) position. In its simplest
+        form, the more the user scrolls down, the more rows get loaded.
+      </li>
+      <li>
+        NOTES: <code>presets.pagination</code> is not supported with Infinite Scroll and will revert to the first page, simply because since we
+        keep appending data, we always have to start from index zero (no offset).
+      </li>
     </ul>
   </div>{/if}
 <div class="row">

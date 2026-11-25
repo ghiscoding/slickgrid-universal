@@ -51,18 +51,18 @@
     },
   ];
 
-  let gridOptions: GridOption;
-  let dataset: any[] = [];
-  let metrics: Partial<Metrics> = {};
-  let tagDataClass = '';
-  let graphqlQuery = '...';
-  let processing = false;
-  let selectedLanguage = 'en';
-  let status = { text: 'processing...', class: 'alert alert-danger' };
-  let showSubTitle = true;
-  let serverWaitDelay = 250;
+  let gridOptions: GridOption = $state.raw({});
+  let dataset: any[] = $state.raw([]);
+  let metrics: Partial<Metrics> = $state({});
+  let tagDataClass = $state('');
+  let graphqlQuery = $state('...');
+  let processing = $state(false);
+  let selectedLanguage = $state('en');
+  let status = $state({ text: 'processing...', class: 'alert alert-danger' });
+  let showSubTitle = $state(true);
+  let serverWaitDelay = $state(250);
   let grid: SlickgridSvelteInstance;
-  $: metricsEndTime = metrics.endTime ? dateFormatter(metrics.endTime, 'DD MMM, h:mm:ss a') : '';
+  const metricsEndTime = $derived(metrics.endTime ? dateFormatter(metrics.endTime, 'DD MMM, h:mm:ss a') : '');
 
   void i18n.changeLanguage('en');
 
@@ -234,7 +234,7 @@
       ><a
         style="font-size: 18px"
         target="_blank"
-        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example39.vue"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example39.svelte"
         ><span class="mdi mdi-link-variant"></span> code</a
       ></span
     >
@@ -248,8 +248,26 @@
   </h2>
   {#if showSubTitle}<div class="subtitle">
       <ul>
-        <li>Infinite scrolling lazy-loads rows from the backend as the user reaches the bottom; loaded rows remain in memory.</li>
-        <li>Notes: pagination is used internally to fetch each batch, and sorting or filtering restarts from the first batch.</li>
+        <li>
+          Infinite scrolling allows the grid to lazy-load rows from the server when reaching the scroll bottom (end) position. In its
+          simplest form, the more the user scrolls down, the more rows get loaded. If we reached the end of the dataset and there is no more
+          data to load, then we'll assume to have the entire dataset loaded in memory. This contrast with the regular Pagination approach
+          which will only hold a single page data at a time.
+        </li>
+        <li>NOTES</li>
+        <ol>
+          <li>
+            <code>presets.pagination</code> is not supported with Infinite Scroll and will revert to the first page, simply because since we keep
+            appending data, we always have to start from index zero (no offset).
+          </li>
+          <li>
+            Pagination is not shown BUT in fact, that is what is being used behind the scene whenever reaching the scroll end (fetching next
+            batch).
+          </li>
+          <li>
+            Also note that whenever the user changes the Sort(s)/Filter(s) it will always reset and go back to zero index (first page).
+          </li>
+        </ol>
       </ul>
     </div>{/if}
   <div class="row">

@@ -11,22 +11,17 @@
     type SlickGrid,
     type SlickgridSvelteInstance,
   } from 'slickgrid-svelte';
-  import { onDestroy, onMount } from 'svelte';
   import './example53.scss';
 
-  type Ref<T> = T;
-  const ref = <T,>(value?: T): T => value as T;
-
   const NB_ITEMS = 2000;
-  let gridOptions = ref<GridOption>();
-  let columns: Ref<Column[]> = ref([]);
-  let dataset = ref<any[]>([]);
-  let showSubTitle = true;
+  let gridOptions: GridOption = $state.raw({});
+  let columns: Column[] = $state.raw([]);
+  // mock some data (different in each dataset)
+  let dataset: any[] = $state.raw(loadData(NB_ITEMS));
+  let showSubTitle = $state(true);
   let svelteGrid!: SlickgridSvelteInstance;
 
   defineGrid();
-  // mock some data (different in each dataset)
-  dataset = loadData(NB_ITEMS);
 
   /* Define grid Options and Columns */
   function defineGrid() {

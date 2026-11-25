@@ -7,29 +7,50 @@
     type OnCellChangeEventArgs,
     type SlickgridSvelteInstance,
   } from 'slickgrid-svelte';
+  import { onMount } from 'svelte';
 
   const NB_ITEMS = 100;
-  let gridOptions: GridOption;
-  let columns: Column[] = [];
-  let dataset: any[] = [];
+  const columns = $state.raw<Column[]>(defineColumns());
+  const gridOptions = $state.raw<GridOption>(defineGridOptions());
+  const dataset = $state.raw<any[]>(loadData(NB_ITEMS));
   let isDarkMode = false;
-  let showSubTitle = true;
+  let showSubTitle = $state(true);
   let grid: SlickgridSvelteInstance;
 
-  function defineGrid() {
-    columns = Array.from({ length: 10 }, (_item, index) => ({
-      id: index,
-      name: String.fromCharCode('A'.charCodeAt(0) + index),
-      field: String(index),
-      type: 'number',
-      width: 58,
-      editor: { model: Editors.integer },
-    }));
-    gridOptions = {
+  onMount(() => {
+    // make sure it's back to light mode before unmounting
+    return () => {
+      document.querySelector('.panel-wm-content')?.classList.remove('dark-mode');
+      const demoContainer = document.querySelector<HTMLDivElement>('#demo-container');
+      if (demoContainer) {
+        demoContainer.dataset.bsTheme = 'light';
+      }
+    };
+  });
+
+  /* Define Columns */
+  function defineColumns(): Column[] {
+    const columnDefs: Column[] = [];
+    for (let i = 0; i < 10; i++) {
+      columnDefs.push({
+        id: i,
+        name: String.fromCharCode('A'.charCodeAt(0) + i),
+        field: String(i),
+        type: 'number',
+        width: 58,
+        editor: { model: Editors.integer },
+      });
+    }
+    return columnDefs;
+  }
+
+  /* Define grid Options */
+  function defineGridOptions(): GridOption {
+    return {
       autoEdit: true,
       autoCommitEdit: true,
       editable: true,
-      darkMode: isDarkMode,
+      darkMode: false,
       gridHeight: 450,
       gridWidth: 800,
       enableCellNavigation: true,
@@ -41,17 +62,20 @@
   }
 
   function loadData(itemCount: number) {
-    return Array.from({ length: itemCount }, (_item, id) => {
-      const row: Record<string, number> = { id };
-      for (let column = 0; column < columns.length; column++) {
-        row[column] = Math.round(Math.random() * 10);
+    // mock a dataset
+    const datasetTmp: any[] = [];
+    for (let i = 0; i < itemCount; i++) {
+      const d = (datasetTmp[i] = {} as any);
+      d.id = i;
+      for (let j = 0; j < 10; j++) {
+        d[j] = Math.round(Math.random() * 10);
       }
-      return row;
-    });
+    }
+    return datasetTmp;
   }
 
-  function handleOnCellChange(event: CustomEvent<{ args: OnCellChangeEventArgs }>) {
-    updateTotal(event.detail.args.cell);
+  function handleOnCellChange(_e: Event, args: OnCellChangeEventArgs) {
+    updateTotal(args.cell);
   }
 
   function handleOnColumnsReordered() {
@@ -59,52 +83,50 @@
   }
 
   function updateAllTotals() {
-    let columnIndex = grid?.slickGrid?.getColumns().length || 0;
-    while (columnIndex--) {
-      updateTotal(columnIndex);
+    let columnIdx = grid.slickGrid?.getColumns().length || 0;
+    while (columnIdx--) {
+      updateTotal(columnIdx);
     }
   }
 
   function updateTotal(cell: number) {
-    const columnId = grid?.slickGrid?.getColumns()[cell]?.id as number | undefined;
-    if (columnId === undefined) {
-      return;
-    }
+    const columnId = grid.slickGrid?.getColumns()[cell].id as number;
+
     let total = 0;
-    let rowIndex = dataset.length;
-    while (rowIndex--) {
-      total += Number.parseInt(dataset[rowIndex][columnId], 10) || 0;
+    let i = dataset.length;
+    while (i--) {
+      total += parseInt(dataset[i][columnId], 10) || 0;
     }
-    const footerCell = grid.slickGrid.getFooterRowColumn(columnId);
-    if (footerCell) {
-      footerCell.textContent = `Sum: ${total}`;
+    const columnElement = grid.slickGrid?.getFooterRowColumn(columnId);
+    if (columnElement) {
+      columnElement.textContent = `Sum: ${total}`;
     }
   }
 
   function toggleDarkMode() {
     isDarkMode = !isDarkMode;
+    toggleBodyBackground();
+    grid.slickGrid?.setOptions({ darkMode: isDarkMode });
+    updateAllTotals();
+  }
+
+  function toggleBodyBackground() {
     document.querySelector('.panel-wm-content')?.classList.toggle('dark-mode', isDarkMode);
     const demoContainer = document.querySelector<HTMLDivElement>('#demo-container');
     if (demoContainer) {
       demoContainer.dataset.bsTheme = isDarkMode ? 'dark' : 'light';
     }
-    grid?.slickGrid?.setOptions({ darkMode: isDarkMode });
-    updateAllTotals();
   }
 
   function toggleSubTitle() {
     showSubTitle = !showSubTitle;
-    queueMicrotask(() => grid?.resizerService.resizeGrid());
+    queueMicrotask(() => grid.resizerService.resizeGrid());
   }
 
   function gridReady(instance: SlickgridSvelteInstance) {
     grid = instance;
     updateAllTotals();
   }
-
-  defineGrid();
-  dataset = loadData(NB_ITEMS);
-  const events = { onCellChange: handleOnCellChange, onColumnsReordered: handleOnColumnsReordered };
 </script>
 
 <svelte:head><title>Example 37 - Footer Totals Row</title></svelte:head>
@@ -115,7 +137,7 @@
     ><a
       style="font-size: 18px"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example37.vue"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example37.svelte"
       ><span class="mdi mdi-link-variant"></span> code</a
     ></span
   >
@@ -131,4 +153,12 @@
   >
 </h2>
 {#if showSubTitle}<div class="subtitle">Display a totals row at the end of the grid.</div>{/if}
-<SlickgridSvelte gridId="grid37" {columns} options={gridOptions} {dataset} {events} onSvelteGridCreated={gridReady} />
+<SlickgridSvelte
+  gridId="grid37"
+  {columns}
+  options={gridOptions}
+  {dataset}
+  onCellChange={(event: CustomEvent) => handleOnCellChange(event.detail.eventData, event.detail.args)}
+  onColumnsReordered={handleOnColumnsReordered}
+  onSvelteGridCreated={gridReady}
+/>

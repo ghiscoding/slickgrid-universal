@@ -1,64 +1,114 @@
 <script lang="ts">
-  import { GlobalGridOptions, type Column, type CustomDataView, type ExtensionList, type Pagination } from '@slickgrid-universal/common';
+  import { GlobalGridOptions, type Pagination } from '@slickgrid-universal/common';
   import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-  import { getContext, onMount, type Component } from 'svelte';
-  import type { GridOption, I18Next, SlickgridSvelteInstance } from '../models/index.js';
-  import { createSveltePagination, type SveltePaginationProps } from '../services/sveltePagination.js';
+  import { getContext, onMount, untrack } from 'svelte';
+  import type { GridOption, I18Next } from '../models/index.js';
+  import { createSveltePagination } from '../services/sveltePagination.js';
   import { TranslaterI18NextService } from '../services/translaterI18Next.service.js';
   import { SlickgridSvelteCore } from '../slickgridSvelteCore.js';
-  import type { SvelteGridEventHandlers } from './slickgridSvelteEvents.interface.js';
   import type { SlickgridSvelteProps } from './slickgridSvelteProps.interface.js';
 
-  interface $$Props extends SlickgridSvelteProps, Omit<SvelteGridEventHandlers, 'onSvelteGridCreated'> {}
+  type EventCallback = (event: CustomEvent<any>) => unknown;
 
-  export let gridId: string;
-  export let className = '';
-  export let columns: Column[] = [];
-  export let options: GridOption = {};
-  export let dataset: any[] = [];
-  export let customDataView: CustomDataView | undefined = undefined;
-  export let datasetHierarchical: any[] | undefined = undefined;
-  export let paginationOptions: Pagination | undefined = undefined;
-  export let events: SvelteGridEventHandlers = {};
-  export let i18n: I18Next | undefined = undefined;
-  export let customPaginationComponent: Component<SveltePaginationProps> | undefined = undefined;
-  export let instances: SlickgridSvelteInstance | undefined = undefined;
-  export let extensions: ExtensionList<any> | undefined = undefined;
-  export let onSvelteGridCreated: ((instance: SlickgridSvelteInstance) => void) | undefined = undefined;
+  let {
+    gridId,
+    className = '',
+    columns = [],
+    options = {},
+    dataset = [],
+    customDataView,
+    datasetHierarchical,
+    paginationOptions,
+    events = {},
+    i18n,
+    customPaginationComponent,
+    instances = $bindable(),
+    extensions = $bindable(),
+    onSvelteGridCreated,
+    header,
+    footer,
+    ...handlerProps
+  }: SlickgridSvelteProps = $props();
 
   const contextI18n = getContext<I18Next | undefined>('i18next');
+  const eventSubscriptions = new Map<string, { unsubscribe(): void }>();
   let container: HTMLDivElement;
-  let footerAnchor: HTMLSpanElement;
+  let footerAnchor: HTMLSpanElement | undefined = $state();
   let grid: SlickgridSvelteCore | undefined;
-  let previousColumns: Column[];
-  let previousOptions: GridOption;
-  let previousDataset: any[];
-  let previousHierarchical: any[] | undefined;
-  let previousPagination: Pagination | undefined;
-  let eventPubSub: EventPubSubService;
+  let eventPubSub: EventPubSubService | undefined;
+  let currentHandlers: Record<string, unknown> = {};
   let disposed = false;
-  let eventSubscriptions: Array<{ unsubscribe(): void }> = [];
-  let previousEvents: SvelteGridEventHandlers;
-  $: eventHandlers = { ...$$restProps, ...events } as SvelteGridEventHandlers;
 
-  function subscribeEvents(handlers: SvelteGridEventHandlers) {
-    eventSubscriptions.forEach((subscription) => subscription.unsubscribe());
-    eventSubscriptions = Object.keys(handlers)
-      .filter((name) => name.startsWith('on') && typeof (handlers as any)[name] === 'function')
-      .map((name) =>
-        eventPubSub.subscribeEvent(name, (event) => {
-          if ((handlers as Record<string, ((event: CustomEvent<any>) => unknown) | undefined>)[name]?.(event) === false) {
-            event.preventDefault();
-          }
-        })
-      );
+  // last values pushed to the grid, so an effect only reacts to a real prop change
+  const applied = {
+    columns: untrack(() => columns),
+    options: untrack(() => options),
+    dataset: untrack(() => dataset),
+    datasetHierarchical: untrack(() => datasetHierarchical),
+    paginationOptions: untrack(() => paginationOptions),
+  };
+
+  function applyWhenChanged<K extends keyof typeof applied>(
+    key: K,
+    value: (typeof applied)[K],
+    apply: (value: (typeof applied)[K]) => void
+  ) {
+    if (grid && value !== applied[key]) {
+      applied[key] = value;
+      untrack(() => apply(value));
+    }
+  }
+
+  /** Subscribe once per event name, the latest handler is resolved when the event fires. */
+  function syncEventSubscriptions(handlers: Record<string, unknown>) {
+    currentHandlers = handlers;
+    const names = Object.keys(handlers).filter((name) => name.startsWith('on') && typeof handlers[name] === 'function');
+    for (const [name, subscription] of eventSubscriptions) {
+      if (!names.includes(name)) {
+        subscription.unsubscribe();
+        eventSubscriptions.delete(name);
+      }
+    }
+    for (const name of names) {
+      if (!eventSubscriptions.has(name)) {
+        eventSubscriptions.set(
+          name,
+          eventPubSub!.subscribeEvent(name, (event) => {
+            if ((currentHandlers[name] as EventCallback | undefined)?.(event) === false) {
+              event.preventDefault();
+            }
+          })
+        );
+      }
+    }
   }
 
   function getPaginationComponent(gridOptions: GridOption) {
     const component = customPaginationComponent ?? gridOptions.customPaginationComponent;
-    return component && !(component as any).prototype?.renderPagination
-      ? createSveltePagination(component as Component<SveltePaginationProps>)
-      : component;
+    return component && !(component as any).prototype?.renderPagination ? createSveltePagination(component as any) : component;
+  }
+
+  /** The Row Detail resource is instantiated by the extension service (not the grid) so it receives the grid PubSub service. */
+  function getRowDetailOptions(gridOptions: GridOption): Partial<GridOption> {
+    const RowDetailClass = gridOptions.externalResources?.find((resource: any) => resource?.pluginName === 'SvelteRowDetailView') as any;
+    const existingExtensions = gridOptions.preRegisterExternalExtensions;
+    if (gridOptions.enableRowDetailView && !RowDetailClass && !existingExtensions) {
+      throw new Error('[Slickgrid-Svelte] Row detail requires SvelteRowDetailView in externalResources.');
+    }
+    if (!gridOptions.enableRowDetailView || !RowDetailClass) {
+      return {};
+    }
+    return {
+      externalResources: gridOptions.externalResources?.filter((resource) => resource !== RowDetailClass),
+      preRegisterExternalExtensions: (pubSub: any) => [
+        ...(existingExtensions?.(pubSub) ?? []),
+        {
+          name: 'rowDetailView' as const,
+          instance: new RowDetailClass(pubSub),
+          columnIndexPosition: gridOptions.rowDetailView?.columnIndexPosition,
+        },
+      ],
+    };
   }
 
   function disposeGrid(emptyDomElementContainer = false) {
@@ -72,17 +122,11 @@
   }
 
   onMount(() => {
-    previousColumns = columns;
-    previousOptions = options;
-    previousDataset = dataset;
-    previousHierarchical = datasetHierarchical;
-    previousPagination = paginationOptions;
-    previousEvents = eventHandlers;
     eventPubSub = new EventPubSubService(container);
     eventPubSub.eventNamingStyle = options.eventNamingStyle ?? GlobalGridOptions.eventNamingStyle ?? 'camelCase';
-    subscribeEvents(eventHandlers);
+    syncEventSubscriptions({ ...handlerProps, ...events });
+
     const i18next = i18n ?? options.i18n ?? contextI18n;
-    const sveltePagination = getPaginationComponent(options);
     const translater = options.translater ?? (i18next ? new TranslaterI18NextService() : undefined);
     if (translater instanceof TranslaterI18NextService && i18next) {
       translater.i18nInstance = i18next;
@@ -90,28 +134,11 @@
     if (options.enableTranslate && !translater) {
       throw new Error('[Slickgrid-Svelte] Translation requires an i18n instance or a translater service.');
     }
-    const languageChanged = (language: string) => eventPubSub.publish('onLanguageChange', language);
-    const rowDetailClass = options.externalResources?.find((resource: any) => resource?.pluginName === 'SvelteRowDetailView') as any;
-    const existingExtensions = options.preRegisterExternalExtensions;
-    const externalResources = options.externalResources?.filter((resource) => resource !== rowDetailClass);
-    const rowDetailOptions =
-      options.enableRowDetailView && rowDetailClass
-        ? {
-            externalResources,
-            preRegisterExternalExtensions: (pubSub: any) => [
-              ...(existingExtensions?.(pubSub) ?? []),
-              {
-                name: 'rowDetailView' as const,
-                instance: new rowDetailClass(pubSub),
-                columnIndexPosition: options.rowDetailView?.columnIndexPosition,
-              },
-            ],
-          }
-        : {};
-    if (options.enableRowDetailView && !rowDetailClass && !existingExtensions) {
-      throw new Error('[Slickgrid-Svelte] Row detail requires SvelteRowDetailView in externalResources.');
-    }
+    const languageChanged = (language: string) => eventPubSub!.publish('onLanguageChange', language);
+    const rowDetailOptions = getRowDetailOptions(options);
+    const paginationComponent = getPaginationComponent(options);
     i18next?.on('languageChanged', languageChanged);
+
     grid = new SlickgridSvelteCore(
       container,
       columns,
@@ -120,57 +147,57 @@
         ...rowDetailOptions,
         translater,
         ...(paginationOptions ? { pagination: paginationOptions } : {}),
-        ...(sveltePagination ? { customPaginationComponent: sveltePagination } : {}),
+        ...(paginationComponent ? { customPaginationComponent: paginationComponent } : {}),
       },
       dataset,
       datasetHierarchical,
       { eventPubSubService: eventPubSub, customDataView, gridElementId: gridId, gridInsertBefore: footerAnchor }
     );
+
     instances = { ...grid.instances!, element: container, paginationComponent: grid.paginationComponent, dispose: disposeGrid };
     extensions = grid.extensions;
     eventPubSub.publish('onSvelteGridCreated', instances);
     onSvelteGridCreated?.(instances);
+
     return () => {
       i18next?.off('languageChanged', languageChanged);
       disposeGrid();
       eventSubscriptions.forEach((subscription) => subscription.unsubscribe());
+      eventSubscriptions.clear();
       instances = undefined;
       extensions = undefined;
       grid = undefined;
     };
   });
 
-  $: if (grid && columns !== previousColumns) {
-    previousColumns = columns;
-    grid.columns = columns;
-  }
-  $: if (grid && options !== previousOptions) {
-    previousOptions = options;
-    const paginationComponent = getPaginationComponent(options);
-    grid.options = { ...options, ...(paginationComponent ? { customPaginationComponent: paginationComponent } : {}) };
-  }
-  $: if (grid && dataset !== previousDataset) {
-    previousDataset = dataset;
-    grid.dataset = dataset;
-  }
-  $: if (grid && datasetHierarchical !== previousHierarchical) {
-    previousHierarchical = datasetHierarchical;
-    grid.datasetHierarchical = datasetHierarchical;
-  }
-  $: if (grid && paginationOptions !== previousPagination) {
-    previousPagination = paginationOptions;
-    if (paginationOptions) {
-      grid.paginationOptions = paginationOptions;
+  $effect(() => applyWhenChanged('columns', columns, (value) => (grid!.columns = value)));
+  $effect(() =>
+    applyWhenChanged('options', options, (value) => {
+      const paginationComponent = getPaginationComponent(value);
+      grid!.options = { ...value, ...(paginationComponent ? { customPaginationComponent: paginationComponent } : {}) };
+    })
+  );
+  $effect(() => applyWhenChanged('dataset', dataset, (value) => (grid!.dataset = value)));
+  $effect(() => applyWhenChanged('datasetHierarchical', datasetHierarchical, (value) => (grid!.datasetHierarchical = value)));
+  $effect(() =>
+    applyWhenChanged('paginationOptions', paginationOptions, (value) => {
+      if (value) {
+        grid!.paginationOptions = value as Pagination;
+      }
+    })
+  );
+  $effect(() => {
+    const handlers: Record<string, unknown> = { ...handlerProps, ...events };
+    if (eventPubSub) {
+      untrack(() => syncEventSubscriptions(handlers));
     }
-  }
-  $: if (grid && eventHandlers !== previousEvents) {
-    previousEvents = eventHandlers;
-    subscribeEvents(eventHandlers);
-  }
+  });
 </script>
 
 <div id={'slickGridContainer-' + gridId} class={className} bind:this={container}>
-  <slot name="header"></slot>
-  <span bind:this={footerAnchor} hidden aria-hidden="true"></span>
-  <slot name="footer"></slot>
+  {@render header?.()}
+  {#if footer}
+    <span bind:this={footerAnchor} hidden aria-hidden="true"></span>
+    {@render footer()}
+  {/if}
 </div>

@@ -7,18 +7,23 @@
     Formatters,
     SlickgridSvelte,
     type Column,
+    type ColumnEditorDualInput,
     type GridOption,
     type SlickgridSvelteInstance,
   } from 'slickgrid-svelte';
+  import { showToast } from './utilities.js';
 
-  let grid: SlickgridSvelteInstance;
-  let checkboxSelector: any;
-  let leftCount = 2,
-    rightCount = 1,
-    topCount = 3,
-    bottomCount = 2,
-    selectAllTitle = false,
-    subtitle = true;
+  const NB_ITEMS = 500;
+  let showSubTitle = $state(true);
+  let pinnedColumnCount = $state(2);
+  let pinnedRightColumnCount = $state(1);
+  let pinnedTopRowCount = $state(3);
+  let pinnedBottomRowCount = $state(2);
+  let isSelectAllShownAsColumnTitle = false;
+  let svelteGrid: SlickgridSvelteInstance;
+  let checkboxSelectorInstance: any;
+
+  const dataset = mockData(NB_ITEMS);
   const columns: Column[] = [
     { id: 'title', name: 'Title', field: 'title', width: 120, minWidth: 100, sortable: true, filterable: true },
     {
@@ -51,8 +56,8 @@
       minWidth: 100,
       type: 'dateIso',
       sortable: true,
-      formatter: Formatters.dateIso,
       filterable: true,
+      formatter: Formatters.dateIso,
       filter: { model: Filters.compoundDate },
     },
     {
@@ -78,8 +83,7 @@
       name: 'Cost | Duration',
       field: 'cost',
       minWidth: 120,
-      formatter: (_r, _c, _v, _d, item) =>
-        `<b>${item.cost == null ? 'n/a' : formatNumber(item.cost, 0, 2, false, '$', '', '.', ',')}</b> | ${item.duration != null ? `${item.duration} ${item.duration > 1 ? 'days' : 'day'}` : 'n/a'}`,
+      formatter: costDurationFormatter,
       sortable: true,
       filter: { model: Filters.compoundSlider },
       editor: {
@@ -87,7 +91,7 @@
         params: {
           leftInput: { field: 'cost', type: 'float', decimal: 2, minValue: 0, maxValue: 50000 },
           rightInput: { field: 'duration', type: 'float', minValue: 0, maxValue: 100 },
-        },
+        } as ColumnEditorDualInput,
       },
     },
     {
@@ -120,45 +124,80 @@
       },
     },
   ];
-  const dataset = Array.from({ length: 500 }, (_v, i) => ({
-    id: i,
-    title: `Task ${i}`,
-    duration: `${Math.round(Math.random() * 100)}`,
-    percentComplete: Math.round(Math.random() * 100),
-    start: new Date(2009, 0, 1),
-    finish: new Date(2009, 4, 5),
-    completed: i % 5 === 0,
-    cost: i % 33 === 0 ? null : Math.random() * 10000,
-    cityOfOrigin: i % 2 ? 'Vancouver, BC, Canada' : 'Boston, MA, United States',
-  }));
-  const options: GridOption = {
-    gridWidth: 920,
-    autoResize: { container: '#demo-container', rightPadding: 10 },
-    autoFitColumnsOnFirstLoad: false,
-    enableCellNavigation: true,
-    editable: true,
-    autoEdit: true,
-    enableFiltering: true,
-    enableExcelCopyBuffer: true,
-    enableExcelExport: true,
-    externalResources: [new ExcelExportService()],
-    enableSelection: true,
-    enableCheckboxSelector: true,
-    selectionOptions: { selectActiveRow: false },
-    checkboxSelector: {
-      hideInColumnTitleRow: true,
-      hideInFilterHeaderRow: false,
-      name: 'Sel',
-      onExtensionRegistered: (instance: any) => (checkboxSelector = instance),
-    },
-    pinning: {
-      columns: { left: ['_checkbox_selector', 'title', 'percentComplete'], right: ['action'] },
-      rows: { top: [0, 1, 2], bottom: [498, 499] },
-    },
-    enableCellMenu: true,
-    cellMenu: { onCommand: (_e: any, args: any) => execute(args) },
-    enableContextMenu: true,
-    contextMenu: {
+  const gridOptions = defineGridOptions();
+
+  function defineGridOptions(): GridOption {
+    return {
+      autoResize: { container: '#demo-container', rightPadding: 10 },
+      // Keep the left-pinned columns compact so two right-pinned columns fit
+      // beside the framework demo's route sidebar.
+      autoFitColumnsOnFirstLoad: false,
+      enableAutoResize: true,
+      enableAutoSizeColumns: true,
+      enableCellNavigation: true,
+      enableFiltering: true,
+      editable: true,
+      autoEdit: true,
+      enableExcelCopyBuffer: true,
+      enableExcelExport: true,
+      externalResources: [new ExcelExportService()],
+      enableSelection: true,
+      enableCheckboxSelector: true,
+      selectionOptions: { selectActiveRow: false },
+      checkboxSelector: {
+        hideInColumnTitleRow: !isSelectAllShownAsColumnTitle,
+        hideInFilterHeaderRow: isSelectAllShownAsColumnTitle,
+        name: 'Sel',
+        onExtensionRegistered: (instance: any) => (checkboxSelectorInstance = instance),
+      },
+      pinning: {
+        columns: { left: ['_checkbox_selector', 'title', 'percentComplete'], right: ['action'] },
+        rows: { top: getPinnedRowIndexes(pinnedTopRowCount), bottom: getPinnedRowIndexes(pinnedBottomRowCount, true) },
+      },
+      enableCellMenu: true,
+      cellMenu: {
+        onCommand: (_e: unknown, args: any) => executeCommand(args),
+      },
+      enableContextMenu: true,
+      contextMenu: getContextMenuOptions(),
+    };
+  }
+
+  function mockData(count: number) {
+    return Array.from({ length: count }, (_v, i) => ({
+      id: i,
+      title: `Task ${i}`,
+      duration: i % 8 ? `${Math.round(Math.random() * 100)}` : null,
+      percentComplete: Math.round(Math.random() * 100),
+      start: new Date(2009, 0, 1),
+      finish: new Date(2009, 4, 5),
+      cost: i % 33 === 0 ? null : Math.random() * 10000,
+      completed: i % 5 === 0,
+      cityOfOrigin: i % 2 ? 'Vancouver, BC, Canada' : 'Boston, MA, United States',
+    }));
+  }
+
+  function getPinnedRowIndexes(rowCount: number, isBottom = false) {
+    const count = Math.max(0, Number(rowCount) || 0);
+    const dataLength = svelteGrid?.slickGrid?.getDataLength?.() ?? dataset.length;
+    const first = isBottom ? Math.max(0, dataLength - count) : 0;
+    return Array.from({ length: count }, (_v, i) => first + i);
+  }
+
+  function costDurationFormatter(_row: number, _cell: number, _value: any, _columnDef: Column, dataContext: any) {
+    const costText = isNullUndefinedOrEmpty(dataContext.cost) ? 'n/a' : formatNumber(dataContext.cost, 0, 2, false, '$', '', '.', ',');
+    const durationText =
+      !isNullUndefinedOrEmpty(dataContext.duration) && dataContext.duration >= 0
+        ? `${dataContext.duration} ${dataContext.duration > 1 ? 'days' : 'day'}`
+        : 'n/a';
+    return `<b>${costText}</b> | ${durationText}`;
+  }
+  function isNullUndefinedOrEmpty(data: any) {
+    return data === '' || data === null || data === undefined;
+  }
+
+  function getContextMenuOptions(): any {
+    return {
       hideCloseButton: true,
       dropSide: 'right',
       commandItems: [
@@ -198,162 +237,218 @@
           ],
         },
       ],
-      onCommand: (_e: any, args: any) => execute(args),
-    },
-  };
-  function ready(i: SlickgridSvelteInstance) {
-    grid = i;
+      onCommand: (_e: unknown, args: any) => executeCommand(args),
+    };
   }
-  function execute(args: any) {
-    if (args.command === 'delete-row' && confirm(`Do you really want to delete row (${args.row + 1}) with "${args.dataContext.title}"?`)) {
-      grid.gridService.deleteItemById(args.dataContext.id);
-    } else if (['exports-csv', 'exports-txt', 'exports-xlsx'].includes(args.command)) {
-      alert(`Exporting as ${args.item.title}`);
-    } else if (args.command === 'contact-email' || args.command === 'contact-chat' || args.command === 'contact-meeting') {
-      alert(`Command: ${args.command}`);
-    } else if (args.item) {
-      alert(args.item.title);
-    } else {
-      alert(`Command: ${args.command}`);
+
+  function executeCommand(args: any) {
+    switch (args.command) {
+      case 'delete-row':
+        if (confirm(`Do you really want to delete row (${args.row + 1}) with "${args.dataContext.title}"?`)) {
+          svelteGrid?.gridService?.deleteItemById(args.dataContext.id);
+        }
+        break;
+      case 'command1':
+      case 'command2':
+      case 'help':
+        alert(args.item.title);
+        break;
+      case 'exports-csv':
+      case 'exports-txt':
+      case 'exports-xlsx':
+        alert(`Exporting as ${args.item.title}`);
+        break;
+      default:
+        alert(`Command: ${args.command}`);
     }
   }
-  function pinnedColumns(left: number, right = rightCount) {
-    grid.slickGrid.setOptions({
-      pinning: {
-        columns: {
-          left: left >= 0 ? ['_checkbox_selector', 'title', 'percentComplete'].slice(0, left + 1) : [],
-          right: ['cityOfOrigin', 'action'].slice(Math.max(0, 2 - Math.max(0, Number(right) || 0))),
-        },
-      },
-    });
-    leftCount = left;
-    rightCount = right;
+
+  function setPinnedColumns(left: number, right = pinnedRightColumnCount) {
+    const nextRight = Math.max(0, Number(right) || 0);
+    // Keep both edges stable by column ID. Numeric edge shorthands are resolved
+    // against visible indexes, which can shift when columns are hidden/shown.
+    const leftIds = left >= 0 ? ['_checkbox_selector', 'title', 'percentComplete'].slice(0, left + 1) : [];
+    const rightIds = ['cityOfOrigin', 'action'].slice(Math.max(0, 2 - nextRight));
+    svelteGrid?.slickGrid?.setOptions({ pinning: { columns: { left: leftIds, right: rightIds } } });
+    pinnedColumnCount = left;
+    pinnedRightColumnCount = nextRight;
   }
-  function changeCols(event: Event, side: 'left' | 'right') {
+  function changePinnedColumnCount(event: Event, side: 'left' | 'right') {
     const value = Number((event.currentTarget as HTMLSelectElement).value);
-    pinnedColumns(side === 'left' ? value : leftCount, side === 'right' ? value : rightCount);
+    setPinnedColumns(side === 'left' ? value : pinnedColumnCount, side === 'right' ? value : pinnedRightColumnCount);
   }
-  function changeRows(event: Event, side: 'top' | 'bottom') {
+  function toggleRightPinning() {
+    setPinnedColumns(pinnedColumnCount, pinnedRightColumnCount > 0 ? 0 : 1);
+  }
+  function changePinnedRowCount(event: Event, side: 'top' | 'bottom') {
     const value = Number((event.currentTarget as HTMLSelectElement).value);
     if (side === 'top') {
-      topCount = value;
+      pinnedTopRowCount = value;
     } else {
-      bottomCount = value;
+      pinnedBottomRowCount = value;
     }
-    const n = grid.slickGrid.getDataLength();
-    grid.slickGrid.setOptions({
+    svelteGrid?.slickGrid?.setOptions({
       pinning: {
         rows: {
-          top: Array.from({ length: topCount }, (_v, i) => i),
-          bottom: Array.from({ length: bottomCount }, (_v, i) => Math.max(0, n - bottomCount) + i),
+          top: getPinnedRowIndexes(pinnedTopRowCount),
+          bottom: getPinnedRowIndexes(pinnedBottomRowCount, true),
         },
       },
     });
   }
-  function toggleRight() {
-    pinnedColumns(leftCount, rightCount ? 0 : 1);
+  function removePinnedColumns() {
+    setPinnedColumns(-1, 0);
   }
-  function toggleSelectAll() {
-    selectAllTitle = !selectAllTitle;
-    checkboxSelector?.setOptions({ hideInColumnTitleRow: !selectAllTitle, hideInFilterHeaderRow: selectAllTitle });
+  function toggleWhichRowToShowSelectAll() {
+    isSelectAllShownAsColumnTitle = !isSelectAllShownAsColumnTitle;
+    checkboxSelectorInstance?.setOptions({
+      hideInColumnTitleRow: !isSelectAllShownAsColumnTitle,
+      hideInFilterHeaderRow: isSelectAllShownAsColumnTitle,
+    });
   }
-  function largeColumns() {
-    grid.gridStateService.applyColumnLayout(
+  function setLargePinnedColumns() {
+    svelteGrid?.gridStateService?.applyColumnLayout?.(
       [
-        { columnId: '_checkbox_selector', width: 40 },
-        { columnId: 'title', width: 220 },
-        { columnId: 'percentComplete', width: 280 },
-        { columnId: 'start', width: 150 },
-        { columnId: 'finish', width: 280 },
-        { columnId: 'completed', width: 180 },
-        { columnId: 'cost', width: 220 },
-        { columnId: 'cityOfOrigin', width: 180 },
-        { columnId: 'action', width: 110 },
+        { columnId: '_checkbox_selector', cssClass: 'slick-cell-checkboxsel', headerCssClass: '', width: 40 },
+        { columnId: 'title', cssClass: '', headerCssClass: '', width: 220 },
+        { columnId: 'percentComplete', cssClass: '', headerCssClass: '', width: 280 },
+        { columnId: 'start', cssClass: '', headerCssClass: '', width: 150 },
+        { columnId: 'finish', cssClass: '', headerCssClass: '', width: 280 },
+        { columnId: 'completed', cssClass: '', headerCssClass: '', width: 180 },
+        { columnId: 'cost', cssClass: '', headerCssClass: '', width: 220 },
+        { columnId: 'cityOfOrigin', cssClass: '', headerCssClass: '', width: 180 },
+        { columnId: 'action', cssClass: '', headerCssClass: '', width: 110 },
       ],
       false,
       false
     );
-    pinnedColumns(2);
+    setPinnedColumns(2, pinnedRightColumnCount);
   }
   function toggleSubTitle() {
-    subtitle = !subtitle;
-    grid?.resizerService.resizeGrid(0);
+    showSubTitle = !showSubTitle;
+    queueMicrotask(() => svelteGrid?.resizerService?.resizeGrid());
+  }
+  function onCellValidationError(event: CustomEvent<{ args: any }>) {
+    showToast(event.detail.args.validationResults.msg, 'danger');
+  }
+  function svelteGridReady(grid: SlickgridSvelteInstance) {
+    svelteGrid = grid;
   }
 </script>
 
 <h2>
   Example 20: Pinned Columns/Rows
-  <span class="float-end">
-    <a
+  <span class="float-end"
+    ><a
       style="font-size: 18px"
       target="_blank"
-      rel="noreferrer"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example20.svelte"
       ><span class="mdi mdi-link-variant"></span> code</a
-    >
-  </span>
-  <button
+    ></span
+  ><button
     class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
     type="button"
     data-test="toggle-subtitle"
     aria-label="Toggle example sub-title details"
-    onclick={toggleSubTitle}><i class="mdi mdi-information-outline"></i></button
+    onclick={toggleSubTitle}
   >
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
 </h2>
-{#if subtitle}<div class="subtitle">This example demonstrates pinned columns and rows. City of Origin cannot be pinned.</div>{/if}
+{#if showSubTitle}
+  <div class="subtitle">
+    This example demonstrates the use of Pinned (aka pinned) Columns and/or Rows (<a
+      href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/pinning"
+      target="_blank">Wiki docs</a
+    >) City of Origin is intentionally non-pinnable and is highlighted with a subtle gray background. Columns and rows can also be pinned
+    selectively, without requiring them to be sequential (for example, rows 0, 2, and 4). You can pin any number of columns or rows, place
+    rows at the bottom, change these options through SlickGrid setOptions(), and customize the border styling between pinned columns and
+    rows.
+  </div>
+{/if}
+<br />
 <div class="row gx-2 mb-2 align-items-end">
   <div class="col-auto">
-    <span>Pinned Rows (top/bottom): </span>
+    <label for="pinned-top-row-count">Pinned Rows (top/bottom): </label>
     <select
-      aria-label="Pinned top row count"
+      id="pinned-top-row-count"
       class="form-select form-select-sm d-inline-block w-auto pinned-top-row-count"
-      value={topCount}
-      onchange={(e) => changeRows(e, 'top')}
-      >{#each [0, 1, 2, 3, 4, 5] as n}<option value={n}>{n}</option>{/each}</select
+      value={pinnedTopRowCount}
+      onchange={(e) => changePinnedRowCount(e, 'top')}
     >
+      {#each [0, 1, 2, 3, 4, 5] as count}
+        <option value={count}>{count}</option>
+      {/each}
+    </select>
     <select
       aria-label="Pinned bottom row count"
       class="form-select form-select-sm d-inline-block w-auto pinned-bottom-row-count"
-      value={bottomCount}
-      onchange={(e) => changeRows(e, 'bottom')}
-      >{#each [0, 1, 2, 3, 4, 5] as n}<option value={n}>{n}</option>{/each}</select
+      value={pinnedBottomRowCount}
+      onchange={(e) => changePinnedRowCount(e, 'bottom')}
     >
+      {#each [0, 1, 2, 3, 4, 5] as count}
+        <option value={count}>{count}</option>
+      {/each}
+    </select>
   </div>
   <div class="col-auto">
-    <span>Pinned Columns (left/right): </span><select
-      aria-label="Pinned left column count"
+    <label for="pinned-left-column-count">Pinned Columns (left/right): </label>
+    <select
+      id="pinned-left-column-count"
       class="form-select form-select-sm d-inline-block w-auto pinned-left-column-count"
-      value={leftCount}
-      onchange={(e) => changeCols(e, 'left')}
-      ><option value="-1">None</option>{#each [0, 1, 2, 3, 4, 5] as n}<option value={n}>{n}</option>{/each}</select
+      value={pinnedColumnCount}
+      onchange={(e) => changePinnedColumnCount(e, 'left')}
     >
+      <option value="-1">None</option>
+      {#each [0, 1, 2, 3, 4, 5] as count}
+        <option value={count}>{count}</option>
+      {/each}
+    </select>
     <select
       aria-label="Pinned right column count"
       class="form-select form-select-sm d-inline-block w-auto pinned-right-column-count"
-      value={rightCount}
-      onchange={(e) => changeCols(e, 'right')}
-      >{#each [0, 1, 2] as n}<option value={n}>{n}</option>{/each}</select
+      value={pinnedRightColumnCount}
+      onchange={(e) => changePinnedColumnCount(e, 'right')}
     >
+      {#each [0, 1, 2] as count}
+        <option value={count}>{count}</option>
+      {/each}
+    </select>
   </div>
 </div>
-<div class="row mb-2">
-  <div class="col-12">
-    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="remove-pinned-column-button" onclick={() => pinnedColumns(-1, 0)}
-      >Remove Pinned Columns</button
+<div class="row mt-2">
+  <div class="col-sm-12">
+    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="remove-pinned-column-button" onclick={removePinnedColumns}>
+      <i class="mdi mdi-close"></i> Remove Pinned Columns
+    </button>
+    <button
+      class="btn btn-outline-secondary btn-sm btn-icon mx-1"
+      data-test="set-3pinned-columns"
+      onclick={() => setPinnedColumns(2, pinnedRightColumnCount)}
     >
-    <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="set-3pinned-columns" onclick={() => pinnedColumns(2)}
-      >Pin 3 Columns</button
+      <i class="mdi mdi-pin-outline"></i> Pin 3 Columns
+    </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="toggle-pinned-right" onclick={toggleRightPinning}>
+      <i class="mdi mdi-pin-outline"></i> Toggle Pinned Right
+    </button>
+    <button
+      class="btn btn-outline-secondary btn-sm btn-icon mx-1"
+      data-test="toggle-select-all-row"
+      onclick={toggleWhichRowToShowSelectAll}
     >
-    <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="toggle-pinned-right" onclick={toggleRight}
-      >Toggle Pinned Right</button
-    >
-    <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="toggle-select-all-row" onclick={toggleSelectAll}
-      >Toggle Select All</button
-    >
-    <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="set-large-pinned-columns" onclick={largeColumns}
-      >Set Large Columns</button
-    >
+      <i class="mdi mdi-checkbox-marked-circle-outline"></i> Toggle Select All
+    </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="set-large-pinned-columns" onclick={setLargePinnedColumns}>
+      <i class="mdi mdi-arrow-expand-horizontal"></i> Set Large Columns
+    </button>
   </div>
 </div>
-<hr />
-<SlickgridSvelte gridId="grid20" {columns} {options} {dataset} onSvelteGridCreated={ready} />
+<div class="col-sm-12"><hr /></div>
+<SlickgridSvelte
+  gridId="grid20"
+  {columns}
+  options={gridOptions}
+  {dataset}
+  onValidationError={onCellValidationError}
+  onSvelteGridCreated={svelteGridReady}
+/>

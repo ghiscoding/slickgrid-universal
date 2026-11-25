@@ -9,26 +9,26 @@ A Svelte 5 wrapper around SlickGrid Universal. Install `slickgrid-svelte`, `svel
   import { SlickgridSvelte, type Column, type GridOption } from 'slickgrid-svelte';
   import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss';
 
-  let columns: Column[] = [{ id: 'title', name: 'Title', field: 'title', sortable: true }];
-  let options: GridOption = { enableAutoResize: false, gridWidth: 800, gridHeight: 300 };
-  let dataset = [{ id: 1, title: 'Task 1' }];
+  const columns: Column[] = [{ id: 'title', name: 'Title', field: 'title', sortable: true }];
+  const options: GridOption = { enableAutoResize: false, gridWidth: 800, gridHeight: 300 };
+  let dataset = $state.raw([{ id: 1, title: 'Task 1' }]);
 </script>
 
 <SlickgridSvelte gridId="grid1" {columns} {options} {dataset} />
 ```
 
-Replace `dataset`, `datasetHierarchical`, `columns`, `options`, or `paginationOptions` with a new value to update the grid. Each grid needs a unique `gridId`; dataset items need unique IDs. Some options must be enabled at initialization.
+Replace `dataset`, `datasetHierarchical`, `columns`, `options`, or `paginationOptions` with a new value to update the grid (use `$state.raw` for these, mutating them in place is not detected). Each grid needs a unique `gridId`; dataset items need unique IDs. Some options must be enabled at initialization.
 
 Use `className` to add a CSS class to the grid container.
 
-Use `onSvelteGridCreated` or `bind:instances` to access the SlickGrid, DataView, and grid services. The `extensions` prop can also be bound. The component disposes the grid when it unmounts; call `instances.dispose()` to dispose it earlier. Named `header` and `footer` slots are available.
+Use `onSvelteGridCreated` or `bind:instances` to access the SlickGrid, DataView, and grid services. The `extensions` prop can also be bound. The component disposes the grid when it unmounts; call `instances.dispose()` to dispose it earlier. The `header` and `footer` snippets render content above and below the grid.
 
-Pass typed event callbacks as component props (for example `onClick`) or in the `events` object using the same names as SlickGrid events. Handlers receive the original `CustomEvent` and can call `preventDefault()` or return `false` for cancellable events. Handlers are registered before grid creation and replaced when the events object changes.
+Pass typed event callbacks as component props (for example `onClick`) or in the `events` object using the same names as SlickGrid events. Handlers receive the original `CustomEvent` and can call `preventDefault()` or return `false` for cancellable events. Each event is subscribed once and always calls the latest handler, so handlers can be replaced without re-subscribing.
 
 ```svelte
 <script lang="ts">
   import { SlickgridSvelte, type SlickgridSvelteInstance } from 'slickgrid-svelte';
-  let instances: SlickgridSvelteInstance | undefined;
+  let instances = $state<SlickgridSvelteInstance>();
   const events = {
     onBeforeGridCreate: () => console.log('Creating grid'),
     onGridStateChanged: (event: CustomEvent) => console.log(event.detail),
@@ -36,7 +36,7 @@ Pass typed event callbacks as component props (for example `onClick`) or in the 
 </script>
 
 <SlickgridSvelte gridId="grid1" {columns} {options} {dataset} {events} bind:instances>
-  <div slot="header">My grid</div>
+  {#snippet header()}<div>My grid</div>{/snippet}
 </SlickgridSvelte>
 ```
 
