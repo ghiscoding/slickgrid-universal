@@ -67,7 +67,7 @@ export class SlickgridSvelteCore<TData = any> {
   protected _currentDatasetLength = 0;
   protected _eventPubSubService!: EventPubSubService;
   protected _darkMode = false;
-  protected _collectionObservers: Array<null | { disconnect: () => void }> = [];
+  protected _columnDefinitionsObserver: null | { disconnect: () => void } = null;
   protected _columns?: Column<TData>[];
   protected _gridOptions: GridOption = {};
   protected _gridContainerElm!: HTMLElement;
@@ -233,7 +233,7 @@ export class SlickgridSvelteCore<TData = any> {
     }
 
     // add/remove dark mode CSS class to parent container
-    this.setDarkMode(options.darkMode);
+    this.setDarkMode(mergedOptions.darkMode);
 
     this._gridOptions = mergedOptions;
   }
@@ -340,7 +340,7 @@ export class SlickgridSvelteCore<TData = any> {
 
     // save resource refs to register before the grid options are merged and possibly deep copied
     // since a deep copy of grid options would lose original resource refs but we want to keep them as singleton
-    this._registeredResources = options?.externalResources || [];
+    this._registeredResources = [...(options?.externalResources ?? [])];
 
     this._gridOptions = this.mergeGridOptions(options || {});
 
@@ -453,7 +453,7 @@ export class SlickgridSvelteCore<TData = any> {
     this.backendService?.dispose?.();
 
     // dispose all registered external resources
-    this.disposeExternalResources();
+    this.resetExternalResources();
 
     // dispose the Components
     this.slickFooter?.dispose();
@@ -481,7 +481,8 @@ export class SlickgridSvelteCore<TData = any> {
     this.datasetHierarchical = undefined;
     this._columns = [];
 
-    this._collectionObservers.forEach((obs) => obs?.disconnect());
+    this._columnDefinitionsObserver?.disconnect();
+    this._columnDefinitionsObserver = null;
     this._eventPubSubService?.unsubscribeAll();
     this._svelteGridInstances = null as any;
 
@@ -822,9 +823,9 @@ export class SlickgridSvelteCore<TData = any> {
 
     // on locale change, we have to manually translate the Headers, GridMenu
     this.subscriptions.push(
-      this._eventPubSubService.subscribe('onLanguageChange', (args: { language: string }) => {
+      this._eventPubSubService.subscribe('onLanguageChange', (language: string) => {
         if (gridOptions.enableTranslate) {
-          this.extensionService.translateAllExtensions(args.language);
+          this.extensionService.translateAllExtensions(language);
           if (gridOptions.createPreHeaderPanel && (gridOptions.createTopHeaderPanel || !gridOptions.enableDraggableGrouping)) {
             this.headerGroupingService.translateHeaderGrouping();
           }
@@ -1325,6 +1326,10 @@ export class SlickgridSvelteCore<TData = any> {
   /** handler for when column definitions changes */
   protected columnsChanged(columns?: Column[]): void {
     if (columns) {
+      if (columns !== this._columns) {
+        this._columnDefinitionsObserver?.disconnect();
+        this._columnDefinitionsObserver = null;
+      }
       this._columns = columns;
     }
     if (this._isGridInitialized) {
@@ -1333,6 +1338,9 @@ export class SlickgridSvelteCore<TData = any> {
     if (this.columns.length > 0) {
       this.copyColumnWidthsReference(this.columns);
     }
+    if (columns && !this._columnDefinitionsObserver) {
+      this._columnDefinitionsObserver = collectionObserver(this.columns, this.columnsChanged.bind(this));
+    }
   }
 
   /**
@@ -1340,7 +1348,8 @@ export class SlickgridSvelteCore<TData = any> {
    * we can use our internal array observer for any changes done via (push, pop, shift, ...)
    */
   protected observeColumnDefinitions(): void {
-    this._collectionObservers.push(collectionObserver(this.columns, this.columnsChanged.bind(this)));
+    this._columnDefinitionsObserver?.disconnect();
+    this._columnDefinitionsObserver = collectionObserver(this.columns, this.columnsChanged.bind(this));
   }
 
   /**
@@ -1446,7 +1455,7 @@ export class SlickgridSvelteCore<TData = any> {
   /** Add a register a new external resource, user could also optional dispose all previous resources before pushing any new resources to the resources array list. */
   registerExternalResources(resources: ExternalResource[], disposePreviousResources = false): void {
     if (disposePreviousResources) {
-      this.disposeExternalResources();
+      this.resetExternalResources();
     }
     resources.forEach((res) => this._registeredResources.push(res));
     this.initializeExternalResources(resources);

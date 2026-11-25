@@ -13,7 +13,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ghiscoding/slickgrid-universal.git",
-    "directory": "packages/slickgrid-svelte"
+    "directory": "frameworks/slickgrid-svelte"
   },
   "bugs": {
     "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
