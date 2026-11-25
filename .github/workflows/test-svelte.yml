@@ -67,17 +67,18 @@ jobs:
       - name: Start HTTP Server
         run: pnpm svelte:serve &
 
-      - name: Run Cypress E2E tests in Chrome
-        working-directory: demos/svelte
-        run: |
-          for spec in test/cypress/e2e/*.cy.ts; do
-            case "$spec" in
-              *example33.cy.ts|*example43.cy.ts|*example45.cy.ts) continue ;;
-            esac
-            pnpm exec cypress run --config-file test/cypress.config.ts --spec "$spec" --browser chrome
-          done
+      - name: Run Cypress E2E tests
+        uses: cypress-io/github-action@18016a55674bd02cabf197de5762a1710cb5577c # v7.4.9
+        with:
+          install: false
+          package-manager-cache: false
+          working-directory: demos/svelte
+          wait-on: 'http://localhost:5100'
+          config-file: test/cypress.config.ts
+          browser: chrome
+          record: false
         env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          # CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           Cypress_extended: true
 
