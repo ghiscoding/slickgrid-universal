@@ -190,8 +190,7 @@
     svelteGrid.paginationService!.goToLastPage();
   }
 
-  let paginationLogTimer: ReturnType<typeof setTimeout> | undefined;
-  let pendingPaginationChange: GridStateChange['change'] | undefined;
+  let lastLoggedPagination = '';
 
   /** Dispatched event of a Grid State Changed event */
   function gridStateChanged(gridStateChanges: GridStateChange) {
@@ -200,12 +199,20 @@
       return;
     }
     if (change.type === 'pagination') {
-      pendingPaginationChange = change;
-      clearTimeout(paginationLogTimer);
-      paginationLogTimer = setTimeout(() => {
-        console.log('Client sample, Grid State changed:: ', pendingPaginationChange);
-      }, 50);
+      const pagination = change.newValues as Pagination;
+      if (pagination.pageNumber === 0) {
+        return;
+      }
+      const paginationKey = `${pagination.pageNumber}:${pagination.pageSize}`;
+      if (paginationKey === lastLoggedPagination) {
+        return;
+      }
+      lastLoggedPagination = paginationKey;
+      console.log('Client sample, Grid State changed:: ', change);
     } else {
+      if (change.type === 'filter') {
+        lastLoggedPagination = '';
+      }
       console.log('Client sample, Grid State changed:: ', change);
     }
   }
