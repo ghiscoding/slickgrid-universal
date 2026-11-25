@@ -28,8 +28,8 @@ describe('Example 16 - Regular & Custom Tooltips', () => {
       .each(($child, index) => expect($child.text()).to.eq(titles[index]));
   });
 
-  it('should change server delay to 10ms for faster testing', () => {
-    cy.get('[data-test="server-delay"]').clear().type('50');
+  it('should change server delay to 50ms for faster testing', () => {
+    cy.get('[data-test="server-delay"]').clear().type('50').should('have.value', '50');
   });
 
   it('should mouse over 1st row checkbox column and NOT expect any tooltip to show since it is disabled on that column', () => {
