@@ -433,6 +433,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
+    expect(tooltipElm.classList).toContain('slick-custom-tooltip-non-interactive');
     expect(tooltipElm.textContent).toBe('tooltip text');
   });
 
@@ -453,6 +454,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
+    expect(tooltipElm.classList).toContain('slick-custom-tooltip-non-interactive');
     expect(tooltipElm.textContent).toBe('tooltip text');
   });
 
@@ -1027,6 +1029,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
+    expect(tooltipElm.classList).not.toContain('slick-custom-tooltip-non-interactive');
     expect(tooltipElm.textContent).toBe('tooltip text');
 
     const mouseEnterEvent = new Event('mouseenter');
@@ -1143,6 +1146,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
+    expect(tooltipElm.classList).toContain('slick-custom-tooltip-non-interactive');
 
     gridStub.onMouseLeave.notify({ grid: gridStub } as any);
 
