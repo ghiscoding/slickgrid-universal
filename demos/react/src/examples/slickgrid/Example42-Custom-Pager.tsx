@@ -126,20 +126,22 @@ const CustomPagerComponent = (_props: any) => {
         <nav aria-label="Page navigation">
           <ul className="custom-pagination-ul">
             <li className={'li page-item seek-first' + (isLeftPaginationDisabled ? ' disabled' : '')}>
-              <a
+              <button
                 className="pagination-link mdi mdi-page-first icon-seek-first font-22px"
                 aria-label="First Page"
-                role="button"
+                type="button"
+                disabled={isLeftPaginationDisabled}
                 onClick={onFirstPageClicked}
-              ></a>
+              ></button>
             </li>
             <li className={'li page-item seek-prev' + (isLeftPaginationDisabled ? ' disabled' : '')}>
-              <a
+              <button
                 className="pagination-link icon-seek-prev mdi mdi-chevron-down font-22px mdi-rotate-90"
                 aria-label="Previous Page"
-                role="button"
+                type="button"
+                disabled={isLeftPaginationDisabled}
                 onClick={onPreviousPageClicked}
-              ></a>
+              ></button>
             </li>
           </ul>
         </nav>
@@ -155,20 +157,23 @@ const CustomPagerComponent = (_props: any) => {
         </div>
         <nav aria-label="Page navigation">
           <ul className="custom-pagination-ul">
-            <li className={'li page-item seek-next' + (isRightPaginationDisabled ? ' disabled' : '')} onClick={onNextPageClicked}>
-              <a
+            <li className={'li page-item seek-next' + (isRightPaginationDisabled ? ' disabled' : '')}>
+              <button
                 className="pagination-link icon-seek-next mdi mdi-chevron-down font-22px mdi-rotate-270"
                 aria-label="Next Page"
-                role="button"
-              ></a>
+                type="button"
+                disabled={isRightPaginationDisabled}
+                onClick={onNextPageClicked}
+              ></button>
             </li>
             <li className={'li page-item seek-end' + (isRightPaginationDisabled ? ' disabled' : '')}>
-              <a
+              <button
                 className="pagination-link icon-seek-end mdi mdi-page-last font-22px"
                 aria-label="Last Page"
-                role="button"
+                type="button"
+                disabled={isRightPaginationDisabled}
                 onClick={onLastPageClicked}
-              ></a>
+              ></button>
             </li>
           </ul>
         </nav>

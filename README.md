@@ -58,7 +58,7 @@ Multiple Themes are available:
 
 ### Available Framework Wrappers
 
-> There's no **SolidJS** or **Svelte** wrappers yet, but if you are interested then let's talk and open a new [Discussion](https://github.com/ghiscoding/slickgrid-universal/discussions)
+> There's no **SolidJS** wrapper yet, but if you are interested then let's talk and open a new [Discussion](https://github.com/ghiscoding/slickgrid-universal/discussions)
 
 | Platform | Project Repos | Live Demo | Stackblitz | Downloads | Details |
 | :------: | ------------- | --------- | ---------- | :-------: | ------- |
@@ -66,6 +66,7 @@ Multiple Themes are available:
 | <a href="https://aurelia.io/" rel="nofollow"><img alt="Aurelia" src="https://ghiscoding.github.io/aurelia-slickgrid-demos/assets/aurelia-logo-9YSzF-gF.png" width="45"></a> | [Aurelia-Slickgrid](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/aurelia-slickgrid) / <br> [Aurelia-Slickgrid-Demos](https://github.com/ghiscoding/aurelia-slickgrid-demos) | [demo](https://ghiscoding.github.io/aurelia-slickgrid-demos) | [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/aurelia-slickgrid-demos) | [![NPM downloads](https://img.shields.io/npm/dy/aurelia-slickgrid)](https://npmjs.org/package/aurelia-slickgrid) | [docs](https://ghiscoding.gitbook.io/aurelia-slickgrid/getting-started/quick-start) / <br> [changelog](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/aurelia-slickgrid/CHANGELOG.md) |
 | <a href="https://react.dev/" rel="nofollow"><img alt="React" src="https://ghiscoding.github.io/slickgrid-react-demos/assets/react-logo-DuD1bc7a.png" width="55"></a> | [Slickgrid-React](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-react/) / <br> [Slickgrid-React-Demos](https://github.com/ghiscoding/slickgrid-react-demos) | [demo](https://ghiscoding.github.io/slickgrid-react-demos) | [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-react-demos/) | [![NPM downloads](https://img.shields.io/npm/dy/slickgrid-react)](https://npmjs.org/package/slickgrid-react) | [docs](https://ghiscoding.gitbook.io/slickgrid-react/getting-started/quick-start) / <br> [changelog](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/slickgrid-react/CHANGELOG.md) |
 | <a href="https://vuejs.org/"><img src="https://play.vuejs.org/logo.svg" height="38" alt="VueJS"/></a> | [Slickgrid-Vue](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-vue) / <br> [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos) | [demo](https://ghiscoding.github.io/slickgrid-vue-demos) | [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-vue-demos) | [![NPM downloads](https://img.shields.io/npm/dy/slickgrid-vue)](https://npmjs.org/package/slickgrid-vue) | [docs](https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start) / <br> [changelog](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/slickgrid-vue/CHANGELOG.md) |
+| Svelte | [Slickgrid-Svelte](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-svelte) / <br> [Svelte demo source](https://github.com/ghiscoding/slickgrid-universal/tree/master/demos/svelte) | — | — | Not published yet | [README](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/slickgrid-svelte/README.md) |
 | <a href="https://vite.dev/" rel="nofollow"><img alt="ViteJS" src="https://ghiscoding.github.io/slickgrid-universal-vite-demo/assets/favicon-C49brna2.svg" width="45"></a> | [Slickgrid-Universal-Vite-Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) | [demo](https://ghiscoding.github.io/slickgrid-universal-vite-demo) | [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-universal-vite-demo) | | [docs](https://ghiscoding.gitbook.io/slickgrid-universal/)
 | <a href="https://lwc.dev/" rel="nofollow"><img alt="Salesforce (LWC)" src="https://login.salesforce.com/img/logo214.svg" width="52"></a> | [Slickgrid-Universal/vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle) | n/a | | [zip](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle/dist-grid-bundle-zip) file | [docs](https://ghiscoding.gitbook.io/slickgrid-universal/getting-started/installation-salesforce) |
 | <a href="https://streamlit.io/" rel="nofollow"><img alt="Streamlit" src="https://docs.streamlit.io/logo.svg" width="45"></a> | [streamlit-slickgrid](https://github.com/streamlit/streamlit-slickgrid/) | [demo](https://slickgrid.streamlit.app/) | | | Community Python wrapper |
@@ -142,6 +143,7 @@ pnpm angular:install
 pnpm aurelia:install
 pnpm react:install
 pnpm vue:install
+pnpm svelte:install
 ```
 
 2. Run Dev (Vanilla Implementation)
@@ -154,11 +156,12 @@ It could be used as a guideline to implement it for other framework wrappers.
 # dev vanilla (default)
 pnpm run dev
 
-# dev for Angular, Aurelia, React or Vue
+# dev for Angular, Aurelia, React, Vue, or Svelte
 pnpm run dev:angular
 pnpm run dev:aurelia
 pnpm run dev:react
 pnpm run dev:vue
+pnpm run dev:svelte
 ```
 
 3. Build

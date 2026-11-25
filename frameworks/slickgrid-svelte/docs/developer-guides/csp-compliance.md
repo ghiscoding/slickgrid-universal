@@ -1,0 +1,39 @@
+## CSP Compliance
+The library is for the most part CSP (Content Security Policy) compliant since `v4.0` **but** only if you configure the `sanitizer` grid option. We were previously using `DOMPurify` internally in the project (in version <=4.x) but it was made optional in version 5 and higher. The main reason to make it optional was because some users who require SSR support could not use `dompuriy` but would rather need to use `isomorphic-dompurify`. You could also skip the `sanitizer` configuration, but that is not recommended.
+
+> **Note** even if the `sanitizer` is optional, we **strongly suggest** that you configure it as a global grid option to avoid possible XSS attacks from your data and also to be CSP compliant. Note that for Salesforce users, you do not have to configure it since Salesforce is already using DOMPurify internally for any HTML templates.
+
+As mentioned above, the project is mostly CSP compliant, however there are some exceptions to be aware of. When using any html string as template (for example with Custom Formatter returning an html string), you will not be fully compliant unless you return `TrustedHTML`. You can achieve this by using the `sanitizer` method in combo with [DOMPurify](https://github.com/cure53/DOMPurify) to return `TrustedHTML` as shown below and with that in place you should be CSP compliant.
+
+```typescript
+import DOMPurify from 'dompurify';
+import { SlickgridSvelte, type GridOption } from 'slickgrid-svelte';
+
+const options: GridOption = {
+  sanitizer: (html) => DOMPurify.sanitize(html, { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }),
+  // you could also optionally use the sanitizerOptions instead
+  // sanitizerOptions: { RETURN_TRUSTED_TYPE: true }
+};
+```
+
+The `level` attribute is used by SlickGrid Grouping and Draggable Grouping to track the grouping depth, so keep it in the sanitizer allowlist when those features are enabled.
+
+Pass those options to the Svelte wrapper:
+
+```svelte
+<SlickgridSvelte gridId="tasks" {columns} {dataset} {options} />
+```
+
+Add an appropriate CSP header or meta tag to your application. For example:
+
+```html
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'nonce-random-string'; require-trusted-types-for 'script'; trusted-types dompurify">
+```
+
+#### DataView
+DataView filtering is CSP-safe by default and does not use runtime code generation. No DataView option is required.
+
+### Custom Formatter using native HTML
+We now also allow passing native HTML Element as a Custom Formatter instead of HTML string in order to avoid the use of `innerHTML` and stay CSP safe. We also have a new grid option named `enableHtmlRendering`, which is enabled by default and is allowing the use of `innerHTML` in the library (by Formatters and others), however when disabled it will totally restrict the use of `innerHTML` which will help to stay CSP safe.
+
+You can take a look at the original SlickGrid library with this new [Filtered DataView with HTML Formatter - CSP Header (Content Security Policy)](https://6pac.github.io/SlickGrid/examples/example4-model-html-formatters.html) example which uses this new approach. There was no new Example created in Slickgrid-Universal specifically for this but the approach is the same.

@@ -1,0 +1,340 @@
+#### index
+- [Usage](#usage)
+- [Rendering and DOM structure](#rendering-and-dom-structure)
+- [Changing Addon Options Dynamically](#changing-addon-options-dynamically)
+- [Calling Addon Methods Dynamically](#calling-addon-methods-dynamically)
+- [Row Detail - Preload Component - Loading Spinner](#row-detail---preload-component-loading-spinner)
+- [Row Detail - View Component](#row-detail---view-component)
+- [Access Parent Component (grid) from the Child Component (row detail)](#access-parent-component-grid-from-the-child-component-row-detail)
+- Troubleshooting
+  - [Adding a Column dynamically is removing the Row Selection column, why is that?](#adding-a-column-dynamically-is-removing-the-row-selection-column-why-is-that)
+
+### Demo
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example21) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example21.ts)
+
+For the Svelte component integration, see [Row Detail with Svelte components](svelte-row-detail.md) and [Svelte Example 45](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example45.svelte).
+
+### Description
+A Row Detail allows you to open a detail panel which can contain extra and/or more detailed information about a row. For example, we have a user list but we want to display detailed information about this user (his full address, account info, last purchasers, ...) but these are extra details that we don't want to display this in the user grid (for performance and real estate reasons)... so a Row Detail is perfect for that use case.
+
+> **NOTE 1** Please note that because of the complexity behind Row Detail, the following features might not play too well together and will possibly cause UI problems with Row Detail (use at your risk):
+> - Pagination
+> - Tree Data
+> - RowSpan
+
+> **NOTE 2** Also please note that because SlickGrid is using its own built-in Virtual Scroll feature by default (for perf reasons), it render and re-render multiple times while scrolling, and whenever that happens whenever the Row Detail will reset its content because of the re-render.
+> So for that reason, you should avoid using dynamic elements (i.e. form inputs) because whenever a re-render kicks in, it will reset and re-render the Row Detail content as if nothing happened.
+> So you should consider using Row Detail mainly for showing static data (hence the name "Row Detail" to show more detailed info) and to be clear dynamic elements can be rendered but it's very usable if they get reset every time you scroll out of the viewport and so just remember this limitation.
+
+### Rendering and DOM structure
+
+Row Detail panels are mounted directly in the grid canvas as siblings of the transformed rows. Each panel uses one `.slick-row-detail-container` element for positioning and automatic overflow scrolling. No overlay host or inner wrapper divs are created, and no rendering option is required. Panels occupy their reserved padding rows even when the parent is pinned or sticky, and stay aligned with the visible viewport during horizontal scrolling.
+
+In v11, `rowTopOffsetRenderType` and `rowDetailView.renderMode` have been removed. Remove both options from existing configurations; see the [v11 migration guide](../migrations/migration-to-11.x.md#row-positioning-rowtopoffsetrendertype).
+
+```ts
+const gridOptions: GridOption = {
+  enableRowDetailView: true,
+  rowDetailView: {
+    // ... other Row Detail options
+  }
+};
+```
+
+The generated panel has only two classes. For an item with ID `1`, its structure is:
+
+```html
+<div class="slick-row-detail-container row-detail-1">
+  <!-- Your Row Detail template or framework component host -->
+</div>
+```
+
+Use `.slick-row-detail-container` for shared panel styling and `.row-detail-{id}` to select a specific item, where `{id}` is the dataset item's identifier. The panel handles positioning, sizing, and automatic overflow scrolling.
+
+The Angular, Aurelia, React, Vue, and Svelte Row Detail plugins mount their preload and detail components directly into this panel. Angular and Aurelia retain their framework component host elements; any elements in your own template also remain. Component lifecycle handling and `keepComponentAlive` continue to apply.
+
+In v11, `.dynamic-cell-detail` is renamed to `.slick-row-detail-container`, and `.cellDetailView_{id}` becomes `.row-detail-{id}`. The `.slick-row-detail-overlay` host, inner wrapper divs, and redundant panel classes have been removed. Update CSS and DOM queries that use `.detail-container`, `.detailViewContainer_{id}`, `.innerDetailView_{id}`, `.container_{id}`, or `.container_loading`. Select the panel using `.slick-row-detail-container` or `.row-detail-{id}`; select preload content using classes in your preload component's own markup. Panels are siblings of grid rows, so replace `.slick-cell + .dynamic-cell-detail` selectors with `.slick-row-detail-container` as well. See [Row Detail DOM and CSS selector migration](../migrations/migration-to-11.x.md#row-detail-dom-and-css-selectors) for a before/after DOM comparison.
+
+### Keeping Row Detail Components Alive During Scrolling
+
+By default, when a Row Detail is scrolled out of the viewport, the component is destroyed and recreated when scrolled back in. This means any state in the Row Detail component (including nested grid filters, sorts, or form inputs) is lost.
+
+To preserve Row Detail component state across viewport changes, you can enable the `keepComponentAlive` option:
+
+```ts
+rowDetailView: {
+  // ... other options
+  
+  // Keep Row Detail component alive when scrolled out of viewport (preserves state)
+  // Default: false
+  keepComponentAlive: true,
+}
+```
+
+When enabled:
+- Row Detail components are detached (not destroyed) when scrolled out of viewport
+- Components are reattached when scrolled back in
+- Component state is fully preserved (including nested grid state, filters, sorts, etc.)
+
+**Trade-offs:**
+- **Pros:** Component state is preserved, better UX for nested grids with dynamic state
+- **Cons:** Slightly higher memory usage since components stay in memory even when not visible
+
+You can dynamically change this option using `setOptions()`:
+
+```ts
+changeKeepingComponentAlive() {
+  const rowDetailInstance = this.extensionService.getExtensionInstanceByName('rowDetailView');
+  const options = rowDetailInstance.getOptions();
+  options.keepComponentAlive = !options.keepComponentAlive;
+  rowDetailInstance.setOptions(options);
+}
+```
+
+## Usage
+
+##### Component
+
+### Required Styles (v11+)
+Stylesheets are now contained in each optional package, add `@slickgrid-universal/row-detail-plugin` styles after your grid theme in your global SCSS/CSS entry file:
+
+```scss
+// SASS
+@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss';
+@use '@slickgrid-universal/row-detail-plugin/dist/styles/sass/slick-row-detail.scss';
+
+// CSS
+@import '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css';
+@import '@slickgrid-universal/row-detail-plugin/dist/styles/css/slick-row-detail.css';
+```
+
+See [Required Styles for Extra Packages](../styling/styling.md#required-styles-for-extra-packages) for plain CSS imports and theme configuration details.
+
+```ts
+import {
+  type Column,
+  createDomElement,
+  Filters,
+  Formatters,
+  type GridOption,
+  SlickEventHandler,
+  Editors,
+} from '@slickgrid-universal/common';
+import { SlickRowDetailView } from '@slickgrid-universal/row-detail-plugin';
+
+export default class Example21 {
+  gridOptions!: GridOption;
+  columns!: Column<Item>[];
+  dataset!: Item[];
+  rowDetail!: SlickRowDetailView;
+  sgb!: SlickVanillaGridBundle;
+
+  attached() {
+    this.defineGrids();
+
+    // mock some data (different in each dataset)
+    this.dataset = this.mockData(NB_ITEMS);
+    this.gridContainerElm = document.querySelector<HTMLDivElement>(`.grid21`) as HTMLDivElement;
+    this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columns, this.gridOptions, this.dataset);
+  }
+
+  defineGrid() {
+    this.columns = [/*...*/];
+
+    this.gridOptions = {
+      enableRowDetailView: true,
+      // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
+      selectionOptions: {
+        selectActiveRow: true
+      },
+      preRegisterExternalExtensions: (pubSubService) => {
+        // Row Detail View is a special case because of its requirement to create extra column definition dynamically
+        // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
+        this.rowDetail = new SlickRowDetailView(pubSubService);
+        return [{ name: 'rowDetailView', instance: this.rowDetail }];
+      },
+      rowDetailView: {
+        // We can load the "process" asynchronously via Fetch, Promise, ...
+        process: (item) => http.get(`api/item/${item.id}`),
+
+        // load only once and reuse the same item detail without calling process method
+        loadOnce: true,
+
+        // limit expanded row to only 1 at a time
+        singleRowExpand: false,
+
+        // false by default, clicking anywhere on the row will open the detail view
+        // when set to false, only the "+" icon would open the row detail
+        // if you use editor or cell navigation you would want this flag set to false (default)
+        useRowClick: true,
+
+        // pre-template is typically used to show a loading spinner
+        preTemplate: this.loadingTemplate.bind(this),
+
+        // post-template is the final HTML template
+        postTemplate: this.loadView.bind(this),
+
+        // how many grid rows do we want to use for the detail panel
+        // also note that the detail view adds an extra 1 row for padding purposes
+        // example, if you choosed 6 panelRows, the display will in fact use 5 rows
+        panelRows: this.detailViewRowCount,
+
+        // make only every 2nd row an expandable row,
+        // by using the override function to provide custom logic of which row is expandable
+        // you can override it here in the options or externally by calling the method on the plugin instance
+        expandableOverride: (_row, dataContext) => dataContext.id % 2 === 1,
+
+        // Optionally pass your Parent Component reference to your Child Component (row detail component)
+        parentRef: this
+      }
+    };
+  }
+
+   /** Loading template, can be an HTML string or an HTML Element */
+  loadingTemplate() {
+    const headerElm = createDomElement('h5', { className: 'title is-5' });
+    headerElm.appendChild(createDomElement('i', { className: 'mdi mdi-load mdi-spin-1s font-40px' }));
+    headerElm.appendChild(document.createTextNode('Loading...'));
+
+    return headerElm;
+  }
+
+  /** Row Detail View, can be an HTML string or an HTML Element (we'll use HTML string for simplicity of the demo) */
+  loadView(itemDetail: ItemDetail) {
+    return `
+      <div>
+        <h4 class="title is-4">${itemDetail.title}</h4>
+        <div class="container">
+          <div class="columns">
+            <div class="column is-half">
+            <div class="detail"><label>Assignee:</label> <input class="input is-small is-8 column mt-1" id="assignee_${itemDetail.id}" type="text" value="${itemDetail.assignee}"/></div>
+              <div class="detail"><label>Reporter:</label> <span>${itemDetail.reporter}</span></div>
+              <div class="detail"><label>Duration:</label> <span>${itemDetail.duration}</span></div>
+              <div class="detail"><label>% Complete:</label> <span>${itemDetail.percentComplete}</span></div>
+              <div class="detail"><label>Start:</label> <span>${itemDetail.start.toDateString()}</span></div>
+              <div class="detail"><label>Finish:</label> <span>${itemDetail.finish.toDateString()}</span></div>
+              <div class="detail"><label>Effort Driven:</label> <span>${itemDetail.effortDriven}</span></div>
+            </div>
+            <div class="column is-half">
+              <div class="detail">
+                <span class="is-flex is-align-items-center">
+                  <label>Find out who is the Assignee</label>
+                  <button class="button is-small" id="who-is-assignee_${itemDetail.id}" data-test="assignee-btn">Click Me</button>
+                </span>
+                <button class="button is-small is-danger ml-5" id="delete_row_${itemDetail.id}" data-test="delete-btn">
+                  Delete Row
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+}
+```
+
+### Changing Addon Options Dynamically
+Row Detail is an addon (commonly known as a plugin and are opt-in addon), because this is not built-in SlickGrid and instead are opt-in, we need to get the instance of that addon object. Once we have the instance, we can use `getOptions` and `setOptions` to get/set any of the addon options, adding `rowDetail` with intellisense should give you this info.
+
+#### Examples
+- Dynamically change the Detail View Row Count (how many grid rows do we want to use for the row detail panel)
+```ts
+changeDetailViewRowCount() {
+  const options = this.rowDetail.getOptions();
+  if (options?.panelRows) {
+    options.panelRows = this.detailViewRowCount; // change number of rows dynamically
+    this.rowDetail.setOptions(options);
+  }
+}
+```
+
+### Calling Addon Methods Dynamically
+Same as previous paragraph, after we get the SlickGrid addon instance, we can call any of the addon methods, adding `rowDetail` with intellisense should give you this info.
+
+#### Examples
+- Dynamically close all Row Detail Panels
+```ts
+closeAllRowDetail() {
+  this.rowDetail.collapseAll();
+}
+```
+- Dynamically close a single Row Detail by it's grid index
+This requires a bit more work, you can call the method `collapseDetailView(item)` but it requires to pass the row item object (data context) and it feasible but it's just more work as can be seen below.
+```ts
+closeRowDetail(gridRowIndex: number) {
+  if (this.sgb) {
+    const rowDetailInstance = this.sgb.extensionService.getExtensionInstanceByName('rowDetailView');
+    const item = this.sgb.gridService.getDataItemByRowIndex(gridRowIndex);
+    rowDetailInstance.collapseDetailView(item);
+  }
+}
+```
+
+### Row Detail - Preload Component (loading spinner)
+Most of the time we would get data asynchronously, during that time we can show a loading spinner to the user via the `preloadComponent` grid option. We could use this simple Preload Component example as shown below
+
+###### Preload Component
+```ts
+/** Loading template, can be an HTML string or an HTML Element */
+loadingTemplate() {
+  const headerElm = createDomElement('h5', { className: 'title is-5' });
+  headerElm.appendChild(createDomElement('i', { className: 'mdi mdi-load mdi-spin-1s font-40px' }));
+  headerElm.appendChild(document.createTextNode('Loading...'));
+
+  return headerElm;
+}
+```
+
+### Row Detail - ViewModel
+Same concept as the preload, we pass an HTML template to render our Row Detail.
+
+```ts
+/** Row Detail View, can be an HTML string or an HTML Element (we'll use HTML string for simplicity of the demo) */
+loadView(itemDetail: ItemDetail) {
+  return `
+    <div>
+      ${itemDetail.name}
+      ...
+    </div>
+  `;
+}
+```
+
+###### Row Detail Component
+
+The best is to see the Example 21 code.
+
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example21) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example21.ts)
+
+###### Grid Definition
+```ts
+export class Example {
+  defineGrid() {
+    this.gridOptions = {
+      enableRowDetailView: true,
+      preRegisterExternalExtensions: (pubSubService) => {
+        // Row Detail View is a special case because of its requirement to create extra column definition dynamically
+        // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
+        const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
+        return [{ name: 'rowDetailView', instance: rowDetail }];
+      },
+      rowDetailView: {
+        // We can load the "process" asynchronously via Fetch, Promise, ...
+        process: (item) => http.get(`api/item/${item.id}`),
+
+        // ...
+
+        // Preload Component
+        preTemplate: this.loadingTemplate.bind(this),
+
+        // Row Detail Component to load when row detail data is ready
+        postTemplate: this.loadView.bind(this),
+
+        // Optionally pass your Parent Component reference to your Child Component (row detail component)
+        parentRef: this
+      }
+    };
+  }
+}
+```
