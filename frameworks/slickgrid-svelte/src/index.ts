@@ -1,10 +1,10 @@
 import SlickgridSvelte from './components/SlickgridSvelte.svelte';
-import type { SlickgridSvelteProps } from './components/slickgridSvelteProps.interface.js';
 import type {
   SvelteGridEventHandlers,
   SvelteRegularEventHandler,
   SvelteSlickEventHandler,
 } from './components/slickgridSvelteEvents.interface.js';
+import type { SlickgridSvelteProps } from './components/slickgridSvelteProps.interface.js';
 import type {
   GridOption,
   RowDetailView,
@@ -12,7 +12,7 @@ import type {
   ViewModelBindableData,
   ViewModelBindableInputData,
 } from './models/index.js';
-import { createSveltePagination, type SveltePaginationProps, TranslaterI18NextService } from './services/index.js';
+import { createSveltePagination, TranslaterI18NextService, type SveltePaginationProps } from './services/index.js';
 import { SlickgridConfig } from './slickgrid-config.js';
 
 export * from '@slickgrid-universal/common';
