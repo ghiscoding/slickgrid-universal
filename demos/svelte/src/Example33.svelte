@@ -647,9 +647,3 @@
   <div class="alert alert-info is-narrow col" class:invisible={!showLazyLoading} data-test="alert-lazy">Lazy loading collection...</div>
 </div>
 <SlickgridSvelte gridId="grid33" {columns} options={gridOptions} {dataset} onSvelteGridCreated={svelteGridReady} />
-
-<style>
-  :global(.slick-custom-tooltip) {
-    pointer-events: none;
-  }
-</style>
