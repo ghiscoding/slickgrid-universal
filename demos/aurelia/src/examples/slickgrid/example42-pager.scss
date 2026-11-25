@@ -24,7 +24,7 @@
       margin: 0;
       &.disabled .pagination-link {
         color: rgb(180, 179, 179);
-        background-color: rgb(180, 179, 179);
+        background-color: transparent;
       }
     }
 
@@ -38,7 +38,7 @@
     }
 
     nav {
-      ul.custom-pagination-ul  {
+      ul.custom-pagination-ul {
         display: flex;
         margin: 0;
         padding: 0 5px;
@@ -46,6 +46,11 @@
 
         .pagination-link {
           color: #0d6efd;
+          border: 0;
+          padding: 0;
+          background: transparent;
+          font: inherit;
+          appearance: none;
           &:hover {
             color: color.adjust(#0d6efd, $lightness: 10%);
           }
