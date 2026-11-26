@@ -1,0 +1,25 @@
+.example48-popup {
+  position: fixed;
+  z-index: 1000;
+  width: 160px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+  .example48-popup-item {
+    padding: 6px 10px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #f0f0f0;
+    }
+  }
+}
+
+.dialog48 {
+  // modal dialogs scroll their overflow by default, which would clip the menus appended to the dialog
+  overflow: visible;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}

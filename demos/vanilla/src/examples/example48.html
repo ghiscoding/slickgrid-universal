@@ -1,0 +1,44 @@
+<h3 class="title is-3">
+  Example 48 - Popups inside Cells
+  <span class="d-inline-flex">
+    <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </span>
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example48.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+
+<h6 class="italic content example-details" style.bind="subTitleStyle">
+  Rows are positioned with <code>transform: translateY()</code> and pinned columns use <code>will-change: transform</code>, so a popup
+  rendered inside a cell is clipped to its row. The "Actions" buttons below open a custom popup appended to
+  <code>grid.getPopupContainer()</code> instead, which escapes the pinned column. The modal button opens a grid inside a
+  <code>&lt;dialog&gt;</code> where the <code>popupContainer</code> grid option is set to the dialog, so the built-in Cell Menu opens over
+  the modal's top layer.
+</h6>
+
+<div class="mb-2">
+  <button class="button is-small" data-test="open-modal-btn" onclick.trigger="openModal()">
+    <span class="mdi mdi-open-in-new"></span>
+    <span>Open Grid in a Modal Dialog</span>
+  </button>
+  <span class="ml-2">Last action: <span data-test="last-action" textcontent.bind="lastAction"></span></span>
+</div>
+
+<div class="grid48"></div>
+
+<dialog class="dialog48" data-test="dialog48">
+  <div class="is-flex is-justify-content-space-between mb-2">
+    <span>Grid inside a modal dialog, Cell Menu appended to the dialog</span>
+    <button class="button is-small" data-test="close-modal-btn" onclick.trigger="closeModal()">Close</button>
+  </div>
+  <div class="grid48-modal"></div>
+</dialog>
