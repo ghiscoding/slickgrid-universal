@@ -1,0 +1,48 @@
+{
+  "name": "slickgrid-svelte-demo",
+  "private": true,
+  "version": "11.0.0",
+  "type": "module",
+  "scripts": {
+    "svelte:dev": "vite",
+    "build": "svelte-check --tsconfig ./tsconfig.json && vite build",
+    "svelte:preview": "vite preview",
+    "svelte:cypress": "cypress open --config-file test/cypress.config.ts",
+    "svelte:cypress:ci": "cypress run --config-file test/cypress.config.ts"
+  },
+  "dependencies": {
+    "@faker-js/faker": "catalog:",
+    "@fnando/sparkline": "catalog:",
+    "@formkit/tempo": "catalog:",
+    "@popperjs/core": "catalog:",
+    "@slickgrid-universal/common": "workspace:*",
+    "@slickgrid-universal/composite-editor-component": "workspace:*",
+    "@slickgrid-universal/custom-tooltip-plugin": "workspace:*",
+    "@slickgrid-universal/event-pub-sub": "workspace:*",
+    "@slickgrid-universal/excel-export": "workspace:*",
+    "@slickgrid-universal/graphql": "workspace:*",
+    "@slickgrid-universal/odata": "workspace:*",
+    "@slickgrid-universal/pdf-export": "workspace:*",
+    "@slickgrid-universal/row-detail-plugin": "workspace:*",
+    "@slickgrid-universal/rxjs-observable": "workspace:*",
+    "@slickgrid-universal/sql": "workspace:*",
+    "@slickgrid-universal/svelte-row-detail-plugin": "workspace:*",
+    "@slickgrid-universal/text-export": "workspace:*",
+    "@slickgrid-universal/web-mcp": "workspace:*",
+    "bootstrap": "catalog:",
+    "i18next": "catalog:",
+    "slickgrid-svelte": "workspace:*",
+    "svelte": "catalog:"
+  },
+  "devDependencies": {
+    "@4tw/cypress-drag-drop": "catalog:",
+    "@sveltejs/vite-plugin-svelte": "^6.0.0",
+    "@types/fnando__sparkline": "catalog:",
+    "cypress": "catalog:",
+    "cypress-real-events": "catalog:",
+    "sass": "catalog:",
+    "svelte-check": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}

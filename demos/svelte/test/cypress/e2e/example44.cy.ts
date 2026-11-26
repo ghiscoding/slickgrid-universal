@@ -1,0 +1,658 @@
+describe('Example 44 - Column & Row Span', () => {
+  const GRID_ROW_HEIGHT = 30;
+  const fullTitles = [
+    'Title',
+    'Revenue Growth',
+    'Pricing Policy',
+    'Policy Index',
+    'Expense Control',
+    'Excess Cash',
+    'Net Trade Cycle',
+    'Cost of Capital',
+    'Revenue Growth',
+    'Pricing Policy',
+    'Policy Index',
+    'Expense Control',
+    'Excess Cash',
+    'Net Trade Cycle',
+    'Cost of Capital',
+    'Revenue Growth',
+    'Pricing Policy',
+    'Policy Index',
+    'Expense Control',
+    'Excess Cash',
+    'Net Trade Cycle',
+    'Cost of Capital',
+  ];
+
+  it('should display Example title', () => {
+    cy.visit(`${Cypress.config('baseUrl')}/example44`);
+    cy.get('h2').should('contain', 'Example 44: colspan/rowspan with large dataset');
+  });
+
+  it('should hide sub-title', () => {
+    cy.get('[data-test=toggle-subtitle]').click();
+  });
+
+  it('should calculate a height that fits the wrapped Revenue Growth header', () => {
+    // The pinning POC uses one live header instead of separate left/right
+    // header panes, so auto-height is applied to a single header element.
+    cy.get('.slick-header-auto-height').should('have.length', 1);
+    cy.get('.slick-header-auto-height')
+      .first()
+      .should(($header) => {
+        expect(parseFloat($header.css('--slick-auto-header-height'))).to.be.greaterThan(0);
+      });
+    cy.get('.auto-header-height-demo').should(($header) => {
+      expect($header[0].scrollHeight).to.be.lte($header[0].clientHeight);
+      expect($header[0].clientHeight).to.be.lessThan(100);
+      const name = $header[0].querySelector<HTMLElement>('.slick-column-name');
+      expect(name).to.exist;
+      const lineHeight = parseFloat(getComputedStyle(name!).lineHeight) || 16;
+      expect(name!.scrollHeight).to.be.within(lineHeight * 1.5, lineHeight * 2.5);
+    });
+  });
+
+  it('should have exact column titles', () => {
+    cy.get('.slick-header-columns')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+  });
+
+  it('should keep spanning cells above active and hovered covered rows', () => {
+    const expectSpanAtCoveredRow = (spanSelector: string, coveredRow: number) => {
+      cy.get(spanSelector).should(($span) => {
+        const span = $span[0];
+        const row = span.ownerDocument.querySelector<HTMLElement>(`#grid44 .slick-row[data-row="${coveredRow}"]`)!;
+        const spanRect = span.getBoundingClientRect();
+        const rowRect = row.getBoundingClientRect();
+        const painted = span.ownerDocument.elementFromPoint(spanRect.left + spanRect.width / 2, rowRect.top + rowRect.height / 2);
+        expect(painted === span || span.contains(painted)).to.eq(true);
+      });
+    };
+
+    cy.get('#grid44 .slick-row[data-row="3"] > .slick-cell.l2').click();
+    expectSpanAtCoveredRow('#grid44 .slick-row[data-row="2"] > .slick-cell.l0.rowspan', 3);
+    cy.get('#grid44 .slick-row[data-row="4"] > .slick-cell.l2').realHover();
+    expectSpanAtCoveredRow('#grid44 .slick-row[data-row="2"] > .slick-cell.l0.rowspan', 4);
+    expectSpanAtCoveredRow('#grid44 .slick-row[data-row="3"] > .slick-cell.l3.rowspan', 4);
+    cy.get('h2').realHover();
+  });
+
+  it('should retain the tall rowspan host while scrolling vertically', () => {
+    let host: HTMLElement;
+    cy.get('#grid44 .slick-row[data-row="8"]').then(($row) => {
+      host = $row[0];
+    });
+    cy.get('#grid44 .slick-viewport').scrollTo(0, 900);
+    cy.get('#grid44 .slick-row[data-row="8"]').should(($row) => {
+      expect($row[0]).to.equal(host);
+      expect($row.find('.slick-cell.l3.rowspan')).to.have.length(1);
+    });
+    cy.get('#grid44 .slick-viewport').scrollTo(0, 0);
+  });
+
+  it('should auto-scroll horizontally when a column is dragged past the viewport', () => {
+    let draggedColumn: HTMLElement;
+
+    cy.clock();
+    cy.get('.slick-horizontal-scroller').scrollTo(0, 0).its('0.scrollLeft').should('equal', 0);
+
+    cy.window().then((win) => {
+      const header = win.document.querySelector('.slick-header-columns-left') as HTMLElement;
+      draggedColumn = header.querySelector('.slick-header-column') as HTMLElement;
+      const rect = draggedColumn.getBoundingClientRect();
+      const dataTransfer = {
+        dropEffect: 'move',
+        effectAllowed: 'all',
+        getData: () => '',
+        setData: () => {},
+        setDragImage: () => {},
+      };
+      const createDragEvent = (type: string, x: number, y: number) => {
+        const event = new Event(type, { bubbles: true, cancelable: true });
+        Object.defineProperties(event, {
+          dataTransfer: { value: dataTransfer },
+          pageX: { value: x },
+          clientX: { value: x },
+          clientY: { value: y },
+        });
+        return event;
+      };
+
+      draggedColumn.dispatchEvent(createDragEvent('dragstart', rect.left + rect.width / 2, rect.top + rect.height / 2));
+      const dragX = win.innerWidth + 1200;
+      win.document.dispatchEvent(createDragEvent('drag', dragX, rect.top + rect.height / 2));
+    });
+    cy.tick(300);
+
+    cy.get('.slick-horizontal-scroller').its('0.scrollLeft').should('be.greaterThan', 0);
+    cy.then(() => draggedColumn.dispatchEvent(new Event('dragend', { bubbles: true, cancelable: true })));
+
+    cy.get('.slick-header-column:nth(0)').should('contain', 'Title');
+    cy.get('.slick-header-column:nth(1)').should('contain', 'Revenue Growth');
+    cy.get('.slick-vertical-scroller').scrollTo(0, 0);
+  });
+
+  it('should drag Title column to swap with 2nd column "Revenue Growth" in the grid and expect rowspan to stay at same position with Task 0 to spread instead', () => {
+    const expectedTitles = ['Revenue Growth', 'Title', 'Pricing Policy'];
+
+    cy.get(`[data-row=2] > .slick-cell.l0.r0.rowspan`).should(($el) =>
+      expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
+    );
+
+    cy.get('.slick-header-columns')
+      .children('.slick-header-column:nth-of-type(1)')
+      .contains('Title')
+      .drag('.slick-header-column:nth-of-type(2)', { force: true });
+    cy.wait(50);
+    cy.get('.slick-header-column:nth(0)').contains('Revenue Growth');
+    cy.get('.slick-header-column:nth(1)').contains('Title');
+
+    cy.get(`[data-row=0] > .slick-cell.l1.r1`).should('contain', 'Task 0');
+    cy.get(`[data-row=2] > .slick-cell.l1.r1`).should('not.exist');
+    cy.get(`[data-row=3] > .slick-cell.l1.r1`).should('contain', 'Task 3');
+
+    cy.get(`[data-row=0] > .slick-cell.l1.r1.rowspan`).should(($el) =>
+      expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
+    );
+
+    cy.get('.slick-header-columns')
+      .children()
+      .each(($child, index) => {
+        if (index < expectedTitles.length) {
+          expect($child.text()).to.eq(expectedTitles[index]);
+        }
+      });
+  });
+
+  it('should drag back Title column to reswap with 2nd column "Revenue Growth" in the grid and expect rowspan to stay at same position with Revenue Growth to now spread', () => {
+    cy.get(`[data-row=0] > .slick-cell.l1.r1.rowspan`).should(($el) =>
+      expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
+    );
+    cy.get('.slick-header-columns')
+      .children('.slick-header-column:nth-of-type(1)')
+      .contains('Revenue Growth')
+      .drag('.slick-header-column:nth-of-type(2)', { force: true });
+    cy.wait(50);
+    cy.get('.slick-header-column:nth(0)').contains('Title');
+    cy.get('.slick-header-column:nth(1)').contains('Revenue Growth');
+
+    cy.get(`[data-row=0] > .slick-cell.l0.r0`).should('contain', 'Task 0');
+    cy.get(`[data-row=1] > .slick-cell.l0.r0`).should('contain', 'Task 1');
+    cy.get(`[data-row=2] > .slick-cell.l0.r0`).should('contain', 'Task 2');
+    cy.get(`[data-row=3] > .slick-cell.l0.r0`).should('not.exist');
+
+    const expectedTitles = ['Title', 'Revenue Growth', 'Pricing Policy'];
+    cy.get('.slick-header-columns')
+      .children()
+      .each(($child, index) => {
+        if (index < expectedTitles.length) {
+          expect($child.text()).to.eq(expectedTitles[index]);
+        }
+      });
+  });
+
+  describe('spanning', () => {
+    it('should expect first row to be regular rows without any spanning', () => {
+      cy.get(`[data-row=0] > .slick-cell.l0.r0`).should('contain', 'Task 0');
+
+      for (let i = 2; i <= 6; i++) {
+        cy.get(`[data-row=0] > .slick-cell.l${i}.r${i}`).should('exist');
+      }
+    });
+
+    it('should expect 1st row, second cell to span (rowspan) across 3 rows', () => {
+      cy.get(`[data-row=0] > .slick-cell.l0.r0`).should('contain', 'Task 0');
+      cy.get(`[data-row=0] > .slick-cell.l1.r1.rowspan`).should(($el) => {
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3);
+      });
+
+      for (let i = 2; i <= 14; i++) {
+        cy.get(`[data-row=1] > .slick-cell:nth(${i})`).contains(/\d+$/); // use regexp to make sure it's a number
+      }
+    });
+
+    it('should expect 3rd row first cell to span (rowspan) across 3 rows', () => {
+      cy.get(`[data-row=2] > .slick-cell.l0.r0.rowspan`).should('contain', 'Task 2');
+      cy.get(`[data-row=2] > .slick-cell.l0.r0.rowspan`).should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
+      );
+
+      for (let i = 2; i <= 5; i++) {
+        cy.get(`[data-row=2] > .slick-cell:nth(${i})`).contains(/\d+$/);
+      }
+    });
+
+    it('should expect 4th row to have 2 sections (blue, green) spanning across 3 rows (rowspan) and 2 columns (colspan)', () => {
+      // blue rowspan section
+      cy.get(`[data-row=3] > .slick-cell.l1.r1.rowspan`).should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 5)
+      );
+      cy.get(`[data-row=3] > .slick-cell.l2.r2`).should('exist').contains(/\d+$/);
+
+      // green colspan/rowspan section
+      cy.get(`[data-row=3] > .slick-cell.l3.r7`).should('exist').contains(/\d+$/);
+      cy.get(`[data-row=3] > .slick-cell.l8.r8`).should('exist').contains(/\d+$/);
+      cy.get(`[data-row=3] > .slick-cell.l9.r9`).should('exist').contains(/\d+$/);
+    });
+
+    it('should click on "Toggle blue cell colspan..." and expect colspan to widen from 1 column to 2 columns and from 5 rows to 3 rowspan', () => {
+      cy.get(`[data-row=3] > .slick-cell.l1.r1.rowspan`).should('exist');
+      cy.get(`[data-row=3] > .slick-cell.l1.r1.rowspan`).should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 5)
+      );
+
+      cy.get('[data-test="toggleSpans"]').click();
+      cy.get('.slick-cell.l1.r1.rowspan').should('exist');
+      cy.get(`[data-row=3] > .slick-cell.l1.r2.rowspan`).should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
+      );
+    });
+
+    it('should expect Task 8 on 2nd column to have rowspan spanning 80 cells', () => {
+      cy.get(`[data-row=8] > .slick-cell.l0.r0`).should('contain', 'Task 8');
+      cy.get(`[data-row=8] > .slick-cell.l1.r1.rowspan`).contains(/\d+$/);
+      cy.get(`[data-row=8] > .slick-cell.l1.r1.rowspan`).should(($el) => {
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 80);
+      });
+    });
+
+    it('should scroll to the right and still expect spans without any extra texts', () => {
+      cy.get('.slick-horizontal-scroller').scrollTo(400, 0).wait(10);
+
+      cy.get(`[data-row=3] > .slick-cell:nth(1)`).contains(/\d+$/);
+      cy.get(`[data-row=3] > .slick-cell.l1.r2.rowspan`).should('exist');
+      cy.get(`[data-row=3] > .slick-cell.l3.r7.rowspan`).should('exist');
+      cy.get(`[data-row=3] > .slick-cell.l3.r7.rowspan`).should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
+      );
+
+      // next rows are regular cells
+      cy.get(`[data-row=4] > .slick-cell.l3.r3`).should('not.exist');
+      cy.get(`[data-row=4] > .slick-cell.l4.r4`).should('not.exist');
+
+      cy.get(`[data-row=5] > .slick-cell.l3.r3`).should('not.exist');
+      cy.get(`[data-row=5] > .slick-cell.l3.r3`).should('not.exist');
+
+      cy.get(`[data-row=6] > .slick-cell.l4.r4`).should('exist');
+      cy.get(`[data-row=6] > .slick-cell.l4.r4`).should('exist');
+    });
+
+    it('should scroll back to left and expect Task 8 to have 2 different spans (Revenue Grow: rowspan=80, Policy Index: rowspan=2000,colspan=2)', () => {
+      cy.get('.slick-vertical-scroller').scrollTo(0, 0).wait(10);
+
+      cy.get(`[data-row=8] > .slick-cell.l0.r0`).should('contain', 'Task 8');
+      cy.get(`[data-row=8] > .slick-cell.l1.r1.rowspan`).should(($el) => {
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 80);
+      });
+      cy.get(`[data-row=8] > .slick-cell:nth(1)`).contains(/\d+$/);
+      cy.get(`[data-row=8] > .slick-cell:nth(2)`).contains(/\d+$/);
+      cy.get(`[data-row=8] > .slick-cell.l3.r4`).should('exist');
+
+      cy.get(`[data-row=9] > .slick-cell.l0.r0`).should('contain', 'Task 9');
+    });
+
+    it('should scroll to row 85 and still expect 3 spans in the screen, "Revenue Growth" and "Policy Index" spans', () => {
+      cy.get('[data-test="clearScrollTo"]').click();
+      cy.get('[data-test="nbrows"]').type('{backspace}85');
+      cy.get('[data-test="scrollToBtn"]').click();
+
+      // left dashed rowspan "Revenue Growth"
+      cy.get(`[data-row=85] > .slick-cell.l0.r0`).should('contain', 'Task 85');
+      cy.get(`[data-row=85] > .slick-cell.l2.r2`).contains(/\d+$/);
+
+      // rowspan middle (yellowish) "Policy Index"
+      cy.get(`[data-row=88] > .slick-cell.l0.r0`).should('contain', 'Task 88');
+      cy.get(`[data-row=88] > .slick-cell.l1.r1`).should('exist');
+    });
+
+    it('should scroll to the end of the grid and still expect "PolicyIndex" column to span across 2 columns and rows until the end of the grid', () => {
+      cy.get('[data-test="clearScrollTo"]').click();
+      cy.get('[data-test="nbrows"]').type('{backspace}490');
+      cy.get('[data-test="scrollToBtn"]').click();
+
+      cy.get(`[data-row=485] > .slick-cell.l0.r0`).should('contain', 'Task 485');
+
+      cy.get(`[data-row=499] > .slick-cell.l0.r0`).should('contain', 'Task 499');
+      cy.get(`[data-row=499] > .slick-cell.l1.r1`).should('exist');
+      cy.get(`[data-row=499] > .slick-cell.l2.r2`).should('exist');
+      cy.get(`[data-row=499] > .slick-cell.l5.r5`).should('exist');
+    });
+
+    it('should load 5K data and expect 8.3 rowspan row height to increase/decrease when data changes from 500 to 5K back to 500', () => {
+      cy.get('[data-row=8] .slick-cell.l3.r4').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * (500 - 8))
+      );
+
+      cy.get('[data-test="add-5k-rows-btn"]').click();
+      cy.get('[data-row=8] .slick-cell.l3.r4').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * (5000 - 8))
+      );
+
+      cy.get('[data-test="add-500-rows-btn"]').click();
+      cy.get('[data-row=8] .slick-cell.l3.r4').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * (500 - 8))
+      );
+    });
+  });
+
+  describe('Basic Key Navigations', () => {
+    it('should scroll back to top', () => {
+      cy.get('[data-test="clearScrollTo"]').click();
+      cy.get('[data-test="nbrows"]').type('0');
+      cy.get('[data-test="scrollToBtn"]').click();
+    });
+
+    it('should start at Task 6 on PolicyIndex column, then type "Arrow Up" key and expect active cell to become the green section in the middle', () => {
+      cy.get('[data-row=6] > .slick-cell.l2.r2').as('active_cell').click();
+      cy.get('[data-row=6] > .slick-cell.l2.r2.active').should('have.length', 1);
+      cy.get('@active_cell').type('{uparrow}');
+      cy.get('[data-row=3] > .slick-cell.l1.r2.active').should('have.length', 1);
+    });
+
+    it('should start at Task 6 on PricingPolicy column, then type "Arrow Left" key and expect active cell to become the green section in the middle', () => {
+      cy.get('[data-row=6] > .slick-cell.l2.r2').as('active_cell').click();
+      cy.get('[data-row=6] > .slick-cell.l2.r2.active').should('have.length', 1);
+      cy.get('[data-test="toggleSpans"]').click();
+      cy.get('@active_cell').type('{leftarrow}');
+      cy.get('[data-row=3] .slick-cell.l1.r1.active').should('have.length', 1);
+    });
+
+    it('should start at Task 5 on Task 5 column, then type "Arrow Right" key 3x times and expect active cell to become the wide green section in the middle', () => {
+      cy.get('[data-row=5] > .slick-cell.l0.r0').as('active_cell').click();
+      cy.get('[data-row=5] > .slick-cell.l0.r0.active').should('have.length', 1);
+      cy.get('@active_cell').type('{rightarrow}{rightarrow}');
+      cy.get('[data-row=5] .slick-cell.l2.r2.active').should('have.length', 1);
+      cy.get('[data-row=5] .slick-cell.l2.r2.active').type('{rightarrow}');
+      cy.get('[data-row=3] .slick-cell.l3.r7.active').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
+      );
+    });
+
+    it('should start at Task 2 on PricingPolicy column, then type "Arrow Left" key and expect active cell to become the dashed section beside Task 0-3 on RevenueGrowth column', () => {
+      cy.get('[data-row=2] > .slick-cell.l2.r2').as('active_cell').click();
+      cy.get('[data-row=2] > .slick-cell.l2.r2.active').should('have.length', 1);
+      cy.get('@active_cell').type('{leftarrow}');
+      cy.get('[data-row=0] > .slick-cell.l1.r1.active').should('have.length', 1);
+    });
+
+    it('should start at Task 2 on PricingPolicy column, then type "Arrow Left" key twice and expect active cell to become Task 2 cell', () => {
+      cy.get('[data-row=2] > .slick-cell.l2.r2').as('active_cell').click();
+      cy.get('[data-row=2] > .slick-cell.l2.r2.active').should('have.length', 1);
+      cy.get('@active_cell').type('{leftarrow}{leftarrow}');
+      cy.get('[data-row=2] > .slick-cell.l0.r0.active').contains('Task 2');
+      cy.get('[data-row=2] > .slick-cell.l0.r0.active').should('have.length', 1);
+    });
+
+    it('should start at Task 2 on PricingPolicy column, then type "Home" key and expect active cell to become Task 2 cell', () => {
+      cy.get('[data-row=2] > .slick-cell.l2.r2').as('active_cell').click();
+      cy.get('[data-row=2] .slick-cell.l2.r2.active').should('have.length', 1);
+      cy.get('@active_cell').type('{home}');
+      cy.get('[data-row=2] .slick-cell.l0.r0.active').contains('Task 2');
+      cy.get('[data-row=2] .slick-cell.l0.r0.active').should('have.length', 1);
+    });
+
+    it('should start at Task 2 on PricingPolicy column, then type "End" key and expect active cell to become Task 2 cell', () => {
+      cy.get('[data-row=2] > .slick-cell.l2.r2').as('active_cell').click();
+      cy.get('[data-row=2] .slick-cell.l2.r2.active').should('have.length', 1);
+      cy.get('@active_cell').type('{end}');
+      cy.get('[data-row=2] .slick-cell.l21.r21.active').should('have.length', 1);
+    });
+
+    it('should start at RevenueGrowth column on first dashed cell, then type "Ctrl+End" then "Ctrl+Home" keys and expect active cell to go to bottom/top of grid on same column', () => {
+      // The preceding span/scroll cases share state. Reset both axes through
+      // the POC's actual scroll owners before interacting with the first row.
+      cy.get('.slick-horizontal-scroller').scrollTo(0, 0);
+      cy.get('.slick-vertical-scroller').scrollTo(0, 0);
+      cy.get('[data-row=0] > .slick-cell.l2.r2').as('active_cell').click();
+      cy.get('[data-row=0] > .slick-cell.l2.r2.active').should('have.length', 1);
+      cy.get('@active_cell').type('{ctrl}{end}', { release: false });
+      cy.get('[data-row=499] > .slick-cell.l21.r21.active').should('have.length', 1);
+      cy.get('[data-row=499] > .slick-cell.l21.r21.active').type('{ctrl}{home}', { release: false });
+      cy.get('[data-row=0] .slick-cell.l0.r0.active').should('have.length', 1);
+      cy.get('[data-row=0] .slick-cell.l1.r1').should(($el) => expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3));
+    });
+
+    it('should start at first row on PolicyIndex column, then type "Ctrl+DownArrow" keys and expect active cell to become yellowish section', () => {
+      cy.get('[data-row=0] > .slick-cell.l3.r3').as('active_cell').click();
+      cy.get('[data-row=0] > .slick-cell.l3.r3.active').should('have.length', 1);
+      cy.get('@active_cell').type('{ctrl}{downarrow}', { release: false });
+      cy.get('[data-row=8] > .slick-cell.l3.r4.active').should('have.length', 1);
+    });
+
+    it('should start at first row on ExpenseControl column, then type "Ctrl+DownArrow" keys and expect active cell to become the cell just above the yellowish section', () => {
+      cy.get('[data-row=0] > .slick-cell.l4.r4').as('active_cell').click();
+      cy.get('[data-row=0] > .slick-cell.l4.r4.active').should('have.length', 1);
+      cy.get('@active_cell').type('{ctrl}{downarrow}', { release: false });
+      cy.get('[data-row=7] .slick-cell.l4.r4.active').should('have.length', 1);
+    });
+
+    it('should start at Task 13, type "End" key and expect active cell to be the last span cell', () => {
+      cy.get('[data-row=13] > .slick-cell.l0.r0').as('active_cell').click();
+      cy.get('[data-row=13] > .slick-cell.l0.r0.active').should('have.length', 1);
+      cy.get('@active_cell').type('{end}');
+      cy.get('[data-row=13] > .slick-cell.l21.r21.active').should('have.length', 1);
+    });
+
+    it('should go to Task 13 last cell, type "Home" key and expect active cell to become Task 13', () => {
+      cy.get('[data-row=13] > .slick-cell.l21.r21').as('active_cell').click();
+      cy.get('[data-row=13] > .slick-cell.l21.r21.active').should('have.length', 1);
+      cy.get('@active_cell').type('{home}');
+      cy.get('[data-row=13] > .slick-cell.l0.r0.active').should('have.length', 1);
+    });
+
+    it('should start at Task 15, type "End" key and expect active cell to be on the last orange span cell', () => {
+      cy.get('[data-row=15] > .slick-cell.l0.r0').as('active_cell').click();
+      cy.get('[data-row=15] > .slick-cell.l0.r0.active').should('have.length', 1);
+      cy.get('@active_cell').type('{end}');
+      cy.get('[data-row=15] > .slick-cell.l18.r21.active').should('have.length', 1);
+      cy.get('[data-row=15] > .slick-cell.l18.r21.active').type('{home}');
+    });
+
+    it('should start at Task 17, type "End" key and expect active cell to be on the last orange span cell', () => {
+      cy.get('[data-row=17] > .slick-cell.l0.r0').as('active_cell').click();
+      cy.get('[data-row=17] > .slick-cell.l0.r0.active').should('have.length', 1);
+      cy.get('@active_cell').type('{end}');
+      cy.get('[data-row=15] > .slick-cell.l18.r21.active').should('have.length', 1);
+      cy.get('[data-row=15] > .slick-cell.l18.r21.active').type('{home}');
+    });
+
+    it('should start at Task 5, type "ArrowRight" key 3x times and expect active cell to be at cell 3.3', () => {
+      cy.get('[data-row=15] > .slick-cell.l0.r0').type('{ctrl}{uparrow}');
+      cy.get('[data-row=5] > .slick-cell.l0.r0').contains('Task 5').as('active_cell').click();
+      cy.get('@active_cell').type('{rightarrow}{rightarrow}{rightarrow}');
+      cy.get('[data-row=3] > .slick-cell.l3.r7.active').should('have.length', 1);
+    });
+
+    it('should start at Task 5, type "ArrowRight" key 4x times and expect active cell to be at cell 5.8', () => {
+      cy.get('[data-row=5] > .slick-cell.l0.r0').contains('Task 5').as('active_cell').click();
+      cy.get('[data-row=5] > .slick-cell.l0.r0.active').should('have.length', 1);
+      cy.get('@active_cell').type('{rightarrow}{rightarrow}{rightarrow}{rightarrow}');
+      cy.get('[data-row=5] > .slick-cell.l8.r8.active').should('have.length', 1);
+    });
+
+    it('should start at Task 5, type "ArrowRight" key 4x times, then "ArrowLeft" 4x times and be back at Task 5', () => {
+      cy.get('[data-row=5] > .slick-cell.l0.r0').contains('Task 5').as('active_cell').click();
+      cy.get('[data-row=5] > .slick-cell.l0.r0.active').should('have.length', 1);
+      cy.get('@active_cell').type('{rightarrow}{rightarrow}{rightarrow}{rightarrow}{leftarrow}{leftarrow}{leftarrow}{leftarrow}');
+      cy.get('[data-row=5] > .slick-cell.l0.r0.active').should('have.length', 1);
+    });
+
+    it('should start at Task 2 on Pricing Policy column and type "PageDown" key 3x times and be on Task 59 on same column', () => {
+      cy.get('[data-row=2] > .slick-cell.l2.r2').as('active_cell').click();
+      cy.get('@active_cell').type('{pagedown}{pagedown}{pagedown}');
+      cy.get('[data-row=59] > .slick-cell.l2.r2.active').should('have.length', 1);
+    });
+
+    it('should start at Task 59 on Pricing Policy column and type "PageUp" key 3x times and be back to Task 2 on same column', () => {
+      cy.get('[data-row=59] > .slick-cell.l2.r2').as('active_cell').click();
+      cy.get('@active_cell').type('{pageup}{pageup}{pageup}');
+      cy.get('[data-row=2] > .slick-cell.l2.r2.active').should('have.length', 1);
+    });
+
+    it('should start at Task 0 on Policy Index column and type "PageDown" key 2x times but expect active cell to stay on initial cell but still scroll down around Task 40', () => {
+      cy.get('[data-row=0] > .slick-cell.l3.r3').as('active_cell').click();
+      cy.get('@active_cell').type('{pagedown}{pagedown}');
+      cy.get('[data-row=0] > .slick-cell.l3.r3.active').should('have.length', 1);
+      cy.get('[data-row=40]').should('be.visible');
+    });
+
+    it('should start at Task 1 on Excess Cash column and type "PageDown" key 4x times and be on Task 77 on same column', () => {
+      cy.get('[data-row=0] > .slick-cell.l3.r3.active').type('{ctrl}{uparrow}');
+      cy.get('[data-row=1] > .slick-cell.l5.r5').as('active_cell').click();
+      cy.get('@active_cell').type('{pagedown}{pagedown}{pagedown}{pagedown}');
+      cy.get('[data-row=77] > .slick-cell.l5.r5.active').should('have.length', 1);
+    });
+
+    it('should start at Task 77 on Excess Cash column and type "PageDown" key 4x times and be on Task 105 on same column', () => {
+      cy.get('[data-row=77] > .slick-cell.l5.r5').as('active_cell').click();
+      cy.get('@active_cell').type('{pagedown}');
+      cy.get('[data-row=105] > .slick-cell.l5.r5.active').should('have.length', 1);
+    });
+
+    it('should start at Task 105 on Excess Cash column and type "PageUp" key once and be on Task 85 on same column', () => {
+      cy.get('[data-row=105] > .slick-cell.l5.r5').as('active_cell').click();
+      cy.get('@active_cell').type('{pageup}');
+      cy.get('[data-row=85] > .slick-cell.l5.r5.active').should('have.length', 1);
+    });
+
+    it('should start at Task 85 on Excess Cash column and type "PageUp" key once and be on Task 66 on same column', () => {
+      cy.get('[data-row=85] > .slick-cell.l5.r5').as('active_cell').click();
+      cy.get('@active_cell').type('{pageup}');
+      cy.get('[data-row=66] > .slick-cell.l5.r5.active').should('have.length', 1);
+    });
+
+    it('should start at Task 66 on Excess Cash column and type "PageUp" key 3x times and be on Task 9 on same column', () => {
+      cy.get('[data-row=66] > .slick-cell.l5.r5').as('active_cell').click();
+      cy.get('@active_cell').type('{pageup}{pageup}{pageup}');
+      cy.get('[data-row=9] > .slick-cell.l5.r5.active').should('have.length', 1).type('{pageup}');
+    });
+
+    it('should start at Task 0 on Revenue Growth column and type "PageDown" key once and be on Task 88 on same column', () => {
+      cy.get('[data-row=0] > .slick-cell.l1.r1').as('active_cell').click();
+      cy.get('@active_cell').type('{pagedown}');
+      cy.get('[data-row=88] > .slick-cell.l1.r1.active').should('have.length', 1);
+    });
+
+    it('should start at Task 88 on Revenue Growth column and type "PageUp" key once and be on Task 8 on same column', () => {
+      cy.get('[data-row=88] > .slick-cell.l1.r1').as('active_cell').click();
+      cy.get('@active_cell').type('{pageup}');
+      cy.get('[data-row=8] > .slick-cell.l1.r1.active').should('have.length', 1);
+    });
+
+    it('should start at Task 9 on Excess Cash column and type "PageUp" key once and be on Task 0 on same column', () => {
+      cy.get('[data-row=9] > .slick-cell.l5.r5').as('active_cell').click();
+      cy.get('@active_cell').type('{pageup}');
+      cy.get('[data-row=0] > .slick-cell.l5.r5.active').should('have.length', 1);
+    });
+
+    it('should start at Task 9 on Excess Cash column and type "PageDown" key 26x times and be on last Task 499 on same column', () => {
+      cy.get('[data-row=9] > .slick-cell.l5.r5').as('active_cell').click();
+      let command = '';
+      for (let i = 1; i <= 26; i++) {
+        command += '{pagedown}';
+      }
+      cy.get('@active_cell').type(command);
+      cy.get('[data-row=499] > .slick-cell.l5.r5.active').should('have.length', 1);
+    });
+  });
+
+  describe('Hide Columns with colspan/rowspan', () => {
+    it('should hide Title column and expect other colspan/rowspan to simply move over and stay attached to same columns', () => {
+      cy.get('[data-row=499] > .slick-cell.l5.r5.active').type('{ctrl}{home}', { release: false });
+      cy.get('[data-row=2] > .slick-cell.l0.r0.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
+      );
+
+      cy.get('.slick-header-column:nth(1)').trigger('mouseover').trigger('contextmenu').invoke('show');
+
+      cy.get('.slick-column-picker')
+        .find('.slick-column-picker-list')
+        .children('li:nth-child(1)')
+        .children('label')
+        .should('contain', 'Title')
+        .click();
+      cy.get('.slick-column-picker .close').click();
+
+      // Task 2 rowspan should be hidden now
+      cy.get('[data-row=2] > .slick-cell.l0.r0.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.not.eq(GRID_ROW_HEIGHT * 3)
+      );
+    });
+
+    it('should start at "Revenue Growth" second cell down, then type "Arrow Right" key 2x times and expect 4th row "Policy Index" green section to still have a rowspan 3x and colspan of 4x', () => {
+      cy.get('[data-row=3] > .slick-cell.l1.r1.rowspan').as('active_cell').click();
+      cy.get('[data-row=3] > .slick-cell.l1.r1.active').should('have.length', 1);
+      cy.get('@active_cell').type('{rightarrow}{rightarrow}');
+
+      cy.get('[data-row=2] > .slick-cell.l3.r5').should('not.have.class', 'rowspan');
+      cy.get('[data-row=3] > .slick-cell.l3.r7.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
+      );
+    });
+
+    it('should go up by 1x "Arrow Up" and expect blue section colspan of 3x', () => {
+      cy.get('[data-row=3] > .slick-cell.l3.r7.rowspan').type('{uparrow}');
+      cy.get('[data-row=2] > .slick-cell.l3.r5.active').should('not.have.class', 'rowspan');
+    });
+
+    it('should "Revenue Growth" rowspan should now be at first column and "Policy Index" should now be at third column', () => {
+      cy.get(`[data-row=0] > .slick-cell.l0.r0`).should('not.exist');
+      cy.get(`[data-row=1] > .slick-cell.l0.r0`).should('not.exist');
+      cy.get(`[data-row=2] > .slick-cell.l0.r0`).should('not.exist');
+
+      cy.get('[data-row=0] > .slick-cell.l1.r1.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
+      );
+      cy.get('[data-row=3] > .slick-cell.l1.r1.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 5)
+      );
+      cy.get('[data-row=8] > .slick-cell.l1.r1.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 80)
+      );
+
+      cy.get('[data-row=2] > .slick-cell.l3.r5').should('not.have.class', 'rowspan');
+      cy.get('[data-row=3] > .slick-cell.l3.r7.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
+      );
+      cy.get('[data-row=8] > .slick-cell.l3.r4.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 492)
+      );
+    });
+
+    it('should show again "Title" column and expect "Revenue Growth" and "Policy Index" columns to be moved to the right by 1 column', () => {
+      cy.get('.slick-header-column:nth(1)').trigger('mouseover').trigger('contextmenu').invoke('show');
+
+      cy.get('.slick-column-picker')
+        .find('.slick-column-picker-list')
+        .children('li:nth-child(1)')
+        .children('label')
+        .should('contain', 'Title')
+        .click();
+      cy.get('.slick-column-picker .close').click();
+
+      cy.get(`[data-row=0] > .slick-cell.l0.r0`).should('contain', 'Task 0');
+      cy.get(`[data-row=1] > .slick-cell.l0.r0`).should('contain', 'Task 1');
+      cy.get(`[data-row=2] > .slick-cell.l0.r0`).should('contain', 'Task 2');
+
+      cy.get('[data-row=0] > .slick-cell.l1.r1.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
+      );
+      cy.get('[data-row=3] > .slick-cell.l1.r1.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 5)
+      );
+      cy.get('[data-row=8] > .slick-cell.l1.r1.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 80)
+      );
+
+      cy.get('[data-row=2] > .slick-cell.l3.r5').should('not.have.class', 'rowspan');
+      cy.get('[data-row=3] > .slick-cell.l3.r7.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
+      );
+      cy.get('[data-row=8] > .slick-cell.l3.r4.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 492)
+      );
+    });
+  });
+});

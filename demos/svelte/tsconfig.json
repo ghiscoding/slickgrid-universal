@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "allowJs": true,
+    "checkJs": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "types": ["svelte", "vite/client"]
+  },
+  "include": ["src/**/*.ts", "src/**/*.svelte", "../../frameworks/slickgrid-svelte/src/**/*.svelte"]
+}

@@ -1,0 +1,327 @@
+##### index
+- [Lifecycle Phases](#lifecycle-phases)
+- [Extra Query Arguments](#extra-query-arguments)
+- [Changing/Updating Options Dynamically](#changingupdating-options-dynamically)
+- [GraphQL without Pagination](#graphql-without-pagination)
+- [GraphQL Server Definitions](#graphql-server-definitions)
+  - [Pagination](graphql/GraphQL-Pagination.md)
+  - [Sorting](graphql/GraphQL-Sorting.md)
+  - [Filtering](graphql/GraphQL-Filtering.md)
+- [Infinite Scroll](../grid-functionalities/infinite-scroll.md#infinite-scroll-with-backend-services)
+
+### Description
+GraphQL Backend Service (for Pagination purposes) to get data from a backend server with the help of GraphQL.
+
+### Demo
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example10) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/tree/master/demos/vanilla/src/examples/example10.ts)
+
+### Note
+You can use it when you need to support **Pagination** (though you could disable Pagination if you wish), that is when your dataset is rather large and has typically more than 5k rows, with a GraphQL endpoint. If your dataset is small (less than 5k rows), then you might be better off with [regular grid](https://ghiscoding.github.io/slickgrid-universal/#/example01) with the "dataset.bind" property. SlickGrid can easily handle million of rows using a DataView object, but personally when the dataset is known to be large, I usually use a backend service (OData or GraphQL) and when it's small I go with a [regular grid](https://ghiscoding.github.io/slickgrid-universal/#/example01).
+
+## Implementation
+To connect a backend service into `Slickgrid-Universal`, you simply need to modify your `gridOptions` and add a declaration of `backendServiceApi`. See below for the signature and an example further down below.
+
+### Lifecycle Phases
+
+All backend services follow these three lifecycle phases:
+
+| Phase         | Description                                              |
+|---------------|---------------------------------------------------------|
+| `preProcess`  | Invoked before the query is processed (e.g., show a loading spinner). |
+| `process`     | Generates the GraphQL query string, which is then sent to your backend server. |
+| `postProcess` | Handles the response, updates the grid dataset, and typically stops the loading spinner. |
+
+This structure ensures a consistent flow for data operations: start loading, process the query, and update the grid when data is received.
+
+### TypeScript Signature
+```ts
+backendServiceApi: {
+  // On init (or on page load), what action to perform?
+  onInit?: (query: string) => Promise<any>;
+
+  // Before executing the query, what action to perform? For example, start a spinner
+  preProcess?: () => void;
+
+  // On Processing, we get the query back from the service, and we need to provide a Promise. For example: this.http.get(myGraphqlUrl)
+  // Note: SlickGrid automatically manages request cancellation via AbortSignal (see "Request Cancellation with AbortSignal" section below)
+  process: (query: string, options?: { signal?: AbortSignal }) => Promise<any>;
+
+  // After executing the query, what action to perform? For example, stop the spinner
+  postProcess: (response: any) => void;
+
+  // Backend Service instance (could be OData or GraphQL Service)
+  service: BackendService;
+
+  // Throttle the amount of requests sent to the backend. Default to 500ms
+  filterTypingDebounce?: number;
+}
+```
+As you can see, you mainly need to define which service to use (GridODataService or GraphQLService) and finally add the `process` and `postProcess` callback, while all the rest are totally optional.
+
+### Typescript GraphQL Service Options
+You can also pass certain options to the `backendServiceApi` through the `options` property. The list of options is the following
+
+```typescript
+export interface GraphqlServiceOption extends BackendServiceOption {
+  /**
+   * When using Translation, we probably want to add locale in the query for the filterBy/orderBy to work
+   * ex.: users(first: 10, offset: 0, locale: "en-CA", filterBy: [{field: name, operator: EQ, value:"John"}]) {
+   */
+  addLocaleIntoQuery?: boolean;
+
+  /** Array of column ids that are included in the column definitions */
+  columnIds?: string[];
+
+  /** What is the dataset, this is required for the GraphQL query to be built */
+  datasetName?: string;
+
+  /** Used for defining the operation name when building the GraphQL query */
+  operationName?: string;
+
+  /** Use Pagination Cursor in the GraphQL Server. Note: previously named `isWithCursor */
+  useCursor?: boolean;
+
+  /** What are the pagination options? ex.: (first, last, offset) */
+  paginationOptions?: GraphqlPaginationOption | GraphqlCursorPaginationOption;
+
+  /** array of Filtering Options, ex.: { field: name, operator: EQ, value: "John" }  */
+  filteringOptions?: GraphqlFilteringOption[];
+
+  /** array of Filtering Options, ex.: { field: name, direction: DESC }  */
+  sortingOptions?: GraphqlSortingOption[];
+
+  /**
+   * Do we want to keep double quotes on field arguments of filterBy/sortBy (field: "name" instead of field: name)
+   * ex.: { field: "name", operator: EQ, value: "John" }
+   */
+  keepArgumentFieldDoubleQuotes?: boolean;
+
+  /**
+   * When false, searchTerms may be manipulated to be functional with certain filters eg: string only filters.
+   * When true, JSON.stringify is used on the searchTerms and used in the query "as-is". It is then the responsibility of the developer to sanitise the `searchTerms` property if necessary.
+   */
+  useVerbatimSearchTerms?: boolean;
+}
+```
+
+#### Grid Definition & call of `backendServiceApi`
+##### Notes
+- Pagination is optional and if not defined, it will use what is set in the  [Slickgrid-Universal - Global Options](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/global-grid-options.ts)
+- `onInit` is optional and is there to initialize the grid with data on first page load (typically the same call as `process`)
+  - you could load the grid yourself outside of the `gridOptions` which is why it's optional
+- `filterTypingDebounce` is a timer (in milliseconds) that waits for user input pause before querying the backend server
+  - this is meant to throttle the amount of requests sent to the backend (we don't really want to query every keystroke)
+  - 700ms is the default when not provided
+
+##### Code
+```ts
+import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, } from '@slickgrid-universal/graphql';
+
+export class Example {
+  columns: Column[];
+  gridOptions: GridOption;
+  dataset = [];
+
+  constructor(http: HttpFetch) {
+    // define the grid options & columns and then create the grid itself
+    this.defineGrid();
+  }
+
+  defineGrid() {
+    this.columns = [
+      // your column definitions
+    ];
+
+    this.gridOptions = {
+      enableFiltering: true,
+      enablePagination: true,
+      pagination: {
+        pageSizes: [10, 15, 20, 25, 30, 40, 50, 75, 100],
+        pageSize: defaultPageSize,
+        totalItems: 0
+      },
+      backendServiceApi: {
+        service: new GraphqlService(),
+
+        // add some options to the backend service to work
+        // shown below is the minimum setup for the service to work correctly
+        options: {
+          datasetName: 'users',
+          paginationOptions: {
+            first: 25,
+            offset: 0
+          }
+        },
+
+        // define all the on Event callbacks
+        preProcess: () => this.displaySpinner(true),
+        process: (query) => this.getAllCustomers(query),
+        postProcess: (response) => {
+          this.displaySpinner(false);
+          this.getCustomerCallback(response);
+        },
+        filterTypingDebounce: 700,
+        service: this.graphqlService
+      }
+    };
+  }
+
+  // Web API call
+  getAllCustomers(graphqlQuery: string, options?: { signal?: AbortSignal }) {
+    // regular Http Client call
+    return this.http.createRequest(`/api/customers?${graphqlQuery}`).then(response => response.json());
+
+    // or with Fetch Client - supporting AbortSignal for request cancellation
+    // return this.http.fetch(`/api/customers?${graphqlQuery}`, { signal: options?.signal }).then(response => response.json());
+  }
+}
+```
+
+### Extra Query Arguments
+You can pass extra query arguments to the GraphQL query via the `extraQueryArguments` property defined in the `backendServiceApi.options`. For example let say you have a list of users and your GraphQL query accepts an optional `userId`, you can write it in code this way:
+```ts
+this.gridOptions = {
+  backendServiceApi: {
+    service: new GraphqlService(),
+
+    // add some options to the backend service to work
+    options: {
+      executeProcessCommandOnInit: false, // true by default, which load the data on page load
+      datasetName: 'users',
+      paginationOptions: {
+        first: 25,
+        offset: 0
+      },
+      extraQueryArguments: [{
+        field: 'userId',
+        value: 567
+      }]
+    },
+
+    // define all the on Event callbacks
+    preProcess: () => this.displaySpinner(true),
+    process: (query) => this.getCustomerApiCall(query),
+    postProcess: (response) => this.displaySpinner(false)
+  }
+};
+```
+
+The GraphQL query built with these options will be
+```ts
+// extraQueryArguments will change the userId with
+{
+  users(first: 20, offset: 0, userId: 567) {
+    totalCount,
+    nodes {
+      id,
+      name,
+      company
+    }
+  }
+}
+```
+
+### Changing/Updating Options Dynamically
+You might want to change certain options dynamically, for example passing new set of values to `extraQueryArguments`. For that you will have to first keep a reference to your `GraphqlService` instance and then you can call the `updateOptions` method.
+
+##### Code Example
+```ts
+export class Example {
+  graphqlService: GraphqlService;
+  columns: Column[];
+  gridOptions: GridOption;
+
+  constructor() {
+    this.graphqlService = new GraphqlService();
+  }
+
+  activate(): void {
+    this.columns = [
+      // ...
+    ];
+
+    this.gridOptions = {
+      backendServiceApi: {
+        service: this.graphqlService,
+        // ...
+      }
+    };
+  }
+}
+
+changeQueryArguments() {
+  // update any Backend Service Options you want
+  this.graphqlService.updateOptions({
+    extraQueryArguments: [{
+      field: 'userId',
+      value: 567
+    }]
+  });
+
+  // then make sure to refresh the dataset
+  this.sgb.pluginService.refreshBackendDataset();
+}
+```
+
+### Request Cancellation with AbortSignal
+When users trigger rapid filter or sort changes (e.g., typing quickly in a filter), SlickGrid will automatically cancel any pending HTTP requests using the `AbortSignal` API. This prevents stale results from overwriting newer data and improves user experience.
+
+The `process` method receives an optional `options` parameter. If you want to support automatic request cancellation, pass the `signal` from this parameter to your fetch/HTTP call. When a new request is triggered, any previous `AbortSignal` will be aborted automatically.
+
+#### How It Works
+1. User types in a filter → sends "Jo" query (request #1)
+2. User types "e" quickly before response arrives → "Joe" query (request #2)
+3. SlickGrid automatically aborts request #1's signal
+4. Request #2's response is processed, request #1's response is ignored
+
+#### Implementation Example with Fetch API
+```ts
+getAllCustomers(graphqlQuery: string, options?: { signal?: AbortSignal }) {
+  // Use the signal from options to enable automatic cancellation
+  return fetch(`/api/graphql`, {
+    method: 'POST',
+    body: graphqlQuery,
+    signal: options?.signal  // Pass the signal to abort the request
+  }).then(response => response.json());
+}
+```
+
+#### Implementation with Axios
+```ts
+getAllCustomers(graphqlQuery: string, options?: { signal?: AbortSignal }) {
+  return axios.post(`/api/graphql`, graphqlQuery, {
+    signal: options?.signal  // Axios supports AbortSignal
+  });
+}
+```
+
+### GraphQL without Pagination
+By default, the Pagination is enabled and will produce a GraphQL query which includes page related information but you could also use the GraphQL Service without Pagination if you wish by disabling the flag `enablePagination: false` in the Grid Options. However please note that the GraphQL Query will be totally different since it won't include any page related information.
+
+#### Code Example
+```ts
+this.gridOptions = {
+  enablePagination: false,
+  backendServiceApi: {
+    service: this.graphqlService,
+    // ...
+  }
+};
+```
+
+#### Query Change Example
+If we take for example a GrahQL Query that includes Pagination versus without Pagination, you will see a much simpler query string. Also, note that the filtering and sorting won't be affected, they will remain as query input.
+
+##### with Pagination
+1. `query{ users(first:20, offset:40){ totalCount, nodes{ id, field1, field2 }}}`
+2. `query{ users(first:20, offset:40, filterBy: [{ field: field1, value: 'test', operator: StartsWith }]){ totalCount, nodes{ id, field1, field2 }}}`
+
+##### without Pagination
+1. `query{ users{ id, field1, field2 }}`
+2. `query{ users(filterBy: [{ field: field1, value: 'test', operator: StartsWith }]){ id, field1, field2 }}`
+
+## GraphQL Server Definitions
+For the implementation of all 3 actions (filtering, sorting, pagination) with your GraphQL Server, please refer to the sections below to configure your GraphQL Schema accordingly.
+- [Pagination](graphql/GraphQL-Pagination.md)
+- [Sorting](graphql/GraphQL-Sorting.md)
+- [Filtering](graphql/GraphQL-Filtering.md)
