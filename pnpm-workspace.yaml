@@ -32,7 +32,7 @@ catalog:
   bootstrap: ^5.3.8
   cross-env: ^10.1.0
   cssnano: ^9.9.0
-  cypress: ^16.2.1
+  cypress: ^16.3.0
   cypress-real-events: ^1.15.1
   dequal: ^2.0.3
   dompurify: ^3.4.17
