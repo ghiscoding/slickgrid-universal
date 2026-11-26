@@ -593,7 +593,7 @@ export class SlickCheckboxSelectColumn<T = any> {
       for (k = 0; k < this._grid.getDataLength(); k++) {
         // If we are allowed to select the row
         const dataItem = this._grid.getDataItem(k);
-        if (!this.checkSelectableOverride(i, dataItem, this._grid)) {
+        if (!this.checkSelectableOverride(k, dataItem, this._grid)) {
           disabledCount++;
         }
       }
@@ -605,7 +605,7 @@ export class SlickCheckboxSelectColumn<T = any> {
 
       // If we are allowed to select the row
       const rowItem = this._grid.getDataItem(row);
-      if (this.checkSelectableOverride(i, rowItem, this._grid)) {
+      if (this.checkSelectableOverride(row, rowItem, this._grid)) {
         lookup[row] = true;
         if (lookup[row] !== this._selectedRowsLookup[row]) {
           this._grid.invalidateRow(row);
