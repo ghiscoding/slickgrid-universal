@@ -50,7 +50,7 @@ The a11y focus outline can be customized using the SASS variable `$slick-focus-o
 
 ## Framework Notes
 
-- All framework wrappers (Angular, React, Vue, Aurelia) inherit these accessibility features.
+- All framework wrappers (Angular, React, Vue, Aurelia, and Svelte) inherit these accessibility features.
 - If you extend or customize the grid, follow the same accessibility patterns.
 
 ## Resources

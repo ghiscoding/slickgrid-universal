@@ -18,6 +18,10 @@
   ],
   "overrides": [
     {
+      "files": ["demos/svelte/src/**/*.{ts,svelte}", "frameworks/slickgrid-svelte/src/**/*.{ts,svelte}"],
+      "rules": { "local-import-ext/require-local-extension": "off" }
+    },
+    {
       "files": ["**/*.spec.ts"],
       "plugins": ["vitest"],
       "rules": {
@@ -58,7 +62,14 @@
       {
         "js": "always",
         "ts": "never",
-        "excludedFolders": ["demos/aurelia/test", "demos/react/test", "demos/vue/test", "frameworks/angular-slickgrid", "test"]
+        "excludedFolders": [
+          "demos/aurelia/test",
+          "demos/react/test",
+          "demos/svelte/test",
+          "demos/vue/test",
+          "frameworks/angular-slickgrid",
+          "test"
+        ]
       }
     ],
     "import/no-self-import": "error",

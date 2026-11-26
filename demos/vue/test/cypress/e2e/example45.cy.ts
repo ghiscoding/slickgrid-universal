@@ -41,7 +41,13 @@ describe('Example 45 - Row Detail with inner Grid', () => {
 
         cy.get('.slick-row-detail-container').find('h4').should('contain', '- Order Details (id: 1)');
         cy.get('.slick-row-detail-container.row-detail-1').parent().should('have.class', 'grid-canvas');
+        cy.get('#grid45').should('have.attr', 'data-detail-mounted-at-async-end', 'true');
         cy.get('.slick-row-detail-container.row-detail-1').children().should('have.length', 1);
+        cy.get('.slick-row-detail-container.row-detail-1 [data-row-detail-context]').should(
+          'have.attr',
+          'data-row-detail-context',
+          'example45'
+        );
         cy.get('.slick-row-detail-container.row-detail-1').find('[class^="container_"]').should('not.exist');
 
         cy.get('#innergrid-1')
@@ -536,6 +542,26 @@ describe('Example 45 - Row Detail with inner Grid', () => {
           'not.contain',
           '10281'
         );
+      });
+
+      it('should unmount the Row Detail Host and expect the open Row Detail to be remounted in isolation without the provider value', () => {
+        cy.get('[data-test="toggle-row-detail-host"]').click();
+
+        cy.get('.slick-row-detail-container.row-detail-1 [data-row-detail-context]')
+          .should('have.length', 1)
+          .and('have.attr', 'data-row-detail-context', 'missing');
+        cy.get('.slick-row-detail-container.row-detail-1').find('h4').should('contain', '- Order Details (id: 1)');
+        cy.get('#innergrid-1 .slick-header-columns').children().should('have.length', innerGridTitles.length);
+      });
+
+      it('should mount the Row Detail Host again and expect the open Row Detail to be remounted with the provider value', () => {
+        cy.get('[data-test="toggle-row-detail-host"]').click();
+
+        cy.get('.slick-row-detail-container.row-detail-1 [data-row-detail-context]')
+          .should('have.length', 1)
+          .and('have.attr', 'data-row-detail-context', 'example45');
+        cy.get('.slick-row-detail-container.row-detail-1').find('h4').should('contain', '- Order Details (id: 1)');
+        cy.get('#innergrid-1 .slick-header-columns').children().should('have.length', innerGridTitles.length);
       });
 
       it('should collapse all rows and disable Keep Component Alive on Scroll', () => {

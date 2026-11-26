@@ -24,3 +24,7 @@
     white-space: var(--slick-tooltip-white-space, v.$slick-tooltip-white-space);
   }
 }
+
+.slick-custom-tooltip-non-interactive {
+  pointer-events: none;
+}

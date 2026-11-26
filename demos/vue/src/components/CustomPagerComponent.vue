@@ -108,20 +108,22 @@ defineExpose({
         <nav aria-label="Page navigation">
           <ul class="custom-pagination-ul">
             <li class="li page-item seek-first" :class="{ disabled: isLeftPaginationDisabled }">
-              <a
+              <button
                 class="pagination-link mdi mdi-page-first icon-seek-first font-22px"
                 aria-label="First Page"
-                role="button"
+                type="button"
+                :disabled="isLeftPaginationDisabled"
                 @click="onFirstPageClicked($event)"
-              ></a>
+              ></button>
             </li>
             <li class="li page-item seek-prev" :class="{ disabled: isLeftPaginationDisabled }">
-              <a
+              <button
                 class="pagination-link icon-seek-prev mdi mdi-chevron-down font-22px mdi-rotate-90"
                 aria-label="Previous Page"
-                role="button"
+                type="button"
+                :disabled="isLeftPaginationDisabled"
                 @click="onPreviousPageClicked($event)"
-              ></a>
+              ></button>
             </li>
           </ul>
         </nav>
@@ -133,20 +135,23 @@ defineExpose({
         </div>
         <nav aria-label="Page navigation">
           <ul class="custom-pagination-ul">
-            <li class="li page-item seek-next" :class="{ disabled: isRightPaginationDisabled }" @click="onNextPageClicked($event)">
-              <a
+            <li class="li page-item seek-next" :class="{ disabled: isRightPaginationDisabled }">
+              <button
                 class="pagination-link icon-seek-next mdi mdi-chevron-down font-22px mdi-rotate-270"
                 aria-label="Next Page"
-                role="button"
-              ></a>
+                type="button"
+                :disabled="isRightPaginationDisabled"
+                @click="onNextPageClicked($event)"
+              ></button>
             </li>
             <li class="li page-item seek-end" :class="{ disabled: isRightPaginationDisabled }">
-              <a
+              <button
                 class="pagination-link icon-seek-end mdi mdi-page-last font-22px"
                 aria-label="Last Page"
-                role="button"
+                type="button"
+                :disabled="isRightPaginationDisabled"
                 @click="onLastPageClicked($event)"
-              ></a>
+              ></button>
             </li>
           </ul>
         </nav>
@@ -187,7 +192,7 @@ defineExpose({
       margin: 0;
       &.disabled .pagination-link {
         color: rgb(180, 179, 179);
-        background-color: rgb(180, 179, 179);
+        background-color: transparent;
       }
     }
 
@@ -214,6 +219,11 @@ defineExpose({
 
         .pagination-link {
           color: #0d6efd;
+          border: 0;
+          padding: 0;
+          background: transparent;
+          font: inherit;
+          appearance: none;
           &:hover {
             color: color.adjust(#0d6efd, $lightness: 10%);
           }

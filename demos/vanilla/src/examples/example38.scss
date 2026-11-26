@@ -1,7 +1,6 @@
 /** override slick-cell to make it look like Excel sheet */
 .grid38 {
   --slick-border-color: #d4d4d4;
-  --slick-cell-odd-background-color: #fbfbfb;
   --slick-cell-border-left: 1px solid var(--slick-border-color);
   --slick-header-menu-display: none;
   --slick-header-column-height: 20px;
@@ -10,6 +9,10 @@
   --slick-row-selected-color: #d4ebfd;
   --slick-text-editor-border: 0px;
   --slick-text-editor-focus-box-shadow: none;
+
+  &:not(.slick-dark-mode) {
+    --slick-cell-odd-background-color: #fbfbfb;
+  }
 
   .slick-cell.copied {
     background: blue;

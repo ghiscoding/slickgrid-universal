@@ -427,6 +427,39 @@ describe('SlickGrid core file', () => {
     expect(grid.getCellFromEvent({ target: spanCell } as unknown as Event)).toEqual({ row: 0, cell: 1 });
   });
 
+  it('retains an offscreen span host and renders its newly visible columns', () => {
+    const dataView = new SlickDataView({
+      globalItemMetadataProvider: { getRowMetadata: (_item, row) => (row === 0 ? { columns: { 0: { rowspan: 3 }, 1: { rowspan: 3 } } } : undefined) },
+    });
+    dataView.setItems([{ id: 0 }, { id: 1 }, { id: 2 }]);
+    grid = new SlickGrid<any, Column>(
+      container,
+      dataView,
+      [
+        { id: 'id', field: 'id', width: 100 },
+        { id: 'other', field: 'id', width: 100 },
+      ],
+      { ...defaultOptions, enableCellRowSpan: true }
+    );
+    grid.init();
+    const internalGrid = grid as any;
+    const range = { top: 1, bottom: 1, leftPx: 0, rightPx: 50 };
+    internalGrid.removeRowFromCache(0);
+    internalGrid.removeRowFromCache(1);
+    internalGrid.renderRows(range);
+    const host = container.querySelector('.slick-row[data-row="0"]');
+    expect(host?.querySelector('.slick-cell.rowspan')).toBeTruthy();
+    expect(host?.querySelector('.slick-cell.l1')).toBeNull();
+
+    internalGrid.cleanUpAndRenderCells({ ...range, leftPx: 100, rightPx: 200 });
+    expect(host?.querySelector('.slick-cell.l1.rowspan')).toBeTruthy();
+
+    internalGrid.removeRowFromCache(1);
+    internalGrid.scrollLeft = internalGrid.lastRenderedScrollLeft + 10;
+    internalGrid.renderRows(range);
+    expect(container.querySelector('.slick-row[data-row="0"]')).toBe(host);
+  });
+
   it.each([
     ['gridMenu', ['export-text-delimited', 'toggle-dark-mode']],
     ['contextMenu', ['copy', 'export-text-delimited']],
@@ -3004,8 +3037,8 @@ describe('SlickGrid core file', () => {
 
         expect(remapRowspanSpy).toHaveBeenCalled();
         expect(slickCell0).toBeTruthy();
-        expect(slickCells.length).toBe(48);
-        expect(getDataSpy).toHaveBeenCalledTimes(32);
+        expect(slickCells.length).toBe(54);
+        expect(getDataSpy).toHaveBeenCalledTimes(31);
       });
 
       describe('getViewportHeight() method', () => {
@@ -3074,6 +3107,51 @@ describe('SlickGrid core file', () => {
           expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT * data.length);
           expect(grid.getCanvasWidth()).toBeGreaterThanOrEqual(799);
           expect(grid.getCanvasWidth()).toBeLessThanOrEqual(801);
+        });
+
+        it('should make the header layers sticky and expose their stacked heights when "autoHeight.stickyHeader" is enabled', () => {
+          grid = new SlickGrid<any, Column>(container, data, columns, {
+            ...defaultOptions,
+            autoHeight: { stickyHeader: true },
+            createTopHeaderPanel: true,
+            showTopHeaderPanel: true,
+            topHeaderPanelHeight: 30,
+            showHeaderRow: true,
+            headerRowHeight: 40,
+          });
+          grid.init();
+          const topHeaderPanelElm = container.querySelector('.slick-topheader-panel') as HTMLDivElement;
+          const headerRootElm = container.querySelector('.slick-header-root') as HTMLDivElement;
+          const contentRootElm = container.querySelector('.slick-content-root') as HTMLDivElement;
+          Object.defineProperty(topHeaderPanelElm, 'offsetHeight', { configurable: true, value: 31 });
+          Object.defineProperty(headerRootElm, 'offsetHeight', { configurable: true, value: 50 });
+          grid.resizeCanvas();
+
+          expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT * data.length);
+          expect(container.classList.contains('slick-auto-height-sticky-header')).toBe(true);
+          expect(container.style.getPropertyValue('--slick-sticky-topheader-height')).toBe('31px');
+          expect(container.style.getPropertyValue('--slick-sticky-header-height')).toBe('50px');
+          expect(contentRootElm.style.top).toBe('0px');
+
+          grid.setOptions({ showTopHeaderPanel: false });
+          grid.resizeCanvas();
+          expect(container.style.getPropertyValue('--slick-sticky-topheader-height')).toBe('0px');
+
+          grid.setOptions({ autoHeight: true });
+          grid.resizeCanvas();
+          expect(container.classList.contains('slick-auto-height-sticky-header')).toBe(false);
+          expect(container.style.getPropertyValue('--slick-sticky-topheader-height')).toBe('');
+          expect(container.style.getPropertyValue('--slick-sticky-header-height')).toBe('');
+          expect(contentRootElm.style.top).toBe('40px');
+        });
+
+        it('should use "autoHeight" without sticky header layers when it is a boolean', () => {
+          grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, autoHeight: true });
+          grid.init();
+
+          expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT * data.length);
+          expect(container.classList.contains('slick-auto-height-sticky-header')).toBe(false);
+          expect(container.style.getPropertyValue('--slick-sticky-header-height')).toBe('');
         });
 
         it('should return original grid height when calling method', () => {

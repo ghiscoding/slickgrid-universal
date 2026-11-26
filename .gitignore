@@ -39,6 +39,7 @@ website
 **/cypress-report
 **/cypress/downloads
 **/dist
+**/.svelte-kit
 **/*.tgz
 test/cypress/screenshots/*.png
 test-report.junit.xml

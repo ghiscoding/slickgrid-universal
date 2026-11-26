@@ -70,6 +70,7 @@
 * [Grid Menu](grid-functionalities/grid-menu.md)
 * [Grid State & Presets](grid-functionalities/grid-state-preset.md)
 * [Grouping & Aggregators](grid-functionalities/grouping-aggregators.md)
+* [Pagination](grid-functionalities/pagination.md)
 * [Header Menu & Header Buttons](grid-functionalities/header-menu-header-buttons.md)
 * [Header & Footer Slots](grid-functionalities/header-footer-slots.md)
 * [Custom Menu Slots](grid-functionalities/menu-slots.md)
@@ -112,5 +113,6 @@
 
 * [Migration Guide to 9.x (2025-05-10)](migrations/migration-to-9.x.md)
 * [Migration Guide to 10.x (2026-03-02)](migrations/migration-to-10.x.md)
+  * [v10 AI Migration Skill](migrations/migration-to-10.x/SKILL.md)
 * [Migration Guide to 11.x (2026-11-09)](migrations/migration-to-11.x.md)
   * [v11 AI Migration Skill](migrations/migration-to-11.x/SKILL.md)

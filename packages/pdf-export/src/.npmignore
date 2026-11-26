@@ -10,3 +10,7 @@ yarn.lock
 # Allow config files
 !*.config.js
 !vite.config.mts
+
+# Tests
+**/__tests__/
+**/*.spec.ts

@@ -4,7 +4,7 @@
   "printWidth": 140,
   "singleQuote": true,
   "trailingComma": "es5",
-  "plugins": ["@prettier/plugin-oxc", "@ianvs/prettier-plugin-sort-imports"],
+  "plugins": ["@prettier/plugin-oxc", "@ianvs/prettier-plugin-sort-imports", "prettier-plugin-svelte"],
   "importOrderParserPlugins": ["typescript", "jsx", "decorators-legacy", "@ianvs/prettier-plugin-sort-imports"],
   "overrides": [
     {
@@ -23,6 +23,12 @@
       "files": ["**/*.spec.ts"],
       "options": {
         "printWidth": 160
+      }
+    },
+    {
+      "files": ["**/*.svelte"],
+      "options": {
+        "parser": "svelte"
       }
     }
   ]

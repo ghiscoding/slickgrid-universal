@@ -614,7 +614,9 @@ export class SlickCustomTooltip {
     this._tooltipId = tooltipId;
     this._tooltipElm = createDomElement('div', {
       id: tooltipId,
-      className: `${this.className} ${this.gridUid} l${cell.cell} r${cell.cell}`,
+      className: `${this.className} ${this.gridUid} l${cell.cell} r${cell.cell}${
+        this._cellAddonOptions?.persistOnHover !== false ? ' slick-custom-tooltip-non-interactive' : ''
+      }`,
       role: 'tooltip',
       ariaLive: 'polite',
       ariaAtomic: 'true',

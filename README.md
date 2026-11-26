@@ -22,32 +22,32 @@ Stackblitz links are also available for all supported frameworks (see [table](ht
 ### Description
 SlickGrid is one of the best JavaScript data grid, which was originally developed by `@mleibman`, it beats most data grids in terms of features, customizability & performance (running smoothly with even a million rows).
 
-Slickgrid-Universal is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces) and [Lerna-Lite](https://github.com/lerna-lite/lerna-lite)) which is regrouping a few packages under a single repository. The main goal of this project is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any frameworks (the core project in itself is framework agnostic).
+Slickgrid-Universal is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces) and [Lerna-Lite](https://github.com/lerna-lite/lerna-lite)) which is regrouping a few packages under a single repository. The main goal of this project is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any frameworks (the core project itself is framework agnostic).
 
-### What's the difference with the original SlickGrid (now [`@6pac/SlickGrid`](https://github.com/6pac/SlickGrid)) project?
-If you've used the original SlickGrid in the past, you might be wondering, should I use the [`@6pac/SlickGrid`](https://github.com/6pac/SlickGrid) or Slickgrid-Universal? To make it simple, the original SlickGrid is like an unassembled IKEA product where it's very bare bone and unassembled, but on the other hand Slickgrid-Universal is an all-assembled product with batteries included. What that means is that Slickgrid-Universal comes with many built-in features like Formatters, Editors, Filters, Tree Data, ... which are not directly available in the original SlickGrid. So in the end SlickGrid (`@6pac/SlickGrid`) project is much smaller in size because it's very bare bone, but you will have to implement many things yourself (Sorting/Filtering/Editing/...), and if you're looking at creating very basic grids with the smallest footprint possible, then SlickGrid might just work for you; otherwise Slickgrid-Universal has a more complete set of features out of the box with a bit larger download and installation size. Side note, I am (`@ghiscoding`) a maintainer in both projects (Slickgrid-Universal and [`@6pac/SlickGrid`](https://github.com/6pac/SlickGrid))
+### What's the difference with the original SlickGrid (now `@6pac/SlickGrid`) project?
+If you've used the original SlickGrid in the past, you might be wondering, should I use the [`@6pac/SlickGrid`](https://github.com/6pac/SlickGrid) or Slickgrid-Universal (or framework wrappers)? Simply put, the original SlickGrid is like an unassembled IKEA product where it's very bare bone and unassembled, but on the other hand Slickgrid-Universal is an all-assembled product with batteries included. What that means is that Slickgrid-Universal comes with many built-in features like Formatters, Editors, Filters, Tree Data, ... which are not directly available in the original SlickGrid project. So in the end SlickGrid (`@6pac/SlickGrid`) project is much smaller in size because it's very bare bone, but you will have to implement many things yourself (Sorting/Filtering/Editing/...), and if you're looking at creating very basic grids with the smallest footprint possible, then SlickGrid might just work for you; otherwise Slickgrid-Universal has a more complete set of features out of the box with a bit larger download and installation size. Side note, I am (`@ghiscoding`) a maintainer in both projects (Slickgrid-Universal and [`@6pac/SlickGrid`](https://github.com/6pac/SlickGrid)). Side note, both projects have roughly the same interfaces with the same configs which make them easily interchangeables.
 
 ### Why create this monorepo?
 Below is a list of reasons as to why this project was created and why it is built as a monorepo project:
-1. avoids duplicate code by creating common packages available in Slickgrid-Universal and used by all frameworks
-2. many of the services are decoupled because no project will ever require all the available services all at once
-   - OData, GraphQL, Export to (CSV, Excel or PDF), Composite Editor, RxJS, ...
-4. and finally it is framework agnostic
+1. avoids duplicate code by creating common packages available in Slickgrid-Universal and used by all framework wrappers
+2. many of the services are decoupled because no project will ever require all of the available services all at once
+   - OData, GraphQL, Export to (CSV, Excel or PDF), Composite Editor, Row Detail, ...
+3. and finally it is framework agnostic
    - you can reuse the same grids and logic in many different frameworks, it's easily transportable
    - you can use it in plain JavaScript (ES6) or TypeScript, for example we use it ourselves as plain JS (ES6) in our Salesforce environment with LWC (Lightning Web Component)
 
-These were all the original reasons to create the library under a monorepo structure, but above all, it was mainly to avoid code duplication.
+These were all the main reasons to create the library under a monorepo structure, but above all, it was mostly to avoid code duplication.
 
 ## Latest News & Releases
 Check out the [Releases](https://github.com/ghiscoding/slickgrid-universal/releases) section for all the latest News & Releases.
 
 ### Like my work?
-If you use and like the project, please give it a star ⭐ and/or support me with caffeine via GitHub [sponsorship](https://github.com/sponsors/ghiscoding) or the Ko-Fi button below would be much appreciated. Thanks in advance.
+If you use and like the project, please give it a star ⭐ and/or support me with caffeine via GitHub [sponsorship](https://github.com/sponsors/ghiscoding) or the Ko-Fi button below and that would be much appreciated. Thanks in advance.
 
 <a href='https://ko-fi.com/ghiscoding' target='_blank'><img height='36' width='140' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi3.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
 ## Live Demos & Available Framework Wrappers
-The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2 different UI themes (Material Design / Salesforce) and you can also see the Bootstrap theme demoed in all other frameworks with links available in the table shown below. Also please note that even if all the demos are built with [Bootstrap](https://getbootstrap.com/) or [Bulma](https://bulma.io/), you could use any other UI libraries (like Google Material, Ms Fluent UI or anything else). The project tries to be agnostic as much as possible and it does so by providing a large set of CSS/SASS variables which are available to customize the UI however you want.
+The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) is showing 2 different UI themes (Material Design / Salesforce) and you can also see the Bootstrap theme demoed in all other frameworks with links available in the table shown below. Also please note that even though demos are built with [Bootstrap](https://getbootstrap.com/) or [Bulma](https://bulma.io/), the fact is that you could any any other UI libraries (like Google Material, Ms Fluent UI or anything else). The project tries to be agnostic as much as possible and it does so by providing a large set of CSS/SASS variables which are available to customize the UI however you want.
 
 Multiple Themes are available:
 - default (`slickgrid-theme-default.[s]css`)
@@ -58,24 +58,25 @@ Multiple Themes are available:
 
 ### Available Framework Wrappers
 
-> There's no **SolidJS** or **Svelte** wrappers, but if you are willing to help then let's talk and open a new [Discussion](https://github.com/ghiscoding/slickgrid-universal/discussions)
+> There's no **SolidJS** wrapper yet, but if you are interested then let's talk and open a new [Discussion](https://github.com/ghiscoding/slickgrid-universal/discussions)
 
 | Platform | Project Repos | Live Demo | Stackblitz | Downloads | Details |
 | :------: | ------------- | --------- | ---------- | :-------: | ------- |
-| <a href="https://angular.io/" rel="nofollow"><img alt="Angular" src="https://ghiscoding.github.io/angular-slickgrid-demos/assets/angular-logo2.png" width="40"></a> | [Angular-Slickgrid](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/angular-slickgrid) / <br> [Angular-Slickgrid-Demos](https://github.com/ghiscoding/angular-slickgrid-demos)  | [demo](https://ghiscoding.github.io/angular-slickgrid-demos) | [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/angular-slickgrid-demos) | [![NPM downloads](https://img.shields.io/npm/dy/angular-slickgrid)](https://npmjs.org/package/angular-slickgrid) | [docs](https://ghiscoding.gitbook.io/angular-slickgrid/getting-started/quick-start) / <br> [changelog](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/CHANGELOG.md) |
+| <a href="https://angular.io/" rel="nofollow"><img alt="Angular" src="https://ghiscoding.github.io/angular-slickgrid-demos/assets/angular-logo2.png" width="40"></a> | [Angular-Slickgrid](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/angular-slickgrid) / <br> [Angular-Slickgrid-Demos](https://github.com/ghiscoding/angular-slickgrid-demos)  | [demo](https://ghiscoding.github.io/angular-slickgrid-demos) | [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/angular-slickgrid-demos/tree/master/standalone-with-translate) | [![NPM downloads](https://img.shields.io/npm/dy/angular-slickgrid)](https://npmjs.org/package/angular-slickgrid) | [docs](https://ghiscoding.gitbook.io/angular-slickgrid/getting-started/quick-start) / <br> [changelog](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/CHANGELOG.md) |
 | <a href="https://aurelia.io/" rel="nofollow"><img alt="Aurelia" src="https://ghiscoding.github.io/aurelia-slickgrid-demos/assets/aurelia-logo-9YSzF-gF.png" width="45"></a> | [Aurelia-Slickgrid](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/aurelia-slickgrid) / <br> [Aurelia-Slickgrid-Demos](https://github.com/ghiscoding/aurelia-slickgrid-demos) | [demo](https://ghiscoding.github.io/aurelia-slickgrid-demos) | [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/aurelia-slickgrid-demos) | [![NPM downloads](https://img.shields.io/npm/dy/aurelia-slickgrid)](https://npmjs.org/package/aurelia-slickgrid) | [docs](https://ghiscoding.gitbook.io/aurelia-slickgrid/getting-started/quick-start) / <br> [changelog](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/aurelia-slickgrid/CHANGELOG.md) |
 | <a href="https://react.dev/" rel="nofollow"><img alt="React" src="https://ghiscoding.github.io/slickgrid-react-demos/assets/react-logo-DuD1bc7a.png" width="55"></a> | [Slickgrid-React](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-react/) / <br> [Slickgrid-React-Demos](https://github.com/ghiscoding/slickgrid-react-demos) | [demo](https://ghiscoding.github.io/slickgrid-react-demos) | [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-react-demos/) | [![NPM downloads](https://img.shields.io/npm/dy/slickgrid-react)](https://npmjs.org/package/slickgrid-react) | [docs](https://ghiscoding.gitbook.io/slickgrid-react/getting-started/quick-start) / <br> [changelog](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/slickgrid-react/CHANGELOG.md) |
 | <a href="https://vuejs.org/"><img src="https://play.vuejs.org/logo.svg" height="38" alt="VueJS"/></a> | [Slickgrid-Vue](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-vue) / <br> [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos) | [demo](https://ghiscoding.github.io/slickgrid-vue-demos) | [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-vue-demos) | [![NPM downloads](https://img.shields.io/npm/dy/slickgrid-vue)](https://npmjs.org/package/slickgrid-vue) | [docs](https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start) / <br> [changelog](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/slickgrid-vue/CHANGELOG.md) |
+| <a href="https://svelte.dev/docs/svelte/"><img src="demos/svelte/src/assets/svelte.svg" height="52" alt="Svelte"/></a> | [Slickgrid-Svelte](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-svelte) / <br> [Svelte demo source](https://github.com/ghiscoding/slickgrid-universal/tree/master/demos/svelte) | — | — | Not published yet | [docs](https://ghiscoding.gitbook.io/slickgrid-svelte/getting-started/quick-start) / <br> [changelog](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/slickgrid-svelte/CHANGELOG.md) |
 | <a href="https://vite.dev/" rel="nofollow"><img alt="ViteJS" src="https://ghiscoding.github.io/slickgrid-universal-vite-demo/assets/favicon-C49brna2.svg" width="45"></a> | [Slickgrid-Universal-Vite-Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) | [demo](https://ghiscoding.github.io/slickgrid-universal-vite-demo) | [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-universal-vite-demo) | | [docs](https://ghiscoding.gitbook.io/slickgrid-universal/)
 | <a href="https://lwc.dev/" rel="nofollow"><img alt="Salesforce (LWC)" src="https://login.salesforce.com/img/logo214.svg" width="52"></a> | [Slickgrid-Universal/vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle) | n/a | | [zip](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle/dist-grid-bundle-zip) file | [docs](https://ghiscoding.gitbook.io/slickgrid-universal/getting-started/installation-salesforce) |
 | <a href="https://streamlit.io/" rel="nofollow"><img alt="Streamlit" src="https://docs.streamlit.io/logo.svg" width="45"></a> | [streamlit-slickgrid](https://github.com/streamlit/streamlit-slickgrid/) | [demo](https://slickgrid.streamlit.app/) | | | Community Python wrapper |
 
-The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) is a Vanilla Implementation (which is not associated to any framework) built with [ViteJS](https://vitejs.dev/) and is also being used to run all E2E tests with [Cypress](https://www.cypress.io/) for testing every UI functionalities. The [Vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle), which extends the [vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) package, is what we use in our SalesForce LWC (Lightning Web Component) implementation and this Zip file can also be used as a Standalone script (see [zip](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle/dist-grid-bundle-zip) file).
+The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) is a Vanilla Implementation (which is not associated to any framework) built with [ViteJS](https://vitejs.dev/) and is also being used to run all E2E tests with [Cypress](https://www.cypress.io/) in order to test every UI functionalities. The [Vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle), which extends the [vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) package, is what we use in our SalesForce LWC (Lightning Web Component) implementation and the zip file that it produces can also be used as a Standalone script (see [zip](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle/dist-grid-bundle-zip) file).
 
-Dark Mode is also shown in some of the examples (not all), see [Dark Mode](https://ghiscoding.gitbook.io/slickgrid-universal/styling/dark-mode) documentation for more infos.
+Dark Mode is also shown in some of the examples (not all), see [Dark Mode](https://ghiscoding.gitbook.io/slickgrid-universal/styling/dark-mode) documentation for more details.
 
 ### Fully Tested with [Vitest](https://vitest.dev/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
-Slickgrid-Universal has **100%** Unit Test Coverage, 6000+ Vitest unit tests and 1000+ Cypress E2E tests to cover **all** [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (each framework also have the same amount of Cypress E2E tests). All of these tests are giving you peace of mind that pretty much all the code, features and PR changes are all tested before releasing anything new. Every time a new Pull Request (PR) is created, it runs all unit tests and all Cypress E2E tests for all available frameworks and they all run in parallel for a complete test suite.
+Slickgrid-Universal has **100%** Unit Test Coverage, 6000+ Vitest unit tests and 1200+ Cypress E2E tests to cover **all** [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (each framework also have the same amount of Cypress E2E tests). All of these tests are giving you peace of mind that pretty much all the code, features and PR changes are tested before releasing anything new. Every time a new Pull Request (PR) is created, it runs all unit tests and all Cypress E2E tests on all available frameworks and they all run in parallel for a complete test suite.
 
 ### Available Public Packages
 
@@ -109,15 +110,15 @@ Slickgrid-Universal has **100%** Unit Test Coverage, 6000+ Vitest unit tests and
 
 ## Installation
 
-**NOTE:** the installation instructions below are **only** required if you want to contribute to this project, if you just want a quick Slickgrid-Universal demo, then I would suggest to try the following repos [Slickgrid-Universal Vite Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) and/or take a look at all the [available framework wrappers](https://github.com/ghiscoding/slickgrid-universal?tab=readme-ov-file#available-framework-wrappers) that you can clone and get started.
+**NOTE:** the installation instructions below are **only** required if you want to contribute to this project, if you just want a quick Slickgrid-Universal demo and code, then I would suggest to try the following repos [Slickgrid-Universal Vite Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) and/or take a look at all the [available framework wrappers](https://github.com/ghiscoding/slickgrid-universal?tab=readme-ov-file#available-framework-wrappers) that you can clone and get started.
 
-If you want to make contribution, get started with development by cloning the repo and follow the steps shown below. Note that you must be at the root of the project in order to run the following commands, this project also requires `pnpm`.
+If you want to make any new contribution, then get started with development by cloning the repo and then follow the steps shown below. Note that you must be at the root of the project in order to run the following commands, this project also requires [`pnpm`](https://pnpm.io/).
 
 1. pnpm installation
 
 This project uses [pnpm workspaces](https://pnpm.io/workspaces), you can install pnpm by choosing 1 of these 2 choices:
 
-a. following their [installation](https://pnpm.io/installation)
+a. following their [pnpm installation](https://pnpm.io/installation)
 
 b. or install pnpm via Node [corepack](https://nodejs.org/api/corepack.html)
 
@@ -142,6 +143,7 @@ pnpm angular:install
 pnpm aurelia:install
 pnpm react:install
 pnpm vue:install
+pnpm svelte:install
 ```
 
 2. Run Dev (Vanilla Implementation)
@@ -154,13 +156,13 @@ It could be used as a guideline to implement it for other framework wrappers.
 # dev vanilla (default)
 pnpm run dev
 
-# dev for Angular, Aurelia, React or Vue
+# dev for Angular, Aurelia, React, Vue, or Svelte
 pnpm run dev:angular
 pnpm run dev:aurelia
 pnpm run dev:react
 pnpm run dev:vue
+pnpm run dev:svelte
 ```
-
 
 3. Build
 

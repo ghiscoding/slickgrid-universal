@@ -1,0 +1,305 @@
+<script lang="ts">
+  import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
+  import { Editors, Formatters, SlickgridSvelte, type Column, type GridOption, type SlickgridSvelteInstance } from 'slickgrid-svelte';
+  import { i18n } from './data/i18n.js';
+
+  const NB_ITEMS = 20;
+  let selectedLanguage = $state('en');
+  let fetchResult = $state('');
+  let statusClass = $state('alert alert-light');
+  let showSubTitle = $state(true);
+  let grid: SlickgridSvelteInstance;
+
+  void i18n.changeLanguage('en');
+
+  const columns: Column[] = [
+    { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100, filterable: true, editor: { model: Editors.text } },
+    {
+      id: 'duration',
+      name: 'Duration (days)',
+      field: 'duration',
+      sortable: true,
+      minWidth: 100,
+      filterable: true,
+      type: 'number',
+      editor: { model: Editors.text },
+    },
+    {
+      id: '%',
+      name: '% Complete',
+      field: 'percentComplete',
+      sortable: true,
+      minWidth: 100,
+      filterable: true,
+      type: 'number',
+      editor: { model: Editors.text },
+    },
+    {
+      id: 'start',
+      name: 'Start',
+      field: 'start',
+      formatter: Formatters.dateIso,
+      exportWithFormatter: true,
+      filterable: true,
+      editor: { model: Editors.date },
+    },
+    {
+      id: 'finish',
+      name: 'Finish',
+      field: 'finish',
+      formatter: Formatters.dateIso,
+      exportWithFormatter: true,
+      filterable: true,
+      editor: { model: Editors.date },
+    },
+    {
+      id: 'effort-driven',
+      name: 'Effort Driven',
+      field: 'effortDriven',
+      sortable: true,
+      minWidth: 100,
+      filterable: true,
+      type: 'boolean',
+      editor: { model: Editors.checkbox },
+    },
+  ];
+
+  let gridOptions: GridOption = $state.raw({
+    enableAutoResize: false,
+    gridHeight: 350,
+    gridWidth: 800,
+    rowHeight: 33,
+    enableExcelCopyBuffer: true,
+    excelCopyBufferOptions: {
+      onBeforePasteCell: (_e, args) => {
+        // for the sake of the demo, do not allow to paste into the first column title
+        // this will be overriden by the row based edit plugin to additionally only work if the row is in editmode
+        return args.cell > 0;
+      },
+    },
+    // NOTE: this will be automatically turned to true by the Row Based Edit Plugin.
+    // A console warning will be shown if you omit this flag
+    autoEdit: false,
+    editable: true,
+    enableCellNavigation: true,
+    enableRowBasedEdit: true,
+    enableTranslate: true,
+    i18n,
+    rowBasedEditOptions: {
+      allowMultipleRows: false,
+      onBeforeEditMode: () => clearStatus(),
+      onBeforeRowUpdated: (args) => {
+        const { effortDriven, percentComplete, finish, start, duration, title } = args.dataContext;
+
+        if (duration > 40) {
+          alert('Sorry, 40 is the maximum allowed duration.');
+          return Promise.resolve(false);
+        }
+
+        return fakeFetch('your-backend-api/endpoint', {
+          method: 'POST',
+          body: JSON.stringify({ effortDriven, percentComplete, finish, start, duration, title }),
+          headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+          },
+        })
+          .catch((err) => {
+            console.error(err);
+            return false;
+          })
+          .then((response: any) => {
+            if (response === false) {
+              statusClass = 'alert alert-danger';
+              return false;
+            }
+            if (typeof response === 'object') {
+              return response!.json();
+            }
+          })
+          .then((json) => {
+            statusClass = 'alert alert-success';
+            fetchResult = json.message;
+            return true;
+          });
+      },
+      actionColumnConfig: {
+        // override the defaults of the action column
+        width: 100,
+        minWidth: 100,
+        maxWidth: 100,
+      },
+      actionButtons: {
+        editButtonClassName: 'button-style margin-auto btn-icon px-2 me-1',
+        iconEditButtonClassName: 'mdi mdi-pencil',
+        // since no title and no titleKey is provided, it will fallback to the default text provided by the plugin
+        // if the title is provided but no titleKey, it will override the default text
+        // last but not least if a titleKey is provided, it will use the translation key to translate the text
+        // editButtonTitle: 'Edit row',
+
+        cancelButtonClassName: 'button-style btn-icon px-2',
+        cancelButtonTitle: 'Cancel row',
+        cancelButtonTitleKey: 'RBE_BTN_CANCEL',
+        iconCancelButtonClassName: 'mdi mdi-undo text-danger',
+        cancelButtonPrompt: 'Are you sure you want to cancel your changes?',
+
+        updateButtonClassName: 'button-style btn-icon px-2 me-1',
+        updateButtonTitle: 'Update row',
+        updateButtonTitleKey: 'RBE_BTN_UPDATE',
+        iconUpdateButtonClassName: 'mdi mdi-check text-success',
+        updateButtonPrompt: 'Save changes?',
+
+        deleteButtonClassName: 'button-style btn-icon px-2',
+        deleteButtonTitle: 'Delete row',
+        iconDeleteButtonClassName: 'mdi mdi-trash-can text-danger',
+        deleteButtonPrompt: 'Are you sure you want to delete this row?',
+      },
+    },
+    externalResources: [new SlickCustomTooltip()],
+  });
+
+  // mock some data (different in each dataset)
+  const dataset = getData(NB_ITEMS);
+
+  function getData(count: number) {
+    const mockDataset: any[] = [];
+    for (let i = 0; i < count; i++) {
+      const randomYear = 2000 + Math.floor(Math.random() * 10);
+      const randomMonth = Math.floor(Math.random() * 11);
+      const randomDay = Math.floor(Math.random() * 29);
+      const randomPercent = Math.round(Math.random() * 100);
+
+      mockDataset[i] = {
+        id: i,
+        title: 'Task ' + i,
+        duration: Math.round(Math.random() * 40) + '',
+        percentComplete: randomPercent,
+        start: new Date(randomYear, randomMonth + 1, randomDay),
+        finish: new Date(randomYear + 1, randomMonth + 1, randomDay),
+        effortDriven: i % 5 === 0,
+      };
+    }
+    return mockDataset;
+  }
+
+  function clearStatus() {
+    statusClass = 'alert alert-light';
+    fetchResult = '';
+  }
+
+  function toggleSingleMultiRowEdit() {
+    const inputGridOptions: GridOption = {
+      ...gridOptions,
+      rowBasedEditOptions: {
+        ...gridOptions.rowBasedEditOptions,
+        allowMultipleRows: !gridOptions.rowBasedEditOptions?.allowMultipleRows,
+      },
+    };
+    grid.slickGrid.setOptions(inputGridOptions);
+    gridOptions = grid.slickGrid.getOptions() as GridOption;
+  }
+
+  async function switchLanguage() {
+    const nextLanguage = selectedLanguage === 'en' ? 'fr' : 'en';
+    await i18n.changeLanguage(nextLanguage);
+    selectedLanguage = nextLanguage;
+  }
+
+  function fakeFetch(_input: string | URL | Request, _init?: RequestInit): Promise<Response> {
+    return new Promise((resolve) => {
+      setTimeout(
+        () => {
+          resolve(new Response(JSON.stringify({ status: 200, message: 'success' })));
+        },
+        // reduces the delay for automated Cypress tests
+        (window as any).Cypress ? 10 : 500
+      );
+    });
+  }
+
+  function toggleSubTitle() {
+    showSubTitle = !showSubTitle;
+    requestAnimationFrame(() => grid?.resizerService.resizeGrid());
+  }
+</script>
+
+<svelte:head><title>Example 35 - Row Based Editing</title></svelte:head>
+
+<h2>
+  Example 35: Row Based Editing
+  <span class="float-end"
+    ><a
+      style="font-size: 18px"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example35.svelte"
+      ><span class="mdi mdi-link-variant"></span> code</a
+    ></span
+  >
+  <button
+    class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+    type="button"
+    aria-label="Toggle example sub-title details"
+    data-test="toggle-subtitle"
+    onclick={toggleSubTitle}><span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span></button
+  >
+</h2>
+
+{#if showSubTitle}
+  <div class="subtitle">
+    <ul>
+      <li>
+        The Row Based Edit plugin allows you to edit either a single or multiple specific rows at a time, while disabling the rest of the
+        grid rows.
+      </li>
+      <li>Editable rows, as well as modified cells are highlighted with a different color, which you can customize using css variables</li>
+      <li>Modifications are kept track of and if the cancel button is pressed, all modifications are rolled back.</li>
+      <li>
+        If the save button is pressed, a custom "onBeforeRowUpdated" callback is called, which you can use to save the data with your
+        backend.<br />
+        The callback needs to return a Promise&lt;boolean&gt; and if the promise resolves to true, then the row will be updated, otherwise it
+        will be cancelled and stays in edit mode. You can try out the later by defining a Duration value
+        <b>larger than 40</b>.
+        <br />
+        <small
+          ><span class="has-text-danger">NOTE:</span> You can also combine this with e.g. Batch Editing like shown
+          <a href="#/example30">in Example 30</a></small
+        >
+      </li>
+      <li>
+        This example additionally uses the ExcelCopyBuffer Plugin, which you can see also in Slickgrid-Universal
+        <a href="https://ghiscoding.github.io/slickgrid-universal/#/example19">example 19</a>. The example defines a rule that pastes in the
+        first column are prohibited. In combination with the Row Based Editing Plugin though, this rule gets enhanced with the fact that
+        only the edited rows are allowed to be pasted into, while still respecting the original rule.
+      </li>
+    </ul>
+  </div>
+{/if}
+
+<section>
+  <div class="row mb-4">
+    <div class="col-sm-8">
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="single-multi-toggle" onclick={toggleSingleMultiRowEdit}>
+        Toggle Single/Multi Row Edit
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="toggle-language" onclick={switchLanguage}>
+        <i class="mdi mdi-translate"></i>
+        Switch Language for Action column buttons
+      </button>
+      <span class="mx-1">Locale:</span>
+      <span style="font-style: italic; width: 70px" data-test="selected-locale">{selectedLanguage + '.json'}</span>
+    </div>
+
+    <div class="col-sm-4 {statusClass}">
+      <strong>Status: </strong>
+      <span data-test="fetch-result">{fetchResult}</span>
+    </div>
+  </div>
+</section>
+
+<SlickgridSvelte gridId="grid35" {columns} options={gridOptions} {dataset} onSvelteGridCreated={(instance) => (grid = instance)} />
+
+<style>
+  section :global(.alert) {
+    padding: 8px;
+    margin-bottom: 10px;
+  }
+</style>

@@ -1,0 +1,65 @@
+{
+  "name": "slickgrid-svelte",
+  "description": "Svelte wrapper for SlickGrid Universal",
+  "version": "11.0.0",
+  "keywords": [
+    "svelte",
+    "datagrid",
+    "datatable",
+    "plugin",
+    "slickgrid"
+  ],
+  "homepage": "https://ghiscoding.github.io/slickgrid-svelte-demos",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ghiscoding/slickgrid-universal.git",
+    "directory": "frameworks/slickgrid-svelte"
+  },
+  "bugs": {
+    "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
+  },
+  "license": "MIT",
+  "author": "Ghislain B.",
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "svelte:dev": "svelte-package -i src -o dist --watch",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "build": "pnpm check && svelte-package -i src -o dist"
+  },
+  "dependencies": {
+    "@slickgrid-universal/common": "workspace:*",
+    "@slickgrid-universal/custom-footer-component": "workspace:*",
+    "@slickgrid-universal/empty-warning-component": "workspace:*",
+    "@slickgrid-universal/event-pub-sub": "workspace:*",
+    "@slickgrid-universal/pagination-component": "workspace:*",
+    "@slickgrid-universal/utils": "workspace:*",
+    "dequal": "catalog:"
+  },
+  "peerDependencies": {
+    "svelte": ">=5.0.0"
+  },
+  "devDependencies": {
+    "@sveltejs/package": "^3.0.3",
+    "svelte": "catalog:",
+    "svelte-check": "catalog:",
+    "typescript": "catalog:"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+}

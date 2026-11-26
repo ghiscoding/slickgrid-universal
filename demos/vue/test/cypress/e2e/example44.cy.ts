@@ -79,6 +79,19 @@ describe('Example 44 - Column & Row Span', () => {
     cy.get('h2').realHover();
   });
 
+  it('should retain the tall rowspan host while scrolling vertically', () => {
+    let host: HTMLElement;
+    cy.get('#grid44 .slick-row[data-row="8"]').then(($row) => {
+      host = $row[0];
+    });
+    cy.get('#grid44 .slick-viewport').scrollTo(0, 900);
+    cy.get('#grid44 .slick-row[data-row="8"]').should(($row) => {
+      expect($row[0]).to.equal(host);
+      expect($row.find('.slick-cell.l3.rowspan')).to.have.length(1);
+    });
+    cy.get('#grid44 .slick-viewport').scrollTo(0, 0);
+  });
+
   it('should auto-scroll horizontally when a column is dragged past the viewport', () => {
     let draggedColumn: HTMLElement;
 

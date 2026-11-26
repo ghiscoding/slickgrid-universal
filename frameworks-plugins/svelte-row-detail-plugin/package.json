@@ -1,0 +1,40 @@
+{
+  "name": "@slickgrid-universal/svelte-row-detail-plugin",
+  "version": "11.0.0",
+  "description": "Svelte row detail plugin for Slickgrid-Svelte",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "svelte:dev": "tsc --watch"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@slickgrid-universal/common": "workspace:*",
+    "@slickgrid-universal/event-pub-sub": "workspace:*",
+    "@slickgrid-universal/row-detail-plugin": "workspace:*",
+    "tslib": "catalog:"
+  },
+  "peerDependencies": {
+    "svelte": ">=5.0.0"
+  },
+  "devDependencies": {
+    "svelte": "catalog:",
+    "typescript": "catalog:"
+  }
+}
