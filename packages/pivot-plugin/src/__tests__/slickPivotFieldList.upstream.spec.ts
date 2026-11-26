@@ -50,7 +50,7 @@ describe('SlickPivotFieldList', () => {
     grid = new SlickGrid(
       gridElm,
       createRows(),
-      columns.map((column) => ({ ...column })),
+      columns.map((column) => ({ ...column })) as Column[],
       SlickPivot.getGridOptions({ enableCellNavigation: true, ...gridOptions })
     );
     grids.push(grid);
@@ -87,6 +87,15 @@ describe('SlickPivotFieldList', () => {
     document.body.innerHTML = '';
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
+  });
+
+  it('allows visibility and width calls before the field list is mounted', () => {
+    const unmounted = new SlickPivotFieldList({ container: document.createElement('div') });
+    const originalWidth = unmounted.getWidth();
+    unmounted.setVisible(false);
+    unmounted.setWidth(500);
+    (unmounted as any).renderStatus();
+    expect(unmounted.getWidth()).toBe(originalWidth);
   });
 
   it('needs a pivot plugin and a container that holds the grid', () => {
@@ -321,7 +330,7 @@ describe('SlickPivotFieldList', () => {
 
   it('shows the counts of the pivot in its status bar, or what its formatter returns', async () => {
     createFieldList();
-    expect(status().textContent).toMatch(/^4 of 4 source rows · \d+ rows × \d+ columns · computed in \d+ ms$/);
+    expect(status().textContent).toMatch(/^4 of 4 source rows · \d+ rows × \d+ columns$/);
     await pivot.setSpec({ ...baseSpec, filters: [{ field: 'region', include: ['West'] }] });
     expect(status().textContent).toContain('1 of 4 source rows');
 
@@ -333,12 +342,13 @@ describe('SlickPivotFieldList', () => {
     createFieldList({ statusBar: { formatter } });
     expect(status().textContent).toBe(`4 rows, ${grid.getDataLength()} lines`);
     expect(formatter).toHaveBeenCalledWith(expect.objectContaining({ columnCount: grid.getColumns().length, locale: 'en-US' }));
+    expect(formatter.mock.calls[0][0].result.duration).toEqual(expect.any(Number));
   });
 
   it('formats the counts without the parts a result leaves out', () => {
     const result = { sourceRowCount: 12345, filteredRowCount: 1234, duration: 7.6 } as PivotResult;
     expect(SlickPivotFieldList.formatStatus({ result, rowCount: 1000, columnCount: 3, locale: 'en-US' })).toBe(
-      '1,234 of 12,345 source rows · 1,000 rows × 3 columns · computed in 8 ms'
+      '1,234 of 12,345 source rows · 1,000 rows × 3 columns'
     );
     expect(SlickPivotFieldList.formatStatus({ result: {} as PivotResult, rowCount: 2, columnCount: 3 })).toBe('2 rows × 3 columns');
   });

@@ -1,4 +1,4 @@
-import { Editors, SlickDataView, SlickEvent, SlickEventData } from '@slickgrid-universal/common';
+import { Editors, SlickDataView, SlickEvent, SlickEventData, SlickRange } from '@slickgrid-universal/common';
 import type { SlickGrid } from '@slickgrid-universal/common';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { Column, GridOption, PivotField, PivotOption, PivotRequest, PivotResult, PivotSpec } from '../pivot.models.js';
@@ -179,6 +179,133 @@ describe('SlickPivot plugin', () => {
     expect(mock.container.classList.contains('slick-pivot')).toBe(false);
   });
 
+  it('keeps a dedicated pivot grid in pivot mode when asked to turn it off', async () => {
+    const { pivot, grid } = createPivot();
+    const warning = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    await pivot.setPivotMode(false);
+    expect(pivot.isPivotMode()).toBe(true);
+    expect(grid.getData()).toBe(pivot.rowModel);
+    expect(warning).toHaveBeenCalled();
+  });
+
+  it('handles operations before an asynchronous provider returns a result', () => {
+    const pivot = new SlickPivot({ fields, provider: { execute: () => new Promise(() => {}) }, spec: baseSpec });
+    created.push(pivot);
+    const internal = pivot as any;
+    internal.pruneCollapsedKeys();
+    pivot.collapseAllRows();
+    internal.buildRows();
+    internal.applySortIndicator();
+    internal.syncDockedHeaderGroups();
+    expect(pivot.rowModel.getItems()).toEqual([]);
+    expect(internal.getNumberFormat(999)).toBeUndefined();
+  });
+
+  it('ignores drill-down requests outside the displayed rows', async () => {
+    const { pivot, grid } = createPivot();
+    const drillDown = vi.fn();
+    pivot.onPivotCellDrillDown.subscribe(drillDown);
+    grid.onDblClick.notify({ row: 999, cell: 0, grid } as any);
+    await Promise.resolve();
+    expect(drillDown).not.toHaveBeenCalled();
+  });
+
+  it('avoids rebuilding a column group already in the requested collapsed state', () => {
+    const { pivot } = createPivot();
+    const toggled = vi.fn();
+    pivot.onGroupToggled.subscribe(toggled);
+    (pivot as any).setColumnCollapsed('[2023]', true);
+    (pivot as any).setColumnCollapsed('[2023]', true);
+    expect(toggled).toHaveBeenCalledTimes(1);
+  });
+
+  it('cancels an active edit when it cannot be committed before a mode change', () => {
+    const { pivot, grid } = createPivot();
+    const lock = { isActive: () => true, commitCurrentEdit: () => false, cancelCurrentEdit: vi.fn() };
+    Object.assign(grid, { getEditorLock: () => lock });
+    (pivot as any).stopEditing();
+    expect(lock.cancelCurrentEdit).toHaveBeenCalledOnce();
+  });
+
+  it('renders nested tabular rows with bottom subtotals', () => {
+    const { pivot } = createPivot({ spec: { ...baseSpec, rows: ['region', 'country', 'year'], columns: [], layout: 'tabular', subtotals: 'bottom' } });
+    pivot.collapseRow(CHINA);
+    expect(pivot.rowModel.getItems().some((row) => row.__pivot.type === 'subtotal')).toBe(true);
+  });
+
+  it('formats a calculated measure with its own number format', () => {
+    const { pivot } = createPivot({
+      spec: {
+        ...baseSpec,
+        measures: [{ id: 'double', label: 'Double', compute: (values) => values['sum:amount'] * 2, numberFormat: { maximumFractionDigits: 0 } }],
+      },
+    });
+    const index = pivot.getResult()!.values.findIndex((value) => value.id === 'double');
+    expect((pivot as any).getNumberFormat(index)).toEqual(expect.objectContaining({ maximumFractionDigits: 0 }));
+  });
+
+  it('prevents write-back when a value cell has no matching source rows', () => {
+    const { pivot } = createPivot({ enableWriteBack: true });
+    const column = pivot.getColumns()[1];
+    const item = pivot.rowModel.getItem(0);
+    const info = pivot.getColumnInfo(column.id)!;
+    const result = pivot.getResult()!;
+    result.cellCounts![item.__pivot.key][info.columnKey!] = 0;
+    expect((pivot as any).handleBeforeEditCell(undefined, { row: 0, column })).toBe(false);
+  });
+
+  it('preserves other row sort fields when sorting a tabular row header', async () => {
+    const { pivot, grid } = createPivot({ spec: { ...baseSpec, layout: 'tabular', sort: [{ field: 'country', direction: 'asc' }] } });
+    grid.onSort.notify({ sortCol: pivot.getColumns()[0], sortAsc: false, grid } as any);
+    await Promise.resolve();
+    expect(pivot.getSpec().sort).toEqual(
+      expect.arrayContaining([
+        { field: 'country', direction: 'asc' },
+        { field: 'region', direction: 'desc' },
+      ])
+    );
+  });
+
+  it('retains selection by row identity when a group above the selected row collapses', () => {
+    const { pivot, grid } = createPivot();
+    const rowId = SlickPivot.getRowId('group', ['West']);
+    const selectedRow = pivot.rowModel.getRowById(rowId)!;
+    const selection = {
+      getSelectedRanges: vi.fn(() => [new SlickRange(selectedRow, 0, selectedRow, 0)]),
+      setSelectedRanges: vi.fn(),
+    };
+    vi.mocked(grid.getSelectionModel).mockReturnValue(selection as any);
+
+    pivot.collapseRow(EAST);
+
+    const newRow = pivot.rowModel.getRowById(rowId)!;
+    expect(newRow).toBeLessThan(selectedRow);
+    expect(selection.setSelectedRanges).toHaveBeenCalledWith([new SlickRange(newRow, 0, newRow, 0)], 'SlickPivot.restoreSelection');
+  });
+
+  it('drops selection for a row hidden by collapsing its group', () => {
+    const { pivot, grid } = createPivot();
+    const row = pivot.rowModel.getRowById(SlickPivot.getRowId('leaf', ['East', 'China']))!;
+    const selection = {
+      getSelectedRanges: vi.fn(() => [new SlickRange(row, 0, row, 0)]),
+      setSelectedRanges: vi.fn(),
+    };
+    vi.mocked(grid.getSelectionModel).mockReturnValue(selection as any);
+    pivot.collapseRow(EAST);
+    expect(selection.setSelectedRanges).toHaveBeenCalledWith([], 'SlickPivot.restoreSelection');
+  });
+
+  it('keeps contiguous selected rows together after a refresh', async () => {
+    const { pivot, grid } = createPivot();
+    const selection = {
+      getSelectedRanges: vi.fn(() => [new SlickRange(1, 0, 2, 0)]),
+      setSelectedRanges: vi.fn(),
+    };
+    vi.mocked(grid.getSelectionModel).mockReturnValue(selection as any);
+    await pivot.refresh();
+    expect(selection.setSelectedRanges).toHaveBeenCalledWith([new SlickRange(1, 0, 2, 0)], 'SlickPivot.restoreSelection');
+  });
+
   it('adds the pre-header panel options needed by the column group headers to the grid options', () => {
     expect(SlickPivot.getGridOptions({ enableCellNavigation: true, preHeaderPanelHeight: 30 })).toEqual({
       enableCellNavigation: true,
@@ -204,6 +331,51 @@ describe('SlickPivot plugin', () => {
     (pivot as any).syncDockedHeaderGroups();
     expect(cell.style.width).toBe('98px');
     expect(cell.style.getPropertyValue('--slick-pivot-dock-offset')).toBe('5px');
+  });
+
+  it('resynchronizes sticky headers after scrolling and cancels pending frames on disposal', () => {
+    const frames: FrameRequestCallback[] = [];
+    vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => {
+      frames.push(callback);
+      return frames.length;
+    });
+    const cancel = vi.fn();
+    vi.stubGlobal('cancelAnimationFrame', cancel);
+    const { grid, preHeaderPanel, pivot } = createPivot();
+    const sticky = document.createElement('div');
+    sticky.className = 'slick-pivot-header-group-sticky';
+    preHeaderPanel.appendChild(sticky);
+    grid.onScroll.notify({ scrollLeft: 50, scrollTop: 0, grid } as any);
+    grid.onColumnsDrag.notify({ grid } as any);
+    expect(frames).toHaveLength(1);
+    frames[0](0);
+    preHeaderPanel.appendChild(sticky);
+    grid.onScroll.notify({ scrollLeft: 100, scrollTop: 0, grid } as any);
+    pivot.destroy();
+    expect(cancel).toHaveBeenCalled();
+    vi.unstubAllGlobals();
+  });
+
+  it('observes grid size changes and disconnects the observer on disposal', () => {
+    let onResize!: ResizeObserverCallback;
+    const observe = vi.fn();
+    const disconnect = vi.fn();
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        constructor(callback: ResizeObserverCallback) {
+          onResize = callback;
+        }
+        observe = observe;
+        disconnect = disconnect;
+      }
+    );
+    const { pivot, container } = createPivot();
+    expect(observe).toHaveBeenCalledWith(container);
+    onResize([], {} as ResizeObserver);
+    pivot.destroy();
+    expect(disconnect).toHaveBeenCalled();
+    vi.unstubAllGlobals();
   });
 
   describe('compact layout', () => {
@@ -289,10 +461,10 @@ describe('SlickPivot plugin', () => {
       expect(pivot.getRowInfo(1)).toEqual(expect.objectContaining({ type: 'leaf', key: CHINA, level: 2, label: 'China', hasChildren: false }));
       expect(pivot.getRowInfo(6)).toEqual(expect.objectContaining({ type: 'grandTotal', key: ROOT, level: 0, label: 'Grand Total' }));
       expect(pivot.getRowInfo(7)).toBeUndefined();
-      expect(pivot.rowModel.getItemMetadata(0)?.cssClasses).toBe('slick-pivot-row slick-pivot-group slick-pivot-level-1');
-      expect(pivot.rowModel.getItemMetadata(1)?.cssClasses).toBe('slick-pivot-row slick-pivot-leaf slick-pivot-level-2');
-      expect(pivot.rowModel.getItemMetadata(6)?.cssClasses).toBe('slick-pivot-row slick-pivot-grand-total slick-pivot-level-0');
-      expect(pivot.rowModel.getItemMetadata(7)).toBeNull();
+      expect(pivot.rowModel.getItemMetadata!(0)?.cssClasses).toBe('slick-pivot-row slick-pivot-group slick-pivot-level-1');
+      expect(pivot.rowModel.getItemMetadata!(1)?.cssClasses).toBe('slick-pivot-row slick-pivot-leaf slick-pivot-level-2');
+      expect(pivot.rowModel.getItemMetadata!(6)?.cssClasses).toBe('slick-pivot-row slick-pivot-grand-total slick-pivot-level-0');
+      expect(pivot.rowModel.getItemMetadata!(7)).toBeNull();
       expect(pivot.getResult()?.filteredRowCount).toBe(5);
     });
 
@@ -437,7 +609,7 @@ describe('SlickPivot plugin', () => {
         ['subtotal', 'West Total', 280],
       ]);
       expect(rows[4].id).toBe('subtotal:["East"]');
-      expect(pivot.rowModel.getItemMetadata(4)?.cssClasses).toBe('slick-pivot-row slick-pivot-subtotal slick-pivot-level-1');
+      expect(pivot.rowModel.getItemMetadata!(4)?.cssClasses).toBe('slick-pivot-row slick-pivot-subtotal slick-pivot-level-1');
 
       pivot.setOptions({ totalSuffix: ' (all)', grandTotalLabel: 'Total' });
       expect(pivot.rowModel.getItem(4).__pivot_rows).toBe('East (all)');
@@ -480,9 +652,9 @@ describe('SlickPivot plugin', () => {
         [undefined, 'Spain', 80],
         ['Grand Total', undefined, 730],
       ]);
-      expect(pivot.rowModel.getItemMetadata(0)?.columns).toEqual({ 0: { colspan: 2 } });
-      expect(pivot.rowModel.getItemMetadata(1)?.columns).toBeUndefined();
-      expect(pivot.rowModel.getItemMetadata(6)?.columns).toEqual({ 0: { colspan: 2 } });
+      expect(pivot.rowModel.getItemMetadata!(0)?.columns).toEqual({ 0: { colspan: 2 } });
+      expect(pivot.rowModel.getItemMetadata!(1)?.columns).toBeUndefined();
+      expect(pivot.rowModel.getItemMetadata!(6)?.columns).toEqual({ 0: { colspan: 2 } });
 
       // the toggle sits in the column of its field, the captions are not indented
       expect(render(pivot, 0, 0).querySelector('.slick-pivot-toggle')?.dataset.key).toBe(EAST);
@@ -498,7 +670,7 @@ describe('SlickPivot plugin', () => {
 
       // a collapsed group keeps its caption in its own column
       pivot.collapseRow(EAST);
-      expect(pivot.rowModel.getItemMetadata(0)?.columns).toBeUndefined();
+      expect(pivot.rowModel.getItemMetadata!(0)?.columns).toBeUndefined();
       expect(pivot.rowModel.getItems().map((row) => row.__pivot_row_0)).toEqual(['East', 'West', 'West', 'West', 'Grand Total']);
     });
 
@@ -515,8 +687,8 @@ describe('SlickPivot plugin', () => {
         ['Grand Total', undefined, 'grandTotal', 730],
       ]);
       expect(pivot.rowModel.getItem(2).id).toBe('subtotal:["East"]');
-      expect(pivot.rowModel.getItemMetadata(2)?.columns).toEqual({ 0: { colspan: 2 } });
-      expect(pivot.rowModel.getItemMetadata(0)?.columns).toBeUndefined();
+      expect(pivot.rowModel.getItemMetadata!(2)?.columns).toEqual({ 0: { colspan: 2 } });
+      expect(pivot.rowModel.getItemMetadata!(0)?.columns).toBeUndefined();
       // the group toggle is drawn on the first row of its group
       expect(render(pivot, 0, 0).querySelector('.slick-pivot-toggle')?.dataset.key).toBe(EAST);
       expect(render(pivot, 1, 0)).toBe('');
@@ -553,7 +725,7 @@ describe('SlickPivot plugin', () => {
       expect(pivot.rowModel.getItems().map((row) => row.__pivot_rows)).toEqual(['East', 'West', 'France', 'Spain', 'Grand Total']);
       expect(pivot.getRowInfo(0)).toEqual(expect.objectContaining({ type: 'group', collapsed: true }));
       expect(pivot.rowModel.getItem(0).__pv_2).toBe(450);
-      expect(pivot.rowModel.getItemMetadata(0)?.cssClasses).toBe('slick-pivot-row slick-pivot-group slick-pivot-level-1 slick-pivot-collapsed');
+      expect(pivot.rowModel.getItemMetadata!(0)?.cssClasses).toBe('slick-pivot-row slick-pivot-group slick-pivot-level-1 slick-pivot-collapsed');
       expect(render(pivot, 0, 0).querySelector('.slick-pivot-toggle')?.getAttribute('aria-label')).toBe('Expand East');
       expect(toggled).toHaveBeenCalledTimes(1);
       expect(toggled.mock.calls[0][1]).toEqual({ key: EAST, axis: 'rows', collapsed: true });
@@ -1384,6 +1556,57 @@ describe('SlickPivot plugin', () => {
   });
 
   describe('spec, source and events', () => {
+    it('refreshes when a DataView reports a source update', async () => {
+      vi.useFakeTimers();
+      const dataView = new SlickDataView();
+      dataView.setItems(createRows());
+      const { pivot } = createPivot({ source: dataView, refreshDelay: 10 });
+      const changed = vi.fn();
+      pivot.onPivotChanged.subscribe(changed);
+      dataView.updateItem(1, { ...createRows()[0], amount: 900 });
+      await vi.advanceTimersByTimeAsync(20);
+      expect(changed).toHaveBeenCalled();
+      expect(pivot.getResult()?.cells[ROOT][ROOT][0]).toBe(1530);
+      vi.useRealTimers();
+    });
+
+    it('registers a custom aggregator through updated plugin options', async () => {
+      const { pivot } = createPivot();
+      await pivot.setOptions({
+        aggregators: {
+          total: { id: 'total', label: 'Total', init: () => 0, accumulate: (state: number, value: number) => state + value, result: (state: number) => state },
+        },
+      });
+      await pivot.updateSpec({ values: [{ field: 'amount', aggregator: 'total' }] });
+      expect(pivot.getResult()?.cells[ROOT][ROOT][0]).toBe(730);
+    });
+
+    it('refreshes field definitions and applies locale changes', async () => {
+      const { pivot } = createPivot();
+      await pivot.setOptions({ locale: 'fr-CA' });
+      await pivot.refreshFields();
+      expect(pivot.getOptions().locale).toBe('fr-CA');
+      expect(pivot.getFields().map((field) => field.id)).toContain('amount');
+      expect(pivot.getResult()).toBeDefined();
+    });
+
+    it('limits grand total columns to configured values and supports totals-only values', () => {
+      const { pivot } = createPivot({
+        spec: {
+          rows: ['region'],
+          columns: ['year'],
+          values: [
+            { id: 'sales', field: 'amount', aggregator: 'sum' },
+            { id: 'units', field: 'units', aggregator: 'sum', totalsOnly: true },
+          ],
+          grandTotals: { columns: true, values: ['units'] },
+        },
+      });
+      const columnInfo = pivot.getColumns().map((column) => pivot.getColumnInfo(column.id));
+      expect(columnInfo.filter((column) => column?.valueId === 'units')).toHaveLength(1);
+      expect(columnInfo.some((column) => column?.valueId === 'sales')).toBe(true);
+    });
+
     it('raises onSpecChanged and onPivotChanged, and lets onBeforePivot cancel a computation', () => {
       const { pivot } = createPivot();
       const specChanged = vi.fn();

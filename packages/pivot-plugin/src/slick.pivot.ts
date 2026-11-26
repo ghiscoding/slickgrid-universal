@@ -233,7 +233,6 @@ export class SlickPivot implements SlickPlugin {
   protected _managedColumnPins = { left: false, right: false };
   protected _resizeObserver?: ResizeObserver;
   protected _stickySyncFrame?: number;
-  protected _warnedNoEditor = false;
   protected _undoStack: WriteBackHistoryEntry[] = [];
   protected _redoStack: WriteBackHistoryEntry[] = [];
   protected _columns: Column[] = [];
@@ -632,9 +631,6 @@ export class SlickPivot implements SlickPlugin {
     this.onHistoryChanged.unsubscribe();
     this.onPivotModeChanged.unsubscribe();
     this._resizeObserver?.disconnect();
-    if (this._stickySyncFrame !== undefined) {
-      cancelAnimationFrame(this._stickySyncFrame);
-    }
   }
 
   /** Release resources registered through externalResources. */
@@ -1572,10 +1568,6 @@ export class SlickPivot implements SlickPlugin {
     if (editable) {
       column.editor = template?.editor ?? options.columnDefaults.editor ?? options.writeBack.editor ?? { model: getEditors().Float };
       column.editorClass = column.editorClass ?? column.editor?.model;
-      if (!column.editor && !this._warnedNoEditor) {
-        this._warnedNoEditor = true;
-        console.warn('[SlickPivot] write-back needs an editor: load slick.editors.js or set "writeBack.editor".');
-      }
       if (column.editorFixedDecimalPlaces === undefined) {
         // edit with the precision of the written values, or the one the cell is shown with
         column.editorFixedDecimalPlaces = precision ?? this.getNumberFormat(leaf.valueIndex)?.maximumFractionDigits ?? 2;
@@ -1705,7 +1697,6 @@ export class SlickPivot implements SlickPlugin {
           setLabel(item, node, label, false);
           rows.push(item);
         }
-        pending = pending.filter((ancestor) => ancestor !== node);
       });
     };
     visit(result.rowTree);

@@ -67,6 +67,65 @@ const key = (...values: any[]) => PivotEngine.getNodeKey(values);
 const labels = (node: PivotHeaderNode): any[] => node.children.map((child) => (child.children.length ? [child.label, labels(child)] : child.label));
 
 describe('PivotEngine', () => {
+  it('sorts aggregate values containing empty strings after non-empty values', () => {
+    const engine = new PivotEngine({
+      fields: [{ id: 'group' }, { id: 'value' }],
+      aggregators: { raw: { id: 'raw', label: 'Raw', init: () => '', accumulate: (_state, value) => value, result: (state) => state } },
+    });
+    const result = engine.execute(
+      [
+        { group: 'A', value: '' },
+        { group: 'B', value: 'x' },
+      ],
+      {
+        rows: ['group'],
+        columns: [],
+        values: [{ id: 'raw', field: 'value', aggregator: 'raw' }],
+        sort: [{ field: 'group', by: { valueId: 'raw' } }],
+      }
+    );
+    expect(result.rowTree.children.map((node) => node.label)).toEqual(['B', 'A']);
+  });
+  describe('criteria expressions', () => {
+    it.each([
+      ['', null, true],
+      ['New York', 'new york', true],
+      ['"say ""hi"""', 'say "hi"', true],
+      ['>= -1.5e2 and < 5', -100, true],
+      ['< 5', 4, true],
+      ['> 5', 6, true],
+      ['(= 1 or = 3) and not = 2', 3, true],
+      ['between 2 and 5', 6, false],
+      ['in (1, 2, 3)', 2, true],
+      ['is null', null, true],
+      ['is not null', 'value', true],
+      ['null', '', true],
+      ['like "A?[!x]#*"', 'Abc2end', true],
+      ['= true', true, true],
+      ['<> false', true, true],
+      ['<= #2024-01-05#', new Date('2024-01-04T00:00:00Z'), true],
+      ['> 1', null, false],
+    ])('evaluates %s against %s', (criteria, value, expected) => {
+      expect(PivotEngine.parseCriteria(criteria as string)(value)).toBe(expected);
+    });
+
+    it.each(['"unclosed', '#invalid#', '#2024-01-01', 'between 1', 'in (1,)', '(= 1', '= 1 2'])('reports invalid criteria with the field name', (criteria) => {
+      expect(() => PivotEngine.parseCriteria(criteria, 'amount')).toThrow('[PivotEngine] invalid criteria of "amount"');
+    });
+
+    it('filters source rows using criteria before aggregating', () => {
+      const engine = new PivotEngine({ fields: [{ id: 'amount', type: 'number' }] });
+      const result = engine.execute([{ amount: 1 }, { amount: 5 }, { amount: 10 }], {
+        rows: [],
+        columns: [],
+        values: [{ field: 'amount', aggregator: 'sum' }],
+        filters: [{ field: 'amount', criteria: '>= 5' }],
+      });
+      expect(result.filteredRowCount).toBe(2);
+      expect(result.cells[ROOT][ROOT][0]).toBe(15);
+    });
+  });
+
   it('groups object-valued fields using their string representation', () => {
     const engine = new PivotEngine({ fields: [{ id: 'group' }] });
     const result = engine.execute([{ group: { toString: () => 'North' } }, { group: 'North' }], {
@@ -765,6 +824,7 @@ describe('PivotEngine', () => {
     };
 
     it('spreads a new sum over the source rows with the weighted, equal and equalIncrement methods', () => {
+      expect(PivotAggregators.get('sum')!.allocate!(10, [], { method: 'equal', rows: [] })).toEqual([]);
       expect(allocate('sum', [10, 30, 60], 200)).toEqual([20, 60, 120]);
       expect(allocate('sum', [10, 30, 60], 200, { method: 'weighted' })).toEqual([20, 60, 120]);
       expect(allocate('sum', [10, 30, 60], 130, { method: 'equalIncrement' })).toEqual([20, 40, 70]);
@@ -852,6 +912,11 @@ describe('PivotEngine', () => {
       expect(engine.allocate(rows, spec('sum'), { rowKey: key('nope'), columnKey: ROOT, valueId: 'sum:v' }, 40)).toEqual([]);
       expect(engine.allocate(rows, spec('sum'), { rowKey: key('a'), columnKey: ROOT, valueId: 'nope' }, 40)).toEqual([]);
       expect(engine.allocate(rows, spec('max'), { rowKey: key('a'), columnKey: ROOT, valueId: 'max:v' }, 40)).toEqual([]);
+      expect(
+        engine
+          .allocate(rows, spec('first'), { rowKey: key('a'), columnKey: ROOT, valueId: 'first:v' }, 12.345, { method: 'fill', precision: 2 })
+          .map((change) => change.newValue)
+      ).toEqual([12.35, 12.35]);
     });
 
     it('applies and undoes the changes, writing derived fields through their setter', () => {

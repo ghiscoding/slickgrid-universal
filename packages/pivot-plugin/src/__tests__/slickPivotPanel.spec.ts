@@ -109,6 +109,37 @@ describe('SlickPivotPanel', () => {
   });
 
   describe('field list', () => {
+    it('handles cancelled and stale panel interactions safely', () => {
+      createPanel({ defaultArea: () => 'columns' });
+      const internal = panel as any;
+      expect(internal.getDefaultArea('channel')).toBe('rows');
+      expect(internal.getAreaTokens(pivot.getSpec(), 'filters')).toContain('channel');
+      internal.handlePointerMove(new PointerEvent('pointermove'));
+      internal.handlePointerUp(new PointerEvent('pointerup'));
+      internal.openValueSettings(999, element);
+      expect(element.querySelector('.slick-pivot-value-settings')).toBeNull();
+      fieldItem('region').dispatchEvent(new PointerEvent('pointerdown', { button: 0, bubbles: true }));
+      document.dispatchEvent(new PointerEvent('pointercancel', { bubbles: true }));
+      expect(element.querySelector('.slick-pivot-drag-ghost')).toBeNull();
+      openPillMenu('rows', 'region');
+      expect(pressKey(menu()!, 'x')).toBe(false);
+    });
+    it('ignores a filter response after its popup has been closed', async () => {
+      createPanel();
+      let resolveItems!: (items: any[]) => void;
+      vi.spyOn(pivot, 'getFieldItems').mockReturnValue(
+        new Promise((resolve) => {
+          resolveItems = resolve;
+        })
+      );
+      openPillMenu('rows', 'region');
+      menuItem('Filter…').click();
+      expect(element.querySelector('.slick-pivot-filter-popup')).toBeTruthy();
+      panel.destroy();
+      resolveItems([]);
+      await Promise.resolve();
+      expect(container.querySelector('.slick-pivot-filter-popup')).toBeNull();
+    });
     it('lists the fields by group with their type, checks the ones the pivot uses and lists the levels of a date field below it', () => {
       createPanel();
 

@@ -16,11 +16,15 @@
 ## Current implementation snapshot
 
 - `SlickPivot` and `SlickPivotFieldList` are separate resources. The latter mounts the sidebar and optional toolbar, status bar, and details dialog around the host grid.
-- The generic `ExternalResource.prepareGridOptions` hook prepares pre-header infrastructure before grid creation. The current README and demo start with `pivotMode: false`, then enable it after wrapper initialization; this is a workaround, not the intended final consumer experience.
+- The generic `ExternalResource.prepareGridOptions` hook prepares pre-header infrastructure before grid creation. Example 48 configures `pivotMode: true` and derives fields from ordinary columns with Pivot-specific overrides. Initial activation is deferred by a microtask so synchronous Vanilla resource initialization can finish. Verify lifecycle and cleanup, including resources registered after grid creation.
 - Local DataView sources currently use `getItems()`, so ordinary DataView filtering does not automatically limit pivot inputs. Example 48 hides the source filter row in Pivot Mode and restores it afterward; this is currently demo behavior.
 - Keep the built-in drill-down dialog for now. It creates a separate basic SlickGrid, not a Vanilla bundle or framework wrapper. `details: false` leaves the drill-down event available for application-owned UI.
 - Recent changes synchronize GridMenu and ColumnPicker with generated columns and correct cell widths after clearing pinning. Revalidate the actual UI, including hiding a pivot column and restoring it from both menus.
-- The last focused grid/pivot run reported 717 passing tests. Coverage was 100% statements/lines for `slickGrid.ts` and 93.84% statements / 94.16% lines for `slick.pivot.ts`; the latter was below the repository target. A new Cypress assertion was adjusted for the 2px GridMenu header compensation and still needs a rerun against the demo. These are historical results, not current validation.
+- Example 48 Cypress passed 35 tests, including GridMenu visibility, Clear all Pinning, source filters, and RTL. The Pivot suite passed 165 tests, with `slick.pivot.ts` at 93.98% statements and 94.31% lines in the last focused coverage run, below the repository's 100% target. These results precede the latest footer change.
+- The default footer now omits computation time. `PivotResult.duration` remains available to a custom status formatter. Toolbar labels and status text are configurable, while automatic integration with Universal's translation service remains to be investigated.
+- The focused Pivot unit suite now reports 100% line and statement coverage across the package. Branch coverage remains informational.
+- Excel and text export work is deferred. Existing export services retain the source DataView while the grid displays generated Pivot columns. Future source-data export must use matching source columns. Native Excel PivotTable export depends on future support in `excel-builder-vanilla`.
+- Master was merged in `b252f17f4`. The subsequent Pivot initialization and footer changes should be checked with `git status` before resuming or committing.
 
 ## Ten upstream feedback points
 
@@ -39,7 +43,8 @@
 
 ### 3. Initialization, pre-header ownership, and teardown
 
-- [ ] Investigate removing the manual post-initialization `setPivotMode(true)` workaround while keeping the source DataView and wrapper services correctly initialized.
+- [x] Remove the manual post-initialization `setPivotMode(true)` call from the initial Vanilla example.
+- [ ] Verify deferred initial activation preserves the source DataView and service initialization in Vanilla, including cancellation and teardown timing.
 - [ ] Review interaction with `HeaderGroupingService`; preserve and restore pre-header content, visibility, dimensions, and service ownership.
 - [ ] Test resource ordering, registration, unregistering Pivot while the host grid remains alive, mode transitions, and grid destruction. Verify all framework wrappers.
 
@@ -51,7 +56,7 @@
 
 ### 5. Source filters and pivot filters
 
-- [ ] Decide whether pivot aggregation uses all source items, source-filtered items, or a configurable choice. Document the present `getItems()` behavior until that decision changes it.
+- [ ] Align with the proposed upstream `sourceItems: 'filtered' | 'all'` API after it lands. The proposed default is filtered source rows before Pivot filters, across loaded local pages. Document the current `getItems()` behavior until changed.
 - [ ] Specify the order and interaction of source filters, pivot filters, pagination, and remote/provider data; explain what “all” means when only part of a dataset is loaded.
 - [ ] Decide whether hiding/restoring the source filter row should become supported resource behavior instead of example code. Test filters before, during, and after Pivot Mode.
 
@@ -59,7 +64,7 @@
 
 - [ ] Validate ColumnPicker/GridMenu with generated and hidden columns, spec changes, reordering, translation, and source state restoration. Hide a generated column via HeaderMenu and restore it through each picker.
 - [ ] Define HeaderMenu sorting, pinning and hiding; ContextMenu and record-specific commands; and meaningful usability rules and callback context for aggregate rows.
-- [ ] Define exports of displayed pivot results versus original or filtered source records and the behavior of existing export resources.
+- [ ] Revisit exports later. For initial Excel support, export source rows with matching source columns. Define source filtering and revisit native Excel PivotTable export after `excel-builder-vanilla` supports it.
 - [ ] Verify Clear all Pinning and other commands leave pivot headers, cells, docking options, and source state consistent, including RTL and horizontal scrolling.
 
 ### 7. Grid State and Presets
@@ -79,7 +84,7 @@
 
 - [ ] Start with ordinary grid data, columns and options; explicitly register resources and mount the separate sidebar. Switch modes without replacing the host grid.
 - [ ] Exercise source updates, field changes, existing menus and filters, selection, state restoration, and cleanup without destroying host-owned extensions.
-- [ ] Add representative Angular, React, Vue, and Aurelia integration examples and end-to-end coverage.
+- [ ] Once Vanilla is complete, add representative framework integration examples and end-to-end coverage.
 - [ ] Rerun Example 48 Cypress after the latest assertion change and complete focused unit, coverage, lint, formatting, and build checks. Meet the repository's changed-file statement/line coverage requirement.
 
 ### 10. Drill-down details dialog
@@ -117,13 +122,14 @@ Do not assume the current controls are all necessary, correctly named, or in the
 | Sidebar | Filters / Columns / Rows / Values and pill menus | Explain assignments, drag/drop, aggregation, filters, settings, keyboard use, and invalid assignments. |
 | Sidebar | Defer layout update / Update | Explain pending versus applied layout and mode/close behavior. |
 | Sidebar | Resize splitter | Review pointer and keyboard controls, limits, RTL, and resize-service integration. |
-| Footer/status | Source counts, pivot row/column counts, compute time, loading | Verify accuracy and meaning for filters/remote data, formatting, localization, optional visibility, and overlap with grid footer/pagination. |
+| Footer/status | Source counts, pivot row/column counts, loading | Computation time is omitted by default and remains available to custom formatters. Verify accuracy for filters/remote data, localization, optional visibility, and overlap with grid footer/pagination. |
 | Grid and menus | Generated headers, group toggles, HeaderMenu, GridMenu, ColumnPicker | Review appropriate commands, hiding/restoring, sorting, pinning, clear pinning, and exports. |
 | Details dialog | Double-click, title/count, sorting, close | Review row limit, formatting, basic grid limitations, and replacement via the event. |
 
 ## Suggested resume order
 
-1. Validate the latest menu and pinning changes in Example 48 and its serial Cypress suite.
-2. Review the UI inventory with the user and agree on each control's role and default before redesigning it.
-3. Address initialization/options and Grid State/Presets; define filtering, menus, exports, and selection.
-4. Complete framework integrations, coverage, documentation, and draft PR validation.
+1. Finish the Vanilla UI and localization review. Excel has equivalent layout and totals controls in its PivotTable ribbon. Investigate automatic translation of the toolbar, field list, details dialog, and status bar.
+2. Verify Vanilla initialization and cleanup, source updates, selection, menu state, and restoration of the original grid.
+3. Recheck upstream filtering and state APIs, then integrate source filtering and Grid State/Presets.
+4. Maintain the Pivot package's 100% unit-test line and statement coverage as implementation work continues.
+5. Revisit export separately. Complete framework integrations only after Vanilla is complete, followed by documentation and draft PR validation.

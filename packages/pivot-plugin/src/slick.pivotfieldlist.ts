@@ -15,7 +15,7 @@ function getParts() {
   return { SlickPivotPanel: SlickPivotPanel_, SlickPivotToolbar: SlickPivotToolbar_, SlickPivotDetails: SlickPivotDetails_ };
 }
 export interface PivotStatusBarOption {
-  /** Text of the status bar, by default "5,000 of 5,000 source rows · 17 rows × 5 columns · computed in 15 ms" */
+  /** Text of the status bar, by default "5,000 of 5,000 source rows · 17 rows × 5 columns". The result includes its computation duration. */
   formatter?: (info: { result: PivotResult; rowCount: number; columnCount: number; locale?: string | string[] }) => string;
 
   /** Text shown while an asynchronous provider computes, defaults to "Calculating…" */
@@ -314,9 +314,6 @@ export class SlickPivotFieldList implements SlickPlugin {
       parts.push(`${format(result.filteredRowCount)} of ${format(result.sourceRowCount)} source rows`);
     }
     parts.push(`${format(rowCount)} rows × ${format(columnCount)} columns`);
-    if (typeof result.duration === 'number') {
-      parts.push(`computed in ${format(Math.round(result.duration))} ms`);
-    }
     return parts.join(' · ');
   }
 

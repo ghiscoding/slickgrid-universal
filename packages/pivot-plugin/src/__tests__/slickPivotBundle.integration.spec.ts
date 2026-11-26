@@ -29,6 +29,23 @@ describe('pivot external resources with the vanilla bundle', () => {
     bundle.dispose();
   });
 
+  it('derives field captions from DOM column names', async () => {
+    const container = document.createElement('div');
+    container.className = 'slickgrid-container';
+    document.body.appendChild(container);
+    const caption = document.createElement('span');
+    caption.textContent = 'Region caption';
+    const pivot = new SlickPivot();
+    const bundle = new SlickVanillaGridBundle(
+      container,
+      [{ id: 'region', field: 'region', name: caption as any }],
+      { externalResources: [pivot], pivotOptions: { pivotMode: false, spec: { rows: ['region'] } } },
+      [{ id: 1, region: 'East' }]
+    );
+    expect(pivot.getFields()[0].label).toBe('Region caption');
+    bundle.dispose();
+  });
+
   it('uses the bundle grid and DataView across mode switches', async () => {
     const container = document.createElement('div');
     const gridElement = document.createElement('div');
@@ -69,6 +86,7 @@ describe('pivot external resources with the vanilla bundle', () => {
         expect.objectContaining({ id: 'amount', field: 'amount', label: 'Amount', type: 'number' }),
       ])
     );
+    bundle.slickGrid!.setSortColumns([{ columnId: 'regionId', sortAsc: true }]);
     await Promise.resolve();
     expect(bundle.slickGrid?.getData()).toBe(pivot.rowModel);
     const picker = bundle.extensionService.getExtensionInstanceByName('columnPicker');
@@ -91,8 +109,11 @@ describe('pivot external resources with the vanilla bundle', () => {
     expect(bundle.slickGrid?.getData()).toBe(bundle.dataView);
     expect(picker.columns.map((column) => column.id)).toEqual(['regionId', 'amount']);
     expect(menu.columns.map((column) => column.id)).toEqual(['regionId', 'amount']);
-    await pivot.setPivotMode(true);
+    await pivot.refresh();
+    bundle.slickGrid!.setColumns([{ id: 'amount', field: 'amount', name: 'Amount' }]);
+    await pivot.togglePivotMode();
     expect(bundle.slickGrid?.getData()).toBe(pivot.rowModel);
+    expect(pivot.getSpec().rows).toEqual([]);
     bundle.dispose();
   });
 });
