@@ -3,10 +3,10 @@ import { SlickEvent as SlickEvent_, SlickEventHandler as SlickEventHandler_ } fr
 import type { SlickGrid, SlickPlugin } from '@slickgrid-universal/common';
 import * as Utils from '@slickgrid-universal/utils';
 import type { PivotResult } from './pivot.models.js';
-import type { SlickPivot } from './slick.pivot.js';
-import { SlickPivotDetails as SlickPivotDetails_, type PivotDetailsOption } from './slick.pivotdetails.js';
-import { SlickPivotPanel as SlickPivotPanel_, type PivotPanelOption } from './slick.pivotpanel.js';
-import { SlickPivotToolbar as SlickPivotToolbar_, type PivotToolbarOption } from './slick.pivottoolbar.js';
+import type { SlickPivot } from './slickPivot.js';
+import { SlickPivotDetails as SlickPivotDetails_, type PivotDetailsOption } from './slickPivotDetails.js';
+import { SlickPivotPanel as SlickPivotPanel_, type PivotPanelOption } from './slickPivotPanel.js';
+import { SlickPivotToolbar as SlickPivotToolbar_, type PivotToolbarOption } from './slickPivotToolbar.js';
 
 const BindingEventService = BindingEventService_;
 const SlickEvent = SlickEvent_;

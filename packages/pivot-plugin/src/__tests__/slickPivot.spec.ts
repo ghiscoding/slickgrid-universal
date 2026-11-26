@@ -2,8 +2,8 @@ import { Editors, SlickDataView, SlickEvent, SlickEventData, SlickRange } from '
 import type { SlickGrid } from '@slickgrid-universal/common';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { Column, GridOption, PivotField, PivotOption, PivotRequest, PivotResult, PivotSpec } from '../pivot.models.js';
-import { SlickPivot } from '../slick.pivot.js';
-import { PivotEngine } from '../slick.pivotengine.js';
+import { SlickPivot } from '../slickPivot.js';
+import { PivotEngine } from '../slickPivotEngine.js';
 
 interface SalesRow {
   id: number;

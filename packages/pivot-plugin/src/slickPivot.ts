@@ -41,7 +41,7 @@ import type {
   SlickPlugin,
   StickyRows,
 } from './pivot.models.js';
-import { PIVOT_VALUES_FIELD, PivotEngine } from './slick.pivotengine.js';
+import { PIVOT_VALUES_FIELD, PivotEngine } from './slickPivotEngine.js';
 
 function getEditors() {
   return { Float: Editors.float };
@@ -216,6 +216,8 @@ export class SlickPivot implements SlickPlugin {
     getItems: () => PivotRowItem[];
     /** Index of a row by id, which lets `pinning.rows` and `stickyRows` reference pivot rows by id */
     getRowById: (id: string) => number | undefined;
+    getAllSelectedIds: () => string[];
+    getAllSelectedFilteredIds: () => string[];
     expandGroup: (key: string) => void;
     collapseGroup: (key: string) => void;
   };
@@ -336,12 +338,16 @@ export class SlickPivot implements SlickPlugin {
     this._sourceHandler = new SlickEventHandler();
     this._bindingEventService = new BindingEventService();
 
+    const getSelectedIds = () =>
+      (this._grid?.getSelectedRows() ?? []).flatMap((index) => (this._rows[index] ? [this._rows[index].id] : []));
     this.rowModel = {
       getLength: () => this._rows.length,
       getItem: (index: number) => this._rows[index],
       getItems: () => this._rows,
       getItemMetadata: (index: number) => this.getItemMetadata(index),
       getRowById: (id: string) => this._rowIndexById.get(id),
+      getAllSelectedIds: getSelectedIds,
+      getAllSelectedFilteredIds: getSelectedIds,
       expandGroup: (key: string) => this.expandRow(key),
       collapseGroup: (key: string) => this.collapseRow(key),
     };

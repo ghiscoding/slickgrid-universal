@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { PivotField, PivotOption, PivotSpec } from '../pivot.models.js';
-import { SlickPivot } from '../slick.pivot.js';
-import { SlickPivotToolbar } from '../slick.pivottoolbar.js';
-import type { PivotToolbarOption } from '../slick.pivottoolbar.js';
+import { SlickPivot } from '../slickPivot.js';
+import { SlickPivotToolbar } from '../slickPivotToolbar.js';
+import type { PivotToolbarOption } from '../slickPivotToolbar.js';
 
 const createRows = () => [
   { id: 1, region: 'East', country: 'China', year: 2023, units: 10 },

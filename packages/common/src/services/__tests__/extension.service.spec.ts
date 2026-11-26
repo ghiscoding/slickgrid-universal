@@ -672,6 +672,14 @@ describe('ExtensionService', () => {
         sharedService.slickGrid = gridStub;
       });
 
+      it('prepares options for external resource instances before creating extensions', () => {
+        const columns = [{ id: 'name', field: 'name' }] as Column[];
+        const prepareGridOptions = vi.fn();
+        const options = { externalResources: [{ pluginName: 'resource', prepareGridOptions }] } as GridOption;
+        service.createExtensionsBeforeGridCreation(columns, options);
+        expect(prepareGridOptions).toHaveBeenCalledWith(options, columns);
+      });
+
       it('should call checkboxSelectorExtension create when "enableCheckboxSelector" is set in the grid options provided', () => {
         const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
         const gridOptionsMock = { enableCheckboxSelector: true } as GridOption;

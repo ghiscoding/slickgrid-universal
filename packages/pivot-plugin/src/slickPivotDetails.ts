@@ -2,8 +2,8 @@ import { BindingEventService as BindingEventService_ } from '@slickgrid-universa
 import { SlickEvent as SlickEvent_, SlickEventHandler as SlickEventHandler_, SlickGrid as SlickGrid_ } from '@slickgrid-universal/common';
 import * as Utils from '@slickgrid-universal/utils';
 import type { Column, GridOption, OnPivotCellDrillDownEventArgs, PivotField, PivotFieldType, PivotNumberFormat } from './pivot.models.js';
-import type { SlickPivot } from './slick.pivot.js';
-import { PIVOT_VALUES_FIELD as PIVOT_VALUES_FIELD_ } from './slick.pivotengine.js';
+import type { SlickPivot } from './slickPivot.js';
+import { PIVOT_VALUES_FIELD as PIVOT_VALUES_FIELD_ } from './slickPivotEngine.js';
 
 // for (iife) load Slick methods from global Slick object, or use imports for (esm)
 const BindingEventService = BindingEventService_;

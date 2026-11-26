@@ -1,9 +1,9 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import type { Column, OnPivotCellDrillDownEventArgs, PivotField, PivotOption, PivotSpec } from '../pivot.models.js';
-import { SlickPivot } from '../slick.pivot.js';
-import { SlickPivotDetails } from '../slick.pivotdetails.js';
-import type { PivotDetailsOption } from '../slick.pivotdetails.js';
-import { PIVOT_VALUES_FIELD } from '../slick.pivotengine.js';
+import { SlickPivot } from '../slickPivot.js';
+import { SlickPivotDetails } from '../slickPivotDetails.js';
+import type { PivotDetailsOption } from '../slickPivotDetails.js';
+import { PIVOT_VALUES_FIELD } from '../slickPivotEngine.js';
 
 Object.defineProperty(document.styleSheets[0], 'ownerNode', { get: () => document.querySelector('style') });
 
@@ -192,6 +192,12 @@ describe('SlickPivotDetails', () => {
     createDetails(undefined, { spec: { ...baseSpec, grandTotals: { label: 'Overall' } } });
     drillDown({ rowPath: {}, columnPath: {} });
     expect(title()).toBe('3 source rows — Overall');
+  });
+
+  it('uses the default grand total caption when no caption is configured', () => {
+    createDetails(undefined, { grandTotalLabel: '' });
+    drillDown({ rowPath: {}, columnPath: {} });
+    expect(title()).toBe('3 source rows — Grand Total');
   });
 
   it('uses the default truncation message when the row limit is exceeded', () => {

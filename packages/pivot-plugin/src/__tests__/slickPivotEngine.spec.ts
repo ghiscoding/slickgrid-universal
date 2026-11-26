@@ -9,7 +9,7 @@ import type {
   PivotMeasureContext,
   PivotSpec,
 } from '../pivot.models.js';
-import { PIVOT_DATE_LEVELS, PIVOT_VALUES_FIELD, PivotAggregators, PivotEngine } from '../slick.pivotengine.js';
+import { PIVOT_DATE_LEVELS, PIVOT_VALUES_FIELD, PivotAggregators, PivotEngine } from '../slickPivotEngine.js';
 
 /** Key of the root (grand total) node of both header trees */
 const ROOT = '[]';
@@ -67,6 +67,16 @@ const key = (...values: any[]) => PivotEngine.getNodeKey(values);
 const labels = (node: PivotHeaderNode): any[] => node.children.map((child) => (child.children.length ? [child.label, labels(child)] : child.label));
 
 describe('PivotEngine', () => {
+  it('leaves rows unfiltered for an unrecognized label filter operator', () => {
+    const engine = new PivotEngine({ fields: [{ id: 'group' }] });
+    const result = engine.execute([{ group: 'East' }, { group: 'West' }], {
+      rows: ['group'],
+      columns: [],
+      values: [],
+      filters: [{ field: 'group', label: { operator: 'unknown' as any, value: 'East' } }],
+    });
+    expect(result.filteredRowCount).toBe(2);
+  });
   it('sorts aggregate values containing empty strings after non-empty values', () => {
     const engine = new PivotEngine({
       fields: [{ id: 'group' }, { id: 'value' }],

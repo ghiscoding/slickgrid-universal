@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { PivotArea, PivotField, PivotOption, PivotSpec } from '../pivot.models.js';
-import { SlickPivot } from '../slick.pivot.js';
-import { SlickPivotPanel } from '../slick.pivotpanel.js';
-import type { PivotPanelOption } from '../slick.pivotpanel.js';
+import { SlickPivot } from '../slickPivot.js';
+import { SlickPivotPanel } from '../slickPivotPanel.js';
+import type { PivotPanelOption } from '../slickPivotPanel.js';
 
 const createRows = () => [
   { id: 1, region: 'East', country: 'China', channel: 'Online', orderDate: new Date(2023, 1, 5), amount: 100, units: 10, active: true },
@@ -109,6 +109,29 @@ describe('SlickPivotPanel', () => {
   });
 
   describe('field list', () => {
+    it('places a popup above its anchor when there is insufficient space below', () => {
+      createPanel();
+      const popup = document.createElement('div');
+      const anchor = document.createElement('button');
+      vi.spyOn(element, 'getBoundingClientRect').mockReturnValue({ top: 0, bottom: 300, left: 0, width: 300 } as DOMRect);
+      vi.spyOn(anchor, 'getBoundingClientRect').mockReturnValue({ top: 250, bottom: 280, left: 20 } as DOMRect);
+      Object.defineProperty(popup, 'offsetHeight', { value: 100 });
+      (panel as any).positionFloating(popup, anchor);
+      expect(popup.style.top).toBe('148px');
+    });
+
+    it('returns focus to the replacement value pill when the original is removed', () => {
+      createPanel();
+      const original = pill('values', 'amount');
+      (panel as any).openValueSettings(0, original);
+      original.remove();
+      const replacement = document.createElement('button');
+      replacement.className = 'slick-pivot-pill';
+      replacement.dataset.index = '0';
+      areaList('values').appendChild(replacement);
+      element.querySelector<HTMLButtonElement>('.slick-pivot-dialog-cancel')!.click();
+      expect(document.activeElement).toBe(replacement);
+    });
     it('handles cancelled and stale panel interactions safely', () => {
       createPanel({ defaultArea: () => 'columns' });
       const internal = panel as any;

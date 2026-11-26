@@ -13,8 +13,8 @@ import type {
   PivotSpec,
   PivotValue,
 } from './pivot.models.js';
-import type { SlickPivot } from './slick.pivot.js';
-import { PIVOT_VALUES_FIELD as PIVOT_VALUES_FIELD_, PivotEngine as PivotEngine_ } from './slick.pivotengine.js';
+import type { SlickPivot } from './slickPivot.js';
+import { PIVOT_VALUES_FIELD as PIVOT_VALUES_FIELD_, PivotEngine as PivotEngine_ } from './slickPivotEngine.js';
 
 // for (iife) load Slick methods from global Slick object, or use imports for (esm)
 const BindingEventService = BindingEventService_;

@@ -1,7 +1,7 @@
 import { SlickDataView, SlickGrid } from '@slickgrid-universal/common';
 import { afterEach, describe, expect, it } from 'vitest';
-import { SlickPivot } from '../slick.pivot.js';
-import { SlickPivotFieldList } from '../slick.pivotfieldlist.js';
+import { SlickPivot } from '../slickPivot.js';
+import { SlickPivotFieldList } from '../slickPivotFieldList.js';
 
 Object.defineProperty(document.styleSheets[0], 'ownerNode', { get: () => Array.from(document.querySelectorAll('style')).at(-1) });
 

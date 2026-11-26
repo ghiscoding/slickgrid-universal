@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { SlickVanillaGridBundle } from '../../../vanilla-bundle/src/components/slick-vanilla-grid-bundle.js';
-import { SlickPivot } from '../slick.pivot.js';
-import { SlickPivotFieldList } from '../slick.pivotfieldlist.js';
+import { SlickPivot } from '../slickPivot.js';
+import { SlickPivotFieldList } from '../slickPivotFieldList.js';
 
 Object.defineProperty(document.styleSheets[0], 'ownerNode', { get: () => Array.from(document.querySelectorAll('style')).at(-1) });
 
@@ -26,6 +26,117 @@ describe('pivot external resources with the vanilla bundle', () => {
     await Promise.resolve();
     expect(pivot.isPivotMode()).toBe(false);
     expect(bundle.slickGrid?.getData()).toBe(bundle.dataView);
+    bundle.dispose();
+  });
+
+  it('does not activate pivot after the bundle is disposed during deferred startup', async () => {
+    const container = document.createElement('div');
+    container.className = 'slickgrid-container';
+    document.body.appendChild(container);
+    const pivot = new SlickPivot();
+    const bundle = new SlickVanillaGridBundle(
+      container,
+      [{ id: 'region', field: 'region', name: 'Region' }],
+      { externalResources: [pivot], pivotOptions: { pivotMode: true, spec: { rows: ['region'] } } },
+      [{ id: 1, region: 'East' }]
+    );
+    const modeChanged = vi.fn();
+    pivot.onPivotModeChanged.subscribe(modeChanged);
+    bundle.dispose();
+    await Promise.resolve();
+    expect(modeChanged).not.toHaveBeenCalled();
+    expect(pivot.isPivotMode()).toBe(false);
+  });
+
+  it('restores the host grid when the pivot resource is disposed independently', async () => {
+    const container = document.createElement('div');
+    container.className = 'slickgrid-container';
+    document.body.appendChild(container);
+    const pivot = new SlickPivot();
+    const bundle = new SlickVanillaGridBundle(
+      container,
+      [{ id: 'region', field: 'region', name: 'Region' }],
+      { enableGridMenu: true, externalResources: [pivot], pivotOptions: { pivotMode: true, spec: { rows: ['region'] } } },
+      [{ id: 1, region: 'East' }]
+    );
+    await Promise.resolve();
+    const grid = bundle.slickGrid!;
+    const menu = bundle.extensionService.getExtensionInstanceByName('gridMenu');
+    expect(grid.getData()).toBe(pivot.rowModel);
+    pivot.dispose();
+    expect(grid.getData()).toBe(bundle.dataView);
+    expect(grid.getColumns().map((column) => column.id)).toEqual(['region']);
+    expect(bundle.extensionService.getExtensionInstanceByName('gridMenu')).toBe(menu);
+    bundle.dispose();
+  });
+
+  it('recomputes after source DataView updates and restores the updated source rows', async () => {
+    const container = document.createElement('div');
+    container.className = 'slickgrid-container';
+    document.body.appendChild(container);
+    const pivot = new SlickPivot();
+    const bundle = new SlickVanillaGridBundle(
+      container,
+      [
+        { id: 'region', field: 'region', name: 'Region' },
+        { id: 'amount', field: 'amount', name: 'Amount' },
+      ],
+      {
+        externalResources: [pivot],
+        pivotOptions: {
+          pivotMode: true,
+          refreshDelay: 0,
+          fields: [{ id: 'amount', type: 'number' }],
+          spec: { rows: ['region'], values: [{ field: 'amount', aggregator: 'sum' }] },
+        },
+      },
+      [{ id: 1, region: 'East', amount: 10 }]
+    );
+    await Promise.resolve();
+    bundle.dataView!.addItem({ id: 2, region: 'West', amount: 20 });
+    await vi.waitFor(() => expect(pivot.getResult()?.sourceRowCount).toBe(2));
+    expect(pivot.getResult()?.cells['[]']['[]'][0]).toBe(30);
+    await pivot.setPivotMode(false);
+    expect(bundle.slickGrid!.getData()).toBe(bundle.dataView);
+    expect(bundle.dataView!.getItems()).toHaveLength(2);
+    bundle.dispose();
+  });
+
+  it('restores source row selection and column visibility after switching modes', async () => {
+    const container = document.createElement('div');
+    container.className = 'slickgrid-container';
+    document.body.appendChild(container);
+    const pivot = new SlickPivot();
+    const bundle = new SlickVanillaGridBundle(
+      container,
+      [
+        { id: 'region', field: 'region', name: 'Region' },
+        { id: 'amount', field: 'amount', name: 'Amount' },
+      ],
+      {
+        enableSelection: true,
+        enableGridMenu: true,
+        dataView: { syncGridSelection: true },
+        externalResources: [pivot],
+        pivotOptions: { pivotMode: false, spec: { rows: ['region'], values: [{ field: 'amount', aggregator: 'sum' }] } },
+      },
+      [
+        { id: 1, region: 'East', amount: 10 },
+        { id: 2, region: 'West', amount: 20 },
+      ]
+    );
+    const grid = bundle.slickGrid!;
+    grid.setSelectedRows([1]);
+    grid.updateColumnById('amount', { hidden: true });
+    grid.updateColumns();
+    await pivot.setPivotMode(true);
+    grid.setSelectedRows([0]);
+    expect(pivot.rowModel.getAllSelectedIds()).toEqual([pivot.rowModel.getItem(0).id]);
+    expect(pivot.rowModel.getAllSelectedFilteredIds()).toEqual([pivot.rowModel.getItem(0).id]);
+    await pivot.setPivotMode(false);
+    expect(grid.getSelectedRows()).toEqual([1]);
+    expect(grid.getColumns().find((column) => column.id === 'amount')?.hidden).toBe(true);
+    expect(bundle.extensionService.getExtensionInstanceByName('gridMenu').columns.find((column: any) => column.id === 'amount')?.hidden).toBe(true);
     bundle.dispose();
   });
 

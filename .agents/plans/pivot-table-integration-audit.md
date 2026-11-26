@@ -20,8 +20,10 @@
 - Local DataView sources currently use `getItems()`, so ordinary DataView filtering does not automatically limit pivot inputs. Example 48 hides the source filter row in Pivot Mode and restores it afterward; this is currently demo behavior.
 - Keep the built-in drill-down dialog for now. It creates a separate basic SlickGrid, not a Vanilla bundle or framework wrapper. `details: false` leaves the drill-down event available for application-owned UI.
 - Recent changes synchronize GridMenu and ColumnPicker with generated columns and correct cell widths after clearing pinning. Revalidate the actual UI, including hiding a pivot column and restoring it from both menus.
-- Example 48 Cypress passed 35 tests, including GridMenu visibility, Clear all Pinning, source filters, and RTL. The Pivot suite passed 165 tests, with `slick.pivot.ts` at 93.98% statements and 94.31% lines in the last focused coverage run, below the repository's 100% target. These results precede the latest footer change.
+- Example 48 Cypress passed 35 tests, including GridMenu visibility, Clear all Pinning, source filters, and RTL. The Pivot suite passed 165 tests, with `slickPivot.ts` at 93.98% statements and 94.31% lines in the last focused coverage run, below the repository's 100% target. These results precede the latest footer change.
 - The default footer now omits computation time. `PivotResult.duration` remains available to a custom status formatter. Toolbar labels and status text are configurable, while automatic integration with Universal's translation service remains to be investigated.
+- Vanilla integration tests verify that deferred activation is cancelled when the bundle is disposed, that disposing Pivot restores the source DataView and columns while leaving GridMenu registered, and that DataView additions recompute the pivot and remain available after switching back. Further lifecycle and source-state scenarios remain open.
+- The Pivot row model exposes selected Pivot row IDs for Grid State. A Vanilla integration test verifies Pivot selection, source selection restoration, and hidden source-column state through a mode round trip. Pivot and source IDs remain separate.
 - The focused Pivot unit suite now reports 100% line and statement coverage across the package. Branch coverage remains informational.
 - Excel and text export work is deferred. Existing export services retain the source DataView while the grid displays generated Pivot columns. Future source-data export must use matching source columns. Native Excel PivotTable export depends on future support in `excel-builder-vanilla`.
 - Master was merged in `b252f17f4`. The subsequent Pivot initialization and footer changes should be checked with `git status` before resuming or committing.
@@ -128,8 +130,8 @@ Do not assume the current controls are all necessary, correctly named, or in the
 
 ## Suggested resume order
 
-1. Finish the Vanilla UI and localization review. Excel has equivalent layout and totals controls in its PivotTable ribbon. Investigate automatic translation of the toolbar, field list, details dialog, and status bar.
-2. Verify Vanilla initialization and cleanup, source updates, selection, menu state, and restoration of the original grid.
+1. Verify Vanilla initialization and cleanup, source updates, selection, menu state, and restoration of the original grid.
+2. Finish the Vanilla UI review. Excel has equivalent layout and totals controls in its PivotTable ribbon. Defer localization until near the end, including automatic translation of the toolbar, field list, details dialog, and status bar.
 3. Recheck upstream filtering and state APIs, then integrate source filtering and Grid State/Presets.
 4. Maintain the Pivot package's 100% unit-test line and statement coverage as implementation work continues.
 5. Revisit export separately. Complete framework integrations only after Vanilla is complete, followed by documentation and draft PR validation.

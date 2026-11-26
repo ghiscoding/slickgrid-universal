@@ -2,7 +2,7 @@ import { BindingEventService as BindingEventService_ } from '@slickgrid-universa
 import { SlickEvent as SlickEvent_, SlickEventHandler as SlickEventHandler_ } from '@slickgrid-universal/common';
 import * as Utils from '@slickgrid-universal/utils';
 import type { PivotGrandTotals, PivotLayout, PivotSubtotalsPosition } from './pivot.models.js';
-import type { SlickPivot } from './slick.pivot.js';
+import type { SlickPivot } from './slickPivot.js';
 
 // for (iife) load Slick methods from global Slick object, or use imports for (esm)
 const BindingEventService = BindingEventService_;

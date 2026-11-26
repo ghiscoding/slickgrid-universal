@@ -1,12 +1,12 @@
 import { SlickGrid, SlickHybridSelectionModel } from '@slickgrid-universal/common';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { Column, GridOption, PivotField, PivotOption, PivotResult, PivotSpec } from '../pivot.models.js';
-import { SlickPivot } from '../slick.pivot.js';
-import { SlickPivotDetails } from '../slick.pivotdetails.js';
-import { PivotEngine } from '../slick.pivotengine.js';
-import { SlickPivotFieldList, type PivotFieldListOption } from '../slick.pivotfieldlist.js';
-import { SlickPivotPanel } from '../slick.pivotpanel.js';
-import { SlickPivotToolbar } from '../slick.pivottoolbar.js';
+import { SlickPivot } from '../slickPivot.js';
+import { SlickPivotDetails } from '../slickPivotDetails.js';
+import { PivotEngine } from '../slickPivotEngine.js';
+import { SlickPivotFieldList, type PivotFieldListOption } from '../slickPivotFieldList.js';
+import { SlickPivotPanel } from '../slickPivotPanel.js';
+import { SlickPivotToolbar } from '../slickPivotToolbar.js';
 
 Object.defineProperty(document.styleSheets[0], 'ownerNode', { get: () => Array.from(document.querySelectorAll('style')).at(-1) });
 
