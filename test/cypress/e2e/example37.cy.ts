@@ -1,4 +1,6 @@
+import type { SlickGrid } from '@slickgrid-universal/common';
 import { getScrollDistanceWhenDragOutsideGrid } from '../support/drag';
+import { visitWithGrid } from '../support/visitWithGrid';
 
 function testScroll(fromClass: string, toClass: string, fromRow: number, fromCol: number) {
   return getScrollDistanceWhenDragOutsideGrid(fromClass, 'topLeft', 'right', fromRow, fromCol, 165).then((cellScrollDistance: any) => {
@@ -18,11 +20,14 @@ function testScroll(fromClass: string, toClass: string, fromRow: number, fromCol
 }
 
 describe('Example 37 - Hybrid Selection Model', () => {
+  let grid1: SlickGrid;
   const grid1Titles = ['#', 'Title', '% Complete', 'Start', 'Finish', 'Priority', 'Effort Driven'];
   const grid2Titles = ['', '#', 'Title', '% Complete', 'Start', 'Finish', 'Priority', 'Effort Driven'];
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/example37`);
+    visitWithGrid(`${Cypress.config('baseUrl')}/example37`, '.grid37-1', (grid) => {
+      grid1 = grid;
+    });
     cy.get('h3').should('contain', 'Example 37 - Hybrid Selection Model');
   });
 
@@ -275,20 +280,9 @@ describe('Example 37 - Hybrid Selection Model', () => {
     });
 
     it('should select the active cell when cell selection disables active-row selection', () => {
-      cy.window()
-        .its('main.app.viewModelObj', { timeout: 10000 })
-        .should((viewModelObj: Record<string, any>) => {
-          expect(
-            Object.values(viewModelObj).some((viewModel) => viewModel?.sgb1?.slickGrid),
-            'Grid 1 view model'
-          ).to.be.true;
-        })
-        .then((viewModelObj: Record<string, any>) => {
-          const viewModel = Object.values(viewModelObj).find((candidate) => candidate?.sgb1?.slickGrid);
-          const selectionModel = viewModel.sgb1.slickGrid.getSelectionModel();
-          selectionModel.setOptions({ selectActiveCell: true, selectActiveRow: false, selectionType: 'cell' });
-          selectionModel.setSelectedRanges([]);
-        });
+      const selectionModel = grid1.getSelectionModel()!;
+      selectionModel.setOptions({ selectActiveCell: true, selectActiveRow: false, selectionType: 'cell' });
+      selectionModel.setSelectedRanges([]);
 
       cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l1.r1').click();
       cy.get('#selectionRange1').should('have.text', '{"fromRow":1,"fromCell":1,"toRow":1,"toCell":1}');

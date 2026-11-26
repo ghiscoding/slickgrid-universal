@@ -27,11 +27,6 @@ const Slicker: any = {
   Utilities,
 };
 
-// expose the bundle on the global "window" object as Slicker
-if (typeof window !== 'undefined') {
-  (window as any).Slicker = Slicker;
-}
-
 export { BindingService };
 export { Aggregators, Editors, Enums, EventPubSubService, Filters, Formatters, GroupTotalFormatters, SortComparers, Utilities };
 export { SlickEmptyWarningComponent, SlickPaginationComponent, SlickVanillaGridBundle }; // export the custom components & interfaces
