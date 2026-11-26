@@ -136,7 +136,7 @@ export class SlickColumnPicker extends MenuBaseClass<ColumnPicker> {
     this._listElm = createDomElement('div', { className: 'slick-column-picker-list', role: 'menu' });
     this._bindEventService.bind(menuElm, 'click', this.handleColumnPickerItemClick.bind(this) as EventListener, undefined, 'parent-menu');
 
-    document.body.appendChild(menuElm);
+    this.popupContainerElm.appendChild(menuElm);
 
     return menuElm;
   }
@@ -204,7 +204,7 @@ export class SlickColumnPicker extends MenuBaseClass<ColumnPicker> {
 
     // load the column & create column picker list
     this.populateColumnPicker(this.addonOptions, this._defaults.headerColumnValueExtractor);
-    document.body.appendChild(this._menuElm);
+    this.popupContainerElm.appendChild(this._menuElm);
 
     // Reposition menu (this also appends _listElm to _menuElm)
     this.repositionMenu(e);
@@ -255,8 +255,9 @@ export class SlickColumnPicker extends MenuBaseClass<ColumnPicker> {
         menuOffsetLeft = menuOffsetLeft - menuWidth;
       }
 
-      this._menuElm.style.top = `${targetEvent.pageY - 10}px`;
-      this._menuElm.style.left = `${menuOffsetLeft}px`;
+      const { top, left } = this.toPopupContainerPosition(this._menuElm, targetEvent.pageY - 10, menuOffsetLeft);
+      this._menuElm.style.top = `${top}px`;
+      this._menuElm.style.left = `${left}px`;
       this._menuElm.style.minHeight = findWidthOrDefault(this.addonOptions.minHeight, '');
       this._menuElm.style.maxHeight = findWidthOrDefault(this.addonOptions.maxHeight, `${window.innerHeight - targetEvent.clientY}px`);
       this._menuElm.style.display = 'block';

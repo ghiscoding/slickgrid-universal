@@ -1309,6 +1309,31 @@ describe('GridMenuControl', () => {
           ];
         });
 
+        it('should append the Grid Menu and its sub-menus to the "popupContainer" and find them there', () => {
+          const dialogElm = document.createElement('dialog');
+          document.body.appendChild(dialogElm);
+          (gridStub as any).getPopupContainer = () => dialogElm;
+
+          gridOptionsMock.gridMenu!.commandItems = mockCommandItems;
+          control.columns = columnsMock;
+          control.init();
+          const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
+          buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+          const gridMenu1Elm = dialogElm.querySelector('.slick-grid-menu.slick-menu-level-0') as HTMLDivElement;
+          expect(gridMenu1Elm.parentElement).toBe(dialogElm);
+
+          const subCommands1Elm = gridMenu1Elm.querySelector('[data-command="sub-commands"]') as HTMLDivElement;
+          subCommands1Elm.dispatchEvent(new Event('click'));
+          expect(dialogElm.querySelector('.slick-grid-menu.slick-menu-level-1')!.parentElement).toBe(dialogElm);
+
+          subCommands1Elm.dispatchEvent(new Event('click'));
+          expect(dialogElm.querySelectorAll('.slick-grid-menu.slick-menu-level-1').length).toBe(1);
+
+          control.hideMenu(new Event('click', { bubbles: true, cancelable: true, composed: false }) as DOMEvent<HTMLDivElement>);
+          delete (gridStub as any).getPopupContainer;
+          dialogElm.remove();
+        });
+
         it('should create a Grid Menu item with commands sub-menu items and expect sub-menu list to show in the DOM element aligned left when sub-menu is clicked', () => {
           const disposeSubMenuSpy = vi.spyOn(control, 'disposeSubMenus');
           Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });

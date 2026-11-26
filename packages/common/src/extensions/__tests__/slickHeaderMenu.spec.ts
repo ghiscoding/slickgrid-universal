@@ -854,6 +854,32 @@ describe('HeaderMenu Plugin', () => {
         expect(disposeSubMenuSpy).toHaveBeenCalledTimes(4);
       });
 
+      it('should keep the Header Menu root in the grid container and append its sub-menus to the "popupContainer"', () => {
+        const dialogElm = document.createElement('dialog');
+        document.body.appendChild(dialogElm);
+        (gridStub as any).getPopupContainer = () => dialogElm;
+        vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columnsMock);
+
+        plugin.init({ autoAlign: true });
+        const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
+        headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+        const headerMenu1Elm = gridContainerDiv.querySelector('.slick-header-menu.slick-menu-level-0') as HTMLDivElement;
+        expect(headerMenu1Elm.parentElement).toBe(gridContainerDiv);
+
+        const subCommands1Elm = headerMenu1Elm.querySelector('[data-command="sub-commands"]') as HTMLDivElement;
+        subCommands1Elm.dispatchEvent(new Event('click'));
+        expect(dialogElm.querySelector('.slick-header-menu.slick-menu-level-1')!.parentElement).toBe(dialogElm);
+
+        subCommands1Elm.dispatchEvent(new Event('click'));
+        expect(dialogElm.querySelectorAll('.slick-header-menu.slick-menu-level-1').length).toBe(1);
+
+        plugin.hideMenu();
+        delete (gridStub as any).getPopupContainer;
+        dialogElm.remove();
+      });
+
       it('should create a Header Menu item with commands sub-menu commandItems and expect sub-menu list to show in the DOM element align right when sub-menu is clicked', () => {
         const onCommandMock = vi.fn();
         const disposeSubMenuSpy = vi.spyOn(plugin, 'disposeSubMenus');

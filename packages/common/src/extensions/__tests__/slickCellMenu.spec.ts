@@ -697,6 +697,32 @@ describe('CellMenu Plugin', () => {
         expect(onAfterSpy).toHaveBeenCalled();
       });
 
+      it('should append the Cell Menu and its sub-menus to the "popupContainer" and find them there', () => {
+        const dialogElm = document.createElement('dialog');
+        document.body.appendChild(dialogElm);
+        (gridStub as any).getPopupContainer = () => dialogElm;
+
+        plugin.dispose();
+        plugin.init({ commandItems: deepCopy(commandItemsMock) });
+        gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
+
+        const cellMenu1Elm = dialogElm.querySelector('.slick-cell-menu.slickgrid12345.slick-menu-level-0') as HTMLDivElement;
+        expect(cellMenu1Elm.parentElement).toBe(dialogElm);
+
+        const subCommands1Elm = cellMenu1Elm.querySelector('[data-command="sub-commands"]') as HTMLDivElement;
+        subCommands1Elm.dispatchEvent(new Event('mouseover'));
+        const cellMenu2Elm = dialogElm.querySelector('.slick-cell-menu.slickgrid12345.slick-menu-level-1') as HTMLDivElement;
+        expect(cellMenu2Elm.parentElement).toBe(dialogElm);
+
+        subCommands1Elm.dispatchEvent(new Event('click'));
+        expect(dialogElm.querySelectorAll('.slick-cell-menu.slickgrid12345.slick-menu-level-1').length).toBe(1);
+
+        plugin.closeMenu(new Event('click') as any, {} as any);
+        expect(dialogElm.querySelector('.slick-cell-menu')).toBeNull();
+        delete (gridStub as any).getPopupContainer;
+        dialogElm.remove();
+      });
+
       it('should create a Cell Menu item with commands sub-menu items and expect sub-menu list to show in the DOM element aligned left when sub-menu is clicked', () => {
         const actionMock = vi.fn();
         const disposeSubMenuSpy = vi.spyOn(plugin, 'disposeSubMenus');

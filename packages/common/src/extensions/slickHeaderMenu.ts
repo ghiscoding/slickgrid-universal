@@ -142,7 +142,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   repositionSubMenu(e: DOMMouseOrTouchEvent<HTMLElement> | SlickEventData, item: MenuCommandItem, level: number, columnDef: Column): void {
     // creating sub-menu, we'll also pass level & the item object since we might have "subMenuTitle" to show
     const subMenuElm = this.createCommandMenu(e.target as HTMLElement, item.commandItems || [], columnDef, level + 1, item);
-    document.body.appendChild(subMenuElm);
+    this.popupContainerElm.appendChild(subMenuElm);
     this.repositionMenu(e, subMenuElm, undefined, this.addonOptions);
   }
 
@@ -732,7 +732,9 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     const subMenuId = subMenuCommand ? subMenuCommand.replace(/\s/g, '') : '';
 
     const menuClasses = `${this.menuCssClass} slick-menu-level-${level} ${this.gridUid}`;
-    const bodyMenuElm = document.body.querySelector<HTMLDivElement>(
+    // the root menu is appended to the grid container while sub-menus are appended to the popup container
+    const menuParentElm = level === 0 ? this.grid.getContainerNode() : this.popupContainerElm;
+    const bodyMenuElm = menuParentElm.querySelector<HTMLDivElement>(
       `.${this.menuCssClass}.slick-menu-level-${level}${this.gridUidSelector}`
     );
 

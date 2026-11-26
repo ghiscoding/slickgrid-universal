@@ -1,6 +1,6 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement } from '@slickgrid-universal/utils';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { SlickGrid } from '../../core/slickGrid.js';
 import type { GridMenu } from '../../interfaces/gridMenu.interface.js';
 import type { Column, GridMenuOption } from '../../interfaces/index.js';
@@ -25,6 +25,9 @@ class TestMenuBase extends MenuBaseClass<GridMenu> {
   }
   public testWireMenuKeyboardNavigation(menuElm: HTMLElement, options?: any) {
     return this.wireMenuKeyboardNavigation(menuElm, options);
+  }
+  public testToPopupContainerPosition(menuElm: HTMLElement, top: number, left: number) {
+    return this.toPopupContainerPosition(menuElm, top, left);
   }
   public testRepositionMenu(event: any, menuElm: HTMLElement, addonOptions?: any) {
     return this.repositionMenu(event, menuElm, undefined, addonOptions);
@@ -425,5 +428,128 @@ describe('MenuBaseClass', () => {
 
     document.body.removeChild(menuElm);
     document.body.removeChild(parentMenu);
+  });
+
+  describe('popup container', () => {
+    const createMenuInContainer = (popupContainerElm: HTMLElement) => {
+      const service = new SharedService();
+      service.slickGrid = { getOptions: () => ({}), getPopupContainer: () => popupContainerElm } as unknown as SlickGrid;
+      const menu = new TestMenuBase(extensionUtility, pubSubServiceStub, service);
+      const menuElm = createDomElement('div', { className: 'slick-grid-menu' }, popupContainerElm);
+      return { menu, menuElm };
+    };
+
+    const mockBox = (elm: HTMLElement, rect: { top: number; left: number }, extra: Record<string, number> = {}) => {
+      vi.spyOn(elm, 'getBoundingClientRect').mockReturnValue({ ...rect, bottom: 0, right: 0, width: 0, height: 0 } as DOMRect);
+      Object.entries(extra).forEach(([prop, value]) => Object.defineProperty(elm, prop, { configurable: true, value }));
+    };
+
+    afterEach(() => {
+      document.body.textContent = '';
+    });
+
+    it('should use document.body as popup container when the grid is not available or has no "getPopupContainer" method', () => {
+      const menu = new TestMenuBase(extensionUtility, pubSubServiceStub, new SharedService());
+      expect(menu.popupContainerElm).toBe(document.body);
+
+      const service = new SharedService();
+      service.slickGrid = { getOptions: () => ({}) } as unknown as SlickGrid;
+      expect(new TestMenuBase(extensionUtility, pubSubServiceStub, service).popupContainerElm).toBe(document.body);
+    });
+
+    it('should keep the document coordinates when the popup container is document.body', () => {
+      const { menu, menuElm } = createMenuInContainer(document.body);
+      expect(menu.testToPopupContainerPosition(menuElm, 120, 80)).toEqual({ top: 120, left: 80 });
+    });
+
+    it('should keep the document coordinates when the menu is not a direct child of the popup container', () => {
+      const dialogElm = createDomElement('dialog', { style: { position: 'fixed' } }, document.body);
+      const { menu } = createMenuInContainer(dialogElm);
+      const otherMenuElm = createDomElement('div', {}, document.body);
+      expect(menu.testToPopupContainerPosition(otherMenuElm, 120, 80)).toEqual({ top: 120, left: 80 });
+    });
+
+    it('should convert document coordinates to be relative to a positioned popup container, including its border and scroll', () => {
+      const dialogElm = createDomElement('dialog', { style: { position: 'fixed' } }, document.body);
+      mockBox(dialogElm, { top: 50, left: 30 }, { clientTop: 2, clientLeft: 3, scrollTop: 10, scrollLeft: 5 });
+      const { menu, menuElm } = createMenuInContainer(dialogElm);
+      Object.defineProperty(window, 'pageYOffset', { configurable: true, value: 20 });
+      Object.defineProperty(window, 'pageXOffset', { configurable: true, value: 4 });
+
+      expect(menu.testToPopupContainerPosition(menuElm, 120, 80)).toEqual({ top: 120 - 50 - 20 - 2 + 10, left: 80 - 30 - 4 - 3 + 5 });
+
+      Object.defineProperty(window, 'pageYOffset', { configurable: true, value: 0 });
+      Object.defineProperty(window, 'pageXOffset', { configurable: true, value: 0 });
+    });
+
+    it('should use the offset parent of a static popup container', () => {
+      const positionedElm = createDomElement('div', { style: { position: 'relative' } }, document.body);
+      mockBox(positionedElm, { top: 40, left: 20 });
+      const staticElm = createDomElement('div', {}, positionedElm);
+      Object.defineProperty(staticElm, 'offsetParent', { configurable: true, value: positionedElm });
+      const { menu, menuElm } = createMenuInContainer(staticElm);
+
+      expect(menu.testToPopupContainerPosition(menuElm, 120, 80)).toEqual({ top: 80, left: 60 });
+    });
+
+    it('should keep the document coordinates when a static popup container has no positioned ancestor', () => {
+      const staticElm = createDomElement('div', {}, document.body);
+      const { menu, menuElm } = createMenuInContainer(staticElm);
+
+      expect(menu.testToPopupContainerPosition(menuElm, 120, 80)).toEqual({ top: 120, left: 80 });
+    });
+
+    it('should find and remove menus from the popup container and the Header Menu root from the grid container', () => {
+      const dialogElm = createDomElement('dialog', {}, document.body);
+      const gridContainerElm = createDomElement('div', {}, document.body);
+      const service = new SharedService();
+      service.slickGrid = {
+        getOptions: () => ({}),
+        getUID: () => 'slickgrid_123',
+        getContainerNode: () => gridContainerElm,
+        getPopupContainer: () => dialogElm,
+      } as unknown as SlickGrid;
+      const menu = new TestMenuBase(extensionUtility, pubSubServiceStub, service);
+      (menu as any)._menuCssPrefix = 'slick-menu';
+      const rootElm = createDomElement('div', { className: 'slick-menu slickgrid_123' }, gridContainerElm);
+      const subMenuElm = createDomElement('div', { className: 'slick-menu slick-submenu slickgrid_123' }, dialogElm);
+
+      expect(menu.menuElement).toBe(subMenuElm);
+
+      menu.disposeSubMenus();
+      expect(dialogElm.contains(subMenuElm)).toBe(false);
+      expect(gridContainerElm.contains(rootElm)).toBe(true);
+
+      createDomElement('div', { className: 'slick-menu slickgrid_123' }, dialogElm);
+      menu.disposeAllMenus();
+      expect(dialogElm.querySelector('.slick-menu')).toBeNull();
+      expect(gridContainerElm.querySelector('.slick-menu')).toBeNull();
+    });
+
+    it('should focus the trigger item of a Header Menu root kept in the grid container when closing a sub-menu with ArrowLeft', () => {
+      const popupContainerElm = createDomElement('div', {}, document.body);
+      const gridContainerElm = createDomElement('div', {}, document.body);
+      const service = new SharedService();
+      service.slickGrid = {
+        getOptions: () => ({}),
+        getContainerNode: () => gridContainerElm,
+        getPopupContainer: () => popupContainerElm,
+      } as unknown as SlickGrid;
+      const menu = new TestMenuBase(extensionUtility, pubSubServiceStub, service);
+
+      const parentMenu = createDomElement('div', { className: 'slick-menu-level-0' }, gridContainerElm);
+      const triggerItem = createDomElement('div', { className: 'slick-submenu-item', tabIndex: 0 }, parentMenu);
+      triggerItem.dataset.command = 'Export';
+      const subMenuElm = createDomElement('div', { className: 'slick-submenu slick-menu-level-1' }, popupContainerElm);
+      subMenuElm.dataset.subMenuParent = 'Export';
+      const item = createDomElement('div', { className: 'slick-submenu-item dropright', tabIndex: 0 }, subMenuElm);
+      item.focus();
+
+      menu.testWireMenuKeyboardNavigation(subMenuElm, { allItemsSelector: '.slick-submenu-item', focusedItemSelector: '.slick-submenu-item' });
+      item.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true, cancelable: true }));
+
+      expect(popupContainerElm.contains(subMenuElm)).toBe(false);
+      expect(document.activeElement).toBe(triggerItem);
+    });
   });
 });

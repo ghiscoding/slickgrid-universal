@@ -221,6 +221,27 @@ describe('ColumnPickerControl', () => {
       expect(remapSpy).toHaveBeenCalled();
     });
 
+    it('should append the Column Picker to the "popupContainer" and position it relative to that container', () => {
+      const dialogElm = document.createElement('dialog');
+      dialogElm.style.position = 'fixed';
+      document.body.appendChild(dialogElm);
+      vi.spyOn(dialogElm, 'getBoundingClientRect').mockReturnValue({ top: 50, left: 30 } as DOMRect);
+      (gridStub as any).getPopupContainer = () => dialogElm;
+      control.columns = columnsMock;
+
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn(), pageX: 100, pageY: 200 } as any;
+      gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData as any, gridStub);
+
+      expect(control.menuElement!.parentElement).toBe(dialogElm);
+      expect(control.menuElement!.style.top).toBe('140px');
+      expect(control.menuElement!.style.left).toBe('70px');
+
+      document.body.dispatchEvent(new Event('mousedown', { bubbles: true }));
+      expect(control.menuElement).toBeFalsy();
+      delete (gridStub as any).getPopupContainer;
+      dialogElm.remove();
+    });
+
     it('should open the Column Picker and then expect it to hide when clicking anywhere in the DOM body', () => {
       const mockRowSelection = [0, 3, 5];
       vi.spyOn(control['_eventHandler'], 'subscribe');

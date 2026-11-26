@@ -79,7 +79,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
         this._menuElm.style.top = `${(event.pageY || 0) + 5}px`;
         this._menuElm.style.left = `${event.pageX}px`;
         this._menuElm.style.display = 'block';
-        document.body.appendChild(this._menuElm);
+        this.popupContainerElm.appendChild(this._menuElm);
 
         // Focus the first menu item BEFORE binding keyboard handler
         this.focusFirstMenuItem(this._menuElm);
@@ -139,7 +139,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     }
 
     const menuClasses = `${this.menuCssClass} slick-menu-level-${level} ${this.gridUid}`;
-    const bodyMenuElm = document.body.querySelector<HTMLDivElement>(
+    const bodyMenuElm = this.popupContainerElm.querySelector<HTMLDivElement>(
       `.${this.menuCssClass}.slick-menu-level-${level}${this.gridUidSelector}`
     );
 
@@ -378,7 +378,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     const subMenuElm = this.createMenu(e.target as HTMLElement, (item as MenuCommandItem)?.commandItems || [], level + 1, item);
     if (subMenuElm) {
       subMenuElm.style.display = 'block';
-      document.body.appendChild(subMenuElm);
+      this.popupContainerElm.appendChild(subMenuElm);
       this.repositionMenu(e, subMenuElm, undefined, this._addonOptions);
     }
   }

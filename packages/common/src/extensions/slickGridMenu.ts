@@ -243,7 +243,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     const subMenuId = subMenuCommand ? subMenuCommand.replace(/\s/g, '') : '';
 
     const menuClasses = `${this.menuCssClass} slick-menu-level-${level} ${this._gridUid}`;
-    const bodyMenuElm = document.body.querySelector<HTMLDivElement>(
+    const bodyMenuElm = this.popupContainerElm.querySelector<HTMLDivElement>(
       `.${this.menuCssClass}.slick-menu-level-${level}${this.gridUidSelector}`
     );
 
@@ -439,8 +439,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         buttonElm = (e.target as HTMLElement).parentElement as HTMLButtonElement; // external grid menu might fall in this last case if wrapped in a span/div
       }
 
-      // append grid menu to the body
-      document.body.appendChild(this._menuElm);
+      // append grid menu to the popup container (defaults to the body)
+      this.popupContainerElm.appendChild(this._menuElm);
 
       // once we have both lists (commandItems + columnPicker), we are ready to reposition the menu since its height/width should be calculated by then
       this.repositionMenu(e as any, this._menuElm, buttonElm, addonOptions);
@@ -949,7 +949,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       item
     );
     subMenuElm.style.display = 'block';
-    document.body.appendChild(subMenuElm);
+    this.popupContainerElm.appendChild(subMenuElm);
     this._gridMenuButtonElm && this.repositionMenu(e, subMenuElm, this._gridMenuButtonElm, this._addonOptions);
   }
 }

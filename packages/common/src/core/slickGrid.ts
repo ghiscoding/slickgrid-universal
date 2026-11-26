@@ -362,6 +362,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     sanitizer: undefined, // sanitize function
     mixinDefaults: false,
     shadowRoot: undefined,
+    popupContainer: undefined,
   };
 
   protected _columnDefaults = {
@@ -5030,6 +5031,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   /** Get Grid Canvas Node DOM Element */
   getContainerNode(): HTMLElement {
     return this._container;
+  }
+
+  /** Get the element where menus and other popups are appended, which is the `popupContainer` grid option when provided or `document.body` by default */
+  getPopupContainer(): HTMLElement {
+    const popupContainer = this._options.popupContainer;
+    return (typeof popupContainer === 'function' ? popupContainer() : popupContainer) || document.body;
   }
 
   // Rendering / Scrolling
