@@ -237,10 +237,7 @@ export class SvelteRowDetailView extends SlickRowDetailView {
     let hasRedrawn = false;
     for (const view of Array.from(this._views.values())) {
       const itemId = view.item?.[this.itemIdField];
-      if (
-        !this._renderedViewportRowIds.has(itemId) ||
-        (view.rendered && view.element.isConnected)
-      ) {
+      if (!this._renderedViewportRowIds.has(itemId) || (view.rendered && view.element.isConnected)) {
         continue;
       }
       const rowIndex = this.dataView.getRowById(itemId);
