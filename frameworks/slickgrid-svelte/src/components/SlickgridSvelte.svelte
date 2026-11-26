@@ -36,6 +36,7 @@
   let footerAnchor: HTMLSpanElement | undefined = $state();
   let grid: SlickgridSvelteCore | undefined;
   let eventPubSub: EventPubSubService | undefined;
+  let removeLanguageListener: (() => void) | undefined;
   let currentHandlers: Record<string, unknown> = {};
   let disposed = false;
 
@@ -112,9 +113,17 @@
   }
 
   function disposeGrid(emptyDomElementContainer = false) {
-    if (!disposed && grid) {
+    if (!disposed) {
       disposed = true;
-      grid.dispose();
+      grid?.dispose();
+      removeLanguageListener?.();
+      removeLanguageListener = undefined;
+      eventSubscriptions.forEach((subscription) => subscription.unsubscribe());
+      eventSubscriptions.clear();
+      instances = undefined;
+      extensions = undefined;
+      grid = undefined;
+      eventPubSub = undefined;
       if (emptyDomElementContainer) {
         container.querySelector(':scope > .slickgrid-container')?.remove();
       }
@@ -138,6 +147,7 @@
     const rowDetailOptions = getRowDetailOptions(options);
     const paginationComponent = getPaginationComponent(options);
     i18next?.on('languageChanged', languageChanged);
+    removeLanguageListener = () => i18next?.off('languageChanged', languageChanged);
 
     grid = new SlickgridSvelteCore(
       container,
@@ -160,13 +170,7 @@
     onSvelteGridCreated?.(instances);
 
     return () => {
-      i18next?.off('languageChanged', languageChanged);
       disposeGrid();
-      eventSubscriptions.forEach((subscription) => subscription.unsubscribe());
-      eventSubscriptions.clear();
-      instances = undefined;
-      extensions = undefined;
-      grid = undefined;
     };
   });
 

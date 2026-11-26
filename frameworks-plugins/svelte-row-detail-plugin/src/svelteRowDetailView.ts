@@ -24,6 +24,7 @@ export class SvelteRowDetailView extends SlickRowDetailView {
   protected _subscriptions: EventSubscription[] = [];
   protected _userProcess?: (item: any) => Promise<any>;
   protected _renderTimer?: ReturnType<typeof setTimeout>;
+  protected _forceRedrawPending = false;
   protected _pubSub: EventPubSubService;
   protected _disposed = false;
 
@@ -177,11 +178,7 @@ export class SvelteRowDetailView extends SlickRowDetailView {
   }
 
   protected detachViewFromDom(item: any): void {
-    const view = this._views.get(item?.[this.itemIdField]);
-    if (view) {
-      view.rendered = false;
-      view.element.remove();
-    }
+    this.disposeView(item, false);
   }
 
   protected reattachView(view: MountedView, container?: HTMLElement): boolean {
@@ -215,13 +212,16 @@ export class SvelteRowDetailView extends SlickRowDetailView {
   }
 
   protected redrawAll(forceRedraw: boolean): void {
+    this._forceRedrawPending ||= forceRedraw;
     clearTimeout(this._renderTimer);
     this._renderTimer = setTimeout(() => {
+      const forcePendingRedraw = this._forceRedrawPending;
+      this._forceRedrawPending = false;
       this.resetRenderedRows();
       for (const view of Array.from(this._views.values())) {
-        if (forceRedraw || !view.rendered || !view.element.isConnected) {
+        if (forcePendingRedraw || !view.rendered || !view.element.isConnected) {
           // keep a placeholder so the view is re-created when its panel is back in the DOM
-          forceRedraw && this.disposeView(view.item, true, false);
+          forcePendingRedraw && this.disposeView(view.item, true, false);
           this.redrawView(view.item, false);
         }
       }
@@ -237,14 +237,14 @@ export class SvelteRowDetailView extends SlickRowDetailView {
     let hasRedrawn = false;
     for (const view of Array.from(this._views.values())) {
       const itemId = view.item?.[this.itemIdField];
-      const rowIndex = this.dataView.getRowById(itemId);
       if (
-        rowIndex === undefined ||
-        rowIndex < renderedRange.top ||
-        rowIndex > renderedRange.bottom ||
         !this._renderedViewportRowIds.has(itemId) ||
         (view.rendered && view.element.isConnected)
       ) {
+        continue;
+      }
+      const rowIndex = this.dataView.getRowById(itemId);
+      if (rowIndex === undefined || rowIndex < renderedRange.top || rowIndex > renderedRange.bottom) {
         continue;
       }
       this.redrawView(view.item, false);
@@ -284,6 +284,7 @@ export class SvelteRowDetailView extends SlickRowDetailView {
   override dispose(): void {
     this._disposed = true;
     clearTimeout(this._renderTimer);
+    this._forceRedrawPending = false;
     this._subscriptions.forEach((subscription) => subscription.unsubscribe?.());
     this.disposeAll();
     super.dispose();

@@ -906,7 +906,11 @@ export class SlickgridSvelteCore<TData = any> {
           // see commit: https://github.com/ghiscoding/aurelia-slickgrid/commit/8c503a4d45fba11cbd8d8cc467fae8d177cc4f60
           if (!calledOnRowCountChanged && Array.isArray(rows)) {
             const ranges = grid.getRenderedRange();
-            rows.filter((row) => row >= ranges.top && row <= ranges.bottom).forEach((row: number) => grid.updateRow(row));
+            for (const row of rows) {
+              if (row >= ranges.top && row <= ranges.bottom) {
+                grid.updateRow(row);
+              }
+            }
             grid.render();
           }
         });
