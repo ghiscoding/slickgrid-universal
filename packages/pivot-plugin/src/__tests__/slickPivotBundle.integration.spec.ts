@@ -10,6 +10,25 @@ describe('pivot external resources with the vanilla bundle', () => {
     document.body.innerHTML = '';
   });
 
+  it('allows an initial pivot activation to be cancelled before the grid is ready', async () => {
+    const container = document.createElement('div');
+    container.className = 'slickgrid-container';
+    document.body.appendChild(container);
+    const pivot = new SlickPivot();
+    const bundle = new SlickVanillaGridBundle(
+      container,
+      [{ id: 'region', field: 'region', name: 'Region' }],
+      { externalResources: [pivot], pivotOptions: { pivotMode: true, spec: { rows: ['region'] } } },
+      [{ id: 1, region: 'East' }]
+    );
+
+    await pivot.setPivotMode(false);
+    await Promise.resolve();
+    expect(pivot.isPivotMode()).toBe(false);
+    expect(bundle.slickGrid?.getData()).toBe(bundle.dataView);
+    bundle.dispose();
+  });
+
   it('uses the bundle grid and DataView across mode switches', async () => {
     const container = document.createElement('div');
     const gridElement = document.createElement('div');
@@ -21,7 +40,7 @@ describe('pivot external resources with the vanilla bundle', () => {
     const bundle = new SlickVanillaGridBundle(
       gridElement,
       [
-        { id: 'region', field: 'region', name: 'Region' },
+        { id: 'regionId', field: 'region', name: 'Region' },
         { id: 'amount', field: 'amount', name: 'Amount' },
       ],
       {
@@ -32,9 +51,9 @@ describe('pivot external resources with the vanilla bundle', () => {
         enableHeaderMenu: true,
         externalResources: [pivot, fieldList],
         pivotOptions: {
-          pivotMode: false,
+          pivotMode: true,
           fields: [{ id: 'amount', type: 'number' }],
-          spec: { rows: ['region'], columns: ['region'], values: [{ field: 'amount', aggregator: 'sum' }] },
+          spec: { rows: ['regionId'], columns: ['regionId'], values: [{ field: 'amount', aggregator: 'sum' }] },
         },
       },
       [
@@ -44,7 +63,13 @@ describe('pivot external resources with the vanilla bundle', () => {
     );
     expect(pivot.getGrid()).toBe(bundle.slickGrid);
     expect(fieldList.getPanel()).toBeDefined();
-    await pivot.setPivotMode(true);
+    expect(pivot.getFields()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: 'regionId', field: 'region', label: 'Region' }),
+        expect.objectContaining({ id: 'amount', field: 'amount', label: 'Amount', type: 'number' }),
+      ])
+    );
+    await Promise.resolve();
     expect(bundle.slickGrid?.getData()).toBe(pivot.rowModel);
     const picker = bundle.extensionService.getExtensionInstanceByName('columnPicker');
     const menu = bundle.extensionService.getExtensionInstanceByName('gridMenu');
@@ -64,8 +89,8 @@ describe('pivot external resources with the vanilla bundle', () => {
     expect(bundle.slickGrid?.getPreHeaderPanel()?.querySelector('.slick-pivot-header-caption')).not.toBeNull();
     await pivot.setPivotMode(false);
     expect(bundle.slickGrid?.getData()).toBe(bundle.dataView);
-    expect(picker.columns.map((column) => column.id)).toEqual(['region', 'amount']);
-    expect(menu.columns.map((column) => column.id)).toEqual(['region', 'amount']);
+    expect(picker.columns.map((column) => column.id)).toEqual(['regionId', 'amount']);
+    expect(menu.columns.map((column) => column.id)).toEqual(['regionId', 'amount']);
     await pivot.setPivotMode(true);
     expect(bundle.slickGrid?.getData()).toBe(pivot.rowModel);
     bundle.dispose();

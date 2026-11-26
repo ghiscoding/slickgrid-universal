@@ -257,6 +257,7 @@ export class SlickPivot implements SlickPlugin {
   /** The grid was created with `rowModel` as its data: it only shows the pivot */
   protected _dedicatedGrid = false;
   protected _gridDestroying = false;
+  protected _pendingInitialMode = false;
   protected _hostState?: HostGridState;
   /** The pivot was not computed while Pivot Mode was off */
   protected _stale = false;
@@ -397,7 +398,18 @@ export class SlickPivot implements SlickPlugin {
     this._eventHandler.subscribe(grid.onBeforeDestroy, () => (this._gridDestroying = true));
 
     if (this._pivotMode) {
-      this.attachToGrid();
+      if (containerService && !this._dedicatedGrid) {
+        this._pivotMode = false;
+        this._pendingInitialMode = true;
+        queueMicrotask(() => {
+          if (this._pendingInitialMode && this._grid === grid && !this._gridDestroying) {
+            this._pendingInitialMode = false;
+            void this.setPivotMode(true);
+          }
+        });
+      } else {
+        this.attachToGrid();
+      }
     }
   }
 
@@ -565,6 +577,7 @@ export class SlickPivot implements SlickPlugin {
    * keeping the spec, the collapsed groups and the column widths for the next time
    */
   setPivotMode(pivotMode: boolean): Promise<void> {
+    this._pendingInitialMode = false;
     if (pivotMode === this._pivotMode) {
       return Promise.resolve();
     }
@@ -593,6 +606,7 @@ export class SlickPivot implements SlickPlugin {
   }
 
   destroy() {
+    this._pendingInitialMode = false;
     clearTimeout(this._refreshTimer);
     this._abortController?.abort();
     if (this._grid && this._pivotMode) {

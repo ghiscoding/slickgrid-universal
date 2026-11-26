@@ -161,14 +161,8 @@ export default class Example48 {
       datasetIdPropertyName: 'orderId',
       externalResources: [this.pivot, this.fieldList],
       pivotOptions: {
-        fields: this.columns.map((column) => ({
-          id: String(column.id),
-          field: column.field,
-          label: typeof column.name === 'string' ? column.name : undefined,
-          ...pivotFieldOptions[String(column.id)],
-        })),
-        fieldsFromColumns: false,
-        pivotMode: false,
+        fields: Object.entries(pivotFieldOptions).map(([id, options]) => ({ id, ...options })),
+        pivotMode: true,
         spec: initialSpec,
       },
     };
@@ -181,7 +175,6 @@ export default class Example48 {
         grid?.updateColumns();
       }
     });
-    void this.pivot.setPivotMode(true);
     Object.assign(window, { grid: this.gridBundle?.slickGrid, pivot: this.pivot, fieldList: this.fieldList });
   }
 
