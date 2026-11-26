@@ -814,6 +814,35 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(stopImmediatePropagationSpy).toHaveBeenCalled();
   });
 
+  it.each([
+    { rows: [0, 3], expectedRows: [3], allChecked: false },
+    { rows: [1, 2, 3], expectedRows: null, allChecked: true },
+  ])('uses grid row indexes for selectableOverride when selected rows are $rows', ({ rows, expectedRows, allChecked }) => {
+    const override = vi.fn((row: number) => row !== 0);
+    const selectedRows = [...rows];
+    vi.spyOn(gridStub, 'getDataLength').mockReturnValue(4);
+    vi.spyOn(gridStub, 'getDataItem').mockImplementation((row) => ({ id: row }));
+    vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(selectedRows);
+    const setSelectedRowsSpy = vi.spyOn(gridStub, 'setSelectedRows');
+    const updateColumnHeaderSpy = vi.spyOn(gridStub, 'updateColumnHeader');
+
+    plugin = new SlickCheckboxSelectColumn(pubSubServiceStub, { applySelectOnAllPages: false, selectableOverride: override });
+    plugin.init(gridStub);
+    gridStub.onSelectedRowsChanged.notify({ rows, previousSelectedRows: [], changedSelectedRows: rows, changedUnselectedRows: [], caller: '', grid: gridStub });
+
+    expect(override.mock.calls.map(([row]) => row)).toEqual([0, 1, 2, 3, ...rows]);
+    if (expectedRows) {
+      expect(setSelectedRowsSpy).toHaveBeenCalledWith(expectedRows, 'click.toggle');
+    } else {
+      expect(setSelectedRowsSpy).not.toHaveBeenCalled();
+    }
+    expect(updateColumnHeaderSpy).toHaveBeenCalledWith(
+      '_checkbox_selector',
+      plugin.createCheckboxElement(`header-selector${plugin['_selectAll_UID']}`, allChecked, true),
+      'Select/Deselect All'
+    );
+  });
+
   it('should trigger "onSelectedRowsChanged" event and invalidate row and render with partial checked icon to be called but without "setSelectedRows" when "applySelectOnAllPages" is disabled & checkSelectableOverride returns True or is not provided', () => {
     const invalidateRowSpy = vi.spyOn(gridStub, 'invalidateRow');
     const renderSpy = vi.spyOn(gridStub, 'render');
