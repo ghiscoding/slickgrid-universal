@@ -1,4 +1,4 @@
-# Slickgrid Svelte
+# <a href="https://svelte.dev/docs/svelte/"><img src="./assets/svelte.svg" height="80" alt="Svelte"/></a> Slickgrid Svelte
 
 A Svelte 5 wrapper around SlickGrid Universal. Install `slickgrid-svelte`, `svelte`, and a Sass compiler, and import a SlickGrid theme in your application.
 
