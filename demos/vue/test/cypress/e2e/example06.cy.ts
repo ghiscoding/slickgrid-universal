@@ -383,18 +383,17 @@ describe('Example 6 - GraphQL Grid', () => {
 
   it('should open Date picker and expect date range between 01-Jan to 15-Feb', () => {
     cy.get('.search-filter.filter-finish.filled input').click({ force: true });
-
     cy.get('.vc:visible');
-
     cy.get('[data-vc="column"]:nth(0) [data-vc="month"]').should('have.text', 'January');
     cy.get('[data-vc="column"]:nth(1) [data-vc="month"]').should('have.text', 'February');
-
     cy.get('[data-vc="year"]:nth(0)').should('have.text', currentYear);
-
     cy.get('.vc:visible [data-vc-date-selected] button').should('have.length', 46);
-
     cy.get('.vc:visible [data-vc-date-selected]').first().should('have.text', '1');
     cy.get('.vc:visible [data-vc-date-selected]').last().should('have.text', '15');
+
+    // close date picker
+    cy.get('[data-test="status"').click();
+    cy.get('.vc:visible').should('not.exist');
   });
 
   describe('Set Dynamic Sorting', () => {
