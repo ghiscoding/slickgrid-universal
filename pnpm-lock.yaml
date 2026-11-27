@@ -305,6 +305,9 @@ importers:
       '@slickgrid-universal/excel-export':
         specifier: workspace:*
         version: link:../../packages/excel-export
+      '@slickgrid-universal/formula-plugin':
+        specifier: workspace:*
+        version: link:../../packages/formula-plugin
       '@slickgrid-universal/graphql':
         specifier: workspace:*
         version: link:../../packages/graphql
@@ -405,6 +408,9 @@ importers:
       '@slickgrid-universal/excel-export':
         specifier: workspace:*
         version: link:../../packages/excel-export
+      '@slickgrid-universal/formula-plugin':
+        specifier: workspace:*
+        version: link:../../packages/formula-plugin
       '@slickgrid-universal/graphql':
         specifier: workspace:*
         version: link:../../packages/graphql
@@ -735,6 +741,9 @@ importers:
       '@slickgrid-universal/excel-export':
         specifier: workspace:*
         version: link:../../packages/excel-export
+      '@slickgrid-universal/formula-plugin':
+        specifier: workspace:*
+        version: link:../../packages/formula-plugin
       '@slickgrid-universal/graphql':
         specifier: workspace:*
         version: link:../../packages/graphql
@@ -826,6 +835,9 @@ importers:
       '@slickgrid-universal/excel-export':
         specifier: workspace:*
         version: link:../../packages/excel-export
+      '@slickgrid-universal/formula-plugin':
+        specifier: workspace:*
+        version: link:../../packages/formula-plugin
       '@slickgrid-universal/graphql':
         specifier: workspace:*
         version: link:../../packages/graphql
@@ -1149,6 +1161,9 @@ importers:
       '@slickgrid-universal/excel-export':
         specifier: workspace:*
         version: link:../../packages/excel-export
+      '@slickgrid-universal/formula-plugin':
+        specifier: workspace:*
+        version: link:../../packages/formula-plugin
       '@slickgrid-universal/graphql':
         specifier: workspace:*
         version: link:../../packages/graphql
@@ -1632,6 +1647,28 @@ importers:
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:*
         version: link:../event-pub-sub
+
+  packages/formula-plugin:
+    dependencies:
+      '@slickgrid-universal/binding':
+        specifier: workspace:*
+        version: link:../binding
+      '@slickgrid-universal/common':
+        specifier: workspace:*
+        version: link:../common
+    devDependencies:
+      autoprefixer:
+        specifier: 'catalog:'
+        version: 10.6.2(postcss@8.5.32)
+      cssnano:
+        specifier: 'catalog:'
+        version: 9.9.0(postcss@8.5.32)
+      postcss:
+        specifier: 'catalog:'
+        version: 8.5.32
+      sass:
+        specifier: 'catalog:'
+        version: 1.107.1
 
   packages/graphql:
     dependencies:

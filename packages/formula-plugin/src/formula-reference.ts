@@ -1,0 +1,304 @@
+import type { FormulaGridCell, FormulaReferenceColorInfo, FormulaReferenceCssHash, FormulaReferenceToken } from './interfaces/index.js';
+
+const FORMULA_TOKEN_COLOR_COUNT = 10;
+/** Maximum number of cells expanded for one formula reference range. */
+export const FORMULA_MAX_REFERENCE_CELLS = 100_000;
+/** Shared grid CSS overlay key used while formula references are highlighted. */
+export const FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY = 'formula-reference-highlights';
+
+/** Shared reference/color state used by FormulaCellEditor and FormulaService. */
+export class FormulaReferenceColorCache {
+  protected _formula = '';
+  protected _references: Map<string, FormulaReferenceColorInfo> = new Map<string, FormulaReferenceColorInfo>();
+  protected _isDirty = false;
+
+  update(formula: string): boolean {
+    if (formula === this._formula) {
+      return false;
+    }
+
+    this._formula = formula;
+    this._references.clear();
+    for (const info of buildFormulaReferenceColorInfos(formula)) {
+      this._references.set(info.ref, info);
+    }
+    this._isDirty = true;
+    return true;
+  }
+
+  clear(): void {
+    this._formula = '';
+    this._references.clear();
+    this._isDirty = false;
+  }
+
+  get isDirty(): boolean {
+    return this._isDirty;
+  }
+
+  get size(): number {
+    return this._references.size;
+  }
+
+  get(ref: string): FormulaReferenceColorInfo | undefined {
+    return this._references.get(normalizeFormulaReferenceToken(ref));
+  }
+
+  values(): IterableIterator<FormulaReferenceColorInfo> {
+    return this._references.values();
+  }
+
+  markClean(): void {
+    this._isDirty = false;
+  }
+}
+
+/** Quoted formula string literal with backslash escapes (doubled delimiters match as adjacent literals). */
+export const FORMULA_QUOTED_STRING_PATTERN: string = String.raw`"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'`;
+
+/** Return the index after the quoted string starting at `start` (backslash escapes and doubled delimiters), or -1 when unterminated. */
+export function skipFormulaString(formula: string, start: number): number {
+  const quote = formula[start];
+  for (let index = start + 1; index < formula.length; index++) {
+    if (formula[index] === '\\') {
+      index++;
+    } else if (formula[index] === quote) {
+      if (formula[index + 1] !== quote) {
+        return index + 1;
+      }
+      index++;
+    }
+  }
+  return -1;
+}
+
+const FORMULA_A1_CELL_PATTERN = String.raw`\$?[A-Z]{1,3}\$?\d+`;
+const FORMULA_A1_RANGE_PATTERN = String.raw`${FORMULA_A1_CELL_PATTERN}\s*:\s*${FORMULA_A1_CELL_PATTERN}`;
+const FORMULA_REFERENCE_BOUNDARY_START = String.raw`(?<![A-Za-z0-9_])`;
+const FORMULA_REFERENCE_BOUNDARY_END = String.raw`(?![A-Za-z0-9_]|\s*\()`;
+
+// Match complete or incomplete ranges (D1:D4, D1:D, D1:) before single cells.
+const FORMULA_REFERENCE_TOKEN_PATTERN = String.raw`${FORMULA_REFERENCE_BOUNDARY_START}${FORMULA_A1_CELL_PATTERN}\s*:\s*(?:\$?[A-Z]{1,3}\$?\d*)?(?![A-Za-z0-9_])|${FORMULA_REFERENCE_BOUNDARY_START}${FORMULA_A1_CELL_PATTERN}${FORMULA_REFERENCE_BOUNDARY_END}`;
+
+function createFormulaReferenceTokenRegex(): RegExp {
+  return new RegExp(FORMULA_REFERENCE_TOKEN_PATTERN, 'gi');
+}
+
+export function createFormulaA1RangeRegex(): RegExp {
+  return new RegExp(`${FORMULA_REFERENCE_BOUNDARY_START}${FORMULA_A1_RANGE_PATTERN}(?![A-Za-z0-9_])`, 'gi');
+}
+
+export function createFormulaA1ReferenceRegex(): RegExp {
+  return new RegExp(
+    `${FORMULA_REFERENCE_BOUNDARY_START}(?:${FORMULA_A1_RANGE_PATTERN}|${FORMULA_A1_CELL_PATTERN})${FORMULA_REFERENCE_BOUNDARY_END}`,
+    'gi'
+  );
+}
+
+/** Transform only formula text outside quoted string literals. */
+export function transformFormulaOutsideQuotedStrings(formula: string, transform: (segment: string) => string): string {
+  const quotedTextRegex = new RegExp(FORMULA_QUOTED_STRING_PATTERN, 'g');
+  let result = '';
+  let previousEnd = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = quotedTextRegex.exec(formula)) !== null) {
+    result += transform(formula.slice(previousEnd, match.index)) + match[0];
+    previousEnd = match.index + match[0].length;
+  }
+  return result + transform(formula.slice(previousEnd));
+}
+
+/** Find references only outside quoted strings, including through unfinished string literals. */
+export function findFormulaReferenceTokens(formula: string): FormulaReferenceToken[] {
+  const references: FormulaReferenceToken[] = [];
+  const addSegment = (start: number, end: number) => {
+    const segment = formula.slice(start, end);
+    const referenceRegex = createFormulaReferenceTokenRegex();
+    let match: RegExpExecArray | null;
+    while ((match = referenceRegex.exec(segment)) !== null) {
+      references.push({ ref: match[0], start: start + match.index, end: start + match.index + match[0].length });
+    }
+  };
+
+  let segmentStart = 0;
+  let index = 0;
+  while (index < formula.length) {
+    const quote = formula[index];
+    if (quote !== '"' && quote !== "'") {
+      index++;
+      continue;
+    }
+
+    addSegment(segmentStart, index);
+    const end = skipFormulaString(formula, index);
+    index = end < 0 ? formula.length : end;
+    segmentStart = index;
+  }
+  addSegment(segmentStart, formula.length);
+  return references;
+}
+
+export function normalizeFormulaReferenceToken(token: string): string {
+  return token.replace(/\$/g, '').replace(/\s+/g, '').toUpperCase();
+}
+
+export function getExcelColumnNameByIndex(columnIndex: number): string {
+  let dividend = columnIndex;
+  let columnName = '';
+
+  while (dividend > 0) {
+    const modulo = (dividend - 1) % 26;
+    columnName = String.fromCharCode(65 + modulo) + columnName;
+    dividend = Math.floor((dividend - modulo) / 26);
+  }
+
+  return columnName;
+}
+
+export function getExcelColumnIndexByName(columnName: string): number {
+  let columnIndex = 0;
+  for (let i = 0; i < columnName.length; i++) {
+    columnIndex = columnIndex * 26 + (columnName.charCodeAt(i) - 64);
+  }
+  return columnIndex - 1;
+}
+
+export function parseExcelReferenceCell(token: string): FormulaGridCell | undefined {
+  const match = normalizeFormulaReferenceToken(token).match(/^([A-Z]{1,3})(\d+)$/);
+  if (!match) {
+    return undefined;
+  }
+
+  const row = Number.parseInt(match[2], 10) - 1;
+  const cell = getExcelColumnIndexByName(match[1]);
+  if (!Number.isFinite(row) || row < 0) {
+    return undefined;
+  }
+
+  return { row, cell };
+}
+
+// fallow-ignore-next-line unused-export
+export function expandFormulaReferenceToGridCells(reference: string): FormulaGridCell[] {
+  const normalizedRef = normalizeFormulaReferenceToken(reference);
+  const [startToken, endToken] = normalizedRef.includes(':') ? normalizedRef.split(':', 2) : [normalizedRef, normalizedRef];
+  const startCell = parseExcelReferenceCell(startToken);
+  const endCell = parseExcelReferenceCell(endToken || startToken);
+
+  if (!startCell) {
+    return [];
+  }
+  if (!endCell) {
+    return [startCell];
+  }
+
+  const cells: FormulaGridCell[] = [];
+  const minRow = Math.min(startCell.row, endCell.row);
+  const maxRow = Math.max(startCell.row, endCell.row);
+  const minCell = Math.min(startCell.cell, endCell.cell);
+  const maxCell = Math.max(startCell.cell, endCell.cell);
+  const rowCount = maxRow - minRow + 1;
+  const cellCount = maxCell - minCell + 1;
+  if (!Number.isSafeInteger(rowCount) || !Number.isSafeInteger(cellCount) || rowCount * cellCount > FORMULA_MAX_REFERENCE_CELLS) {
+    return [];
+  }
+
+  for (let row = minRow; row <= maxRow; row++) {
+    for (let cell = minCell; cell <= maxCell; cell++) {
+      cells.push({ row, cell });
+    }
+  }
+  return cells;
+}
+
+/** Build the shared left-to-right reference/color mapping used by both the editor and service. */
+// fallow-ignore-next-line unused-export
+export function buildFormulaReferenceColorInfos(formula: string): FormulaReferenceColorInfo[] {
+  const references: FormulaReferenceColorInfo[] = [];
+  const seen = new Set<string>();
+  for (const token of findFormulaReferenceTokens(formula)) {
+    const ref = normalizeFormulaReferenceToken(token.ref);
+    if (seen.has(ref)) {
+      continue;
+    }
+
+    seen.add(ref);
+    const colorIdx = references.length % FORMULA_TOKEN_COLOR_COUNT;
+    references.push({
+      ref,
+      colorIdx,
+      colorClass: `formula-cell-color-${colorIdx + 1}`,
+      cells: expandFormulaReferenceToGridCells(ref),
+    });
+  }
+
+  return references;
+}
+
+/** Convert colored formula references to the keyed cell-class hash expected by SlickGrid. */
+export function buildFormulaReferenceCssHash(
+  references: Iterable<FormulaReferenceColorInfo>,
+  columns: Array<{ id?: number | string; hidden?: boolean }>,
+  rowCount?: number
+): FormulaReferenceCssHash {
+  const hash: FormulaReferenceCssHash = Object.create(null);
+
+  for (const reference of references) {
+    const first = reference.cells[0];
+    const last = reference.cells[reference.cells.length - 1];
+    const visibleCells = reference.cells.filter((cell) => columns[cell.cell] && !columns[cell.cell].hidden);
+    const firstVisible = visibleCells[0];
+    const lastVisible = visibleCells[visibleCells.length - 1];
+    for (const cell of reference.cells) {
+      const columnId = columns[cell.cell]?.id;
+      if (
+        columnId === undefined ||
+        columnId === null ||
+        columns[cell.cell].hidden ||
+        cell.row < 0 ||
+        (rowCount !== undefined && cell.row >= rowCount)
+      ) {
+        continue;
+      }
+
+      const rowClasses = (hash[cell.row] ??= Object.create(null));
+      let classes = reference.colorClass;
+      if (reference.cells.length > 1) {
+        const bottom = rowCount === undefined ? last.row : Math.min(last.row, rowCount - 1);
+        const right = lastVisible.cell;
+        classes += ' formula-ref-range';
+        if (cell.row === first.row) {
+          classes += ' formula-ref-top';
+        }
+        if (cell.row === bottom) {
+          classes += ' formula-ref-bottom';
+        }
+        if (cell.cell === firstVisible.cell) {
+          classes += ' formula-ref-left';
+        }
+        if (cell.cell === right) {
+          classes += ' formula-ref-right';
+        }
+      }
+      rowClasses[columnId] = classes;
+    }
+  }
+
+  return hash;
+}
+
+/** Assign a data-cell value without invoking the legacy Object.prototype.__proto__ setter. */
+export function setFormulaObjectProperty(target: Record<string, unknown>, propertyName: string, value: unknown): void {
+  if (propertyName === '__proto__') {
+    Object.defineProperty(target, propertyName, {
+      configurable: true,
+      enumerable: true,
+      value,
+      writable: true,
+    });
+    return;
+  }
+
+  target[propertyName] = value;
+}

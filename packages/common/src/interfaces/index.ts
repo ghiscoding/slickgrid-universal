@@ -54,6 +54,7 @@ export type * from './editorValidator.interface.js';
 export type * from './editUndoRedoBuffer.interface.js';
 export type * from './emptyWarning.interface.js';
 export type * from './excelCopyBufferOption.interface.js';
+export type * from './excelExportCellProvider.interface.js';
 export type * from './excelExportOption.interface.js';
 export type * from './extension.interface.js';
 export type * from './extensionModel.interface.js';

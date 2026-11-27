@@ -2,6 +2,7 @@ import type {
   ExcelExportService as BaseExcelExportService,
   Column,
   ContainerService,
+  ExcelExportCellProvider,
   ExcelExportOption,
   ExcelGroupValueParserArgs,
   ExportCellReader,
@@ -14,6 +15,7 @@ import type {
   KeyTitlePair,
   Locale,
   PubSubService,
+  SharedService,
   SlickDataView,
   SlickGrid,
   TranslaterService,
@@ -34,11 +36,12 @@ import {
 import { addWhiteSpaces, createDomElement, extend, htmlDecode, isEmptyObject, stripTags } from '@slickgrid-universal/utils';
 import {
   createExcelFileStream,
+  createWorkbook,
   downloadExcelFile,
-  Workbook,
   type ExcelColumnMetadata,
   type ExcelMetadata,
   type StyleSheet,
+  type Workbook,
   type Worksheet,
 } from 'excel-builder-vanilla';
 import { getExcelFormatFromGridFormatter, getGroupTotalValue, useCellFormatByFieldType, type ExcelFormatter } from './excelUtils.js';
@@ -77,10 +80,12 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   protected _stylesheet!: StyleSheet;
   protected _stylesheetFormats: any;
   protected _pubSubService: PubSubService | null = null;
+  protected _sharedService: SharedService | null = null;
   protected _translaterService: TranslaterService | undefined;
   protected _workbook!: Workbook;
   protected _timer1?: any;
   protected _timer2?: any;
+  protected _cellProviders: ExcelExportCellProvider[] = [];
 
   // references of each detected cell and/or group total formats
   protected _regularCellExcelFormats: { [fieldId: string]: RegularCellExcelFormat } = Object.create(null);
@@ -134,7 +139,9 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     this._grid = null as any;
     this._dataView = null as any;
     this._pubSubService = null;
+    this._sharedService = null;
     this._translaterService = undefined;
+    this._cellProviders = [];
     this._regularCellExcelFormats = Object.create(null);
     this._groupTotalExcelFormats = Object.create(null);
   }
@@ -148,6 +155,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     this._grid = grid;
     this._dataView = grid?.getData<SlickDataView>() || {};
     this._pubSubService = containerService.get<PubSubService>('PubSubService');
+    this._sharedService = containerService.get<SharedService>('SharedService');
 
     // get locales provided by user in main file or else use default English locales via the Constants
     this._locales = this._gridOptions?.locales ?? Constants.locales;
@@ -190,7 +198,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
     // prepare the Excel Workbook & Sheet
     const worksheetOptions = { name: this._excelExportOptions.sheetName || 'Sheet1' };
-    this._workbook = new Workbook();
+    this._workbook = createWorkbook();
     this._sheet = this._workbook.createWorksheet(worksheetOptions);
 
     // add any Excel Format/Stylesheet to current Workbook
@@ -204,12 +212,12 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     this._sheet.setColumnFormats([boldFormat]);
 
     try {
-      // get all data by reading all DataView rows with yielding for responsiveness
-      const dataOutput = await this.getDataOutputAsync();
-
       if (this._gridOptions?.excelExportOptions?.customExcelHeader) {
         this._gridOptions.excelExportOptions.customExcelHeader(this._workbook, this._sheet);
       }
+
+      // get all data by reading all DataView rows with yielding for responsiveness
+      const dataOutput = await this.getDataOutputAsync();
 
       const columns = this.getColumns();
       this._sheet.setColumns(this.getColumnStyles(columns));
@@ -223,6 +231,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       this._sheet.setData(finalOutput);
 
       this._workbook.addWorksheet(this._sheet);
+      this._cellProviders.forEach((provider) => provider.onExcelExportEnd?.({ workbook: this._workbook, sheet: this._sheet }));
 
       // MIME type could be undefined, if that's the case we'll detect the type by its file extension
       // user could also provide its own mime type, if however an empty string is provided we will consider to be without any MIME type)
@@ -332,6 +341,19 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     // also style the headers, defaults to Bold but user could pass his own style
     outputData.push(this.getColumnHeaderData(columns, { style: columnHeaderStyleId }));
 
+    // let external resources (e.g. FormulaService) prepare their export state, they can then provide cell values while rows are read
+    this._cellProviders = ((this._sharedService?.externalRegisteredResources ?? []) as ExcelExportCellProvider[]).filter(
+      (resource) => typeof resource?.getExcelExportCellValue === 'function'
+    );
+    const startContext = {
+      workbook: this._workbook,
+      sheet: this._sheet,
+      columns: columns.filter(isColumnExported),
+      dataStartRow: this.getWorksheetReservedRowCount() + outputData.length + 1,
+      hasGroupedItems: this._hasGroupedItems,
+    };
+    this._cellProviders.forEach((provider) => provider.onExcelExportStart?.(startContext));
+
     // Populate the rest of the Grid Data by reading directly from DataView with yielding for responsiveness
     await this.pushAllGridRowDataToArrayAsync(outputData, columns, columnMetadataCache);
 
@@ -395,6 +417,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     let colspanStartIndex = 0;
     let headerOffset = 0; // increases when "Group by" is provided in the next header row
     let outputGroupedHeaderTitles: Array<ExcelColumnMetadata> = [];
+    const groupedHeaderRowNumber = this.getWorksheetReservedRowCount() + 1;
 
     if (this.getGroupColumnTitle()) {
       outputGroupedHeaderTitles.push({ value: '' });
@@ -417,7 +440,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       ) {
         const leftExcelColumnChar = this.getExcelColumnNameByIndex(colspanStartIndex + 1 + headerOffset);
         const rightExcelColumnChar = this.getExcelColumnNameByIndex(cellIndex + 1 + headerOffset);
-        this._sheet.mergeCells(`${leftExcelColumnChar}1`, `${rightExcelColumnChar}1`);
+        this._sheet.mergeCells(`${leftExcelColumnChar}${groupedHeaderRowNumber}`, `${rightExcelColumnChar}${groupedHeaderRowNumber}`);
 
         // next group starts 1 column index away
         colspanStartIndex = cellIndex + 1;
@@ -778,20 +801,41 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         }
 
         const { excelFormatId, getDataValueParser } = cellStyleFormat;
-        const parsedItemData = getDataValueParser(itemData, {
-          columnDef,
-          excelFormatId,
-          stylesheet: this._stylesheet,
-          gridOptions,
-          dataRowIdx,
-          dataContext: itemObj,
-        }) as Date | number | string | ExcelColumnMetadata;
+        const providedCell = this.getProvidedCellValue(itemObj, columnDef, dataRowIdx);
+        if (providedCell) {
+          rowOutputStrings.push({ ...providedCell, metadata: { style: excelFormatId, ...providedCell.metadata } });
+        } else {
+          const parsedItemData = getDataValueParser(itemData, {
+            columnDef,
+            excelFormatId,
+            stylesheet: this._stylesheet,
+            gridOptions,
+            dataRowIdx,
+            dataContext: itemObj,
+          }) as Date | number | string | ExcelColumnMetadata;
 
-        rowOutputStrings.push(parsedItemData);
+          rowOutputStrings.push(parsedItemData);
+        }
       }
     }
 
     return rowOutputStrings as string[];
+  }
+
+  /** Return the first cell value supplied by a registered ExcelExportCellProvider, if any. */
+  protected getProvidedCellValue(itemObj: any, columnDef: Column, dataRowIdx: number): ExcelColumnMetadata | undefined {
+    for (const provider of this._cellProviders) {
+      const cell = provider.getExcelExportCellValue!(itemObj, columnDef, dataRowIdx);
+      if (cell) {
+        return cell;
+      }
+    }
+    return undefined;
+  }
+
+  /** Return number of worksheet rows already reserved before grid headers/data (includes merged-cell vertical spans). */
+  protected getWorksheetReservedRowCount(): number {
+    return Array.isArray(this._sheet?.data) ? this._sheet.data.length : 0;
   }
 
   /**

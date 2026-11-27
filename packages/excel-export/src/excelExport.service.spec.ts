@@ -25,6 +25,7 @@ import { useCellFormatByFieldType } from './excelUtils.js';
 // mocked modules
 vi.mock('excel-builder-vanilla', async (importOriginal) => ({
   ...((await importOriginal()) as any),
+  createWorkbook: vi.fn(() => new Workbook()),
   downloadExcelFile: vi.fn().mockResolvedValue(true),
   createExcelFileStream: vi.fn(() => {
     return {
@@ -2781,6 +2782,70 @@ describe('ExcelExportService', () => {
       expect(output[0]).toBe('A');
       expect((service as any)._regularCellExcelFormats.title.excelFormatId).toBeDefined();
       expect((service as any)._regularCellExcelFormats.title.getDataValueParser).toBe(parserSpy);
+    });
+
+    it('readRegularRowData should use the first cell value supplied by an ExcelExportCellProvider and keep the column style by default', () => {
+      service.init(gridStub, container);
+      const localColumns = [{ id: 'total', field: 'total', width: 100, type: 'number' }] as unknown as Column[];
+      (service as any)._excelExportOptions = { htmlDecode: true, autoDetectCellFormat: true };
+      (service as any)._workbook = new Workbook();
+      (service as any)._sheet = (service as any)._workbook.createWorksheet({ name: 'Sheet1' });
+      (service as any)._stylesheet = (service as any)._workbook.getStyleSheet();
+      const boldFmt = (service as any)._stylesheet.createFormat({ font: { bold: true } });
+      const strFmt = (service as any)._stylesheet.createFormat({ format: '@' });
+      const numFmt = (service as any)._stylesheet.createFormat({ format: '0' });
+      (service as any)._stylesheetFormats = { boldFormat: boldFmt, stringFormat: strFmt, numberFormat: numFmt };
+      const getExcelExportCellValue = vi.fn().mockReturnValueOnce({ value: 'B2*C2', metadata: { type: 'formula' } });
+      (service as any)._cellProviders = [{ getExcelExportCellValue: vi.fn() }, { getExcelExportCellValue }];
+
+      const metadataCache = (service as any).preCalculateColumnMetadata(localColumns);
+      const output = (service as any).readRegularRowData(localColumns, 0, { id: 'id_1', total: 0 }, 0, metadataCache);
+      const nextOutput = (service as any).readRegularRowData(localColumns, 1, { id: 'id_2', total: 5 }, 1, metadataCache);
+
+      expect(output[0]).toEqual({ value: 'B2*C2', metadata: { type: 'formula', style: expect.any(Number) } });
+      expect(getExcelExportCellValue).toHaveBeenCalledWith({ id: 'id_1', total: 0 }, localColumns[0], 0);
+      expect(nextOutput[0]).not.toEqual(expect.objectContaining({ value: 'B2*C2' }));
+    });
+
+    it('should call ExcelExportCellProvider start/end hooks with the export context', async () => {
+      const columns = [
+        { id: 'value', field: 'value', width: 100 },
+        { id: 'skip', field: 'skip', excludeFromExport: true },
+      ] as Column[];
+      const provider = {
+        onExcelExportStart: vi.fn(),
+        getExcelExportCellValue: vi.fn(),
+        onExcelExportEnd: vi.fn(({ workbook }) => workbook.addWorksheet(workbook.createWorksheet({ name: 'Helper' }))),
+      };
+      container.registerInstance('SharedService', { externalRegisteredResources: [{ pluginName: 'Other' }, provider] });
+      vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columns);
+      vi.spyOn(dataViewStub, 'getLength').mockReturnValue(1);
+      vi.spyOn(dataViewStub, 'getItem').mockReturnValue({ id: 0, value: 1 });
+      const customExcelHeader = vi.fn((_workbook, sheet) => sheet.data.push([{ value: 'Title' }]));
+      mockGridOptions.excelExportOptions = { customExcelHeader };
+      const svc = service as any;
+
+      try {
+        service.init(gridStub, container);
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
+      } finally {
+        delete mockGridOptions.excelExportOptions;
+      }
+
+      expect(provider.onExcelExportStart).toHaveBeenCalledWith({
+        workbook: svc._workbook,
+        sheet: svc._sheet,
+        columns: [columns[0]],
+        dataStartRow: 3,
+        hasGroupedItems: false,
+      });
+      expect(provider.getExcelExportCellValue).toHaveBeenCalledWith({ id: 0, value: 1 }, columns[0], 0);
+      expect(provider.onExcelExportEnd).toHaveBeenCalledWith({ workbook: svc._workbook, sheet: svc._sheet });
+      expect(svc._workbook.worksheets.map((sheet: any) => sheet.name)).toEqual(['Sheet1', 'Helper']);
+
+      svc._sharedService = null;
+      await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
+      expect(svc._cellProviders).toEqual([]);
     });
 
     it('efficientYield should use scheduler.postTask when available', async () => {

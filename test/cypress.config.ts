@@ -17,6 +17,9 @@ interface ParsedXlsxExport {
   header: string[];
   firstDataRow: string[];
   dataRows: string[][];
+  formulaRows: string[][];
+  additionalSheetFormulaRows: string[][][];
+  definedNames: Array<{ name: string; formula: string }>;
 }
 
 function isExcelExportFile(fileName: string): boolean {
@@ -25,7 +28,13 @@ function isExcelExportFile(fileName: string): boolean {
 }
 
 function decodeXmlEntities(input: string): string {
-  return input.replaceAll('&amp;', '&').replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&quot;', '"').replaceAll('&apos;', "'");
+  return input
+    .replaceAll('&#39;', "'")
+    .replaceAll('&amp;', '&')
+    .replaceAll('&lt;', '<')
+    .replaceAll('&gt;', '>')
+    .replaceAll('&quot;', '"')
+    .replaceAll('&apos;', "'");
 }
 
 function extractZipEntries(buffer: Buffer): Map<string, Buffer> {
@@ -150,6 +159,32 @@ function parseSheetRowValues(sheetXml: string, sharedStrings: string[], rowNumbe
   return values;
 }
 
+function parseSheetRowFormulas(sheetXml: string, rowNumber: number): string[] {
+  const rowRegex = new RegExp(`<row[^>]*r="${rowNumber}"[^>]*>([\\s\\S]*?)<\\/row>`);
+  const rowMatch = sheetXml.match(rowRegex);
+  if (!rowMatch) {
+    return [];
+  }
+
+  const formulas: string[] = [];
+  const cellRegex = /<c([^>]*)>([\s\S]*?)<\/c>/g;
+  let cellMatch: RegExpExecArray | null;
+
+  while ((cellMatch = cellRegex.exec(rowMatch[1])) !== null) {
+    const cellReference = cellMatch[1].match(/\sr="([A-Z]+)\d+"/);
+    const formulaMatch = cellMatch[2].match(/<f(?:\s[^>]*)?>([\s\S]*?)<\/f>/);
+    if (!cellReference || !formulaMatch) {
+      continue;
+    }
+
+    const columnName = cellReference[1];
+    const columnIndex = [...columnName].reduce((index, letter) => index * 26 + letter.charCodeAt(0) - 64, 0) - 1;
+    formulas[columnIndex] = decodeXmlEntities(formulaMatch[1]);
+  }
+
+  return formulas.map((formula) => formula || '');
+}
+
 function parseXlsxExport(filePath: string, maxDataRows = 10): ParsedXlsxExport {
   const zipBuffer = fs.readFileSync(filePath);
   const entries = extractZipEntries(zipBuffer);
@@ -175,6 +210,7 @@ function parseXlsxExport(filePath: string, maxDataRows = 10): ParsedXlsxExport {
   const dataRows = Array.from({ length: Math.max(0, maxDataRows) }, (_unused, index) =>
     parseSheetRowValues(firstSheetXml, sharedStrings, index + 2)
   );
+  const formulaRows = Array.from({ length: Math.max(0, maxDataRows) }, (_unused, index) => parseSheetRowFormulas(firstSheetXml, index + 2));
 
   return {
     fileName: path.basename(filePath),
@@ -183,6 +219,16 @@ function parseXlsxExport(filePath: string, maxDataRows = 10): ParsedXlsxExport {
     header,
     firstDataRow,
     dataRows,
+    formulaRows,
+    definedNames: [...workbookXml.matchAll(/<definedName\b([^>]*)>([\s\S]*?)<\/definedName>/g)].flatMap((match) => {
+      const name = match[1].match(/\bname="([^"]+)"/);
+      return name ? [{ name: decodeXmlEntities(name[1]), formula: decodeXmlEntities(match[2]) }] : [];
+    }),
+    additionalSheetFormulaRows: [...entries.entries()]
+      .filter(([name]) => /^xl\/worksheets\/sheet\d+\.xml$/.test(name) && name !== 'xl/worksheets/sheet1.xml')
+      .map(([, content]) =>
+        Array.from({ length: Math.max(0, maxDataRows) }, (_, index) => parseSheetRowFormulas(content.toString('utf8'), index + 1))
+      ),
   };
 }
 
@@ -242,6 +288,13 @@ export default defineConfig({
     testIsolation: false,
     setupNodeEvents(on) {
       on('task', {
+        clearFormulaCsvDownload({ downloadsFolder }: { downloadsFolder: string }) {
+          const filename = path.join(downloadsFolder, 'grocery-formula-values.csv');
+          if (fs.existsSync(filename)) {
+            fs.unlinkSync(filename);
+          }
+          return null;
+        },
         clearXlsxDownloads({ downloadsFolder }: { downloadsFolder: string }) {
           if (!fs.existsSync(downloadsFolder)) {
             return 0;

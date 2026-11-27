@@ -1,0 +1,508 @@
+import { FORMULA_ERROR } from './formula-errors.js';
+import type { FormulaCallback } from './interfaces/index.js';
+
+const referenceTag: unique symbol = Symbol('formula reference');
+export interface FormulaReferenceValue {
+  readonly [referenceTag]: true;
+  readonly value: unknown;
+}
+
+const literalTag: unique symbol = Symbol('formula literal text');
+export interface FormulaLiteralTextValue {
+  readonly [literalTag]: true;
+  readonly value: string;
+}
+
+export function formulaLiteralText(value: string): FormulaLiteralTextValue {
+  return { [literalTag]: true, value };
+}
+
+export function isFormulaLiteralText(value: unknown): value is FormulaLiteralTextValue {
+  return typeof value === 'object' && value !== null && literalTag in value;
+}
+
+export function formulaReference(value: unknown): FormulaReferenceValue {
+  return { [referenceTag]: true, value };
+}
+
+export function isFormulaReference(value: unknown): value is FormulaReferenceValue {
+  return typeof value === 'object' && value !== null && referenceTag in value;
+}
+
+export function unwrapFormulaReference(value: unknown): unknown {
+  return isFormulaReference(value) ? unwrapFormulaReference(value.value) : isFormulaLiteralText(value) ? value.value : value;
+}
+
+/** Convert a local JavaScript date to the Excel 1900 date system, including its leap-year compatibility day. */
+export function formulaDateToSerial(date: Date): number {
+  const year = date.getFullYear();
+  if (!Number.isFinite(date.getTime()) || year < 1900 || year > 9999) {
+    return NaN;
+  }
+  const day = Date.UTC(year, date.getMonth(), date.getDate());
+  const serial = (day - Date.UTC(1899, 11, 31)) / 86400000;
+  const time = ((date.getHours() * 60 + date.getMinutes()) * 60 + date.getSeconds()) * 1000 + date.getMilliseconds();
+  return serial + (serial >= 60 ? 1 : 0) + time / 86400000;
+}
+
+export function formulaLogicalCondition(value: unknown): boolean | string {
+  value = unwrapFormulaReference(value);
+  if (value instanceof Date) {
+    value = formulaDateToSerial(value);
+  }
+  if (typeof value === 'boolean') {
+    return value;
+  }
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value !== 0;
+  }
+  if (value === null || value === undefined) {
+    return false;
+  }
+  if (typeof value === 'string') {
+    if (value.toUpperCase() === 'TRUE') {
+      return true;
+    }
+    if (value.toUpperCase() === 'FALSE') {
+      return false;
+    }
+  }
+  return FORMULA_ERROR.VALUE;
+}
+
+export function formulaTextValue(value: unknown): string {
+  value = unwrapFormulaReference(value);
+  if (value instanceof Date) {
+    return String(formulaDateToSerial(value));
+  }
+  return typeof value === 'boolean' ? (value ? 'TRUE' : 'FALSE') : String(value ?? '');
+}
+
+export function calculateFormulaPower(base: number, exponent: number): number | string {
+  if (base === 0 && exponent < 0) {
+    return FORMULA_ERROR.DIV0;
+  }
+  if (base === 0 && exponent === 0) {
+    return FORMULA_ERROR.NUM;
+  }
+  const result = Math.pow(base, exponent);
+  return Number.isFinite(result) ? result : FORMULA_ERROR.NUM;
+}
+
+export function createFormulaFunctionRegistry(customFunctions: ReadonlyMap<string, FormulaCallback>): Map<string, FormulaCallback> {
+  const registry = createBuiltInFormulaFunctions();
+
+  // Custom functions can extend or override built-ins by name.
+  for (const [functionName, callback] of customFunctions.entries()) {
+    if (/^[A-Z_][A-Z0-9_]*$/.test(functionName) && typeof callback === 'function') {
+      registry.set(functionName, callback);
+    }
+  }
+
+  return registry;
+}
+
+function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
+  const registry = new Map<string, FormulaCallback>();
+
+  const IF = (...args: unknown[]) => {
+    if (args.length < 2 || args.length > 3) {
+      return FORMULA_ERROR.VALUE;
+    }
+    const condition = formulaLogicalCondition(args[0]);
+    return typeof condition === 'boolean' ? (condition ? args[1] : (args[2] ?? false)) : condition;
+  };
+  const SUM = (...args: unknown[]) => {
+    const values = aggregateNumbers(args);
+    return Array.isArray(values) ? values.reduce((acc, value) => acc + value, 0) : values;
+  };
+  const PRODUCT = (...args: unknown[]) => {
+    const values = aggregateNumbers(args);
+    return Array.isArray(values) ? (values.length ? values.reduce((acc, value) => acc * value, 1) : 0) : values;
+  };
+  const MIN = (...args: unknown[]) => {
+    const values = aggregateNumbers(args);
+    if (!Array.isArray(values)) {
+      return values;
+    }
+    return values.length ? values.reduce((minimum, value) => (value < minimum ? value : minimum)) : 0;
+  };
+  const MAX = (...args: unknown[]) => {
+    const values = aggregateNumbers(args);
+    if (!Array.isArray(values)) {
+      return values;
+    }
+    return values.length ? values.reduce((maximum, value) => (value > maximum ? value : maximum)) : 0;
+  };
+  const AVERAGE = (...args: unknown[]) => {
+    const values = aggregateNumbers(args);
+    if (!Array.isArray(values)) {
+      return values;
+    }
+    return values.length ? values.reduce((acc, value) => acc + value, 0) / values.length : FORMULA_ERROR.DIV0;
+  };
+  const MEDIAN = (...args: unknown[]) => {
+    const values = aggregateNumbers(args);
+    if (!Array.isArray(values)) {
+      return values;
+    }
+    values.sort((a, b) => a - b);
+    if (!values.length) {
+      return FORMULA_ERROR.NUM;
+    }
+    const mid = Math.floor(values.length / 2);
+    return values.length % 2 === 0 ? (values[mid - 1] + values[mid]) / 2 : values[mid];
+  };
+  const POWER = (...args: unknown[]) => {
+    const values = numericScalarArguments(args, 2);
+    return Array.isArray(values) ? calculateFormulaPower(values[0], values[1]) : values;
+  };
+  const ABS = (...args: unknown[]) => {
+    const values = numericScalarArguments(args, 1);
+    return Array.isArray(values) ? Math.abs(values[0]) : values;
+  };
+  const SQRT = (...args: unknown[]) => {
+    const values = numericScalarArguments(args, 1);
+    return Array.isArray(values) ? (values[0] < 0 ? FORMULA_ERROR.NUM : Math.sqrt(values[0])) : values;
+  };
+  const MOD = (...args: unknown[]) => {
+    const values = numericScalarArguments(args, 2);
+    if (!Array.isArray(values)) {
+      return values;
+    }
+    const [number, divisor] = values;
+    if (divisor === 0) {
+      return FORMULA_ERROR.DIV0;
+    }
+    const remainder = number % divisor;
+    return remainder === 0 ? 0 : Math.sign(remainder) === Math.sign(divisor) ? remainder : remainder + divisor;
+  };
+  const ROUND = (...args: unknown[]) => {
+    const values = numericScalarArguments(args, 2);
+    if (!Array.isArray(values)) {
+      return values;
+    }
+    const [number, rawDigits] = values;
+    const digits = Math.trunc(rawDigits);
+    if (digits > 308) {
+      return number;
+    }
+    if (digits < -308) {
+      return 0;
+    }
+    const [coefficient, exponent = '0'] = Math.abs(number).toString().split('e');
+    const shifted = Number(`${coefficient}e${Number(exponent) + digits}`);
+    if (!Number.isFinite(shifted)) {
+      return number;
+    }
+    const rounded = Math.round(shifted);
+    const [roundedCoefficient, roundedExponent = '0'] = rounded.toString().split('e');
+    const result = Number(`${roundedCoefficient}e${Number(roundedExponent) - digits}`);
+    return Number.isFinite(result) ? (number < 0 && result !== 0 ? -result : result) : FORMULA_ERROR.NUM;
+  };
+  const RAND = (...args: unknown[]) => (args.length ? FORMULA_ERROR.VALUE : Math.random());
+  const NOW = (...args: unknown[]) => (args.length ? FORMULA_ERROR.VALUE : new Date());
+  const TODAY = (...args: unknown[]) => {
+    if (args.length) {
+      return FORMULA_ERROR.VALUE;
+    }
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  };
+  const CONCAT = (...args: unknown[]) =>
+    !args.length || args.length > 253 ? FORMULA_ERROR.VALUE : flattenFormulaFunctionArgs(args).map(formulaTextValue).join('');
+  const COUNT = (...args: unknown[]) =>
+    !args.length || args.length > 255
+      ? FORMULA_ERROR.VALUE
+      : args.reduce<number>(
+          (count, arg) =>
+            count +
+            (Array.isArray(arg)
+              ? flattenFormulaFunctionArgs(arg).filter((value) => isCountableNumericValue(unwrapFormulaReference(value))).length
+              : isFormulaReference(arg)
+                ? isCountableNumericValue(arg.value)
+                  ? 1
+                  : 0
+                : isCountableNumericValue(unwrapFormulaReference(arg)) ||
+                    typeof unwrapFormulaReference(arg) === 'boolean' ||
+                    isNumericFormulaValue(unwrapFormulaReference(arg))
+                  ? 1
+                  : 0),
+          0
+        );
+  const COUNTA = (...args: unknown[]) =>
+    !args.length || args.length > 255
+      ? FORMULA_ERROR.VALUE
+      : flattenFormulaFunctionArgs(args).filter((value) =>
+          isFormulaReference(value) ? value.value !== null && value.value !== undefined : value !== null && value !== undefined
+        ).length;
+  const COUNTBLANK = (...args: unknown[]) =>
+    args.length !== 1
+      ? FORMULA_ERROR.VALUE
+      : flattenFormulaFunctionArgs(args).filter((value) => {
+          const unwrapped = unwrapFormulaReference(value);
+          return unwrapped === null || unwrapped === undefined || unwrapped === '';
+        }).length;
+  const COUNTIF = (...args: unknown[]) => {
+    if (args.length !== 2) {
+      return FORMULA_ERROR.VALUE;
+    }
+    const [range, criteria] = args;
+    const values = toFormulaArray(range);
+    const matches = createFormulaCriteriaMatcher(criteria);
+    return values.filter(matches).length;
+  };
+  const SUMIF = (...args: unknown[]) => {
+    if (args.length < 2 || args.length > 3) {
+      return FORMULA_ERROR.VALUE;
+    }
+    const [range, criteria, sumRange] = args;
+    const criteriaValues = toFormulaArray(range);
+    const sumValues = sumRange === undefined ? criteriaValues : toFormulaArray(sumRange);
+    if (sumValues.length !== criteriaValues.length) {
+      return FORMULA_ERROR.VALUE;
+    }
+    const matches = createFormulaCriteriaMatcher(criteria);
+    const length = Math.min(criteriaValues.length, sumValues.length);
+    let sum = 0;
+    for (let i = 0; i < length; i++) {
+      const rawValue = unwrapFormulaReference(sumValues[i]);
+      const value = rawValue instanceof Date ? formulaDateToSerial(rawValue) : rawValue;
+      if (matches(criteriaValues[i]) && typeof value === 'number' && Number.isFinite(value)) {
+        sum += value;
+      }
+    }
+    return sum;
+  };
+  const NA = (...args: unknown[]) => (args.length ? FORMULA_ERROR.VALUE : FORMULA_ERROR.NA);
+
+  registry.set('IF', IF);
+  registry.set('SUM', SUM);
+  registry.set('SUMIF', SUMIF);
+  registry.set('PRODUCT', PRODUCT);
+  registry.set('MIN', MIN);
+  registry.set('MAX', MAX);
+  registry.set('AVERAGE', AVERAGE);
+  registry.set('MEDIAN', MEDIAN);
+  registry.set('POWER', POWER);
+  registry.set('ABS', ABS);
+  registry.set('ROUND', ROUND);
+  registry.set('MOD', MOD);
+  registry.set('SQRT', SQRT);
+  registry.set('RAND', RAND);
+  registry.set('RANDOM', RAND);
+  registry.set('RAN', RAND);
+  registry.set('NOW', NOW);
+  registry.set('TODAY', TODAY);
+  registry.set('CONCAT', CONCAT);
+  registry.set('CONCATENATE', CONCAT);
+  registry.set('COUNT', COUNT);
+  registry.set('COUNTA', COUNTA);
+  registry.set('COUNTBLANK', COUNTBLANK);
+  registry.set('COUNTIF', COUNTIF);
+  registry.set('NA', NA);
+
+  return registry;
+}
+
+/** Convert scalar function arguments without accepting ranges or silently converting text to zero. */
+function numericScalarArguments(args: unknown[], count: number): number[] | string {
+  if (args.length !== count) {
+    return FORMULA_ERROR.VALUE;
+  }
+  const numbers: number[] = [];
+  for (const arg of args) {
+    const value = unwrapFormulaReference(arg);
+    if (value === null || value === undefined) {
+      numbers.push(0);
+    } else if (value instanceof Date && Number.isFinite(formulaDateToSerial(value))) {
+      numbers.push(formulaDateToSerial(value));
+    } else if (typeof value === 'number' && Number.isFinite(value)) {
+      numbers.push(value);
+    } else if (typeof value === 'boolean') {
+      numbers.push(value ? 1 : 0);
+    } else if (typeof value === 'string' && /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(value.trim())) {
+      const number = Number(value);
+      if (!Number.isFinite(number)) {
+        return FORMULA_ERROR.VALUE;
+      }
+      numbers.push(number);
+    } else {
+      return FORMULA_ERROR.VALUE;
+    }
+  }
+  return numbers;
+}
+
+function flattenFormulaFunctionArgs(args: unknown[]): unknown[] {
+  const flat: unknown[] = [];
+  for (const arg of args) {
+    if (Array.isArray(arg)) {
+      flat.push(...flattenFormulaFunctionArgs(arg));
+    } else {
+      flat.push(arg);
+    }
+  }
+  return flat;
+}
+
+/** Aggregate functions treat referenced text and booleans differently from literal arguments. */
+function aggregateNumbers(args: unknown[]): number[] | string {
+  if (!args.length || args.length > 255) {
+    return FORMULA_ERROR.VALUE;
+  }
+  const values: number[] = [];
+  const visit = (arg: unknown, fromRange = false): boolean => {
+    if (Array.isArray(arg)) {
+      return arg.every((item) => visit(item, true));
+    }
+    const reference = isFormulaReference(arg);
+    const rawValue = unwrapFormulaReference(arg);
+    const value = rawValue instanceof Date ? formulaDateToSerial(rawValue) : rawValue;
+    if (reference || fromRange) {
+      if (typeof value === 'number' && Number.isFinite(value)) {
+        values.push(value);
+      }
+      return true;
+    }
+    if (value === null || value === undefined) {
+      return true;
+    }
+    if (typeof value === 'string' && !value.trim()) {
+      return false;
+    }
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric)) {
+      return false;
+    }
+    values.push(numeric);
+    return true;
+  };
+  return args.every((arg) => visit(arg)) ? values : FORMULA_ERROR.VALUE;
+}
+
+function isCountableNumericValue(value: unknown): boolean {
+  return (typeof value === 'number' && Number.isFinite(value)) || (value instanceof Date && Number.isFinite(value.getTime()));
+}
+
+function isNumericFormulaValue(value: unknown): boolean {
+  if (typeof value === 'number') {
+    return Number.isFinite(value);
+  }
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (!trimmed) {
+      return false;
+    }
+    const numeric = Number(trimmed);
+    return Number.isFinite(numeric);
+  }
+  return false;
+}
+
+function toFormulaArray(value: unknown): unknown[] {
+  return Array.isArray(value) ? flattenFormulaFunctionArgs(value) : [value];
+}
+
+function createFormulaCriteriaMatcher(input: unknown): (value: unknown) => boolean {
+  const reference = isFormulaReference(input);
+  const rawCriteria = unwrapFormulaReference(input);
+  const criteria =
+    reference && (rawCriteria === null || rawCriteria === undefined)
+      ? 0
+      : rawCriteria instanceof Date
+        ? formulaDateToSerial(rawCriteria)
+        : rawCriteria;
+  if (typeof criteria === 'number' || typeof criteria === 'boolean') {
+    return (value) => {
+      const unwrapped = unwrapFormulaReference(value);
+      return (unwrapped instanceof Date ? formulaDateToSerial(unwrapped) : unwrapped) === criteria;
+    };
+  }
+
+  const criteriaText = String(criteria ?? '');
+  const operatorMatch = criteriaText.match(/^(<=|>=|<>|=|<|>)([\s\S]*)$/);
+  const operator = operatorMatch?.[1] ?? '=';
+  const operandText = operatorMatch?.[2] ?? criteriaText;
+  const pattern = parseFormulaWildcardPattern(operandText);
+  const hasWildcard = pattern.some((token) => token === null || token === undefined);
+  const rightNumber = isNumericFormulaValue(operandText) ? Number(operandText) : undefined;
+  const rightText = hasWildcard ? operandText.toLowerCase() : pattern.map((token) => token ?? '').join('');
+
+  return (inputValue: unknown) => {
+    const rawValue = unwrapFormulaReference(inputValue);
+    const value = rawValue instanceof Date ? formulaDateToSerial(rawValue) : rawValue;
+    if (operandText === '' && (operator === '=' || operator === '<>')) {
+      const isBlank = value === null || value === undefined || value === '';
+      return operator === '=' ? isBlank : !isBlank;
+    }
+    if (value === null || value === undefined) {
+      return false;
+    }
+    if (hasWildcard && (operator === '=' || operator === '<>')) {
+      const matched = typeof value === 'string' && matchesFormulaWildcard(value.toLowerCase(), pattern);
+      return operator === '=' ? matched : !matched;
+    }
+    const leftNumber = isNumericFormulaValue(value) ? Number(String(value).trim()) : undefined;
+    const left = leftNumber ?? String(value).toLowerCase();
+    const right = rightNumber ?? rightText;
+
+    switch (operator) {
+      case '=':
+        return left === right;
+      case '<>':
+        return left !== right;
+      case '<':
+        return (left as any) < (right as any);
+      case '>':
+        return (left as any) > (right as any);
+      case '<=':
+        return (left as any) <= (right as any);
+      case '>=':
+        return (left as any) >= (right as any);
+      default:
+        return false;
+    }
+  };
+}
+
+/** Null is '*', undefined is '?'; escaped wildcard characters remain literal strings. */
+function parseFormulaWildcardPattern(text: string): Array<string | null | undefined> {
+  const chars = Array.from(text.toLowerCase());
+  const tokens: Array<string | null | undefined> = [];
+  for (let i = 0; i < chars.length; i++) {
+    if (chars[i] === '~' && ['*', '?', '~'].includes(chars[i + 1])) {
+      tokens.push(chars[++i]);
+    } else {
+      tokens.push(chars[i] === '*' ? null : chars[i] === '?' ? undefined : chars[i]);
+    }
+  }
+  return tokens;
+}
+
+/** Iterative glob matching avoids regular-expression backtracking on untrusted criteria. */
+function matchesFormulaWildcard(text: string, pattern: Array<string | null | undefined>): boolean {
+  const chars = Array.from(text);
+  let position = 0;
+  let token = 0;
+  let star = -1;
+  let retry = 0;
+  while (position < chars.length) {
+    if (token < pattern.length && (pattern[token] === undefined || pattern[token] === chars[position])) {
+      token++;
+      position++;
+    } else if (token < pattern.length && pattern[token] === null) {
+      star = token++;
+      retry = position;
+    } else if (star >= 0) {
+      token = star + 1;
+      position = ++retry;
+    } else {
+      return false;
+    }
+  }
+  while (token < pattern.length && pattern[token] === null) {
+    token++;
+  }
+  return token === pattern.length;
+}

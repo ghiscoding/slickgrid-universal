@@ -17,6 +17,7 @@
     margin-bottom: var(--slick-text-editor-margin-bottom, v.$slick-text-editor-margin-bottom);
     margin-right: var(--slick-text-editor-margin-right, v.$slick-text-editor-margin-right);
     margin-top: var(--slick-text-editor-margin-top, v.$slick-text-editor-margin-top);
+    box-sizing: border-box;
     outline: 0;
     height: 100%;
     max-width: 100%;

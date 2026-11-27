@@ -3,6 +3,7 @@ import type { Column, EmptyWarning, GridOption, RowDetailView, TreeDataOption } 
 
 export const PluginFlagMappings: Map<string, keyof GridOption> = new Map<string, keyof GridOption>([
   ['ExcelExportService', 'enableExcelExport'],
+  ['FormulaService', 'enableFormulas'],
   ['PdfExportService', 'enablePdfExport'],
   ['TextExportService', 'enableTextExport'],
   ['CompositeEditorComponent', 'enableCompositeEditor'],
