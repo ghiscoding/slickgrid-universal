@@ -68,6 +68,65 @@ const Example: React.FC = () => {
 }
 ```
 
+#### Custom chip sorting
+
+`draggableGrouping.groupSortComparer` lets an application decide how groups are ordered after a user clicks a grouping chip's sort icon. It receives two `{ value, count }` groups, the **next** direction and the column, and must return `SortDirectionNumber.asc`, `desc` or `neutral`. The direction represents the chip's two states, so the callback can assign a different meaning to each one. It replaces the column's `grouping.comparer` on a chip click, and the plugin reapplies grouping automatically.
+
+The following example starts with the largest groups first, switches to value ascending on the first click, and switches back to count descending on the second. Empty values remain last in either state, and equal counts are ordered by value. The initial `grouping.comparer` uses the same logic because the chip callback is only installed after a click.
+
+```ts
+import { sortByFieldType, SortDirectionNumber } from '@slickgrid-universal/common';
+import type { Column, GridOption, GroupingComparerItem } from '@slickgrid-universal/common';
+
+const compareGroups = (
+  a: GroupingComparerItem,
+  b: GroupingComparerItem,
+  direction: SortDirectionNumber,
+  column: Column,
+  gridOptions: GridOption
+): SortDirectionNumber => {
+  const isEmpty = (value: unknown) => value == null || (typeof value === 'string' && value.trim() === '');
+  const aEmpty = isEmpty(a.value);
+  const bEmpty = isEmpty(b.value);
+  if (aEmpty !== bEmpty) {
+    return aEmpty ? SortDirectionNumber.asc : SortDirectionNumber.desc;
+  }
+  if (aEmpty) {
+    return SortDirectionNumber.neutral;
+  }
+
+  const byValue = () => sortByFieldType(column.type || 'text', a.value, b.value, SortDirectionNumber.asc, column, gridOptions);
+  const result = direction === SortDirectionNumber.desc ? b.count - a.count || byValue() : byValue();
+  return result < 0 ? SortDirectionNumber.desc : result > 0 ? SortDirectionNumber.asc : SortDirectionNumber.neutral;
+};
+
+// Use your application's grid options and add these settings before creating the grid.
+const gridOptions: GridOption = {
+  enableDraggableGrouping: true,
+  draggableGrouping: {
+    groupSortComparer: (a, b, direction, column) => compareGroups(a, b, direction, column, gridOptions),
+    sortAscIconCssClass: 'my-value-sort-icon',
+    sortDescIconCssClass: 'my-count-sort-icon',
+  },
+};
+
+const statusColumn: Column = {
+  id: 'status', name: 'Status', field: 'status', type: 'text', sortable: true,
+};
+statusColumn.grouping = {
+  getter: 'status',
+  sortAsc: false,
+  comparer: (a, b) => compareGroups(a, b, SortDirectionNumber.desc, statusColumn, gridOptions),
+};
+// Include statusColumn in the grid's column definitions.
+```
+
+Supply CSS for `my-value-sort-icon` and `my-count-sort-icon`, or use classes from your icon library. The ascending class represents value order and the descending class represents count order in this example. Both classes are configured globally for the plugin. Each sortable grouped column keeps its own direction and icon, and the callback can inspect `column` to customize comparisons per column. Use a matching initial comparer and `sortAsc` on each grouped column.
+
+By default `sortAsc` is `true`, so the first click selects the descending state. Setting it to `false` as above makes the first click select the ascending state, and the initial comparer and icon both represent count order. `sortByFieldType` uses the column's type and grid options for value comparisons. Define a suitable `type` and customize the comparison for values or date formats specific to your application.
+
+This is a two-state toggle. The callback supplies the sort logic, including empty handling and tie-breaking. It does not provide arbitrary sort cycles, custom chip controls, or a dedicated sort-mode event. `onGroupChanged` also fires for other grouping changes, and its `sort-group` notification occurs before the chip's `sortAsc` is updated.
+
 ### Draggable Dropzone Location
 
 Draggable grouping uses built-in drag and drop with RTL, mouse, and touch support. Header

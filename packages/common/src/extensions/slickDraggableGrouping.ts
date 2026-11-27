@@ -399,7 +399,10 @@ export class SlickDraggableGrouping {
 
       if (grouping) {
         const nextSortDirection = grouping.sortAsc ? SortDirectionNumber.desc : SortDirectionNumber.asc;
-        grouping.comparer = (a, b) => sortByFieldType(type || 'text', a.value, b.value, nextSortDirection, col, this.gridOptions);
+        grouping.comparer = (a, b) =>
+          this._addonOptions.groupSortComparer
+            ? this._addonOptions.groupSortComparer(a, b, nextSortDirection, col)
+            : sortByFieldType(type || 'text', a.value, b.value, nextSortDirection, col, this.gridOptions);
         this.getGroupBySortIcon(groupSortContainerElm, !grouping.sortAsc);
         this.updateGroupBy('sort-group');
         grouping.sortAsc = !grouping.sortAsc;
