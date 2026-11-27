@@ -436,7 +436,7 @@ export class PaginationService {
     event?: Event | undefined,
     cursorArgs?: PaginationCursorChangedArgs
   ): Promise<PaginationMetadata> {
-    console.assert(!this.isCursorBased || cursorArgs, 'Configured for cursor based pagination - cursorArgs expected');
+    console.assert(!this.isCursorBased || !!cursorArgs, 'Configured for cursor based pagination - cursorArgs expected');
 
     if (this.pubSubService.publish('onBeforePaginationChange', this.getFullPagination()) === false) {
       this.resetToPreviousPagination();
