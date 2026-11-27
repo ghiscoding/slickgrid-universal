@@ -19,11 +19,12 @@
 - The generic `ExternalResource.prepareGridOptions` hook prepares pre-header infrastructure before grid creation. Example 48 configures `pivotMode: true` and derives fields from ordinary columns with Pivot-specific overrides. Initial activation is deferred by a microtask so synchronous Vanilla resource initialization can finish. Verify lifecycle and cleanup, including resources registered after grid creation.
 - Local DataView sources currently use `getItems()`, so ordinary DataView filtering does not automatically limit pivot inputs. Pivot hides the source filter row while active and restores its prior visibility on exit or disposal.
 - Keep the built-in drill-down dialog for now. It creates a separate basic SlickGrid, not a Vanilla bundle or framework wrapper. `details: false` leaves the drill-down event available for application-owned UI.
-- Recent changes synchronize GridMenu and ColumnPicker with generated columns and correct cell widths after clearing pinning. Revalidate the actual UI, including hiding a pivot column and restoring it from both menus.
-- Example 48 Cypress passed 35 tests, including GridMenu visibility, Clear all Pinning, source filters, and RTL. The Pivot suite passed 165 tests, with `slickPivot.ts` at 93.98% statements and 94.31% lines in the last focused coverage run, below the repository's 100% target. These results precede the latest footer change.
+- GridMenu and ColumnPicker synchronize with generated columns. Example 48 Cypress passed 37 tests, including picker visibility, Clear all Pinning, source pinning restoration, source filters, and RTL.
 - The default footer now omits computation time. `PivotResult.duration` remains available to a custom status formatter. Toolbar labels and status text are configurable, while automatic integration with Universal's translation service remains to be investigated.
 - Vanilla integration tests verify that deferred activation is cancelled when the bundle is disposed, that disposing Pivot restores the source DataView and columns while leaving GridMenu registered, and that DataView additions recompute the pivot and remain available after switching back. Further lifecycle and source-state scenarios remain open.
-- Vanilla integration tests also cover replacing DataView items while pivoting, deriving a changed source-column caption on the next mode switch, and aborting an in-flight provider request when Pivot is disposed.
+- Vanilla integration tests also cover adding, updating, deleting, and replacing DataView items while pivoting, deriving a changed source-column caption on the next mode switch, and aborting an in-flight provider request when Pivot is disposed.
+- Pivot Mode aborts an in-flight provider request on exit and requests fresh data on re-entry. A Vanilla integration test verifies that an older response cannot replace the newer result.
+- A Vanilla bundle integration test verifies that a successful editor-lock commit updates the source before Pivot calculates its result. The test simulates the editor lock, so actual editor interaction still needs browser verification.
 - The Pivot row model exposes selected Pivot row IDs for Grid State. A Vanilla integration test verifies Pivot selection, source selection restoration, and hidden source-column state through a mode round trip. Pivot and source IDs remain separate.
 - Vanilla integration coverage also verifies source column order, width and sort indicators after a mode round trip. ContextMenu usability callbacks receive the displayed Pivot row in Pivot Mode and the source record after returning to ordinary mode. Example 48 Cypress verifies source column pinning restoration and hiding or restoring a Pivot column through GridMenu and ColumnPicker.
 - The focused Pivot unit suite now reports 100% line and statement coverage across the package. Branch coverage remains informational.
@@ -31,37 +32,40 @@
 - Excel and text export work is deferred. Existing export services retain the source DataView while the grid displays generated Pivot columns. Future source-data export must use matching source columns. Native Excel PivotTable export depends on future support in `excel-builder-vanilla`.
 - Master was merged in `b252f17f4`. The subsequent Pivot initialization and footer changes should be checked with `git status` before resuming or committing.
 
-## Ten upstream feedback points
+## Upstream feedback and Universal follow-up
 
 ### 1. Pre-header preparation and normal grid construction
 
-- [ ] Verify `prepareGridOptions` runs early enough for registered resource instances in Vanilla and all four wrappers without importing Pivot into core.
+- [x] Verify `prepareGridOptions` runs before grid creation for resource instances in Vanilla without importing Pivot into core.
+- [ ] Verify the pre-creation hook in the framework wrappers after Vanilla is complete.
 - [ ] Define precedence when the application or multiple resources configure the pre-header; preserve its original configuration.
-- [ ] Correct stale Universal examples/JSDoc that suggest wrapping grid options in `SlickPivot.getGridOptions()`.
+- [x] Correct Pivot JSDoc and the missing-pre-header warning to use ordinary grid options for direct SlickGrid usage.
 - [ ] Reconsider the fork separately: `grid.registerPlugin()` normally runs after grid construction, so the Universal hook is not automatically a direct upstream patch.
 
 ### 2. Host grid options, columns, and initial layout
 
 - [ ] Keep ordinary column definitions, grid options, and dataset as the primary configuration. Define precedence between resource-constructor options and host `pivotOptions`.
-- [ ] Derive field IDs, captions, and suitable types from host columns where possible; allow overrides for hierarchies, calculated fields, formatting, aggregation restrictions, getters/setters, and write-back.
+- [x] Derive field IDs and captions from host columns and allow Pivot-specific field overrides.
+- [ ] Review automatic type inference and overrides for hierarchies, calculated fields, formatting, aggregation restrictions, getters/setters, and write-back.
 - [ ] Verify updated source columns, hidden columns, translated captions, and datasets do not leave stale or duplicate field schemas.
 
 ### 3. Initialization, pre-header ownership, and teardown
 
 - [x] Remove the manual post-initialization `setPivotMode(true)` call from the initial Vanilla example.
-- [ ] Verify deferred initial activation preserves the source DataView and service initialization in Vanilla, including cancellation and teardown timing.
-- [ ] Review interaction with `HeaderGroupingService`; preserve and restore pre-header content, visibility, dimensions, and service ownership.
+- [x] Verify deferred initial activation, cancellation, and teardown in the Vanilla bundle with the source DataView and GridMenu.
+- [x] Verify Vanilla source header groups and pre-header visibility return after Pivot Mode ends and after independent Pivot disposal.
+- [ ] Verify pre-header dimensions and service ownership across additional layout and resource-order combinations.
 - [ ] Test resource ordering, registration, unregistering Pivot while the host grid remains alive, mode transitions, and grid destruction. Verify all framework wrappers.
 
 ### 4. Source rows versus displayed pivot rows
 
 - [ ] Define dataset replacement and incremental updates, source column changes, row identity and indices, active/edit state, and drill-down.
-- [ ] Verify source and pivot selections remain separate; restore the source DataView, columns, order, widths, visibility, sorting, pinning, and selection appropriately.
+- [x] Verify source and Pivot selections remain separate and restore the source DataView, columns, order, widths, visibility, sorting, pinning, and selection in Vanilla.
 - [ ] Define generated-column sorting, pagination/item counts, and event context for source records, pivot groups, subtotals, and grand totals.
 
 ### 5. Source filters and pivot filters
 
-- [ ] Align with the proposed upstream `sourceItems: 'filtered' | 'all'` API after it lands. The proposed default is filtered source rows before Pivot filters, across loaded local pages. Document the current `getItems()` behavior until changed.
+- [ ] Align with the proposed upstream `sourceItems: 'filtered' | 'all'` API after it lands. The proposed default is filtered source rows before Pivot filters, across loaded local pages. The package README documents the current `getItems()` behavior.
 - [ ] Specify the order and interaction of source filters, pivot filters, pagination, and remote/provider data; explain what “all” means when only part of a dataset is loaded.
 - [x] Hide the source filter row during Pivot Mode and restore its prior visibility on exit or disposal. Test filters before, during, and after Pivot Mode.
 
@@ -87,14 +91,14 @@
 
 ### 9. Acceptance example and integration tests
 
-- [ ] Start with ordinary grid data, columns and options; explicitly register resources and mount the separate sidebar. Switch modes without replacing the host grid.
+- [x] Start with ordinary grid data, columns and options; explicitly register resources and mount the separate sidebar. Switch modes without replacing the host grid.
 - [ ] Exercise source updates, field changes, existing menus and filters, selection, state restoration, and cleanup without destroying host-owned extensions.
 - [ ] Once Vanilla is complete, add representative framework integration examples and end-to-end coverage.
 - [ ] Rerun Example 48 Cypress after the latest assertion change and complete focused unit, coverage, lint, formatting, and build checks. Meet the repository's changed-file statement/line coverage requirement.
 
 ### 10. Drill-down details dialog
 
-- [ ] Keep the dialog for now: Excel has a similar Show Details action, although Excel opens a new worksheet. Equivalent built-in dialogs were not found in the AG Grid and MUI pivot documentation checked for the feedback.
+- [x] Keep the dialog for now. Excel has a similar Show Details action, although Excel opens a new worksheet.
 - [x] Verify `onPivotCellDrillDown` supplies source rows and aggregate context when the default dialog is disabled.
 - [x] Document that the dialog grid is separate and basic: it implements sorting, but does not automatically initialize wrapper services, GridMenu, ColumnPicker, or filtering.
 - [ ] Consider inheriting appropriate host presentation settings with explicit details options taking precedence. Avoid importing the Vanilla bundle into Pivot merely to construct this grid, which would add dependencies for framework users.

@@ -36,12 +36,12 @@ const pivotFieldOptions: Record<string, Partial<PivotField>> = {
   channel: { group: 'Customer' },
   category: { group: 'Product' },
   product: { group: 'Product' },
-  orderId: { type: 'number', group: 'Order' },
-  orderDate: { type: 'date', group: 'Order' },
-  units: { type: 'number', group: 'Measures' },
-  unitPrice: { type: 'number', group: 'Measures' },
-  discount: { type: 'number', group: 'Measures' },
-  amount: { type: 'number', group: 'Measures', getter: (row: Sale) => calculateAmount(row) },
+  orderId: { group: 'Order' },
+  orderDate: { group: 'Order' },
+  units: { group: 'Measures' },
+  unitPrice: { group: 'Measures' },
+  discount: { group: 'Measures' },
+  amount: { group: 'Measures', getter: (row: Sale) => calculateAmount(row) },
 };
 const initialSpec: Partial<PivotSpec> = {
   rows: ['region', 'country'],

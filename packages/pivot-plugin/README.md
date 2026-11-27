@@ -8,22 +8,31 @@ Create your grid normally and explicitly register the optional resources. The la
 import { SlickPivot, SlickPivotFieldList } from '@slickgrid-universal/pivot-plugin';
 import '@slickgrid-universal/pivot-plugin/dist/styles/css/slick.pivot-default.css';
 
-const pivot = new SlickPivot({
-  pivotMode: true,
-  fields: [{ id: 'year', type: 'number' }, { id: 'amount', type: 'number' }],
-  spec: { rows: ['region'], columns: ['year'], values: [{ field: 'amount', aggregator: 'sum' }] },
-});
+const pivot = new SlickPivot();
 const fieldList = new SlickPivotFieldList({ container: '#grid-and-pivot', pivot });
 const gridOptions = {
   externalResources: [pivot, fieldList],
   enableCellNavigation: true,
+  pivotOptions: {
+    pivotMode: true,
+    fields: [{ id: 'year', type: 'number' }, { id: 'amount', type: 'number' }],
+    spec: { rows: ['region'], columns: ['year'], values: [{ field: 'amount', aggregator: 'sum' }] },
+  },
 };
 // Pass gridOptions, your regular column definitions, and dataset to your grid wrapper.
 ```
 
 Fields are derived from the grid columns, with `fields` providing overrides or calculated fields. `pivot.setPivotMode(false)` restores the host grid's data and columns; `pivot.setPivotMode(true)` displays the saved pivot layout again. Register both resources explicitly; options alone do not load the plugin.
 
+Pivot derives `number` from `integer`, `float`, and `number` column types, and derives `date` from `date`, `dateIso`, and `dateUtc`. The `string` and `boolean` types are also carried over. Other column types use data inference unless a Pivot field override specifies a type. A Pivot override takes precedence over the column type.
+
 Initial Pivot Mode is activated after synchronous grid initialization so Universal services can initialize with the source DataView. The pivot displays aggregated rows while active. Application handlers, menus, exports, filtering, and selection logic that expect source records must account for pivot mode. See Vanilla Example 48 for a complete example.
+
+## Source filtering and pagination
+
+For a local DataView, Pivot reads the source with `getItems()` and applies the Pivot spec's filters to those items. Regular grid filters do not restrict the rows used for Pivot aggregation, drill-down, or write-back. The local pivot uses all items currently loaded in the DataView, including items outside the current page. The source filter row is hidden during Pivot Mode and its previous visibility is restored when Pivot Mode ends.
+
+For a remote dataset, a local pivot can only use the items loaded in the browser. A Pivot provider can compute results from a different dataset, such as one held by a server, according to the provider's implementation.
 
 ## Drill-down details
 

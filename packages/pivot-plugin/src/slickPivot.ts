@@ -158,15 +158,15 @@ const SHOW_AS_PERCENT_TYPES = [
  * multi-level column headers, compact/outline/tabular row layouts, subtotals, grand totals,
  * expand & collapse, sorting and drill-down.
  *
- * Create the grid as usual, with its own data and columns (and `SlickPivot.getGridOptions()` merged
- * into its options, for the pre-header panel of the column groups), then register the plugin. The
+ * Create the grid as usual, with its own data and columns, then register the plugin. For direct
+ * SlickGrid usage, enable `createPreHeaderPanel` in the grid options for grouped headers. The
  * fields are made from the columns and the source rows are the grid data. In Pivot Mode (`pivotMode`,
  * on by default) the plugin shows the pivot in the grid; turning it off gives the grid its own data,
  * columns and options back. A grid that only shows a pivot can instead be created with `pivot.rowModel`
  * as its data.
  *
  * @example
- * const grid = new SlickGrid('#grid', dataView, columns, SlickPivot.getGridOptions({ enableCellNavigation: true }));
+ * const grid = new SlickGrid('#grid', dataView, columns, { enableCellNavigation: true, createPreHeaderPanel: true });
  * const pivot = new SlickPivot({ spec: { rows: ['region'], columns: ['year'], values: [{ field: 'amount', aggregator: 'sum' }] } });
  * grid.registerPlugin(pivot);
  * pivot.setPivotMode(false); // the grid shows the data view again
@@ -396,9 +396,7 @@ export class SlickPivot implements SlickPlugin {
     }
 
     if (!grid.getPreHeaderPanel()) {
-      console.warn(
-        '[SlickPivot] the column group headers need a pre-header panel, create the grid with "SlickPivot.getGridOptions()" (createPreHeaderPanel: true).'
-      );
+      console.warn('[SlickPivot] the column group headers need a pre-header panel; set createPreHeaderPanel: true in the grid options.');
     }
     // the grid gives the plugins up while it is destroyed: there is nothing to give back then
     this._eventHandler.subscribe(grid.onBeforeDestroy, () => (this._gridDestroying = true));
@@ -604,6 +602,12 @@ export class SlickPivot implements SlickPlugin {
         this._headerGroupingService?.dispose();
         done = this.attachToGrid();
       } else {
+        if (this._abortController) {
+          this._abortController.abort();
+          this._abortController = undefined;
+          this._stale = true;
+          this.setLoading(false);
+        }
         this.detachFromGrid();
         this._headerGroupingService?.init(this._grid);
       }
@@ -1151,7 +1155,16 @@ export class SlickPivot implements SlickPlugin {
       .filter((column) => column.field && !column.excludeFromColumnPicker)
       .map((column) => {
         const id = String(column.id);
-        const field: PivotField = { id, label: getColumnLabel(column), field: column.field, ...byId.get(id) };
+        const columnType = column.type;
+        const type: PivotFieldType | undefined =
+          columnType === 'integer' || columnType === 'float' || columnType === 'number'
+            ? 'number'
+            : columnType === 'date' || columnType === 'dateIso' || columnType === 'dateUtc'
+              ? 'date'
+              : columnType === 'boolean' || columnType === 'string'
+                ? columnType
+                : undefined;
+        const field: PivotField = { id, label: getColumnLabel(column), field: column.field, ...(type ? { type } : {}), ...byId.get(id) };
         byId.delete(id);
         return field;
       });

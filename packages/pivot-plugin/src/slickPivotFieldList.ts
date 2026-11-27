@@ -77,7 +77,7 @@ type ResolvedFieldListOption = PivotFieldListOption &
  * the plugin for anything its options do not cover.
  *
  * @example
- * const grid = new SlickGrid('#myGrid', dataView, columns, SlickPivot.getGridOptions(gridOptions));
+ * const grid = new SlickGrid('#myGrid', dataView, columns, { ...gridOptions, createPreHeaderPanel: true });
  * grid.registerPlugin(new SlickPivot({ spec }));
  * grid.registerPlugin(new SlickPivotFieldList({ container: '#gridAndPivot' }));
  */

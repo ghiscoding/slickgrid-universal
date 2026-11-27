@@ -12,6 +12,73 @@ describe('pivot external resources with the vanilla bundle', () => {
     document.body.innerHTML = '';
   });
 
+  it('derives supported field types from columns with empty data and honors Pivot overrides', () => {
+    const container = document.createElement('div');
+    container.className = 'slickgrid-container';
+    document.body.appendChild(container);
+    const pivot = new SlickPivot();
+    const bundle = new SlickVanillaGridBundle(
+      container,
+      [
+        { id: 'int', field: 'int', name: 'Integer', type: 'integer' },
+        { id: 'float', field: 'float', name: 'Float', type: 'float' },
+        { id: 'date', field: 'date', name: 'Date', type: 'dateIso' },
+        { id: 'flag', field: 'flag', name: 'Flag', type: 'boolean' },
+        { id: 'text', field: 'text', name: 'Text', type: 'string' },
+        { id: 'unknown', field: 'unknown', name: 'Unknown', type: 'unknown' },
+      ],
+      {
+        externalResources: [pivot],
+        pivotOptions: { pivotMode: false, fields: [{ id: 'float', type: 'string' }] },
+      },
+      []
+    );
+    expect(pivot.getFields().map(({ id, type }) => [id, type])).toEqual([
+      ['int', 'number'],
+      ['float', 'string'],
+      ['date', 'date'],
+      ['flag', 'boolean'],
+      ['text', 'string'],
+      ['unknown', undefined],
+    ]);
+    expect(pivot.inferFieldType('int')).toBe('number');
+    expect(pivot.inferFieldType('date')).toBe('date');
+    bundle.dispose();
+  });
+
+  it('commits the active source edit before switching to Pivot Mode', async () => {
+    const container = document.createElement('div');
+    container.className = 'slickgrid-container';
+    document.body.appendChild(container);
+    const pivot = new SlickPivot();
+    const bundle = new SlickVanillaGridBundle(
+      container,
+      [{ id: 'region', field: 'region', name: 'Region' }],
+      {
+        editable: true,
+        enableCellNavigation: true,
+        autoEdit: false,
+        externalResources: [pivot],
+        pivotOptions: { pivotMode: false, spec: { rows: ['region'] } },
+      },
+      [{ id: 1, region: 'East' }]
+    );
+    const grid = bundle.slickGrid!;
+    const commit = vi.fn(() => {
+      bundle.dataView!.updateItem(1, { id: 1, region: 'North' });
+      return true;
+    });
+    const editorLock = vi.spyOn(grid, 'getEditorLock').mockReturnValue({ isActive: () => true, commitCurrentEdit: commit } as any);
+    await pivot.setPivotMode(true);
+    expect(commit).toHaveBeenCalled();
+    expect(bundle.dataView!.getItemById(1).region).toBe('North');
+    expect(pivot.getResult()!.rowTree.children.map((node) => node.label)).toEqual(['North']);
+    await pivot.setPivotMode(false);
+    expect(grid.getDataItem(0).region).toBe('North');
+    editorLock.mockRestore();
+    bundle.dispose();
+  });
+
   it.each([true, false])('restores the original header filter visibility when it starts as %s', async (visible) => {
     const container = document.createElement('div');
     container.className = 'slickgrid-container';
@@ -71,6 +138,38 @@ describe('pivot external resources with the vanilla bundle', () => {
     await Promise.resolve();
     expect(modeChanged).not.toHaveBeenCalled();
     expect(pivot.isPivotMode()).toBe(false);
+  });
+
+  it('restores source header groups after Pivot Mode and independent disposal', async () => {
+    const container = document.createElement('div');
+    container.className = 'slickgrid-container';
+    document.body.appendChild(container);
+    const pivot = new SlickPivot();
+    const bundle = new SlickVanillaGridBundle(
+      container,
+      [
+        { id: 'region', field: 'region', name: 'Region', columnGroup: 'Customer' },
+        { id: 'amount', field: 'amount', name: 'Amount', columnGroup: 'Sales' },
+      ],
+      {
+        showPreHeaderPanel: true,
+        externalResources: [pivot],
+        pivotOptions: { pivotMode: false, spec: { rows: ['region'], columns: ['region'], values: [{ field: 'amount', aggregator: 'sum' }] } },
+      },
+      [{ id: 1, region: 'East', amount: 10 }]
+    );
+    const grid = bundle.slickGrid!;
+    bundle.headerGroupingService.renderPreHeaderRowGroupingTitles();
+    expect(grid.getPreHeaderPanel()!.textContent).toContain('Customer');
+    await pivot.setPivotMode(true);
+    expect(grid.getPreHeaderPanel()!.querySelector('.slick-pivot-header-caption')).not.toBeNull();
+    await pivot.setPivotMode(false);
+    await vi.waitFor(() => expect(grid.getPreHeaderPanel()!.textContent).toContain('Customer'));
+    expect(grid.getOptions().showPreHeaderPanel).toBe(true);
+    await pivot.setPivotMode(true);
+    pivot.dispose();
+    await vi.waitFor(() => expect(grid.getPreHeaderPanel()!.textContent).toContain('Customer'));
+    bundle.dispose();
   });
 
   it('restores the host grid when the pivot resource is disposed independently', async () => {
@@ -156,9 +255,13 @@ describe('pivot external resources with the vanilla bundle', () => {
     bundle.dataView!.addItem({ id: 2, region: 'West', amount: 20 });
     await vi.waitFor(() => expect(pivot.getResult()?.sourceRowCount).toBe(2));
     expect(pivot.getResult()?.cells['[]']['[]'][0]).toBe(30);
+    bundle.dataView!.updateItem(1, { id: 1, region: 'East', amount: 15 });
+    await vi.waitFor(() => expect(pivot.getResult()?.cells['[]']['[]'][0]).toBe(35));
+    bundle.dataView!.deleteItem(2);
+    await vi.waitFor(() => expect(pivot.getResult()?.cells['[]']['[]'][0]).toBe(15));
     await pivot.setPivotMode(false);
     expect(bundle.slickGrid!.getData()).toBe(bundle.dataView);
-    expect(bundle.dataView!.getItems()).toHaveLength(2);
+    expect(bundle.dataView!.getItems()).toEqual([{ id: 1, region: 'East', amount: 15 }]);
     await pivot.setPivotMode(true);
     bundle.dataView!.setItems([{ id: 3, region: 'North', amount: 45 }]);
     await vi.waitFor(() => expect(pivot.getResult()?.cells['[]']['[]'][0]).toBe(45));
@@ -203,6 +306,42 @@ describe('pivot external resources with the vanilla bundle', () => {
     await Promise.resolve();
     expect(changed).not.toHaveBeenCalled();
     expect(bundle.slickGrid!.getData()).toBe(bundle.dataView);
+    bundle.dispose();
+  });
+
+  it('keeps the host grid intact when an older provider request resolves after mode changes', async () => {
+    const container = document.createElement('div');
+    container.className = 'slickgrid-container';
+    document.body.appendChild(container);
+    const requests: Array<{ signal: AbortSignal; resolve: (result: any) => void }> = [];
+    const pivot = new SlickPivot();
+    const bundle = new SlickVanillaGridBundle(
+      container,
+      [{ id: 'region', field: 'region', name: 'Region' }],
+      {
+        externalResources: [pivot],
+        pivotOptions: {
+          pivotMode: true,
+          spec: { rows: ['region'] },
+          provider: { execute: (_request, context) => new Promise((resolve) => requests.push({ signal: context.signal, resolve })) },
+        },
+      },
+      [{ id: 1, region: 'East' }]
+    );
+    await Promise.resolve();
+    await pivot.setPivotMode(false);
+    const enabling = pivot.setPivotMode(true);
+    expect(requests).toHaveLength(2);
+    expect(requests[0].signal.aborted).toBe(true);
+    const engine = new PivotEngine({ fields: [{ id: 'region' }] });
+    requests[1].resolve(engine.execute([{ region: 'North' }], { rows: ['region'] }));
+    await enabling;
+    requests[0].resolve(engine.execute([{ region: 'West' }], { rows: ['region'] }));
+    await Promise.resolve();
+    expect(pivot.getResult()!.rowTree.children.map((node) => node.label)).toEqual(['North']);
+    await pivot.setPivotMode(false);
+    expect(bundle.slickGrid!.getData()).toBe(bundle.dataView);
+    expect(bundle.slickGrid!.getDataItem(0).region).toBe('East');
     bundle.dispose();
   });
 
