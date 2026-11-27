@@ -306,7 +306,10 @@ describe('Example 45 - Row Detail with inner Grid', () => {
       });
 
       it('should go to the bottom end of the grid and open row 987', () => {
-        cy.get('#grid45 .slick-vertical-scroller').first().invoke('scrollTop', 1001 * GRID_ROW_HEIGHT).trigger('scroll');
+        cy.get('#grid45 .slick-vertical-scroller')
+          .first()
+          .invoke('scrollTop', 1001 * GRID_ROW_HEIGHT)
+          .trigger('scroll');
 
         cy.get('.slick-row[data-row=1001] .slick-cell.detail-view-toggle').click();
 
