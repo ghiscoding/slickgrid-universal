@@ -206,6 +206,29 @@ describe('Example 48 - Pivot Table', () => {
     cy.window().then((win: any) => win.pivot.refresh());
   });
 
+  it('restores a hidden pivot column through ColumnPicker', () => {
+    cy.get(`${grid} .slick-grid-menu-button`).click();
+    cy.get('.slick-grid-menu:visible .slick-column-picker-list').contains('2025').click();
+    cy.get('.slick-grid-menu:visible .close').click();
+    cy.get(`${grid} .slick-header-column`).first().trigger('contextmenu');
+    cy.get('.slick-column-picker:visible .slick-column-picker-list').contains('2025').click();
+    cy.get('.slick-column-picker:visible .close').click();
+    cy.window().should((win: any) => {
+      expect(win.grid.getColumns().find((column: any) => column.name === '2025').hidden).to.equal(false);
+    });
+  });
+
+  it('restores source column pinning after switching pivot mode', () => {
+    cy.get(`${panel} .slick-pivot-mode-checkbox`).uncheck();
+    cy.window().then((win: any) => win.grid.setOptions({ pinning: { columns: { left: ['region'] } } }));
+    cy.window().its('grid').invoke('getOptions').its('pinning.columns.left').should('deep.equal', ['region']);
+    cy.get(`${panel} .slick-pivot-mode-checkbox`).check();
+    cy.get(`${panel} .slick-pivot-mode-checkbox`).uncheck();
+    cy.window().its('grid').invoke('getOptions').its('pinning.columns.left').should('deep.equal', ['region']);
+    cy.window().then((win: any) => win.grid.setOptions({ pinning: { columns: { left: [] } } }));
+    cy.get(`${panel} .slick-pivot-mode-checkbox`).check();
+  });
+
   it('shows unit prices and discounts in the source data', () => {
     cy.get(`${panel} .slick-pivot-mode-checkbox`).uncheck();
     cy.get(cell(0, 8)).should('have.text', '5');

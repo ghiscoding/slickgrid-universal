@@ -167,14 +167,6 @@ export default class Example48 {
       },
     };
     this.gridBundle = new Slicker.GridBundle(gridElement, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
-    // Source-column filters are shown only while the grid displays source rows.
-    this.pivot.onPivotModeChanged.subscribe((_event, args) => {
-      const grid = this.gridBundle?.slickGrid;
-      grid?.setHeaderRowVisibility(!args.pivotMode);
-      if (!args.pivotMode) {
-        grid?.updateColumns();
-      }
-    });
     Object.assign(window, { grid: this.gridBundle?.slickGrid, pivot: this.pivot, fieldList: this.fieldList });
   }
 
@@ -295,14 +287,6 @@ export default class Example48 {
       pivotOptions: { ...options, fields: currentFields, pivotMode: false, spec: currentSpec },
     };
     this.gridBundle = new Slicker.GridBundle(gridElement, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
-    // Source-column filters are shown only while the grid displays source rows.
-    this.pivot.onPivotModeChanged.subscribe((_event, args) => {
-      const grid = this.gridBundle?.slickGrid;
-      grid?.setHeaderRowVisibility(!args.pivotMode);
-      if (!args.pivotMode) {
-        grid?.updateColumns();
-      }
-    });
     void this.pivot.setPivotMode(true);
     Object.assign(window, { grid: this.gridBundle?.slickGrid, pivot: this.pivot, fieldList: this.fieldList });
   }

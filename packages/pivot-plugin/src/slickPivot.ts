@@ -114,6 +114,7 @@ interface HostGridState {
   pinning: PinningOption;
   stickyRows: StickyRows;
   showPreHeaderPanel: boolean;
+  showHeaderRow: boolean;
   preHeaderPanelHeight?: number;
   preHeaderContent: DocumentFragment;
   preHeaderWidth: string;
@@ -436,12 +437,14 @@ export class SlickPivot implements SlickPlugin {
         pinning: Utils.extend(true, {}, gridOptions.pinning ?? {}),
         stickyRows: Utils.extend(true, {}, gridOptions.stickyRows ?? {}),
         showPreHeaderPanel: !!gridOptions.showPreHeaderPanel,
+        showHeaderRow: !!gridOptions.showHeaderRow,
         preHeaderPanelHeight: gridOptions.preHeaderPanelHeight,
         preHeaderContent,
         preHeaderWidth: preHeaderPanel?.style.width ?? '',
         preHeaderScrollerHeight: (preHeaderPanel?.parentElement as HTMLElement | null)?.style.height ?? '',
       };
       grid.resetActiveCell();
+      grid.setHeaderRowVisibility(false);
       grid.setData(this.rowModel);
       // once the grid shows the pivot, so that a DataView synced with the grid keeps the ids of its selected rows
       this.clearSelection();
@@ -540,6 +543,10 @@ export class SlickPivot implements SlickPlugin {
     this._managedColumnPins = { left: false, right: false };
     grid.setData(host.data);
     grid.setColumns(host.columns);
+    grid.setHeaderRowVisibility(host.showHeaderRow);
+    if (host.showHeaderRow) {
+      grid.updateColumns();
+    }
     this.syncMenuColumns(host.columns);
     grid.setSortColumns(host.sortColumns);
     grid.setPreHeaderPanelVisibility(host.showPreHeaderPanel);

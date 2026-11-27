@@ -17,14 +17,17 @@
 
 - `SlickPivot` and `SlickPivotFieldList` are separate resources. The latter mounts the sidebar and optional toolbar, status bar, and details dialog around the host grid.
 - The generic `ExternalResource.prepareGridOptions` hook prepares pre-header infrastructure before grid creation. Example 48 configures `pivotMode: true` and derives fields from ordinary columns with Pivot-specific overrides. Initial activation is deferred by a microtask so synchronous Vanilla resource initialization can finish. Verify lifecycle and cleanup, including resources registered after grid creation.
-- Local DataView sources currently use `getItems()`, so ordinary DataView filtering does not automatically limit pivot inputs. Example 48 hides the source filter row in Pivot Mode and restores it afterward; this is currently demo behavior.
+- Local DataView sources currently use `getItems()`, so ordinary DataView filtering does not automatically limit pivot inputs. Pivot hides the source filter row while active and restores its prior visibility on exit or disposal.
 - Keep the built-in drill-down dialog for now. It creates a separate basic SlickGrid, not a Vanilla bundle or framework wrapper. `details: false` leaves the drill-down event available for application-owned UI.
 - Recent changes synchronize GridMenu and ColumnPicker with generated columns and correct cell widths after clearing pinning. Revalidate the actual UI, including hiding a pivot column and restoring it from both menus.
 - Example 48 Cypress passed 35 tests, including GridMenu visibility, Clear all Pinning, source filters, and RTL. The Pivot suite passed 165 tests, with `slickPivot.ts` at 93.98% statements and 94.31% lines in the last focused coverage run, below the repository's 100% target. These results precede the latest footer change.
 - The default footer now omits computation time. `PivotResult.duration` remains available to a custom status formatter. Toolbar labels and status text are configurable, while automatic integration with Universal's translation service remains to be investigated.
 - Vanilla integration tests verify that deferred activation is cancelled when the bundle is disposed, that disposing Pivot restores the source DataView and columns while leaving GridMenu registered, and that DataView additions recompute the pivot and remain available after switching back. Further lifecycle and source-state scenarios remain open.
+- Vanilla integration tests also cover replacing DataView items while pivoting, deriving a changed source-column caption on the next mode switch, and aborting an in-flight provider request when Pivot is disposed.
 - The Pivot row model exposes selected Pivot row IDs for Grid State. A Vanilla integration test verifies Pivot selection, source selection restoration, and hidden source-column state through a mode round trip. Pivot and source IDs remain separate.
+- Vanilla integration coverage also verifies source column order, width and sort indicators after a mode round trip. ContextMenu usability callbacks receive the displayed Pivot row in Pivot Mode and the source record after returning to ordinary mode. Example 48 Cypress verifies source column pinning restoration and hiding or restoring a Pivot column through GridMenu and ColumnPicker.
 - The focused Pivot unit suite now reports 100% line and statement coverage across the package. Branch coverage remains informational.
+- An isolated esbuild browser bundle of `SlickGrid` using the built common package contained no Pivot inputs. Adding `SlickPivot` and `SlickPivotFieldList` from Pivot source increased minified JavaScript by 189,701 bytes and gzip by 48,535 bytes. This measurement excludes CSS and represents the tested build, not every application's final bundle.
 - Excel and text export work is deferred. Existing export services retain the source DataView while the grid displays generated Pivot columns. Future source-data export must use matching source columns. Native Excel PivotTable export depends on future support in `excel-builder-vanilla`.
 - Master was merged in `b252f17f4`. The subsequent Pivot initialization and footer changes should be checked with `git status` before resuming or committing.
 
@@ -60,7 +63,7 @@
 
 - [ ] Align with the proposed upstream `sourceItems: 'filtered' | 'all'` API after it lands. The proposed default is filtered source rows before Pivot filters, across loaded local pages. Document the current `getItems()` behavior until changed.
 - [ ] Specify the order and interaction of source filters, pivot filters, pagination, and remote/provider data; explain what “all” means when only part of a dataset is loaded.
-- [ ] Decide whether hiding/restoring the source filter row should become supported resource behavior instead of example code. Test filters before, during, and after Pivot Mode.
+- [x] Hide the source filter row during Pivot Mode and restore its prior visibility on exit or disposal. Test filters before, during, and after Pivot Mode.
 
 ### 6. Menus, commands, and exports
 
@@ -92,8 +95,8 @@
 ### 10. Drill-down details dialog
 
 - [ ] Keep the dialog for now: Excel has a similar Show Details action, although Excel opens a new worksheet. Equivalent built-in dialogs were not found in the AG Grid and MUI pivot documentation checked for the feedback.
-- [ ] Preserve `onPivotCellDrillDown` with rows and aggregate context when the default dialog is disabled, so applications can use a framework-managed grid or another presentation.
-- [ ] Document that the dialog grid is separate and basic: it implements sorting, but does not automatically initialize wrapper services, GridMenu, ColumnPicker, or filtering.
+- [x] Verify `onPivotCellDrillDown` supplies source rows and aggregate context when the default dialog is disabled.
+- [x] Document that the dialog grid is separate and basic: it implements sorting, but does not automatically initialize wrapper services, GridMenu, ColumnPicker, or filtering.
 - [ ] Consider inheriting appropriate host presentation settings with explicit details options taking precedence. Avoid importing the Vanilla bundle into Pivot merely to construct this grid, which would add dependencies for framework users.
 - [ ] Review row limits, formatting, custom columns, accessibility, RTL recreation, close/disposal, provider drill-down, and empty results.
 
