@@ -307,8 +307,10 @@
     Support multiple locales with the i18next plugin, following these steps. Take a look at the (<a
       href="https://ghiscoding.gitbook.io/svelte-slickgrid/localization/localization"
       target="_blank"
-      rel="noreferrer">Wiki documentation</a
-    >)
+      rel="noreferrer"
+    >
+      Wiki documentation
+    </a>)
     <ol class="small">
       <li>You first need to "enableTranslate" in the Grid Options</li>
       <li>In the Column Definitions, you have following options</li>
@@ -336,15 +338,17 @@
           <a
             href="https://ghiscoding.gitbook.io/svelte-slickgrid/column-functionalities/filters/select-filter"
             target="_blank"
-            rel="noreferrer">Wiki page</a
+            rel="noreferrer"
           >
+            Wiki page
+          </a>
         </li>
       </ul>
       <li>
         For more info about "Download to File", read the
-        <a href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/export-to-excel" target="_blank" rel="noreferrer"
-          >Wiki page</a
-        >
+        <a href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/export-to-excel" target="_blank" rel="noreferrer">
+          Wiki page
+        </a>
       </li>
     </ol>
   </div>

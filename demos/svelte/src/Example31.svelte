@@ -442,22 +442,25 @@
 
 <h2>
   Example 31: Grid with OData Backend Service using RxJS Observables
-  <span class="float-end"
-    ><a
+  <span class="float-end">
+    <a
       style="font-size:18px"
       target="_blank"
       rel="noreferrer"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example31.svelte"
-      ><i class="mdi mdi-link-variant"></i> code</a
-    ></span
-  >
+    >
+      <i class="mdi mdi-link-variant"></i> code
+    </a>
+  </span>
   <button
     class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
     type="button"
     data-test="toggle-subtitle"
     aria-label="Toggle example sub-title details"
-    onclick={toggleSubTitle}><i class="mdi mdi-information-outline"></i></button
+    onclick={toggleSubTitle}
   >
+    <i class="mdi mdi-information-outline"></i>
+  </button>
 </h2>
 {#if showSubTitle}<div class="subtitle">
     Optionally use RxJS instead of Promises, you would typically use this with a Backend Service API (OData/GraphQL)
@@ -468,20 +471,24 @@
       class="btn btn-outline-secondary btn-sm btn-icon"
       data-test="clear-filters-sorting"
       title="Clear all Filters & Sorts"
-      onclick={clearAllFiltersAndSorts}><i class="mdi mdi-close"></i> Clear all Filter &amp; Sorts</button
+      onclick={clearAllFiltersAndSorts}
     >
-    <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="set-dynamic-filter" onclick={setFiltersDynamically}
-      >Set Filters Dynamically</button
-    >
-    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-sorting" onclick={setSortingDynamically}
-      >Set Sorting Dynamically</button
-    >
+      <i class="mdi mdi-close"></i> Clear all Filter &amp; Sorts
+    </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="set-dynamic-filter" onclick={setFiltersDynamically}>
+      Set Filters Dynamically
+    </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-sorting" onclick={setSortingDynamically}>
+      Set Sorting Dynamically
+    </button>
     <button
       class="btn btn-outline-secondary btn-sm btn-icon mx-1"
       data-test="add-gender-button"
       disabled={isOtherGenderAdded}
-      onclick={addOtherGender}>Add Other Gender via RxJS</button
+      onclick={addOtherGender}
     >
+      Add Other Gender via RxJS
+    </button>
   </div>
 </div>
 <br />
@@ -493,19 +500,23 @@
         class="btn btn-outline-secondary btn-xs btn-icon px-2"
         data-test="goto-first-page"
         aria-label="Go to first page"
-        onclick={goToFirstPage}><i class="mdi mdi-page-first"></i></button
-      ><button
+        onclick={goToFirstPage}
+      >
+        <i class="mdi mdi-page-first"></i>
+      </button><button
         class="btn btn-outline-secondary btn-xs btn-icon px-2"
         data-test="goto-last-page"
         aria-label="Go to last page"
-        onclick={goToLastPage}><i class="mdi mdi-page-last"></i></button
+        onclick={goToLastPage}
       >
+        <i class="mdi mdi-page-last"></i>
+      </button>
     </div>
   </div>
   <div class="d-inline-block ms-3">
-    <span>OData Version: </span><span data-test="radioVersion"
-      ><label class="ms-1 radio-inline control-label" for="radio2"
-        ><input
+    <span>OData Version: </span><span data-test="radioVersion">
+      <label class="ms-1 radio-inline control-label" for="radio2">
+        <input
           id="radio2"
           type="radio"
           name="inlineRadioOptions"
@@ -513,9 +524,9 @@
           checked={odataVersion === 2}
           value="2"
           onclick={() => setOdataVersion(2)}
-        /> 2</label
-      ><label class="ms-1 radio-inline control-label" for="radio4"
-        ><input
+        /> 2
+      </label><label class="ms-1 radio-inline control-label" for="radio4">
+        <input
           id="radio4"
           type="radio"
           name="inlineRadioOptions"
@@ -523,21 +534,21 @@
           checked={odataVersion === 4}
           value="4"
           onclick={() => setOdataVersion(4)}
-        /> 4</label
-      ></span
-    >
-    <label class="checkbox-inline control-label ms-3" for="enableCount"
-      ><input id="enableCount" type="checkbox" data-test="enable-count" checked={isCountEnabled} onclick={changeCountEnableFlag} />
-      <span class="ms-1 fw-bold">Enable Count</span> (add to OData query)</label
-    >
-    <label class="checkbox-inline control-label ms-3" for="enableSelect"
-      ><input id="enableSelect" type="checkbox" data-test="enable-select" checked={isSelectEnabled} onclick={changeEnableSelectFlag} />
-      <span class="ms-1 fw-bold">Enable Select</span> (add to OData query)</label
-    >
-    <label class="checkbox-inline control-label ms-3" for="enableExpand"
-      ><input id="enableExpand" type="checkbox" data-test="enable-expand" checked={isExpandEnabled} onclick={changeEnableExpandFlag} />
-      <span class="ms-1 fw-bold">Enable Expand</span> (add to OData query)</label
-    >
+        /> 4
+      </label>
+    </span>
+    <label class="checkbox-inline control-label ms-3" for="enableCount">
+      <input id="enableCount" type="checkbox" data-test="enable-count" checked={isCountEnabled} onclick={changeCountEnableFlag} />
+      <span class="ms-1 fw-bold">Enable Count</span> (add to OData query)
+    </label>
+    <label class="checkbox-inline control-label ms-3" for="enableSelect">
+      <input id="enableSelect" type="checkbox" data-test="enable-select" checked={isSelectEnabled} onclick={changeEnableSelectFlag} />
+      <span class="ms-1 fw-bold">Enable Select</span> (add to OData query)
+    </label>
+    <label class="checkbox-inline control-label ms-3" for="enableExpand">
+      <input id="enableExpand" type="checkbox" data-test="enable-expand" checked={isExpandEnabled} onclick={changeEnableExpandFlag} />
+      <span class="ms-1 fw-bold">Enable Expand</span> (add to OData query)
+    </label>
   </div>
 </div>
 <div class="row mt-1">

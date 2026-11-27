@@ -320,8 +320,10 @@
 <div class="subtitle" class:hidden={!showSubTitle}>
   This demo shows how to use Filters with Range of Search Values (<a
     href="https://ghiscoding.gitbook.io/svelte-slickgrid/column-functionalities/filters/range-filters"
-    target="_blank">Wiki docs</a
-  >)
+    target="_blank"
+  >
+    Wiki docs
+  </a>)
   <br />
   <ul class="small">
     <li>

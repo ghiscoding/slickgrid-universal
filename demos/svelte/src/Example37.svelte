@@ -133,24 +133,27 @@
 
 <h2>
   Example 37: Footer Totals Row
-  <span class="float-end"
-    ><a
+  <span class="float-end">
+    <a
       style="font-size: 18px"
       target="_blank"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example37.svelte"
-      ><span class="mdi mdi-link-variant"></span> code</a
-    ></span
-  >
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
   <button
     class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
     type="button"
     aria-label="Toggle example sub-title details"
     data-test="toggle-subtitle"
-    onclick={toggleSubTitle}><span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span></button
+    onclick={toggleSubTitle}
   >
-  <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" data-test="toggle-dark-mode" onclick={toggleDarkMode}
-    ><span class="mdi mdi-theme-light-dark"></span><span>Toggle Dark Mode</span></button
-  >
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
+  <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" data-test="toggle-dark-mode" onclick={toggleDarkMode}>
+    <span class="mdi mdi-theme-light-dark"></span><span>Toggle Dark Mode</span>
+  </button>
 </h2>
 {#if showSubTitle}<div class="subtitle">Display a totals row at the end of the grid.</div>{/if}
 <SlickgridSvelte

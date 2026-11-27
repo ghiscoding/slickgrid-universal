@@ -358,9 +358,8 @@
   Example 28: Tree Data with Aggregators
   <small>
     <span class="mdi mdi-file-tree font-27px"></span> (from a Hierarchical Dataset -
-    <a href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/tree-data-grid" target="_blank" rel="noreferrer">Wiki</a
-    >)</small
-  >
+    <a href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/tree-data-grid" target="_blank" rel="noreferrer">Wiki</a>)
+  </small>
   <span class="float-end">
     <a
       style="font-size: 18px"

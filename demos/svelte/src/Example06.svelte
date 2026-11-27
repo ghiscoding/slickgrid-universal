@@ -457,9 +457,9 @@
     </ul>
     <li>
       You can also preload a grid with certain "presets" like Filters / Sorters / Pagination
-      <a href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/grid-state-and-preset" target="_blank"
-        >Wiki - Grid Preset</a
-      >
+      <a href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/grid-state-and-preset" target="_blank">
+        Wiki - Grid Preset
+      </a>
     </li>
     <li>
       Also note that the column Name has a filter with a custom %% operator that behaves like an SQL LIKE operator supporting % wildcards.

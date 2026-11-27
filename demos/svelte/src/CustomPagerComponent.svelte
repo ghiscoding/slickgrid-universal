@@ -52,24 +52,26 @@
 
 <div bind:this={rootElement}>
   <div class="custom-pagination">
-    <span class="custom-pagination-settings"
-      ><span class="custom-pagination-count">
-        <span class="page-info-from-to"
-          ><span class="item-from" aria-label="Page Item From" data-test="item-from">{currentPagination.dataFrom}</span>-<span
+    <span class="custom-pagination-settings">
+      <span class="custom-pagination-count">
+        <span class="page-info-from-to">
+          <span class="item-from" aria-label="Page Item From" data-test="item-from">{currentPagination.dataFrom}</span>-<span
             class="item-to"
             aria-label="Page Item To"
-            data-test="item-to">{currentPagination.dataTo}</span
-          > of</span
-        >
-        <span class="page-info-total-items"
-          ><span class="total-items" aria-label="Total Items" data-test="total-items">{currentPagination.totalItems}</span><span
+            data-test="item-to"
+          >
+            {currentPagination.dataTo}
+          </span> of
+        </span>
+        <span class="page-info-total-items">
+          <span class="total-items" aria-label="Total Items" data-test="total-items">{currentPagination.totalItems}</span><span
             class="text-items"
           >
-            items</span
-          ></span
-        >
-      </span></span
-    >
+            items
+          </span>
+        </span>
+      </span>
+    </span>
     <div class="custom-pagination-nav">
       <nav aria-label="Page navigation">
         <ul class="custom-pagination-ul">
@@ -94,9 +96,9 @@
         </ul>
       </nav>
       <div class="page-number">
-        <span class="text-page">Page</span><span class="page-number" aria-label="Page Number" data-test="page-number-label"
-          >{currentPagination.pageNumber}</span
-        >
+        <span class="text-page">Page</span><span class="page-number" aria-label="Page Number" data-test="page-number-label">
+          {currentPagination.pageNumber}
+        </span>
         of <span class="page-count" data-test="page-count">{currentPagination.pageCount}</span>
       </div>
       <nav aria-label="Page navigation">

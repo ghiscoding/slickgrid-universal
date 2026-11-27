@@ -413,21 +413,24 @@
 <div class="demo38">
   <h2>
     Example 38: OData (v4) Backend Service with Infinite Scroll
-    <span class="float-end"
-      ><a
+    <span class="float-end">
+      <a
         style="font-size: 18px"
         target="_blank"
         href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example38.svelte"
-        ><span class="mdi mdi-link-variant"></span> code</a
-      ></span
-    >
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
     <button
       class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
       type="button"
       aria-label="Toggle example sub-title details"
       data-test="toggle-subtitle"
-      onclick={toggleSubTitle}><span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span></button
+      onclick={toggleSubTitle}
     >
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
   </h2>
 
   {#if showSubTitle}

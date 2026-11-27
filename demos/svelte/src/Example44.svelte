@@ -378,14 +378,15 @@
 
 <h2>
   Example 44: colspan/rowspan with large dataset
-  <span class="float-end"
-    ><a
+  <span class="float-end">
+    <a
       style="font-size: 18px"
       target="_blank"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example44.svelte"
-      ><span class="mdi mdi-link-variant"></span> code</a
-    ></span
-  >
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
   <button
     class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
     type="button"
@@ -444,8 +445,10 @@
         class="btn btn-sm btn-outline-secondary d-flex align-items-center"
         aria-label="Clear scroll target"
         data-test="clearScrollTo"
-        onclick={clearScrollTo}><span class="icon mdi mdi-close-thick"></span></button
+        onclick={clearScrollTo}
       >
+        <span class="icon mdi mdi-close-thick"></span>
+      </button>
     </div>
   </div>
 </section>

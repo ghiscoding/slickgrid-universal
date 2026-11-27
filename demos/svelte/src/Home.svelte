@@ -16,15 +16,19 @@
   <a
     href="https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-svelte#readme"
     target="_blank"
-    rel="noreferrer">Slickgrid-Svelte README</a
-  >, so be sure to consult it before opening any new issue.
+    rel="noreferrer"
+  >
+    Slickgrid-Svelte README
+  </a>, so be sure to consult it before opening any new issue.
   <br />
   The
   <a
     href="https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-svelte#quick-start"
     target="_blank"
-    rel="noreferrer">Quick Start</a
+    rel="noreferrer"
   >
+    Quick Start
+  </a>
   is the best starting point to get going with this library.
 </p>
 

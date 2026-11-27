@@ -322,8 +322,10 @@
 <div class="subtitle" class:hidden={!showSubTitle}>
   Add functionality to show extra information with a Row Detail View, (<a
     href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/row-detail"
-    target="_blank">Wiki docs</a
-  >)
+    target="_blank"
+  >
+    Wiki docs
+  </a>)
   <ul>
     <li>Click on the row "+" icon or anywhere on the row to open it (the latter can be changed via property "useRowClick: false")</li>
     <li>Pass a View/Model as a Template to the Row Detail</li>

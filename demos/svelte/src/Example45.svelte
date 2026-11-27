@@ -246,46 +246,51 @@
 
 <h2>
   Example 45: Row Detail with inner Grid
-  <span class="float-end"
-    ><a
+  <span class="float-end">
+    <a
       style="font-size: 18px"
       target="_blank"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example45.svelte"
-      ><span class="mdi mdi-link-variant"></span> code</a
-    ></span
-  >
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
   <button
     class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
     type="button"
     data-test="toggle-subtitle"
     aria-label="Toggle example sub-title details"
-    onclick={toggleSubTitle}><span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span></button
+    onclick={toggleSubTitle}
   >
-  <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" onclick={toggleDarkMode} data-test="toggle-dark-mode"
-    ><span class="mdi mdi-theme-light-dark"></span><span>Toggle Dark Mode</span></button
-  >
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
+  <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" onclick={toggleDarkMode} data-test="toggle-dark-mode">
+    <span class="mdi mdi-theme-light-dark"></span><span>Toggle Dark Mode</span>
+  </button>
 </h2>
 
 {#if showSubTitle}
   <div class="subtitle">
     Add functionality to show extra information with a Row Detail View, (<a
       href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/row-detail"
-      target="_blank">Wiki docs</a
-    >), we'll use an inner grid inside our Row Detail Component. Note that because SlickGrid uses Virtual Scroll, the rows and row details
-    are often be re-rendered (when row is out of viewport range) and this means unmounting Row Detail Component which indirectly mean that
-    all component states (dynamic elements, forms, ...) will be disposed as well, however you can use Grid State/Presets to reapply previous
-    state whenever the row detail gets re-rendered when back to viewport.
+      target="_blank"
+    >
+      Wiki docs
+    </a>), we'll use an inner grid inside our Row Detail Component. Note that because SlickGrid uses Virtual Scroll, the rows and row
+    details are often be re-rendered (when row is out of viewport range) and this means unmounting Row Detail Component which indirectly
+    mean that all component states (dynamic elements, forms, ...) will be disposed as well, however you can use Grid State/Presets to
+    reapply previous state whenever the row detail gets re-rendered when back to viewport.
   </div>
 {/if}
 
 <div class="row">
   <div class="col-sm-10">
-    <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" data-test="collapse-all-btn" onclick={closeAllRowDetail}
-      >Close all Row Details</button
-    >
-    <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="redraw-all-btn" onclick={redrawAllRowDetail}
-      >Force redraw all Row Details</button
-    >
+    <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" data-test="collapse-all-btn" onclick={closeAllRowDetail}>
+      Close all Row Details
+    </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="redraw-all-btn" onclick={redrawAllRowDetail}>
+      Force redraw all Row Details
+    </button>
     <span class="d-inline-flex gap-1 align-items-center">
       <label for="detailViewRowCount">Detail View Rows Shown: </label><input
         id="detailViewRowCount"
@@ -298,8 +303,10 @@
         class="btn btn-outline-secondary btn-xs btn-icon"
         style="height: 26px"
         data-test="set-count-btn"
-        onclick={changeDetailViewRowCount}>Set</button
+        onclick={changeDetailViewRowCount}
       >
+        Set
+      </button>
       <label for="serverdelay" class="ms-2">Server Delay: </label><input
         id="serverdelay"
         bind:value={serverWaitDelay}
@@ -308,8 +315,8 @@
         style="height: 26px; width: 55px"
         title="input a fake timer delay to simulate slow server response"
       />
-      <label class="checkbox-inline control-label ms-2" for="useInnerGridStatePresets"
-        ><input
+      <label class="checkbox-inline control-label ms-2" for="useInnerGridStatePresets">
+        <input
           type="checkbox"
           id="useInnerGridStatePresets"
           data-test="use-inner-grid-state-presets"
@@ -320,10 +327,10 @@
           title="should we use Grid State/Presets to keep the inner grid state whenever Row Details are out and back to viewport and re-rendered"
         >
           Use Inner Grid State/Presets
-        </span></label
-      >
-      <label class="checkbox-inline control-label ms-2" for="keepComponentAlive"
-        ><input
+        </span>
+      </label>
+      <label class="checkbox-inline control-label ms-2" for="keepComponentAlive">
+        <input
           type="checkbox"
           id="keepComponentAlive"
           data-test="keep-component-alive"
@@ -332,18 +339,18 @@
         />
         <span title="preserve component state (incl. nested grid sort/filters) when row scrolls out of viewport instead of destroying it">
           Keep Component Alive on Scroll
-        </span></label
-      >
-      <label class="checkbox-inline control-label ms-2" for="useResizeAutoHeight"
-        ><input
+        </span>
+      </label>
+      <label class="checkbox-inline control-label ms-2" for="useResizeAutoHeight">
+        <input
           type="checkbox"
           id="useResizeAutoHeight"
           data-test="use-auto-height"
           checked={isUsingAutoHeight}
           onclick={changeUsingResizerAutoHeight}
         />
-        Use <code>autoResize.autoHeight</code></label
-      >
+        Use <code>autoResize.autoHeight</code>
+      </label>
     </span>
   </div>
 </div>

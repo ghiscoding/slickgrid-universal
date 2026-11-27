@@ -226,21 +226,24 @@
 
 <h2>
   Example 35: Row Based Editing
-  <span class="float-end"
-    ><a
+  <span class="float-end">
+    <a
       style="font-size: 18px"
       target="_blank"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example35.svelte"
-      ><span class="mdi mdi-link-variant"></span> code</a
-    ></span
-  >
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
   <button
     class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
     type="button"
     aria-label="Toggle example sub-title details"
     data-test="toggle-subtitle"
-    onclick={toggleSubTitle}><span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span></button
+    onclick={toggleSubTitle}
   >
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
 </h2>
 
 {#if showSubTitle}
@@ -259,10 +262,10 @@
         will be cancelled and stays in edit mode. You can try out the later by defining a Duration value
         <b>larger than 40</b>.
         <br />
-        <small
-          ><span class="has-text-danger">NOTE:</span> You can also combine this with e.g. Batch Editing like shown
-          <a href="#/example30">in Example 30</a></small
-        >
+        <small>
+          <span class="has-text-danger">NOTE:</span> You can also combine this with e.g. Batch Editing like shown
+          <a href="#/example30">in Example 30</a>
+        </small>
       </li>
       <li>
         This example additionally uses the ExcelCopyBuffer Plugin, which you can see also in Slickgrid-Universal

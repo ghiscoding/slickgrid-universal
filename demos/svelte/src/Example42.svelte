@@ -147,21 +147,24 @@
 
 <h2>
   Example 42: Custom Pagination
-  <span class="float-end"
-    ><a
+  <span class="float-end">
+    <a
       style="font-size: 18px"
       target="_blank"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example42.svelte"
-      ><span class="mdi mdi-link-variant"></span> code</a
-    ></span
-  >
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
   <button
     class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
     type="button"
     aria-label="Toggle example sub-title details"
     data-test="toggle-subtitle"
-    onclick={toggleSubTitle}><span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span></button
+    onclick={toggleSubTitle}
   >
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
 </h2>
 {#if showSubTitle}<div class="subtitle">
     You can create a Custom Pagination by passing a Svelte Custom Component and it must expose the <code>init</code>,
@@ -169,15 +172,15 @@
     example we purposely moved the page size away from the rest of the pagination elements).
   </div>{/if}
 <div>
-  <span class="margin-15px"
-    >Page Size <input
+  <span class="margin-15px">
+    Page Size <input
       value={pageSize}
       class="input is-small is-narrow"
       type="text"
       data-test="page-size-input"
       style="width: 55px"
       oninput={pageSizeChanged}
-    /></span
-  >
+    />
+  </span>
 </div>
 <SlickgridSvelte gridId="grid42" {columns} {options} {dataset} onSvelteGridCreated={(instance) => (grid = instance)} />

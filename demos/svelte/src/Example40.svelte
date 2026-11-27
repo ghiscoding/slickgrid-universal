@@ -184,21 +184,24 @@
 
 <h2>
   Example 40: Infinite Scroll from JSON data
-  <span class="float-end"
-    ><a
+  <span class="float-end">
+    <a
       style="font-size: 18px"
       target="_blank"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example40.svelte"
-      ><span class="mdi mdi-link-variant"></span> code</a
-    ></span
-  >
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
   <button
     class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
     type="button"
     aria-label="Toggle example sub-title details"
     data-test="toggle-subtitle"
-    onclick={toggleSubTitle}><span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span></button
+    onclick={toggleSubTitle}
   >
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
 </h2>
 {#if showSubTitle}<div class="subtitle">
     <ul>
@@ -218,14 +221,16 @@
       class="btn btn-outline-secondary btn-sm btn-icon"
       data-test="clear-filters-sorting"
       title="Clear all Filters & Sorts"
-      onclick={clearAllFiltersAndSorts}><span class="mdi mdi-close"></span><span>Clear all Filter & Sorts</span></button
+      onclick={clearAllFiltersAndSorts}
     >
-    <button class="btn btn-outline-secondary btn-sm mx-1" data-test="set-dynamic-filter" onclick={setFiltersDynamically}
-      >Set Filters Dynamically</button
-    >
-    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-sorting" onclick={setSortingDynamically}
-      >Set Sorting Dynamically</button
-    >
+      <span class="mdi mdi-close"></span><span>Clear all Filter & Sorts</span>
+    </button>
+    <button class="btn btn-outline-secondary btn-sm mx-1" data-test="set-dynamic-filter" onclick={setFiltersDynamically}>
+      Set Filters Dynamically
+    </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-sorting" onclick={setSortingDynamically}>
+      Set Sorting Dynamically
+    </button>
     <button class="btn btn-outline-secondary btn-sm mx-1" data-test="group-by-duration" onclick={groupByDuration}>Group by Duration</button>
     <span class="ms-4">Reset Dataset <code>onSort</code>:</span>
     <button class="btn btn-outline-secondary btn-sm mx-1" data-test="onsort-on" onclick={() => onSortReset(true)}>ON</button>

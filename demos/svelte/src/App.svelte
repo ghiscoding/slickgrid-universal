@@ -146,9 +146,9 @@
     <i class="mdi mdi-github" aria-hidden="true"></i><span class="ms-2">Slickgrid-Svelte</span>
   </a>
   <div class="github-button-container">
-    <a href="https://github.com/ghiscoding/slickgrid-universal"
-      ><img src="https://img.shields.io/github/stars/ghiscoding/slickgrid-universal?style=social" alt="GitHub stars" /></a
-    >
+    <a href="https://github.com/ghiscoding/slickgrid-universal">
+      <img src="https://img.shields.io/github/stars/ghiscoding/slickgrid-universal?style=social" alt="GitHub stars" />
+    </a>
   </div>
   <button
     class="navbar-toggler"
@@ -164,9 +164,9 @@
     <ul class="navbar-nav">
       <li class="nav-item"><a class="nav-link" href="#/home" onclick={() => (menuOpen = false)}>Home</a></li>
       <li class="nav-item">
-        <a class="nav-link" href="https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-svelte#readme"
-          >Documentation</a
-        >
+        <a class="nav-link" href="https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-svelte#readme">
+          Documentation
+        </a>
       </li>
     </ul>
   </div>
@@ -176,9 +176,9 @@
   <aside id="panel-left" class="panel-wm-left" aria-label="Examples">
     <ul class="nav nav-pills nav-stacked">
       <li class="nav-item fw-bold nav-docs">
-        <a class="nav-link" href="https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-svelte#readme"
-          >📘 Documentation</a
-        >
+        <a class="nav-link" href="https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-svelte#readme">
+          📘 Documentation
+        </a>
       </li>
       {#each examples as example (example.id)}
         <li class="nav-item">
@@ -186,8 +186,10 @@
             class="nav-link"
             class:active={current === example.id}
             aria-current={current === example.id ? 'page' : undefined}
-            href={'#/example' + example.id}>{example.name}</a
+            href={'#/example' + example.id}
           >
+            {example.name}
+          </a>
         </li>
       {/each}
     </ul>

@@ -587,29 +587,34 @@
 
 <h2>
   Example 33: Regular &amp; Custom Tooltips
-  <span class="float-end"
-    ><a
+  <span class="float-end">
+    <a
       style="font-size:18px"
       target="_blank"
       rel="noreferrer"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example33.svelte"
-      ><i class="mdi mdi-link-variant"></i> code</a
-    ></span
-  >
+    >
+      <i class="mdi mdi-link-variant"></i> code
+    </a>
+  </span>
   <button
     class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
     type="button"
     data-test="toggle-subtitle"
     aria-label="Toggle example sub-title details"
-    onclick={toggleSubTitle}><i class="mdi mdi-information-outline"></i></button
+    onclick={toggleSubTitle}
   >
+    <i class="mdi mdi-information-outline"></i>
+  </button>
 </h2>
 {#if showSubTitle}
   <div class="subtitle">
     This demo shows how to create Regular & Custom Tooltips (<a
       href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/custom-tooltip"
-      target="_blank">Wiki docs</a
-    >)
+      target="_blank"
+    >
+      Wiki docs
+    </a>)
     <br />
     <ul class="small">
       <li>optionally parse regular [title] attributes and transform them into tooltips</li>
@@ -634,15 +639,17 @@
       data-test="filter-empty-desc"
       onclick={() => setFiltersDynamically('=')}
       title="Apply filter to show only empty descriptions"
-      ><i class="mdi mdi-filter" title="icon tooltip for empty descriptions"></i><span>Filters Empty Description</span></button
     >
+      <i class="mdi mdi-filter" title="icon tooltip for empty descriptions"></i><span>Filters Empty Description</span>
+    </button>
     <button
       class="ms-2 btn btn-outline-secondary btn-icon btn-sm"
       data-test="filter-non-empty-desc"
       onclick={() => setFiltersDynamically('!=')}
       title="Apply filter to show only non-empty descriptions"
-      ><i class="mdi mdi-filter" title="icon tooltip for non-empty descriptions"></i><span>Filters Non-Empty Description</span></button
     >
+      <i class="mdi mdi-filter" title="icon tooltip for non-empty descriptions"></i><span>Filters Non-Empty Description</span>
+    </button>
   </div>
   <div class="alert alert-info is-narrow col" class:invisible={!showLazyLoading} data-test="alert-lazy">Lazy loading collection...</div>
 </div>

@@ -382,24 +382,27 @@
 
 <h2>
   Example 34: Real-Time Trading Platform
-  <span class="float-end"
-    ><a
+  <span class="float-end">
+    <a
       style="font-size: 18px"
       target="_blank"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example34.svelte"
-      ><span class="mdi mdi-link-variant"></span> code</a
-    ></span
-  >
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
   <button
     class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
     type="button"
     aria-label="Toggle example sub-title details"
     data-test="toggle-subtitle"
-    onclick={toggleSubTitle}><span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span></button
+    onclick={toggleSubTitle}
   >
-  <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" data-test="toggle-dark-mode" onclick={toggleDarkMode}
-    ><span class="mdi mdi-theme-light-dark"></span><span>Toggle Dark Mode</span></button
-  >
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
+  <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" data-test="toggle-dark-mode" onclick={toggleDarkMode}>
+    <span class="mdi mdi-theme-light-dark"></span><span>Toggle Dark Mode</span>
+  </button>
 </h2>
 
 {#if showSubTitle}
@@ -426,39 +429,39 @@
         <input id="refreshRateRange" type="range" class="form-range" min="0" max="250" bind:value={refreshRate} />
         <span class="refresh-rate"><input type="number" bind:value={refreshRate} /></span>
       </div>
-      <span class="ms-3 me-1"
-        ><button class="btn btn-outline-secondary btn-sm btn-icon" data-test="start-btn" onclick={startSimulation}
-          ><i class="mdi mdi-play-circle-outline"></i> Start Simulation</button
-        ></span
-      >
-      <span class="me-3"
-        ><button class="btn btn-outline-secondary btn-sm btn-icon" data-test="stop-btn" onclick={stopSimulation}
-          ><i class="mdi mdi-stop-circle-outline"></i> Stop Simulation</button
-        ></span
-      >
-      <span class="mx-1"
-        ><label for="change-per-cycle-input">Changes p/Cycle</label><input
+      <span class="ms-3 me-1">
+        <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="start-btn" onclick={startSimulation}>
+          <i class="mdi mdi-play-circle-outline"></i> Start Simulation
+        </button>
+      </span>
+      <span class="me-3">
+        <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="stop-btn" onclick={stopSimulation}>
+          <i class="mdi mdi-stop-circle-outline"></i> Stop Simulation
+        </button>
+      </span>
+      <span class="mx-1">
+        <label for="change-per-cycle-input">Changes p/Cycle</label><input
           id="change-per-cycle-input"
           class="ms-1"
           type="number"
           bind:value={minChangePerCycle}
           max={maxChangePerCycle}
         />
-        to <input type="number" bind:value={maxChangePerCycle} min={minChangePerCycle} /></span
-      >
-      <span class="ms-2"
-        ><label for="highlight-input">Highlight Duration(ms)</label><input
+        to <input type="number" bind:value={maxChangePerCycle} min={minChangePerCycle} />
+      </span>
+      <span class="ms-2">
+        <label for="highlight-input">Highlight Duration(ms)</label><input
           id="highlight-input"
           class="ms-1"
           type="number"
           data-test="highlight-input"
           bind:value={highlightDuration}
-        /></span
-      >
+        />
+      </span>
       <div class="ms-auto">
-        <button class="btn btn-outline-secondary btn-sm btn-icon" onclick={toggleFullScreen}
-          ><i class={isFullScreen ? 'mdi mdi-arrow-collapse' : 'mdi mdi-arrow-expand'}></i> Toggle Full-Screen</button
-        >
+        <button class="btn btn-outline-secondary btn-sm btn-icon" onclick={toggleFullScreen}>
+          <i class={isFullScreen ? 'mdi mdi-arrow-collapse' : 'mdi mdi-arrow-expand'}></i> Toggle Full-Screen
+        </button>
       </div>
     </div>
   </div>

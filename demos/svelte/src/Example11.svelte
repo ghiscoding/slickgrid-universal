@@ -246,8 +246,10 @@
     Add / Update / Hightlight an Item from the Datagrid (<a
       href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/add-update-highlight"
       target="_blank"
-      rel="noreferrer">Wiki docs</a
-    >).
+      rel="noreferrer"
+    >
+      Wiki docs
+    </a>).
     <ul>
       <li><b>Note:</b> this demo is <b>only</b> on the datagrid (client) side, you still need to deal with the backend yourself</li>
       <li>Adding an item, will always be showing as the 1st item in the grid because that is the best visual place to add it</li>
@@ -261,8 +263,10 @@
         <a
           href="https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss"
           target="_blank"
-          rel="noreferrer">SASS Variables</a
+          rel="noreferrer"
         >
+          SASS Variables
+        </a>
       </li>
       <ul>
         <li>"$row-highlight-background-color" or "$row-highlight-fade-animation"</li>
@@ -275,8 +279,10 @@
             <a
               href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/dynamic-item-metadata"
               target="_blank"
-              rel="noreferrer">Wiki doc</a
+              rel="noreferrer"
             >
+              Wiki doc
+            </a>
           </li>
         </ul>
       </li>

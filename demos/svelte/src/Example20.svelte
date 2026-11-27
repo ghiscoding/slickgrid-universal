@@ -338,14 +338,15 @@
 
 <h2>
   Example 20: Pinned Columns/Rows
-  <span class="float-end"
-    ><a
+  <span class="float-end">
+    <a
       style="font-size: 18px"
       target="_blank"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example20.svelte"
-      ><span class="mdi mdi-link-variant"></span> code</a
-    ></span
-  ><button
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span><button
     class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
     type="button"
     data-test="toggle-subtitle"
@@ -359,8 +360,10 @@
   <div class="subtitle">
     This example demonstrates the use of Pinned (aka pinned) Columns and/or Rows (<a
       href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/pinning"
-      target="_blank">Wiki docs</a
-    >) City of Origin is intentionally non-pinnable and is highlighted with a subtle gray background. Columns and rows can also be pinned
+      target="_blank"
+    >
+      Wiki docs
+    </a>) City of Origin is intentionally non-pinnable and is highlighted with a subtle gray background. Columns and rows can also be pinned
     selectively, without requiring them to be sequential (for example, rows 0, 2, and 4). You can pin any number of columns or rows, place
     rows at the bottom, change these options through SlickGrid setOptions(), and customize the border styling between pinned columns and
     rows.

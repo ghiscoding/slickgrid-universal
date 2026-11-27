@@ -315,9 +315,9 @@
   <div class="col-sm-9">
     <div class="subtitle" class:hidden={!showSubTitle}>
       Use it when you need to support Pagination with a OData endpoint (for simple JSON, use a regular grid)<br />
-      Take a look at the (<a href="https://ghiscoding.gitbook.io/svelte-slickgrid/backend-services/odata" target="_blank"
-        >Wiki documentation</a
-      >)
+      Take a look at the (<a href="https://ghiscoding.gitbook.io/svelte-slickgrid/backend-services/odata" target="_blank">
+        Wiki documentation
+      </a>)
       <br />
       <ul class="small">
         <li>Only "Name" field is sortable for the demo (because we use JSON files), however "multiColumnSort: true" is also supported</li>
@@ -330,9 +330,9 @@
         <li>OData Service could be replaced by other Service type in the future (GraphQL or whichever you provide)</li>
         <li>
           You can also preload a grid with certain "presets" like Filters / Sorters / Pagination
-          <a href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/grid-state-and-preset" target="_blank"
-            >Wiki - Grid Preset</a
-          >
+          <a href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/grid-state-and-preset" target="_blank">
+            Wiki - Grid Preset
+          </a>
         </li>
         <li>
           <span class="text-danger">NOTE:</span> For demo purposes, the last column (filter & sort) will always throw an error and its only purpose

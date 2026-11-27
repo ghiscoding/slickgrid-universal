@@ -230,22 +230,25 @@
 
 <h2>
   Example 26: Use of Svelte Components
-  <span class="float-end"
-    ><a
+  <span class="float-end">
+    <a
       style="font-size:18px"
       target="_blank"
       rel="noreferrer"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example26.svelte"
-      ><i class="mdi mdi-link-variant"></i> code</a
-    ></span
-  >
+    >
+      <i class="mdi mdi-link-variant"></i> code
+    </a>
+  </span>
   <button
     class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
     type="button"
     data-test="toggle-subtitle"
     aria-label="Toggle example sub-title details"
-    onclick={toggleSubtitle}><i class="mdi mdi-information-outline"></i></button
+    onclick={toggleSubtitle}
   >
+    <i class="mdi mdi-information-outline"></i>
+  </button>
 </h2>
 {#if showSubtitle}
   <div class="subtitle">

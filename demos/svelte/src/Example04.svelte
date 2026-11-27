@@ -343,8 +343,10 @@
 <div class="subtitle" class:hidden={!showSubTitle}>
   Sort/Filter on client side only using SlickGrid DataView (<a
     href="https://ghiscoding.gitbook.io/svelte-slickgrid/column-functionalities/sorting"
-    target="_blank">Wiki docs</a
-  >)
+    target="_blank"
+  >
+    Wiki docs
+  </a>)
   <br />
   <ul class="small">
     <li>Support multi-sort (by default), hold "Shift" key and click on the next column to sort.</li>
@@ -369,9 +371,9 @@
     </li>
     <li>
       Custom Filter are now possible, "Description" column below, is a customized InputFilter with different placeholder. See
-      <a href="https://ghiscoding.gitbook.io/svelte-slickgrid/column-functionalities/filters/custom-filter" target="_blank"
-        >Wiki - Custom Filter</a
-      >
+      <a href="https://ghiscoding.gitbook.io/svelte-slickgrid/column-functionalities/filters/custom-filter" target="_blank">
+        Wiki - Custom Filter
+      </a>
     </li>
   </ul>
 </div>

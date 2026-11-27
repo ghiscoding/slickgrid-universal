@@ -52,9 +52,9 @@
   <hr />
   <div class="col-sm-8">
     <h4>
-      Find out who is the Assignee <small
-        ><button class="btn btn-primary btn-sm" data-test="assignee-btn" onclick={alertAssignee}>Click Me</button></small
-      >
+      Find out who is the Assignee <small>
+        <button class="btn btn-primary btn-sm" data-test="assignee-btn" onclick={alertAssignee}>Click Me</button>
+      </small>
     </h4>
   </div>
   <div class="col-sm-4">
