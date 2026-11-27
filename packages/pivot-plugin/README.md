@@ -26,6 +26,8 @@ Fields are derived from the grid columns, with `fields` providing overrides or c
 
 Pivot derives `number` from `integer`, `float`, and `number` column types, and derives `date` from `date`, `dateIso`, and `dateUtc`. The `string` and `boolean` types are also carried over. Other column types use data inference unless a Pivot field override specifies a type. A Pivot override takes precedence over the column type.
 
+When Pivot is registered as a Universal external resource, values supplied in `gridOptions.pivotOptions` take precedence over corresponding constructor options. The `fields` list in `pivotOptions` replaces the constructor's list. Pivot requests a pre-header during grid preparation and uses the application's `preHeaderPanelHeight` when supplied, otherwise it defaults to 25 pixels. External resources prepare options in registration order, so a later resource can change those options.
+
 Initial Pivot Mode is activated after synchronous grid initialization so Universal services can initialize with the source DataView. The pivot displays aggregated rows while active. Application handlers, menus, exports, filtering, and selection logic that expect source records must account for pivot mode. See Vanilla Example 48 for a complete example.
 
 ## Source filtering and pagination

@@ -12,6 +12,55 @@ describe('pivot external resources with the vanilla bundle', () => {
     document.body.innerHTML = '';
   });
 
+  it('uses host Pivot options over constructor options and preserves configured pre-header height', () => {
+    const container = document.createElement('div');
+    container.className = 'slickgrid-container';
+    document.body.appendChild(container);
+    const pivot = new SlickPivot({ pivotMode: true, fields: [{ id: 'region', label: 'Constructor caption' }], locale: 'en-US' });
+    const bundle = new SlickVanillaGridBundle(
+      container,
+      [{ id: 'region', field: 'region', name: 'Region' }],
+      {
+        preHeaderPanelHeight: 42,
+        externalResources: [pivot],
+        pivotOptions: { pivotMode: false, fields: [{ id: 'region', label: 'Host caption' }], locale: 'fr-CA' },
+      },
+      [{ id: 1, region: 'East' }]
+    );
+    expect(bundle.slickGrid!.getOptions()).toEqual(expect.objectContaining({ createPreHeaderPanel: true, preHeaderPanelHeight: 42 }));
+    expect(pivot.isPivotMode()).toBe(false);
+    expect(pivot.getOptions().locale).toBe('fr-CA');
+    expect(pivot.getFields()[0].label).toBe('Host caption');
+    bundle.dispose();
+  });
+
+  it('prepares external resources in registration order', () => {
+    const container = document.createElement('div');
+    container.className = 'slickgrid-container';
+    document.body.appendChild(container);
+    const pivot = new SlickPivot();
+    const observed: number[] = [];
+    const resource = {
+      pluginName: 'test',
+      prepareGridOptions: (options: any) => {
+        observed.push(options.preHeaderPanelHeight);
+        options.preHeaderPanelHeight = 55;
+      },
+    };
+    const bundle = new SlickVanillaGridBundle(
+      container,
+      [{ id: 'region', field: 'region', name: 'Region' }],
+      {
+        externalResources: [pivot, resource],
+        pivotOptions: { pivotMode: false },
+      },
+      [{ id: 1, region: 'East' }]
+    );
+    expect(observed).toEqual([25]);
+    expect(bundle.slickGrid!.getOptions().preHeaderPanelHeight).toBe(55);
+    bundle.dispose();
+  });
+
   it('derives supported field types from columns with empty data and honors Pivot overrides', () => {
     const container = document.createElement('div');
     container.className = 'slickgrid-container';
@@ -140,7 +189,7 @@ describe('pivot external resources with the vanilla bundle', () => {
     expect(pivot.isPivotMode()).toBe(false);
   });
 
-  it('restores source header groups after Pivot Mode and independent disposal', async () => {
+  it.each([true, false])('restores source header groups after Pivot Mode when pre-header visibility is %s', async (visible) => {
     const container = document.createElement('div');
     container.className = 'slickgrid-container';
     document.body.appendChild(container);
@@ -152,7 +201,8 @@ describe('pivot external resources with the vanilla bundle', () => {
         { id: 'amount', field: 'amount', name: 'Amount', columnGroup: 'Sales' },
       ],
       {
-        showPreHeaderPanel: true,
+        showPreHeaderPanel: visible,
+        preHeaderPanelHeight: 41,
         externalResources: [pivot],
         pivotOptions: { pivotMode: false, spec: { rows: ['region'], columns: ['region'], values: [{ field: 'amount', aggregator: 'sum' }] } },
       },
@@ -165,10 +215,13 @@ describe('pivot external resources with the vanilla bundle', () => {
     expect(grid.getPreHeaderPanel()!.querySelector('.slick-pivot-header-caption')).not.toBeNull();
     await pivot.setPivotMode(false);
     await vi.waitFor(() => expect(grid.getPreHeaderPanel()!.textContent).toContain('Customer'));
-    expect(grid.getOptions().showPreHeaderPanel).toBe(true);
+    expect(grid.getOptions().showPreHeaderPanel).toBe(visible);
+    expect(grid.getOptions().preHeaderPanelHeight).toBe(41);
     await pivot.setPivotMode(true);
     pivot.dispose();
     await vi.waitFor(() => expect(grid.getPreHeaderPanel()!.textContent).toContain('Customer'));
+    expect(grid.getOptions().showPreHeaderPanel).toBe(visible);
+    expect(grid.getOptions().preHeaderPanelHeight).toBe(41);
     bundle.dispose();
   });
 
@@ -267,6 +320,25 @@ describe('pivot external resources with the vanilla bundle', () => {
     await vi.waitFor(() => expect(pivot.getResult()?.cells['[]']['[]'][0]).toBe(45));
     await pivot.setPivotMode(false);
     expect(bundle.dataView!.getItems()).toEqual([{ id: 3, region: 'North', amount: 45 }]);
+    bundle.dispose();
+  });
+
+  it('recomputes immediately when source data changes just before Pivot Mode is re-enabled', async () => {
+    const container = document.createElement('div');
+    container.className = 'slickgrid-container';
+    document.body.appendChild(container);
+    const pivot = new SlickPivot();
+    const bundle = new SlickVanillaGridBundle(
+      container,
+      [{ id: 'region', field: 'region', name: 'Region' }],
+      { externalResources: [pivot], pivotOptions: { pivotMode: true, refreshDelay: 1000, spec: { rows: ['region'] } } },
+      [{ id: 1, region: 'East' }]
+    );
+    await Promise.resolve();
+    await pivot.setPivotMode(false);
+    bundle.dataView!.setItems([{ id: 2, region: 'West' }]);
+    await pivot.setPivotMode(true);
+    expect(pivot.getResult()!.rowTree.children.map((node) => node.label)).toEqual(['West']);
     bundle.dispose();
   });
 
@@ -393,6 +465,43 @@ describe('pivot external resources with the vanilla bundle', () => {
     expect(grid.getSortColumns()).toEqual([{ columnId: 'region', sortAsc: false }]);
     expect(grid.getColumns().find((column) => column.id === 'amount')?.hidden).toBe(true);
     expect(bundle.extensionService.getExtensionInstanceByName('gridMenu').columns.find((column: any) => column.id === 'amount')?.hidden).toBe(true);
+    bundle.dispose();
+  });
+
+  it('restores source selection by ID after rows are reordered while pivoting', async () => {
+    const container = document.createElement('div');
+    container.className = 'slickgrid-container';
+    document.body.appendChild(container);
+    const pivot = new SlickPivot();
+    const bundle = new SlickVanillaGridBundle(
+      container,
+      [{ id: 'region', field: 'region', name: 'Region' }],
+      {
+        enableSelection: true,
+        dataView: { syncGridSelection: true },
+        externalResources: [pivot],
+        pivotOptions: { pivotMode: false, refreshDelay: 0, spec: { rows: ['region'] } },
+      },
+      [
+        { id: 1, region: 'East' },
+        { id: 2, region: 'West' },
+      ]
+    );
+    const grid = bundle.slickGrid!;
+    grid.setSelectedRows([1]);
+    await pivot.setPivotMode(true);
+    bundle.dataView!.setItems([
+      { id: 2, region: 'West' },
+      { id: 1, region: 'East' },
+    ]);
+    await vi.waitFor(() => expect(bundle.dataView!.getItem(0).id).toBe(2));
+    await pivot.setPivotMode(false);
+    expect(grid.getSelectedRows()).toEqual([0]);
+    expect(grid.getDataItem(grid.getSelectedRows()[0]).id).toBe(2);
+    await pivot.setPivotMode(true);
+    bundle.dataView!.deleteItem(2);
+    await pivot.setPivotMode(false);
+    expect(grid.getSelectedRows()).toEqual([]);
     bundle.dispose();
   });
 

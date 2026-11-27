@@ -1205,6 +1205,7 @@ export class SlickPivot implements SlickPlugin {
   }
 
   protected scheduleRefresh(): void {
+    this._stale = true;
     clearTimeout(this._refreshTimer);
     this._refreshTimer = setTimeout(() => this.refresh(), this._options.refreshDelay);
   }

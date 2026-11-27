@@ -24,8 +24,10 @@
 - Vanilla integration tests verify that deferred activation is cancelled when the bundle is disposed, that disposing Pivot restores the source DataView and columns while leaving GridMenu registered, and that DataView additions recompute the pivot and remain available after switching back. Further lifecycle and source-state scenarios remain open.
 - Vanilla integration tests also cover adding, updating, deleting, and replacing DataView items while pivoting, deriving a changed source-column caption on the next mode switch, and aborting an in-flight provider request when Pivot is disposed.
 - Pivot Mode aborts an in-flight provider request on exit and requests fresh data on re-entry. A Vanilla integration test verifies that an older response cannot replace the newer result.
+- Source DataView notifications invalidate the cached result immediately. A Vanilla integration test covers re-enabling Pivot before the delayed source refresh runs.
 - A Vanilla bundle integration test verifies that a successful editor-lock commit updates the source before Pivot calculates its result. The test simulates the editor lock, so actual editor interaction still needs browser verification.
 - The Pivot row model exposes selected Pivot row IDs for Grid State. A Vanilla integration test verifies Pivot selection, source selection restoration, and hidden source-column state through a mode round trip. Pivot and source IDs remain separate.
+- Vanilla selection coverage includes source rows being reordered or a selected source record being deleted while Pivot Mode is active.
 - Vanilla integration coverage also verifies source column order, width and sort indicators after a mode round trip. ContextMenu usability callbacks receive the displayed Pivot row in Pivot Mode and the source record after returning to ordinary mode. Example 48 Cypress verifies source column pinning restoration and hiding or restoring a Pivot column through GridMenu and ColumnPicker.
 - The focused Pivot unit suite now reports 100% line and statement coverage across the package. Branch coverage remains informational.
 - An isolated esbuild browser bundle of `SlickGrid` using the built common package contained no Pivot inputs. Adding `SlickPivot` and `SlickPivotFieldList` from Pivot source increased minified JavaScript by 189,701 bytes and gzip by 48,535 bytes. This measurement excludes CSS and represents the tested build, not every application's final bundle.
@@ -38,22 +40,24 @@
 
 - [x] Verify `prepareGridOptions` runs before grid creation for resource instances in Vanilla without importing Pivot into core.
 - [ ] Verify the pre-creation hook in the framework wrappers after Vanilla is complete.
-- [ ] Define precedence when the application or multiple resources configure the pre-header; preserve its original configuration.
+- [x] Document pre-header preparation order and verify that Pivot preserves an application-specified height in Vanilla.
+- [ ] Verify pre-header ownership across multiple resources with conflicting requirements.
 - [x] Correct Pivot JSDoc and the missing-pre-header warning to use ordinary grid options for direct SlickGrid usage.
 - [ ] Reconsider the fork separately: `grid.registerPlugin()` normally runs after grid construction, so the Universal hook is not automatically a direct upstream patch.
 
 ### 2. Host grid options, columns, and initial layout
 
-- [ ] Keep ordinary column definitions, grid options, and dataset as the primary configuration. Define precedence between resource-constructor options and host `pivotOptions`.
+- [x] Keep ordinary columns, grid options, and dataset as the primary configuration. Document and test host `pivotOptions` precedence over constructor options.
 - [x] Derive field IDs and captions from host columns and allow Pivot-specific field overrides.
-- [ ] Review automatic type inference and overrides for hierarchies, calculated fields, formatting, aggregation restrictions, getters/setters, and write-back.
+- [x] Derive supported numeric, date, boolean, and string types from column definitions and honor explicit Pivot overrides.
+- [ ] Review remaining type formats and overrides for hierarchies, calculated fields, formatting, aggregation restrictions, getters/setters, and write-back.
 - [ ] Verify updated source columns, hidden columns, translated captions, and datasets do not leave stale or duplicate field schemas.
 
 ### 3. Initialization, pre-header ownership, and teardown
 
 - [x] Remove the manual post-initialization `setPivotMode(true)` call from the initial Vanilla example.
 - [x] Verify deferred initial activation, cancellation, and teardown in the Vanilla bundle with the source DataView and GridMenu.
-- [x] Verify Vanilla source header groups and pre-header visibility return after Pivot Mode ends and after independent Pivot disposal.
+- [x] Verify Vanilla source header groups, original visibility, and configured height return after Pivot Mode ends and after independent Pivot disposal.
 - [ ] Verify pre-header dimensions and service ownership across additional layout and resource-order combinations.
 - [ ] Test resource ordering, registration, unregistering Pivot while the host grid remains alive, mode transitions, and grid destruction. Verify all framework wrappers.
 
