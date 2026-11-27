@@ -196,6 +196,8 @@ function defineGrid() {
     // use columnDef searchTerms OR use presets as shown below
     presets: {
       // the column position in the array is very important and represent
+
+If any entry in `presets.columns` has a positive `width`, the preset layout takes precedence over automatic viewport fitting on first load. A height-only resize also preserves those widths. When the available grid width changes, `enableAutoSizeColumns` can fit the columns to the new width.
       // the position that will show in the grid
       columns: [
         { columnId: 'duration', width: 88, headerCssClass: 'customHeaderClass' },

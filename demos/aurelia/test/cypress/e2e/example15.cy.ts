@@ -1,7 +1,17 @@
 import { format } from '@formkit/tempo';
+import { resizeColumn } from '../../../../../test/cypress/support/resizeColumn';
 
 describe('Example 15: Grid State & Presets using Local Storage', () => {
   const fullEnglishTitles = ['', 'Title', 'Description', 'Duration', '% Complete', 'Start', 'Completed'];
+  let initialDescriptionWidth = 0;
+  let savedDescriptionWidth = 0;
+  interface GridHost extends HTMLElement {
+    $au?: {
+      'au:resource:custom-element'?: {
+        viewModel: { instances?: { gridStateService: { getCurrentGridState: () => { columns: { columnId: string; width: number }[] } } } };
+      };
+    };
+  }
 
   beforeEach(() => {
     cy.restoreLocalStorage();
@@ -192,15 +202,13 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
   });
 
   it('should resize "Description" column and make it wider', () => {
-    cy.get('.slick-header-column:nth(2)').find('.slick-resizable-handle').should('be.visible').invoke('show').dblclick();
-
-    cy.get('.slick-header-column:nth(1) .slick-resizable-handle')
-      .trigger('mousedown', { which: 1, force: true })
-      .trigger('mousemove', 'bottomRight');
-    cy.get('.slick-header-column:nth(2)').trigger('mousemove', 'bottomRight').trigger('mouseup', 'bottomRight', { which: 1, force: true });
-
-    cy.get('.slick-header-column:nth(1)').should(($el) => {
-      expect($el.width()).greaterThan(200);
+    resizeColumn('#grid15 .slick-header-column[data-id="description"]', 60).then((width) => {
+      initialDescriptionWidth = width;
+      cy.window().then((win) => {
+        const gridState = JSON.parse(win.localStorage.getItem('gridState') || '{}');
+        savedDescriptionWidth = gridState.columns.find((column: { columnId: string }) => column.columnId === 'description').width;
+        expect(savedDescriptionWidth).to.be.greaterThan(0);
+      });
     });
   });
 
@@ -217,8 +225,15 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
       .children()
       .each(($child, index) => expect($child.find('.slick-column-name').text()).to.eq(expectedTitles[index]));
 
-    cy.get('.slick-header-column:nth(1)').should(($el) => {
-      expect($el.width()).greaterThan(200);
+    cy.get('#grid15 .slick-header-column[data-id="description"]').should(($column) => {
+      expect(parseFloat($column[0].style.width)).to.be.greaterThan(initialDescriptionWidth);
+    });
+    cy.get('aurelia-slickgrid').should(($host) => {
+      const instance = ($host[0] as GridHost).$au?.['au:resource:custom-element']?.viewModel.instances;
+      expect(instance, 'Aurelia grid instance').to.exist;
+      expect(instance!.gridStateService.getCurrentGridState().columns.find((column) => column.columnId === 'description')?.width).to.equal(
+        savedDescriptionWidth
+      );
     });
   });
 

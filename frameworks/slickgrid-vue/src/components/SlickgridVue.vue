@@ -13,6 +13,7 @@ import {
   GridEventService,
   GridService,
   GridStateService,
+  hasPresetColumnWidths,
   hasStringDateColumns,
   HeaderGroupingService,
   PaginationService,
@@ -236,7 +237,13 @@ watch(
 
     // expand/autofit columns on first page load
     // we can assume that if the prevDataset was empty then we are on first load
-    if (grid && _gridOptions.value?.autoFitColumnsOnFirstLoad && prevDatasetLn === 0 && !isAutosizeColsCalled) {
+    if (
+      grid &&
+      _gridOptions.value?.autoFitColumnsOnFirstLoad &&
+      !hasPresetColumnWidths(_gridOptions.value as GridOption) &&
+      prevDatasetLn === 0 &&
+      !isAutosizeColsCalled
+    ) {
       grid.autosizeColumns();
       isAutosizeColsCalled = true;
     }
@@ -1008,7 +1015,14 @@ function bindResizeHook(grid: SlickGrid, options: GridOption) {
   }
 
   // expand/autofit columns on first page load
-  if (grid && options?.enableAutoResize && options.autoFitColumnsOnFirstLoad && options.enableAutoSizeColumns && !isAutosizeColsCalled) {
+  if (
+    grid &&
+    options?.enableAutoResize &&
+    options.autoFitColumnsOnFirstLoad &&
+    !hasPresetColumnWidths(options) &&
+    options.enableAutoSizeColumns &&
+    !isAutosizeColsCalled
+  ) {
     grid.autosizeColumns();
     isAutosizeColsCalled = true;
   }
