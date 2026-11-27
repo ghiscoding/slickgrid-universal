@@ -12,6 +12,7 @@ import {
   GridEventService,
   GridService,
   GridStateService,
+  hasPresetColumnWidths,
   hasStringDateColumns,
   HeaderGroupingService,
   PaginationService,
@@ -201,7 +202,13 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
     // expand/autofit columns on first page load
     // we can assume that if the prevDataset was empty then we are on first load
-    if (this.grid && this.options.autoFitColumnsOnFirstLoad && prevDatasetLn === 0 && !this._isAutosizeColsCalled) {
+    if (
+      this.grid &&
+      this.options.autoFitColumnsOnFirstLoad &&
+      !hasPresetColumnWidths(this.options) &&
+      prevDatasetLn === 0 &&
+      !this._isAutosizeColsCalled
+    ) {
       this.grid.autosizeColumns();
       this._isAutosizeColsCalled = true;
     }
@@ -1103,6 +1110,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       grid &&
       options?.enableAutoResize &&
       options.autoFitColumnsOnFirstLoad &&
+      !hasPresetColumnWidths(options) &&
       options.enableAutoSizeColumns &&
       !this._isAutosizeColsCalled
     ) {

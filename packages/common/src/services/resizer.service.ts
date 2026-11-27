@@ -6,6 +6,7 @@ import { type SlickDataView } from '../core/slickDataView.js';
 import { type SlickGrid } from '../core/slickGrid.js';
 import { parseFormatterWhenExist } from '../formatters/formatterUtilities.js';
 import type { AutoResizeOption, Column, Formatter, GridOption, GridSize, ResizeByContentOption } from '../interfaces/index.js';
+import { hasPresetColumnWidths } from './utilities.js';
 
 // using external non-typed js libraries
 const DATAGRID_BOTTOM_PADDING = 20;
@@ -385,7 +386,6 @@ export class ResizerService {
       // we will use the height as a fixed height but the width will be resized by it's available space
       const newHeight = newSizes?.height ? newSizes.height : availableDimensions?.height;
       const newWidth = newSizes?.width ? newSizes.width : availableDimensions?.width;
-
       // apply these new height/width to the datagrid
       if (!this.gridOptions.autoHeight) {
         this._gridDomElm.style.height = `${newHeight}px`;
@@ -404,8 +404,11 @@ export class ResizerService {
       if (this._grid && this.gridOptions?.enableAutoSizeColumns) {
         // make sure that the grid still exist (by looking if the Grid UID is found in the DOM tree) to avoid SlickGrid error "missing stylesheet"
         if (this.gridUid && document.querySelector(this.gridUidSelector)) {
-          // don't call autosize unless dimension really changed
-          if (!this._lastGridSizes || this._lastGridSizes.height !== newHeight || this._lastGridSizes.width !== newWidth) {
+          const previous = this._lastGridSizes;
+          const shouldAutosize = hasPresetColumnWidths(this.gridOptions)
+            ? previous && previous.width !== newWidth
+            : !previous || previous.width !== newWidth || previous.height !== newHeight;
+          if (shouldAutosize) {
             this._grid.autosizeColumns();
           }
         }

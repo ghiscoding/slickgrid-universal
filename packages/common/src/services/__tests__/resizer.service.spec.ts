@@ -588,6 +588,22 @@ describe('Resizer Service', () => {
       expect(gridAutosizeSpy).toHaveBeenCalled();
     });
 
+    it('preserves preset widths on initial and height-only resizes, but autosizes when the width changes', () => {
+      mockGridOptions.enableAutoSizeColumns = true;
+      mockGridOptions.presets = { columns: [{ columnId: 'description', width: 211 }] };
+      service.init(gridStub, divContainer);
+      const autosizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
+      autosizeSpy.mockClear();
+      (service as any)._lastGridSizes = undefined;
+
+      service.resizeGridWithDimensions({ height: 200, width: 800 });
+      expect(autosizeSpy).not.toHaveBeenCalled();
+      service.resizeGridWithDimensions({ height: 300, width: 800 });
+      expect(autosizeSpy).not.toHaveBeenCalled();
+      service.resizeGridWithDimensions({ height: 300, width: 900 });
+      expect(autosizeSpy).toHaveBeenCalledOnce();
+    });
+
     it('should call "resizeGridWithDimensions" method and expect "resizeColumnsByCellContent" to be called when "enableAutoResizeColumnsByCellContent" is set', () => {
       const resizeContentSpy = vi.spyOn(service, 'resizeColumnsByCellContent');
 

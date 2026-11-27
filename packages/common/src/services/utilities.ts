@@ -450,6 +450,10 @@ export function getDescendantProperty<T = any>(object: T, path: string | undefin
   return path.split('.').reduce((obj, prop) => obj && (obj as any)[prop], object);
 }
 
+export function hasPresetColumnWidths(options: GridOption): boolean {
+  return options.presets?.columns?.some(({ width }) => typeof width === 'number' && width > 0) ?? false;
+}
+
 /** Get I18N Translation Prefix, defaults to an empty string */
 export function getTranslationPrefix(gridOptions?: GridOption): string {
   if (gridOptions?.translationNamespace) {

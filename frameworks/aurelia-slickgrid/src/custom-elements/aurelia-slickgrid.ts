@@ -30,6 +30,7 @@ import {
   GridEventService,
   GridService,
   GridStateService,
+  hasPresetColumnWidths,
   hasStringDateColumns,
   HeaderGroupingService,
   PaginationService,
@@ -640,7 +641,13 @@ export class AureliaSlickgridCustomElement {
 
     // expand/autofit columns on first page load
     // we can assume that if the oldValue was empty then we are on first load
-    if (this.grid && this.options.autoFitColumnsOnFirstLoad && (!oldValue || oldValue.length < 1) && !this._isAutosizeColsCalled) {
+    if (
+      this.grid &&
+      this.options.autoFitColumnsOnFirstLoad &&
+      !hasPresetColumnWidths(this.options) &&
+      (!oldValue || oldValue.length < 1) &&
+      !this._isAutosizeColsCalled
+    ) {
       this.grid.autosizeColumns();
       this._isAutosizeColsCalled = true;
     }
@@ -969,6 +976,7 @@ export class AureliaSlickgridCustomElement {
       grid &&
       options?.enableAutoResize &&
       options.autoFitColumnsOnFirstLoad &&
+      !hasPresetColumnWidths(options) &&
       options.enableAutoSizeColumns &&
       !this._isAutosizeColsCalled
     ) {

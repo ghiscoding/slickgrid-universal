@@ -1,7 +1,9 @@
 import { format } from '@formkit/tempo';
+import { resizeColumn } from '../../../../../test/cypress/support/resizeColumn';
 
 describe('Example 15: Grid State & Presets using Local Storage', () => {
   const fullEnglishTitles = ['', 'Title', 'Description', 'Duration', '% Complete', 'Start', 'Completed'];
+  let initialDescriptionWidth = 0;
 
   beforeEach(() => {
     cy.restoreLocalStorage();
@@ -192,15 +194,8 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
   });
 
   it('should resize "Description" column and make it wider', () => {
-    cy.get('.slick-header-column:nth(2)').find('.slick-resizable-handle').should('be.visible').invoke('show').dblclick();
-
-    cy.get('.slick-header-column:nth(1) .slick-resizable-handle')
-      .trigger('mousedown', { which: 1, force: true })
-      .trigger('mousemove', 'bottomRight');
-    cy.get('.slick-header-column:nth(2)').trigger('mousemove', 'bottomRight').trigger('mouseup', 'bottomRight', { which: 1, force: true });
-
-    cy.get('.slick-header-column:nth(1)').should(($el) => {
-      expect($el.width()).greaterThan(200);
+    resizeColumn('#grid15 .slick-header-column[data-id="description"]', 60).then((width) => {
+      initialDescriptionWidth = width;
     });
   });
 
@@ -217,8 +212,8 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
       .children()
       .each(($child, index) => expect($child.find('.slick-column-name').text()).to.eq(expectedTitles[index]));
 
-    cy.get('.slick-header-column:nth(1)').should(($el) => {
-      expect($el.width()).greaterThan(200);
+    cy.get('#grid15 .slick-header-column[data-id="description"]').should(($column) => {
+      expect(parseFloat($column[0].style.width)).to.be.greaterThan(initialDescriptionWidth);
     });
   });
 

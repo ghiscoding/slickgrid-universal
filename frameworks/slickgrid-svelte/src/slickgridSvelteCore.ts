@@ -13,6 +13,7 @@ import {
   GridEventService,
   GridService,
   GridStateService,
+  hasPresetColumnWidths,
   hasStringDateColumns,
   HeaderGroupingService,
   MapContainerService,
@@ -163,7 +164,13 @@ export class SlickgridSvelteCore<TData = any> {
 
     // expand/autofit columns on first page load
     // we can assume that if the prevDataset was empty then we are on first load
-    if (this.slickGrid && this.options.autoFitColumnsOnFirstLoad && prevDatasetLn === 0 && !this._isAutosizeColsCalled) {
+    if (
+      this.slickGrid &&
+      this.options.autoFitColumnsOnFirstLoad &&
+      !hasPresetColumnWidths(this.options) &&
+      prevDatasetLn === 0 &&
+      !this._isAutosizeColsCalled
+    ) {
       this.slickGrid.autosizeColumns();
       this._isAutosizeColsCalled = true;
     }
@@ -1080,6 +1087,7 @@ export class SlickgridSvelteCore<TData = any> {
       grid &&
       options?.enableAutoResize &&
       options.autoFitColumnsOnFirstLoad &&
+      !hasPresetColumnWidths(options) &&
       options.enableAutoSizeColumns &&
       !this._isAutosizeColsCalled
     ) {
