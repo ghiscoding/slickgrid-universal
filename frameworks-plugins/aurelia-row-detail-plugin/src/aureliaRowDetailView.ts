@@ -168,12 +168,15 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
             this.rowDetailViewOptions?.onBeforeRowOutOfViewportRange?.(event, args);
             if (this.rowDetailViewOptions?.keepComponentAlive) {
               this.detachViewFromDom(args.item);
-            } else {
-              this.disposeView(args.item);
             }
           });
 
           this._eventHandler.subscribe(this.onRowOutOfViewportRange, (event, args) => {
+            // Cached rows can be removed and recreated within one grid render. Dispose only
+            // once the detail actually leaves the viewport, so a retained panel stays mounted.
+            if (!this.rowDetailViewOptions?.keepComponentAlive) {
+              this.disposeView(args.item);
+            }
             this.rowDetailViewOptions?.onRowOutOfViewportRange?.(event, args);
           });
 
