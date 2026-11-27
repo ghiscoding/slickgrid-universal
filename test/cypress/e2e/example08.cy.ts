@@ -1,7 +1,10 @@
+import type { SlickGrid } from '@slickgrid-universal/common';
 // eslint-disable-next-line n/file-extension-in-import
 import { removeExtraSpaces } from '../plugins/utilities';
+import { visitWithGrid } from '../support/visitWithGrid';
 
 describe('Example 08 - Column Span & Header Grouping', () => {
+  let grid1: SlickGrid;
   const fullPreTitles = ['', 'Common Factor', 'Period', 'Analysis'];
   const fullTitles = ['#', 'Title', 'Duration', 'Start', 'Finish', '% Complete', 'Effort Driven'];
   let restoreGrid1Columns: (() => void) | undefined;
@@ -16,7 +19,9 @@ describe('Example 08 - Column Span & Header Grouping', () => {
   });
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/example08`);
+    visitWithGrid(`${Cypress.config('baseUrl')}/example08`, '.grid1', (grid) => {
+      grid1 = grid;
+    });
     cy.get('h3').should('contain', 'Example 08 - Column Span & Header Grouping');
   });
 
@@ -467,17 +472,8 @@ describe('Example 08 - Column Span & Header Grouping', () => {
       };
       const hostSelector = '.grid1 [data-row="1"] .slick-pinned-left-cells > .slick-cell.l1:not(.slick-cell-colspan-part)';
       const fragmentSelector = '.grid1 [data-row="1"] .slick-scrolling-cells > .slick-cell-colspan-part';
-      let grid1: any;
-      let originalGrid1Columns: any[] = [];
-
-      cy.window()
-        .its('main.app.viewModelObj', { timeout: 10000 })
-        .then((viewModelObj: Record<string, any>) => {
-          const viewModel = Object.values(viewModelObj).find((candidate) => candidate?.sgb1?.slickGrid);
-          grid1 = viewModel.sgb1.slickGrid;
-          originalGrid1Columns = grid1.getColumns().map((column: any) => ({ ...column }));
-          restoreGrid1Columns = () => grid1.setColumns(originalGrid1Columns);
-        });
+      const originalGrid1Columns = grid1.getColumns().map((column) => ({ ...column }));
+      restoreGrid1Columns = () => grid1.setColumns(originalGrid1Columns);
 
       setPinning('.grid1 .slick-header:not(.slick-preheader-panel) .slick-header-columns [data-id="title"]', 'pin-left');
 
