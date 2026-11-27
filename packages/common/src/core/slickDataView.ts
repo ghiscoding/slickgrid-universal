@@ -102,6 +102,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   protected filterArgs: any;
   protected filteredItems: TData[] = [];
   protected filterCache: any[] = [];
+  protected _gridResyncs: Array<() => void> = [];
   protected _grid?: SlickGrid; // grid object will be defined after using "syncGridSelection()" or "setGrid()" method
   protected _eventHandler: SlickEventHandler = new SlickEventHandler();
   protected _gridOptions?: ReturnType<SlickGrid['getOptions']>; // cached grid options, refreshed via onSetOptions subscription
@@ -225,6 +226,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this.filteredItems = [];
     this.clearFormattedDataCache();
     this._eventHandler.unsubscribeAll();
+    this._gridResyncs = [];
     this.onRowsOrCountChanged?.unsubscribe();
   }
 
@@ -1398,7 +1400,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     };
 
     const update = () => {
-      if ((this.selectedRowIds || []).length > 0 && !inHandler) {
+      if ((this.selectedRowIds || []).length > 0 && !inHandler && grid.getData() === this) {
         inHandler = true;
         const selectedRows = this.mapIdsToRows(this.selectedRowIds || []);
         if (!preserveHidden) {
@@ -1424,7 +1426,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     };
 
     this._eventHandler.subscribe(grid.onSelectedRowsChanged, (_e, args) => {
-      if (!inHandler) {
+      if (!inHandler && grid.getData() === this) {
         const newSelectedRowIds = this.mapRowsToIds(args.rows);
         const selectedRowsChangedArgs = {
           grid: this._grid,
@@ -1486,9 +1488,15 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       }
     };
 
-    this.onRowsOrCountChanged.subscribe(update.bind(this));
+    this.onRowsOrCountChanged.subscribe(update);
+    this._gridResyncs.push(update);
 
     return this.onSelectedRowIdsChanged;
+  }
+
+  /** Restore selection and cell styles after the grid returns to this DataView. */
+  resyncGrid(): void {
+    this._gridResyncs.forEach((resync) => resync());
   }
 
   /**
@@ -1554,7 +1562,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     }
 
     // should we also apply the row selection in to the grid (UI) as well?
-    if (applyRowSelectionToGrid !== false && this._grid) {
+    if (applyRowSelectionToGrid !== false && this._grid && this._grid.getData() === this) {
       this._grid.setSelectedRows(selectedRows);
     }
   }
@@ -1608,7 +1616,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     storeCellCssStyles(grid.getCellCssStyles(key));
 
     const update = () => {
-      if (typeof hashById === 'object') {
+      if (typeof hashById === 'object' && grid.getData() === this) {
         inHandler = true;
         this.ensureRowsByIdCache();
         const newHash: CssStyleHash = {};
@@ -1628,15 +1636,19 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
         return;
       }
       if (args.hash) {
-        storeCellCssStyles(args.hash);
+        if (grid.getData() === this) {
+          storeCellCssStyles(args.hash);
+        }
       } else {
         this._eventHandler.unsubscribe(grid.onCellCssStylesChanged, handleCellCssStylesChanged);
         this.onRowsOrCountChanged.unsubscribe(update);
+        this._gridResyncs = this._gridResyncs.filter((resync) => resync !== update);
       }
     };
     this._eventHandler.subscribe(grid.onCellCssStylesChanged, handleCellCssStylesChanged);
 
     this.onRowsOrCountChanged.subscribe(update);
+    this._gridResyncs.push(update);
   }
 
   // --------------------------

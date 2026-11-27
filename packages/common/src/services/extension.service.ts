@@ -352,6 +352,11 @@ export class ExtensionService {
    * @param gridOptions
    */
   createExtensionsBeforeGridCreation(columns: Column[], gridOptions: GridOption): void {
+    for (const resource of gridOptions.externalResources ?? []) {
+      if (typeof resource === 'object') {
+        resource.prepareGridOptions?.(gridOptions, columns);
+      }
+    }
     const featureWithColumnIndexPositions: Array<ExtensionModel<any>> = [];
 
     // the following 3 features might have `columnIndexPosition` that we need to respect their column order, we will execute them by their sort order further down

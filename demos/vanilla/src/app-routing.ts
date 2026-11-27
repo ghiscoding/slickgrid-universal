@@ -335,6 +335,13 @@ export class AppRouting {
         viewModel: () => import('./examples/example47.js'),
         title: 'Example47',
       },
+      {
+        route: 'example48',
+        name: 'example48',
+        view: './examples/example48.html',
+        viewModel: () => import('./examples/example48.js'),
+        title: 'Example48',
+      },
       { route: '', redirect: 'example01' },
       { route: '**', redirect: 'example01' },
     ];

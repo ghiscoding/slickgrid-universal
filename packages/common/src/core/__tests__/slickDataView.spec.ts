@@ -1930,6 +1930,25 @@ describe('SlickDatView core file', () => {
       vi.clearAllMocks();
     });
 
+    it('preserves DataView selection while the grid displays different data and restores it afterwards', () => {
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }];
+      dv = new SlickDataView({});
+      const grid = new SlickGrid('#myGrid', dv, columns, { enableCellNavigation: true, multiSelect: true, devMode: { ownerNodeIndex: 0 } });
+      grid.setSelectionModel(new SlickHybridSelectionModel({ selectActiveRow: false, selectionType: 'row' }));
+      dv.setItems(items);
+      dv.syncGridSelection(grid, true);
+      grid.setSelectedRows([0]);
+      expect(dv.getAllSelectedIds()).toEqual([4]);
+      grid.setData([{ id: 'pivot' }]);
+      grid.setSelectedRows([0]);
+      dv.setSelectedIds([3]);
+      expect(dv.getAllSelectedIds()).toEqual([3]);
+      grid.setData(dv);
+      dv.resyncGrid();
+      expect(grid.getSelectedRows()).toEqual([1]);
+      grid.destroy();
+    });
+
     it('should throw when calling syncGridSelection() and selection model is undefined', () => {
       const columns = [
         { id: 'name', field: 'name', name: 'Name' },
@@ -2218,6 +2237,23 @@ describe('SlickDatView core file', () => {
     afterEach(() => {
       dv.destroy();
       vi.clearAllMocks();
+    });
+
+    it('restores source cell styles after the grid temporarily displays different rows', () => {
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }];
+      dv = new SlickDataView({});
+      const grid = new SlickGrid('#myGrid', dv, columns, { devMode: { ownerNodeIndex: 0 } });
+      dv.setItems(items);
+      grid.setCellCssStyles('highlight', { 0: { name: 'source-style' } });
+      dv.syncGridCellCssStyles(grid, 'highlight');
+      grid.setData([{ id: 'pivot' }]);
+      grid.setCellCssStyles('highlight', { 0: { name: 'pivot-style' } });
+      dv.refresh();
+      expect(grid.getCellCssStyles('highlight')).toEqual({ 0: { name: 'pivot-style' } });
+      grid.setData(dv);
+      dv.resyncGrid();
+      expect(grid.getCellCssStyles('highlight')).toEqual({ 0: { name: 'source-style' } });
+      grid.destroy();
     });
 
     it('should call syncGridCellCssStyles() with CSS style hashes and expect it sync it in the grid when onRowsOrCountChanged event is triggered', () => {
