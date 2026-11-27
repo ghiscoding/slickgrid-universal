@@ -230,21 +230,24 @@
 <div class="demo39">
   <h2>
     Example 39: GraphQL Backend Service with Infinite Scroll
-    <span class="float-end"
-      ><a
+    <span class="float-end">
+      <a
         style="font-size: 18px"
         target="_blank"
         href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example39.svelte"
-        ><span class="mdi mdi-link-variant"></span> code</a
-      ></span
-    >
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
     <button
       class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
       type="button"
       aria-label="Toggle example sub-title details"
       data-test="toggle-subtitle"
-      onclick={toggleSubTitle}><span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span></button
+      onclick={toggleSubTitle}
     >
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
   </h2>
   {#if showSubTitle}<div class="subtitle">
       <ul>
@@ -282,8 +285,10 @@
             class="btn btn-outline-secondary btn-sm btn-icon"
             data-test="clear-filters-sorting"
             title="Clear all Filters & Sorts"
-            onclick={clearAllFiltersAndSorts}><i class="mdi mdi-filter-remove-outline"></i> Clear all Filter & Sorts</button
+            onclick={clearAllFiltersAndSorts}
           >
+            <i class="mdi mdi-filter-remove-outline"></i> Clear all Filter & Sorts
+          </button>
           <label for="serverdelay" class="mx-1">Server Delay: </label><input
             id="serverdelay"
             bind:value={serverWaitDelay}
@@ -296,18 +301,18 @@
       </div>
       <div class="row mt-1">
         <div class="col-md-12">
-          <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="language-button" onclick={switchLanguage}
-            ><i class="mdi mdi-translate"></i> Switch Language</button
-          >
+          <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="language-button" onclick={switchLanguage}>
+            <i class="mdi mdi-translate"></i> Switch Language
+          </button>
           <strong class="mx-1">Locale:</strong><span style="font-style: italic" data-test="selected-locale">{selectedLanguage}.json</span>
         </div>
       </div>
       <br />
       <div style="margin: 10px 0px">
-        <b>Metrics:</b><span
-          ><span>{metricsEndTime}</span> — <span data-test="itemCount">{metrics.itemCount ?? 0}</span> of
-          <span data-test="totalItemCount">{metrics.totalItemCount ?? 0}</span> items</span
-        ><span class={'badge rounded-pill text-bg-primary ' + tagDataClass} data-test="data-loaded-tag">All Data Loaded!!!</span>
+        <b>Metrics:</b><span>
+          <span>{metricsEndTime}</span> — <span data-test="itemCount">{metrics.itemCount ?? 0}</span> of
+          <span data-test="totalItemCount">{metrics.totalItemCount ?? 0}</span> items
+        </span><span class={'badge rounded-pill text-bg-primary ' + tagDataClass} data-test="data-loaded-tag">All Data Loaded!!!</span>
       </div>
     </div>
     <div class="col-sm-7">

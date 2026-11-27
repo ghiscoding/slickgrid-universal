@@ -540,9 +540,9 @@
 >
   <span class="mdi mdi-chevron-down mdi-rotate-270"></span> Navigate to Right Cell
 </button>
-<button class="ms-2 btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="toggle-employee-id" onclick={toggleEmployeeIdVisibility}
-  >Show/Hide EmployeeID</button
->
+<button class="ms-2 btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="toggle-employee-id" onclick={toggleEmployeeIdVisibility}>
+  Show/Hide EmployeeID
+</button>
 <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon mx-1" onclick={toggleEditing} data-test="toggle-editing">
   <span class="mdi mdi-pencil-outline"></span>
   <span>Toggle Editing: <span id="isEditable" class="text-italic">{isEditable}</span></span>

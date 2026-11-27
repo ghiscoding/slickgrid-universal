@@ -338,45 +338,50 @@
 
 <h2>
   Example 47: Row Detail View + Grouping
-  <span class="float-end"
-    ><a
+  <span class="float-end">
+    <a
       style="font-size: 18px"
       target="_blank"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example47.svelte"
-      ><span class="mdi mdi-link-variant"></span> code</a
-    ></span
-  >
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
   <button
     class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
     type="button"
     data-test="toggle-subtitle"
     aria-label="Toggle example sub-title details"
-    onclick={toggleSubTitle}><span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span></button
+    onclick={toggleSubTitle}
   >
-  <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" data-test="toggle-dark-mode" onclick={toggleDarkMode}
-    ><span class="mdi mdi-theme-light-dark"></span><span>Toggle Dark Mode</span></button
-  >
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
+  <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" data-test="toggle-dark-mode" onclick={toggleDarkMode}>
+    <span class="mdi mdi-theme-light-dark"></span><span>Toggle Dark Mode</span>
+  </button>
 </h2>
 {#if showSubTitle}<div class="subtitle">
     Provide ability for Row Detail to work with Grouping, see (<a
       href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/row-detail"
-      target="_blank">Wiki docs</a
-    >)
+      target="_blank"
+    >
+      Wiki docs
+    </a>)
   </div>{/if}
 <div class="row">
   <div class="col-sm-12 d-flex gap-1 align-items-center flex-wrap">
-    <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" data-test="collapse-all-rowdetail-btn" onclick={closeAllRowDetail}
-      >Close all Row Details</button
-    >
-    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-grouping-btn" onclick={clearGrouping}
-      ><i class="mdi mdi-close"></i> Clear grouping</button
-    >
-    <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="collapse-all-groups-btn" onclick={collapseAllGroups}
-      ><i class="mdi mdi-arrow-collapse"></i> Collapse all groups</button
-    >
-    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="expand-all-groups-btn" onclick={expandAllGroups}
-      ><i class="mdi mdi-arrow-expand"></i> Expand all groups</button
-    >
+    <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" data-test="collapse-all-rowdetail-btn" onclick={closeAllRowDetail}>
+      Close all Row Details
+    </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-grouping-btn" onclick={clearGrouping}>
+      <i class="mdi mdi-close"></i> Clear grouping
+    </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="collapse-all-groups-btn" onclick={collapseAllGroups}>
+      <i class="mdi mdi-arrow-collapse"></i> Collapse all groups
+    </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="expand-all-groups-btn" onclick={expandAllGroups}>
+      <i class="mdi mdi-arrow-expand"></i> Expand all groups
+    </button>
     <label for="detailViewRowCount">Detail View Rows Shown: </label><input
       id="detailViewRowCount"
       bind:value={detailViewRowCount}
@@ -387,8 +392,10 @@
       class="btn btn-outline-secondary btn-sm btn-icon"
       style="height: 26px"
       data-test="set-count-btn"
-      onclick={changeDetailViewRowCount}>Set</button
+      onclick={changeDetailViewRowCount}
     >
+      Set
+    </button>
     <label for="serverdelay" class="ms-2">Server Delay: </label><input
       id="serverdelay"
       bind:value={serverWaitDelay}
@@ -399,12 +406,12 @@
     />
   </div>
   <div class="col-sm-12 d-flex gap-1">
-    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="group-duration-sort-value-btn" onclick={groupByDuration}
-      >Group by Duration</button
-    >
-    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="group-duration-effort-btn" onclick={groupByDurationEffortDriven}
-      >Group by Duration then Effort-Driven</button
-    >
+    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="group-duration-sort-value-btn" onclick={groupByDuration}>
+      Group by Duration
+    </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="group-duration-effort-btn" onclick={groupByDurationEffortDriven}>
+      Group by Duration then Effort-Driven
+    </button>
   </div>
 </div>
 <hr />

@@ -246,8 +246,10 @@
 <div class="subtitle" class:hidden={!showSubTitle}>
   Grid with Custom and/or included Slickgrid Formatters (<a
     href="https://ghiscoding.gitbook.io/svelte-slickgrid/column-functionalities/formatters"
-    target="_blank">Wiki docs</a
-  >).
+    target="_blank"
+  >
+    Wiki docs
+  </a>).
   <ul>
     <li>The 2 last columns are using Custom Formatters</li>
     <ul>

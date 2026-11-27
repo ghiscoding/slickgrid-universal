@@ -247,16 +247,19 @@
       target="_blank"
       rel="noreferrer"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example15.svelte"
-      ><span class="mdi mdi-link-variant"></span> code</a
     >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
   </span>
   <button
     class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
     type="button"
     data-test="toggle-subtitle"
     aria-label="Toggle example sub-title details"
-    onclick={toggleSubTitle}><span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span></button
+    onclick={toggleSubTitle}
   >
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
 </h2>
 
 {#if !hideSubTitle}
@@ -264,8 +267,10 @@
     Grid State &amp; Preset (<a
       href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/grid-state-preset"
       target="_blank"
-      rel="noreferrer">Wiki docs</a
-    >)
+      rel="noreferrer"
+    >
+      Wiki docs
+    </a>)
     <br />
     <ul class="small">
       <li>Uses Local Storage to persist the Grid State and uses Grid Options "presets" to put the grid back to it's previous state</li>

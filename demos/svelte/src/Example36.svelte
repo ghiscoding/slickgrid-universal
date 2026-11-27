@@ -505,29 +505,34 @@
 
 <h2>
   Example 36: Excel Export Formulas
-  <span class="float-end"
-    ><a
+  <span class="float-end">
+    <a
       style="font-size: 18px"
       target="_blank"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example36.svelte"
-      ><span class="mdi mdi-link-variant"></span> code</a
-    ></span
-  >
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
   <button
     class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
     type="button"
     aria-label="Toggle example sub-title details"
     data-test="toggle-subtitle"
-    onclick={toggleSubTitle}><span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span></button
+    onclick={toggleSubTitle}
   >
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
 </h2>
 
 {#if showSubTitle}
   <div class="subtitle">
     Grid with Excel Formulas (<a
       href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/export-to-excel#cell-value-parser"
-      target="_blank">Wiki docs</a
-    >). Calculate Totals via Formatters in the UI, but use Excel Formula when exporting via
+      target="_blank"
+    >
+      Wiki docs
+    </a>). Calculate Totals via Formatters in the UI, but use Excel Formula when exporting via
     <code>excelExportOptions.valueParserCallback</code> When Grouped we will also calculate the Group Totals in the UI via Group Formatter
     and we again use Excel Formula to calculate the Group Totals (sum) dynamically. For Grouping we need to use
     <code>groupTotalsExcelExportOptions.valueParserCallback</code> instead.

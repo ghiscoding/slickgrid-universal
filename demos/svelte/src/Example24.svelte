@@ -375,25 +375,28 @@
 
 <h2>
   Example 24: Cell Menu &amp; Context Menu Plugins
-  <span class="float-end"
-    ><a
+  <span class="float-end">
+    <a
       style="font-size:18px"
       target="_blank"
       rel="noreferrer"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example24.svelte"
-      ><i class="mdi mdi-link-variant"></i> code</a
-    ></span
-  >
+    >
+      <i class="mdi mdi-link-variant"></i> code
+    </a>
+  </span>
   <button
     class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
     type="button"
     data-test="toggle-subtitle"
     aria-label="Toggle example sub-title details"
-    onclick={toggleSubtitle}><i class="mdi mdi-information-outline"></i></button
+    onclick={toggleSubtitle}
   >
-  <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" type="button" data-test="toggle-dark-mode" onclick={toggleDarkMode}
-    ><i class="mdi mdi-theme-light-dark"></i> <span>Toggle Dark Mode</span></button
-  >
+    <i class="mdi mdi-information-outline"></i>
+  </button>
+  <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" type="button" data-test="toggle-dark-mode" onclick={toggleDarkMode}>
+    <i class="mdi mdi-theme-light-dark"></i> <span>Toggle Dark Mode</span>
+  </button>
 </h2>
 {#if showSubtitle}
   <div class="subtitle">
@@ -405,15 +408,19 @@
           Using the <b>SlickCellMenu</b> plugin, often used for an Action Menu(s), 1 or more per grid (<a
             href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/cell-menu"
             target="_blank"
-            rel="noreferrer">Wiki docs</a
-          >).
+            rel="noreferrer"
+          >
+            Wiki docs
+          </a>).
         </li>
         <li>
           Using the <b>SlickContextMenu</b> plugin, shown after a mouse right+click, only 1 per grid. (<a
             href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/context-menu"
             target="_blank"
-            rel="noreferrer">Wiki docs</a
-          >).
+            rel="noreferrer"
+          >
+            Wiki docs
+          </a>).
         </li>
       </ol>
       <li>It will also "autoAdjustDrop" (bottom/top) and "autoAlignSide" (left/right) by default but could be turned off</li>
@@ -437,9 +444,9 @@
 <div class="grid24">
   <div class="row locale">
     <div class="col-12">
-      <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="language-button" onclick={switchLanguage}
-        ><i class="mdi mdi-translate"></i> Switch Language</button
-      >
+      <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="language-button" onclick={switchLanguage}>
+        <i class="mdi mdi-translate"></i> Switch Language
+      </button>
       <b>Locale:</b>
       <span style="font-style:italic" data-test="selected-locale">{selectedLanguage}.json</span>
     </div>

@@ -220,8 +220,10 @@
   This example demonstrates using the <b>SlickHeaderButtons</b> plugin to easily add buttons to colum headers. These buttons can be
   specified directly in the column definition, and are very easy to configure and use. (<a
     href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/header-menu-header-buttons"
-    target="_blank">Wiki docs</a
-  >)
+    target="_blank"
+  >
+    Wiki docs
+  </a>)
   <ul>
     <li>Resize the 1st column to see all icon/command</li>
     <li>Mouse hover the 2nd column to see it's icon/command</li>

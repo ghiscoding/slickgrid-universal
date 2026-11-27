@@ -289,27 +289,29 @@
 </script>
 
 <h2>
-  Example 27: Tree Data <small
-    ><span class="mdi mdi-file-tree font-27px"></span> (from a flat dataset with <code>parentId</code> references -
-    <a href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/tree-data-grid" target="_blank" rel="noreferrer">Wiki</a
-    >)</small
-  >
-  <span class="float-end"
-    ><a
+  Example 27: Tree Data <small>
+    <span class="mdi mdi-file-tree font-27px"></span> (from a flat dataset with <code>parentId</code> references -
+    <a href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/tree-data-grid" target="_blank" rel="noreferrer">Wiki</a>)
+  </small>
+  <span class="float-end">
+    <a
       style="font-size:18px"
       target="_blank"
       rel="noreferrer"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example27.svelte"
-      ><i class="mdi mdi-link-variant"></i> code</a
-    ></span
-  >
+    >
+      <i class="mdi mdi-link-variant"></i> code
+    </a>
+  </span>
   <button
     class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
     type="button"
     data-test="toggle-subtitle"
     aria-label="Toggle example sub-title details"
-    onclick={toggleSubtitle}><i class="mdi mdi-information-outline"></i></button
+    onclick={toggleSubtitle}
   >
+    <i class="mdi mdi-information-outline"></i>
+  </button>
 </h2>
 {#if showSubtitle}
   <div class="subtitle">
@@ -331,12 +333,12 @@
 <div class="row" style="margin-bottom: 4px">
   <div class="col-md-12">
     <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-500-rows-btn" onclick={() => loadData(500)}>500 rows</button>
-    <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="add-75k-rows-btn" onclick={() => loadData(75000)}
-      >75k rows</button
-    >
-    <button class="btn btn-outline-secondary btn-xs btn-icon me-1" data-test="add-250k-rows-btn" onclick={() => loadData(250000)}
-      >250k rows</button
-    >
+    <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="add-75k-rows-btn" onclick={() => loadData(75000)}>
+      75k rows
+    </button>
+    <button class="btn btn-outline-secondary btn-xs btn-icon me-1" data-test="add-250k-rows-btn" onclick={() => loadData(250000)}>
+      250k rows
+    </button>
     <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="change-filter-dynamically" onclick={dynamicallyChangeFilter}>
       <span class="mdi mdi-filter-outline"></span>
       <span>Dynamically Change Filter (% complete &lt; 40)</span>

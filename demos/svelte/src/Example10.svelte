@@ -280,8 +280,10 @@
     Row selection, single or multi-select (<a
       href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/row-selection"
       target="_blank"
-      rel="noreferrer">Wiki docs</a
-    >).
+      rel="noreferrer"
+    >
+      Wiki docs
+    </a>).
     <ul>
       <li>Single Select, you can click on any cell to make the row active</li>
       <li>Multiple Selections, you need to specifically click on the checkbox to make 1 or more selections</li>

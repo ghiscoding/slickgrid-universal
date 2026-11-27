@@ -864,22 +864,25 @@
 
 <h2>
   Example 32: Columns Resize by Content
-  <span class="float-end"
-    ><a
+  <span class="float-end">
+    <a
       style="font-size:18px"
       target="_blank"
       rel="noreferrer"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example32.svelte"
-      ><i class="mdi mdi-link-variant"></i> code</a
-    ></span
-  >
+    >
+      <i class="mdi mdi-link-variant"></i> code
+    </a>
+  </span>
   <button
     class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
     type="button"
     data-test="toggle-subtitle"
     aria-label="Toggle example sub-title details"
-    onclick={toggleSubTitle}><i class="mdi mdi-information-outline"></i></button
+    onclick={toggleSubTitle}
   >
+    <i class="mdi mdi-information-outline"></i>
+  </button>
 </h2>
 {#if showSubTitle}<div class="subtitle">
     The grid below uses the optional resize by cell content (with a fixed 950px for demo purposes), you can click on the 2 buttons to see
@@ -907,14 +910,16 @@
         class="btn btn-outline-secondary btn-icon"
         data-test="set-dynamic-rows-btn"
         title="Change Row Selection across multiple pages"
-        onclick={setSelectedRowIds}>Change Row Selection</button
+        onclick={setSelectedRowIds}
       >
-      <button class="btn btn-outline-secondary btn-icon" data-test="toggle-readonly-btn" onclick={toggleGridEditReadonly}
-        ><i class="mdi mdi-table-edit"></i> Toggle Readonly</button
-      >
-      <button class="btn btn-outline-secondary btn-icon" data-test="undo-last-edit-btn" onclick={() => undoLastEdit()}
-        ><i class="mdi mdi-undo"></i> Undo Last Edit</button
-      >
+        Change Row Selection
+      </button>
+      <button class="btn btn-outline-secondary btn-icon" data-test="toggle-readonly-btn" onclick={toggleGridEditReadonly}>
+        <i class="mdi mdi-table-edit"></i> Toggle Readonly
+      </button>
+      <button class="btn btn-outline-secondary btn-icon" data-test="undo-last-edit-btn" onclick={() => undoLastEdit()}>
+        <i class="mdi mdi-undo"></i> Undo Last Edit
+      </button>
       <button class="btn btn-outline-secondary btn-icon" data-test="save-all-btn" onclick={saveAll}>Save All</button>
     </div>
     <span class="ms-2"><code>autoEdit</code></span>
@@ -922,16 +927,22 @@
       <button class="btn btn-outline-secondary btn-sm" data-test="auto-edit-on-btn" onclick={() => toggleAutoEdit(true)}>ON</button><button
         class="btn btn-outline-secondary btn-sm"
         data-test="auto-edit-off-btn"
-        onclick={() => toggleAutoEdit(false)}>OFF</button
+        onclick={() => toggleAutoEdit(false)}
       >
+        OFF
+      </button>
     </div>
     <span class="ms-2"><code>autoEditByKeypress</code></span>
     <div class="btn-group" role="group" aria-label="autoEditByKeypress">
-      <button class="btn btn-outline-secondary btn-sm" data-test="auto-edit-key-on-btn" onclick={() => toggleAutoEditByKeypress(true)}
-        >ON</button
-      ><button class="btn btn-outline-secondary btn-sm" data-test="auto-edit-key-off-btn" onclick={() => toggleAutoEditByKeypress(false)}
-        >OFF</button
+      <button class="btn btn-outline-secondary btn-sm" data-test="auto-edit-key-on-btn" onclick={() => toggleAutoEditByKeypress(true)}>
+        ON
+      </button><button
+        class="btn btn-outline-secondary btn-sm"
+        data-test="auto-edit-key-off-btn"
+        onclick={() => toggleAutoEditByKeypress(false)}
       >
+        OFF
+      </button>
     </div>
   </div>
 </div>

@@ -319,25 +319,28 @@
 
 <h2>
   Example 46: Tree Data with Lazy Loading
-  <small
-    ><span class="mdi mdi-file-tree font-27px"></span> (from a Hierarchical Dataset -
-    <a href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/tree-data-grid" target="_blank">Wiki</a>)</small
-  >
-  <span class="float-end"
-    ><a
+  <small>
+    <span class="mdi mdi-file-tree font-27px"></span> (from a Hierarchical Dataset -
+    <a href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/tree-data-grid" target="_blank">Wiki</a>)
+  </small>
+  <span class="float-end">
+    <a
       style="font-size: 18px"
       target="_blank"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example46.svelte"
-      ><span class="mdi mdi-link-variant"></span> code</a
-    ></span
-  >
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
   <button
     class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
     type="button"
     data-test="toggle-subtitle"
     aria-label="Toggle example sub-title details"
-    onclick={toggleSubTitle}><span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span></button
+    onclick={toggleSubTitle}
   >
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
 </h2>
 
 {#if showSubTitle}
@@ -362,25 +365,25 @@
 
 <div class="row">
   <div class="col-md-7">
-    <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="clear-filters-btn" onclick={clearFilters}
-      ><span class="mdi mdi-close"></span><span>Clear Filters</span></button
-    >
-    <button data-test="collapse-all-btn" class="btn btn-outline-secondary btn-xs btn-icon" onclick={collapseAll}
-      ><span class="mdi mdi-arrow-collapse"></span><span>Collapse All</span></button
-    >
-    <button data-test="expand-all-btn" class="btn btn-outline-secondary btn-xs btn-icon mx-1" onclick={expandAll}
-      ><span class="mdi mdi-arrow-expand"></span><span>Expand All</span></button
-    >
-    <span class="ml-2"
-      ><label for="server-delay">Simulated Server Delay (ms): </label><input
+    <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="clear-filters-btn" onclick={clearFilters}>
+      <span class="mdi mdi-close"></span><span>Clear Filters</span>
+    </button>
+    <button data-test="collapse-all-btn" class="btn btn-outline-secondary btn-xs btn-icon" onclick={collapseAll}>
+      <span class="mdi mdi-arrow-collapse"></span><span>Collapse All</span>
+    </button>
+    <button data-test="expand-all-btn" class="btn btn-outline-secondary btn-xs btn-icon mx-1" onclick={expandAll}>
+      <span class="mdi mdi-arrow-expand"></span><span>Expand All</span>
+    </button>
+    <span class="ml-2">
+      <label for="server-delay">Simulated Server Delay (ms): </label><input
         id="server-delay"
         class="ms-1"
         type="number"
         data-test="server-delay"
         style="width: 60px"
         bind:value={serverApiDelay}
-      /></span
-    >
+      />
+    </span>
   </div>
   <div class="col-md-5">
     <div class="input-group input-group-sm">
@@ -397,8 +400,10 @@
         class="btn btn-sm btn-outline-secondary d-flex align-items-center"
         aria-label="Clear search string"
         data-test="clear-search-string"
-        onclick={clearSearch}><span class="icon mdi mdi-close-thick"></span></button
+        onclick={clearSearch}
       >
+        <span class="icon mdi mdi-close-thick"></span>
+      </button>
     </div>
   </div>
 </div>

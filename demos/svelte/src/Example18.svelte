@@ -441,16 +441,19 @@
       target="_blank"
       rel="noreferrer"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example18.svelte"
-      ><span class="mdi mdi-link-variant"></span> code</a
     >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
   </span>
   <button
     class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
     type="button"
     data-test="toggle-subtitle"
     aria-label="Toggle example sub-title details"
-    onclick={toggleSubTitle}><span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span></button
+    onclick={toggleSubTitle}
   >
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
   <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" data-test="toggle-dark-mode" onclick={toggleDarkMode}>
     <span class="mdi mdi-theme-light-dark"></span>
     <span>Toggle Dark Mode</span>
@@ -461,9 +464,9 @@
   <div class="subtitle">
     <ul>
       <li>
-        <a href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/grouping-aggregators" target="_blank" rel="noreferrer"
-          >Wiki docs</a
-        >
+        <a href="https://ghiscoding.gitbook.io/svelte-slickgrid/grid-functionalities/grouping-aggregators" target="_blank" rel="noreferrer">
+          Wiki docs
+        </a>
       </li>
       <li>This example shows 3 ways of grouping</li>
       <ol>

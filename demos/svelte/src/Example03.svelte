@@ -620,8 +620,10 @@
 <div class="subtitle" class:hidden={!showSubTitle}>
   Grid with Inline Editors and onCellClick actions (<a
     href="https://ghiscoding.gitbook.io/svelte-slickgrid/column-functionalities/editors"
-    target="_blank">Wiki docs</a
-  >).
+    target="_blank"
+  >
+    Wiki docs
+  </a>).
   <ul>
     <li>When using "enableCellNavigation: true", clicking on a cell will automatically make it active &amp; selected.</li>
     <ul>

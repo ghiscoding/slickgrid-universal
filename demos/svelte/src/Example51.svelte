@@ -705,8 +705,8 @@
         Context Menu, Grid Menu):
       </p>
       <p class="mt-2">
-        <small
-          ><strong>Note:</strong> The demo focuses on the custom rendering capability via <code>slotRenderer</code> and
+        <small>
+          <strong>Note:</strong> The demo focuses on the custom rendering capability via <code>slotRenderer</code> and
           <code>defaultMenuItemRenderer</code>, which work across all menu plugins (SlickHeaderMenu, SlickCellMenu, SlickContextMenu,
           SlickGridMenu). Also note that the keyboard shortcuts displayed in the menus (e.g., <code>Alt+↑</code>, <code>F5</code>) are for
           demo purposes only and do not actually trigger any actions.
