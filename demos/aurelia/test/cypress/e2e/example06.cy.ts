@@ -395,6 +395,10 @@ describe('Example 6 - GraphQL Grid', () => {
 
     cy.get('.vc:visible [data-vc-date-selected]').first().should('have.text', '1');
     cy.get('.vc:visible [data-vc-date-selected]').last().should('have.text', '15');
+
+    // close date picker
+    cy.get('[data-test="status"').click();
+    cy.get('.vc:visible').should('not.exist');
   });
 
   describe('Set Dynamic Sorting', () => {

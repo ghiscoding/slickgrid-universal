@@ -163,6 +163,10 @@ describe('Example 52 - SQL Grid', () => {
     cy.get('.vc:visible [data-vc-date-selected] button').should('have.length.greaterThan', 0);
     cy.get('.vc:visible [data-vc-date-selected]').first().should('have.text', '1');
     cy.get('.vc:visible [data-vc-date-selected]').last().should('have.text', '15');
+
+    // close date picker
+    cy.get('[data-test="status"').click();
+    cy.get('.vc:visible').should('not.exist');
   });
 
   it('should click on "Name" column to sort it Ascending', () => {
