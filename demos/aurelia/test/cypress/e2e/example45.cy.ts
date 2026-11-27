@@ -33,7 +33,7 @@ describe('Example 45 - Row Detail with inner Grid', () => {
       it('should set row detail height to 8 rows and change server delay to 40ms for faster testing', () => {
         cy.get('[data-test="detail-view-row-count"]').clear().type('8');
         cy.get('[data-test="set-count-btn"]').click();
-        cy.get('[data-test="server-delay"]').type('{backspace}');
+        cy.get('[data-test="server-delay"]').should('be.enabled').click().type('{backspace}');
       });
 
       it('should open the Row Detail of the 2nd row and expect to find an inner grid with all inner column titles', () => {
@@ -306,7 +306,7 @@ describe('Example 45 - Row Detail with inner Grid', () => {
       });
 
       it('should go to the bottom end of the grid and open row 987', () => {
-        cy.get('#grid45').type('{ctrl}{end}{ctrl}{end}', { release: false });
+        cy.get('#grid45 .slick-vertical-scroller').first().invoke('scrollTop', 1001 * GRID_ROW_HEIGHT).trigger('scroll');
 
         cy.get('.slick-row[data-row=1001] .slick-cell.detail-view-toggle').click();
 
