@@ -9,6 +9,7 @@ import { ExtensionUtility } from '../../extensions/extensionUtility.js';
 import type { Column, DraggableGroupingOption, GridOption } from '../../interfaces/index.js';
 import { BackendUtilityService } from '../../services/backendUtility.service.js';
 import { SharedService } from '../../services/shared.service.js';
+import { sortByFieldType } from '../../sortComparers/sortUtilities.js';
 import { SlickDraggableGrouping } from '../slickDraggableGrouping.js';
 
 const GRID_UID = 'slickgrid12345';
@@ -1046,6 +1047,80 @@ describe('Draggable Grouping Plugin', () => {
           expect(invalidateSpy).toHaveBeenCalledTimes(2);
           expect(onGroupChangedCallbackSpy).toHaveBeenCalledWith(expect.anything(), { caller: 'sort-group', groupColumns: expect.any(Array) });
           expect(groupChangedSpy).toHaveBeenCalledWith({ caller: 'sort-group', groupColumns: expect.any(Array) });
+        });
+
+        it('uses the custom chip comparer with each direction and column', () => {
+          const comparer = vi.fn((_a, _b, direction) => direction);
+          plugin.init(gridStub, { ...addonOptions, groupSortComparer: comparer });
+          plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+          const header = createDomElement('div', { className: 'slick-header-column', dataset: { id: 'age' } }, mockHeaderLeftDiv1);
+          fireDragStartOnHeader(header);
+          fireDropOnDropzone(dropzoneElm, 'age');
+          const button = preHeaderDiv.querySelector('.slick-groupby-sort') as HTMLDivElement;
+          const a = { value: 'A', count: 2 };
+          const b = { value: 'B', count: 1 };
+
+          button.click();
+          expect(mockColumns[2].grouping!.comparer!(a, b)).toBe(SortDirectionNumber.desc);
+          expect(comparer).toHaveBeenLastCalledWith(a, b, SortDirectionNumber.desc, mockColumns[2]);
+          button.click();
+          expect(mockColumns[2].grouping!.comparer!(a, b)).toBe(SortDirectionNumber.asc);
+          expect(comparer).toHaveBeenLastCalledWith(a, b, SortDirectionNumber.asc, mockColumns[2]);
+        });
+
+        it('supports independent value and count sorting with empty groups last', () => {
+          const columns = deepCopy(mockColumns);
+          const compareGroups: NonNullable<DraggableGroupingOption['groupSortComparer']> = (a, b, direction, column) => {
+            const isEmpty = (value: unknown) => value == null || (typeof value === 'string' && value.trim() === '');
+            const aEmpty = isEmpty(a.value);
+            const bEmpty = isEmpty(b.value);
+            if (aEmpty !== bEmpty) {
+              return aEmpty ? SortDirectionNumber.asc : SortDirectionNumber.desc;
+            }
+            if (aEmpty) {
+              return SortDirectionNumber.neutral;
+            }
+            const byValue = () => sortByFieldType(column.type || 'text', a.value, b.value, SortDirectionNumber.asc, column);
+            const result = direction === SortDirectionNumber.desc ? b.count - a.count || byValue() : byValue();
+            return result < 0 ? SortDirectionNumber.desc : result > 0 ? SortDirectionNumber.asc : SortDirectionNumber.neutral;
+          };
+          for (const column of columns.slice(2, 4)) {
+            column.grouping!.sortAsc = false;
+            column.grouping!.comparer = (a, b) => compareGroups(a, b, SortDirectionNumber.desc, column);
+          }
+          vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+          plugin.init(gridStub, { ...addonOptions, groupSortComparer: compareGroups, sortAscIconCssClass: 'value-icon', sortDescIconCssClass: 'count-icon' });
+          plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, columns, getColumnIndexSpy, GRID_UID, triggerSpy);
+          for (const id of ['age', 'medals']) {
+            const header = createDomElement('div', { className: 'slick-header-column', dataset: { id } }, mockHeaderLeftDiv1);
+            fireDragStartOnHeader(header);
+            fireDropOnDropzone(dropzoneElm, id);
+          }
+          const ageButton = preHeaderDiv.querySelector('[data-id="age"] .slick-groupby-sort') as HTMLDivElement;
+          const medalsButton = preHeaderDiv.querySelector('[data-id="medals"] .slick-groupby-sort') as HTMLDivElement;
+          const groups = [
+            { value: 'B', count: 3 },
+            { value: 'A', count: 3 },
+            { value: 'C', count: 5 },
+            { value: '', count: 10 },
+            { value: '  ', count: 12 },
+            { value: null, count: 15 },
+            { value: undefined, count: 20 },
+          ];
+          const sorted = (index: number) => [...groups].sort(columns[index].grouping!.comparer!).map((group) => group.value);
+          expect(sorted(2)).toEqual(['C', 'A', 'B', '', '  ', null, undefined]);
+          expect(ageButton.classList.contains('count-icon')).toBe(true);
+          ageButton.click();
+          expect(sorted(2)).toEqual(['A', 'B', 'C', '', '  ', null, undefined]);
+          expect(sorted(3)).toEqual(['C', 'A', 'B', '', '  ', null, undefined]);
+          expect(ageButton.classList.contains('value-icon')).toBe(true);
+          expect(medalsButton.classList.contains('count-icon')).toBe(true);
+          medalsButton.click();
+          ageButton.click();
+          expect(sorted(2)).toEqual(['C', 'A', 'B', '', '  ', null, undefined]);
+          expect(sorted(3)).toEqual(['A', 'B', 'C', '', '  ', null, undefined]);
+          expect(ageButton.classList.contains('count-icon')).toBe(true);
+          expect(medalsButton.classList.contains('value-icon')).toBe(true);
         });
 
         it('should toggle ascending/descending order with different icons when original sort is ascending then user clicked the sorting icon twice', () => {

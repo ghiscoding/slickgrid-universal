@@ -1,7 +1,18 @@
 import type { ColumnReorderFunction } from '../enums/columnReorderFunction.type.js';
+import type { SortDirectionNumber } from '../enums/sortDirectionNumber.enum.js';
+import type { Column } from './column.interface.js';
 import type { GroupingGetterFunction } from './grouping.interface.js';
+import type { GroupingComparerItem } from './groupingComparerItem.interface.js';
 
 export interface DraggableGroupingOption {
+  /** Custom comparer used when a grouping chip's sort icon is clicked. */
+  groupSortComparer?: (
+    a: GroupingComparerItem,
+    b: GroupingComparerItem,
+    direction: SortDirectionNumber,
+    column: Column
+  ) => SortDirectionNumber;
+
   /** an extra CSS class to add to the delete button (default undefined), if deleteIconCssClass is undefined then slick-groupby-remove-icon class will be added */
   deleteIconCssClass?: string;
 
