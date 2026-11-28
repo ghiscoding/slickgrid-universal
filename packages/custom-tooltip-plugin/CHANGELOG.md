@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v11.0.0...v11.1.0) (2026-11-28)
+
+### Bug Fixes
+
+* **custom-tooltip:** prevent tooltip from blocking its trigger ([#2945](https://github.com/ghiscoding/slickgrid-universal/issues/2945)) ([2a6fe69](https://github.com/ghiscoding/slickgrid-universal/commit/2a6fe69c86d3ed63dbd53692dd73cd29aecd9385)) - by @ghiscoding
+
 ## [11.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v11.0.0-beta.0...v11.0.0) (2026-11-10)
 
 ### Bug Fixes

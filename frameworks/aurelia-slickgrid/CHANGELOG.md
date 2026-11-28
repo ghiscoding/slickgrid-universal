@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v11.0.0...v11.1.0) (2026-11-28)
+
+### Features
+
+* **common:** add sticky headers to autoHeight grids ([#2934](https://github.com/ghiscoding/slickgrid-universal/issues/2934)) ([3cab0a5](https://github.com/ghiscoding/slickgrid-universal/commit/3cab0a5143dd9d11954e404cb580a558aa1ea862)) - by @ghiscoding
+* **draggable-grouping:** allow custom chip sort comparers ([#2952](https://github.com/ghiscoding/slickgrid-universal/issues/2952)) ([453385f](https://github.com/ghiscoding/slickgrid-universal/commit/453385ffe7194278e753ab3efe53f83921f18d24)) - by @ghiscoding
+
+### Bug Fixes
+
+* **grid-state:** preserve preset column widths on initial resize ([#2959](https://github.com/ghiscoding/slickgrid-universal/issues/2959)) ([f86a87c](https://github.com/ghiscoding/slickgrid-universal/commit/f86a87c43aeb5fa607b29b0854028df87a88a976)) - by @ghiscoding
+* **resizer:** account for group totals and refreshed data ([#2930](https://github.com/ghiscoding/slickgrid-universal/issues/2930)) ([3ae2582](https://github.com/ghiscoding/slickgrid-universal/commit/3ae2582794d5a54971aeac07a5180b88840cab10)) - by @ghiscoding
+
 ## [11.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v11.0.0-beta.0...v11.0.0) (2026-11-10)
 
 > [!NOTE]

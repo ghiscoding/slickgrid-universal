@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v11.0.0...v11.1.0) (2026-11-28)
+
+### Bug Fixes
+
+* **packaging:** exclude tests from published packages ([9362467](https://github.com/ghiscoding/slickgrid-universal/commit/9362467c805803eab3aea47a9a6114eba59a566d)) - by @ghiscoding
+
 ## [11.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v11.0.0-beta.0...v11.0.0) (2026-11-10)
 
 **Note:** Version bump only for package @slickgrid-universal/sql

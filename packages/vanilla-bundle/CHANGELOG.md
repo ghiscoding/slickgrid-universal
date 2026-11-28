@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v11.0.0...v11.1.0) (2026-11-28)
+
+### Bug Fixes
+
+* **grid-state:** preserve preset column widths on initial resize ([#2959](https://github.com/ghiscoding/slickgrid-universal/issues/2959)) ([f86a87c](https://github.com/ghiscoding/slickgrid-universal/commit/f86a87c43aeb5fa607b29b0854028df87a88a976)) - by @ghiscoding
+* **vanilla-bundle:** remove unnecessary browser globals ([#2950](https://github.com/ghiscoding/slickgrid-universal/issues/2950)) ([560cc11](https://github.com/ghiscoding/slickgrid-universal/commit/560cc11fb8c90842a6c789050cf500ef13736e96)) - by @ghiscoding
+
 ## [11.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v11.0.0-beta.0...v11.0.0) (2026-11-10)
 
 ### ⚠ BREAKING CHANGES

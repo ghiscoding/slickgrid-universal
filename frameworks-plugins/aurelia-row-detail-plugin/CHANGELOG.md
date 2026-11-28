@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v11.0.0...v11.1.0) (2026-11-28)
+
+### Bug Fixes
+
+* **row-detail:** prevent blank Aurelia views after scrolling ([#2955](https://github.com/ghiscoding/slickgrid-universal/issues/2955)) ([3fdd4a1](https://github.com/ghiscoding/slickgrid-universal/commit/3fdd4a14922d94f22cd7a54013d448945aefaa51)) - by @ghiscoding
+
 ## [11.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v11.0.0-beta.0...v11.0.0) (2026-11-10)
 
 **Note:** Version bump only for package @slickgrid-universal/aurelia-row-detail-plugin

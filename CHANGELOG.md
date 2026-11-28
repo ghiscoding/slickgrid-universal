@@ -4,6 +4,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v11.0.0...v11.1.0) (2026-11-28)
+
+### Features
+
+* **common:** add sticky headers to autoHeight grids ([#2934](https://github.com/ghiscoding/slickgrid-universal/issues/2934)) ([3cab0a5](https://github.com/ghiscoding/slickgrid-universal/commit/3cab0a5143dd9d11954e404cb580a558aa1ea862)) - by @ghiscoding
+* **draggable-grouping:** allow custom chip sort comparers ([#2952](https://github.com/ghiscoding/slickgrid-universal/issues/2952)) ([453385f](https://github.com/ghiscoding/slickgrid-universal/commit/453385ffe7194278e753ab3efe53f83921f18d24)) - by @ghiscoding
+* **react,vue:** add row detail hosts for provider access ([#2933](https://github.com/ghiscoding/slickgrid-universal/issues/2933)) ([eae22f6](https://github.com/ghiscoding/slickgrid-universal/commit/eae22f6d79930b5f69e9af3bac5f44de3de53764)) - by @ghiscoding
+* **svelte:** create Slickgrid-Svelte wrapper and add full demo ([#2942](https://github.com/ghiscoding/slickgrid-universal/issues/2942)) ([96bed30](https://github.com/ghiscoding/slickgrid-universal/commit/96bed3035d7989619c2d8cfdebdf18571715d97a)) - by @ghiscoding
+
+### Bug Fixes
+
+* **checkbox:** pass grid row index to selectableOverride ([#2947](https://github.com/ghiscoding/slickgrid-universal/issues/2947)) ([9f61c85](https://github.com/ghiscoding/slickgrid-universal/commit/9f61c85b78400264fb740a72e545019720e29dfb)) - by @ghiscoding
+* **custom-tooltip:** prevent tooltip from blocking its trigger ([#2945](https://github.com/ghiscoding/slickgrid-universal/issues/2945)) ([2a6fe69](https://github.com/ghiscoding/slickgrid-universal/commit/2a6fe69c86d3ed63dbd53692dd73cd29aecd9385)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#2956](https://github.com/ghiscoding/slickgrid-universal/issues/2956)) ([762a790](https://github.com/ghiscoding/slickgrid-universal/commit/762a79027932f80c3a4f86b89811fc60d6af1dc0)) - by @renovate-bot
+* **grid-state:** preserve preset column widths on initial resize ([#2959](https://github.com/ghiscoding/slickgrid-universal/issues/2959)) ([f86a87c](https://github.com/ghiscoding/slickgrid-universal/commit/f86a87c43aeb5fa607b29b0854028df87a88a976)) - by @ghiscoding
+* keep rowspan cells visible on click and hover ([#2931](https://github.com/ghiscoding/slickgrid-universal/issues/2931)) ([7b86d46](https://github.com/ghiscoding/slickgrid-universal/commit/7b86d46c051e878977852c1bf468e0951ccd6c35)) - by @ghiscoding
+* **packaging:** exclude tests from published packages ([9362467](https://github.com/ghiscoding/slickgrid-universal/commit/9362467c805803eab3aea47a9a6114eba59a566d)) - by @ghiscoding
+* **packaging:** exclude tests from published packages ([4767434](https://github.com/ghiscoding/slickgrid-universal/commit/47674347584ef8c5bbba5ef6db76ca4459ce68b5)) - by @ghiscoding
+* preserve date editor behavior with Tempo v1.6.0 ([#2960](https://github.com/ghiscoding/slickgrid-universal/issues/2960)) ([49700a5](https://github.com/ghiscoding/slickgrid-universal/commit/49700a527b1232215d58ce38911c8bc4c293fda8)) - by @ghiscoding
+* **resizer:** account for group totals and refreshed data ([#2930](https://github.com/ghiscoding/slickgrid-universal/issues/2930)) ([3ae2582](https://github.com/ghiscoding/slickgrid-universal/commit/3ae2582794d5a54971aeac07a5180b88840cab10)) - by @ghiscoding
+* **row-detail:** prevent blank Aurelia views after scrolling ([#2955](https://github.com/ghiscoding/slickgrid-universal/issues/2955)) ([3fdd4a1](https://github.com/ghiscoding/slickgrid-universal/commit/3fdd4a14922d94f22cd7a54013d448945aefaa51)) - by @ghiscoding
+* **vanilla-bundle:** remove unnecessary browser globals ([#2950](https://github.com/ghiscoding/slickgrid-universal/issues/2950)) ([560cc11](https://github.com/ghiscoding/slickgrid-universal/commit/560cc11fb8c90842a6c789050cf500ef13736e96)) - by @ghiscoding
+
+### Performance Improvements
+
+* reuse rowspan hosts during vertical scrolling ([#2932](https://github.com/ghiscoding/slickgrid-universal/issues/2932)) ([37b2438](https://github.com/ghiscoding/slickgrid-universal/commit/37b2438a37cf8a6538e40c96e7c263a2f5d4b8a3)) - by @ghiscoding
+
 ## [11.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v11.0.0-beta.0...v11.0.0) (2026-11-10)
 
 > [!NOTE]

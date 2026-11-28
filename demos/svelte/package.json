@@ -1,7 +1,7 @@
 {
   "name": "slickgrid-svelte-demo",
   "private": true,
-  "version": "11.0.0",
+  "version": "11.1.0",
   "type": "module",
   "scripts": {
     "svelte:dev": "vite",

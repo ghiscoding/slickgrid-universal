@@ -1,7 +1,7 @@
 {
   "name": "slickgrid-svelte",
   "description": "Svelte wrapper for SlickGrid Universal",
-  "version": "11.0.0",
+  "version": "11.1.0",
   "keywords": [
     "svelte",
     "datagrid",
