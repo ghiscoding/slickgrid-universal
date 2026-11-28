@@ -417,7 +417,8 @@ export default class Example40 {
               action: (_event, args) => {
                 const dataContext = args.dataContext;
                 if (confirm(`Do you really want to delete row (${args.row! + 1}) with "${dataContext.title}"`)) {
-                  this.sgb?.instances?.gridService.deleteItemById(dataContext.id);
+                  const bundle = [this.sgb, this.modalSgb, this.popoverSgb].find((item) => item?.slickGrid === args.grid);
+                  bundle?.instances?.gridService.deleteItemById(dataContext.id);
                 }
               },
             },

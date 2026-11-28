@@ -467,6 +467,13 @@ describe('Example 40 - Menus with Slots', () => {
       cy.get('.slick-cell-menu').should('not.exist');
     });
 
+    it('should delete the row from the modal grid', () => {
+      cy.get('.grid40-modal [data-row="0"] > .slick-cell:first').should('contain', 'Task 0');
+      cy.get('.grid40-modal [data-row="0"] > .slick-cell:nth(6)').click();
+      cy.get('.slick-cell-menu .slick-menu-item').contains('Delete Row').click();
+      cy.get('.grid40-modal [data-row="0"] > .slick-cell:first').should('contain', 'Task 1');
+    });
+
     it('should close the modal dialog', () => {
       cy.get('[data-test="close-modal-btn"]').click();
       cy.get('[data-test="grid40-dialog"]').should('not.have.attr', 'open');
@@ -497,6 +504,13 @@ describe('Example 40 - Menus with Slots', () => {
       cy.get('@alertStub').should('have.been.calledWith', 'Export row #0');
       cy.get('.slick-cell-menu').should('not.exist');
       cy.get('[data-test="grid40-popover"]').should('match', ':popover-open');
+    });
+
+    it('should delete the row from the popover grid', () => {
+      cy.get('.grid40-popover-grid [data-row="0"] > .slick-cell:first').should('contain', 'Task 0');
+      cy.get('.grid40-popover-grid [data-row="0"] > .slick-cell:nth(6)').click();
+      cy.get('.slick-cell-menu .slick-menu-item').contains('Delete Row').click();
+      cy.get('.grid40-popover-grid [data-row="0"] > .slick-cell:first').should('contain', 'Task 1');
     });
 
     it('should close the popover', () => {
