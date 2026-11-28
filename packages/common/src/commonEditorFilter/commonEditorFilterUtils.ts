@@ -121,7 +121,10 @@ export function setPickerDates(
     const isoFormat = mapTempoDateFormatWithFieldType('dateIso') as string;
     const inputFormat = inputFieldType ? mapTempoDateFormatWithFieldType(inputFieldType) : undefined;
     for (const initialDate of newDates) {
-      const date = initialDate instanceof Date ? initialDate : tryParseDate(initialDate, inputFormat);
+      const date =
+        initialDate instanceof Date
+          ? initialDate
+          : tryParseDate(initialDate, inputFormat) || (/^\d{4}-\d{2}-\d{2}T/.test(initialDate) && tryParseDate(initialDate, 'ISO8601'));
       if (date) {
         pickerDates.push(date);
       }

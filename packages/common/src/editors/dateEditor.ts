@@ -73,7 +73,7 @@ export class DateEditor extends BaseEditorClass implements Editor {
       if (outputFormat && (outputFormat === 'ISO8601' || outputFormat.toLowerCase().includes('h'))) {
         this.hasTimePicker = true;
       }
-      const pickerFormat = mapTempoDateFormatWithFieldType(this.hasTimePicker ? 'dateTimeIsoAM_PM' : 'dateIso');
+      const pickerFormat = mapTempoDateFormatWithFieldType('dateIso');
 
       const pickerOptions: Options = {
         extensions: [time],
@@ -347,7 +347,9 @@ export class DateEditor extends BaseEditorClass implements Editor {
       const inputFieldType = this.columnEditor.type || this.columnDef?.type || 'dateIso';
       const outputFieldType = this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || 'dateIso';
 
-      const formattedDate = formatDateByFieldType(value, inputFieldType, outputFieldType);
+      const formattedDate =
+        formatDateByFieldType(value, inputFieldType, outputFieldType) ||
+        (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(value) ? formatDateByFieldType(value, 'dateUtc', outputFieldType) : '');
       this._originalDate = formattedDate !== '' ? value : '';
       this._inputElm.value = formattedDate;
     }

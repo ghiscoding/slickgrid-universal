@@ -263,6 +263,16 @@ describe('DateEditor', () => {
       expect(editor.getValue()).toBe('2001-01-02');
     });
 
+    it('should retain an ISO timestamp when the calendar initializes for a date-only editor', () => {
+      mockColumn.type = 'dateIso';
+      editorArguments.item = { ...mockItemData, startDate: '2001-01-02T11:02:02.000Z' };
+      editor = new DateEditor(editorArguments);
+      editor.loadValue(editorArguments.item);
+      vi.runAllTimers();
+
+      expect(editor.getValue()).toBe('2001-01-02');
+    });
+
     it('should hide the DOM element when the "hide" method is called', () => {
       editor = new DateEditor(editorArguments);
 

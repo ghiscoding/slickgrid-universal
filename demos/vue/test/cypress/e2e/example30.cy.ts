@@ -645,6 +645,7 @@ describe('Example 30  Composite Editor Modal', () => {
 
   it('should change the "Title" & "Duration" from the Clone form, then click on "Clone" button and expect a new row to show up on top of the grid', () => {
     cy.get('.slick-editor-modal-title').contains('Clone - Task 8899');
+    cy.get('.item-details-container.editor-finish input').should('not.have.value', '');
 
     cy.get('textarea').contains('Task 8899').type('Task 9999');
     cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete')
@@ -660,6 +661,7 @@ describe('Example 30  Composite Editor Modal', () => {
     cy.get('.item-details-editor-container .editor-checkbox').uncheck();
 
     cy.get('.item-details-container.editor-duration input.editor-text').type('44');
+    cy.get('.item-details-container.editor-finish input').should('have.value', '');
     cy.get('.item-details-container.editor-duration .modified').should('have.length', 1);
 
     cy.get('.btn-save').contains('Clone').click();

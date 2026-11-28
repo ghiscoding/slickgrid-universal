@@ -243,7 +243,7 @@ export class DateFilter implements Filter {
     if (outputFormat && this.inputFilterType !== 'range' && (outputFormat === 'ISO8601' || outputFormat.toLowerCase().includes('h'))) {
       this.hasTimePicker = true;
     }
-    const pickerFormat = mapTempoDateFormatWithFieldType(this.hasTimePicker ? 'dateTimeIsoAM_PM' : 'dateIso');
+    const pickerFormat = mapTempoDateFormatWithFieldType('dateIso');
 
     // get current locale, if user defined a custom locale just use or get it the Translate Service if it exist else just use English
     // prettier-ignore
@@ -313,7 +313,7 @@ export class DateFilter implements Filter {
           }
 
           if (this.hasTimePicker && firstDate) {
-            const tempoDate = parse(firstDate, pickerFormat);
+            const tempoDate = parse(firstDate, typeof firstDate === 'string' && firstDate.includes('T') ? 'ISO8601' : pickerFormat);
             tempoDate.setHours(+(self.context.selectedHours || 0));
             tempoDate.setMinutes(+(self.context.selectedMinutes || 0));
             self.context.inputElement.value = formatDateByFieldType(tempoDate, undefined, outputFieldType);

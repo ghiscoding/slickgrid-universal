@@ -19,8 +19,8 @@ catalogs:
       specifier: ^0.3.10
       version: 0.3.10
     '@formkit/tempo':
-      specifier: ^1.1.0
-      version: 1.1.0
+      specifier: ^1.6.0
+      version: 1.6.0
     '@popperjs/core':
       specifier: ^2.11.8
       version: 2.11.8
@@ -166,7 +166,7 @@ importers:
         version: 2.3.1(cypress@16.3.0)
       '@formkit/tempo':
         specifier: 'catalog:'
-        version: 1.1.0
+        version: 1.6.0
       '@ianvs/prettier-plugin-sort-imports':
         specifier: ^4.7.1
         version: 4.7.1(@prettier/plugin-oxc@0.2.4)(@vue/compiler-sfc@3.5.41)(prettier@3.10.1)(supports-color@8.1.1)
@@ -286,7 +286,7 @@ importers:
         version: 0.3.10
       '@formkit/tempo':
         specifier: 'catalog:'
-        version: 1.1.0
+        version: 1.6.0
       '@popperjs/core':
         specifier: 'catalog:'
         version: 2.11.8
@@ -471,7 +471,7 @@ importers:
         version: 0.3.10
       '@formkit/tempo':
         specifier: 'catalog:'
-        version: 1.1.0
+        version: 1.6.0
       '@popperjs/core':
         specifier: 'catalog:'
         version: 2.11.8
@@ -577,7 +577,7 @@ importers:
         version: 0.3.10
       '@formkit/tempo':
         specifier: 'catalog:'
-        version: 1.1.0
+        version: 1.6.0
       '@popperjs/core':
         specifier: 'catalog:'
         version: 2.11.8
@@ -622,7 +622,7 @@ importers:
         version: 0.3.10
       '@formkit/tempo':
         specifier: 'catalog:'
-        version: 1.1.0
+        version: 1.6.0
       '@popperjs/core':
         specifier: 'catalog:'
         version: 2.11.8
@@ -719,7 +719,7 @@ importers:
         version: 0.3.10
       '@formkit/tempo':
         specifier: 'catalog:'
-        version: 1.1.0
+        version: 1.6.0
       '@slickgrid-universal/binding':
         specifier: workspace:*
         version: link:../../packages/binding
@@ -807,7 +807,7 @@ importers:
         version: 0.3.10
       '@formkit/tempo':
         specifier: 'catalog:'
-        version: 1.1.0
+        version: 1.6.0
       '@popperjs/core':
         specifier: 'catalog:'
         version: 2.11.8
@@ -1127,7 +1127,7 @@ importers:
         version: 0.3.10
       '@formkit/tempo':
         specifier: 'catalog:'
-        version: 1.1.0
+        version: 1.6.0
       '@ng-select/ng-select':
         specifier: ^24.2.1
         version: 24.2.1(f462a7a07d2bed38264268b131e7caa0)
@@ -1242,7 +1242,7 @@ importers:
         version: 2.0.0-rc.2
       '@formkit/tempo':
         specifier: 'catalog:'
-        version: 1.1.0
+        version: 1.6.0
       '@slickgrid-universal/common':
         specifier: workspace:*
         version: link:../../packages/common
@@ -1313,7 +1313,7 @@ importers:
     devDependencies:
       '@formkit/tempo':
         specifier: 'catalog:'
-        version: 1.1.0
+        version: 1.6.0
       '@slickgrid-universal/composite-editor-component':
         specifier: workspace:*
         version: link:../../packages/composite-editor-component
@@ -1422,7 +1422,7 @@ importers:
     dependencies:
       '@formkit/tempo':
         specifier: 'catalog:'
-        version: 1.1.0
+        version: 1.6.0
       '@slickgrid-universal/common':
         specifier: workspace:*
         version: link:../../packages/common
@@ -1491,7 +1491,7 @@ importers:
         version: 5.3.1
       '@formkit/tempo':
         specifier: 'catalog:'
-        version: 1.1.0
+        version: 1.6.0
       '@slickgrid-universal/binding':
         specifier: workspace:*
         version: link:../binding
@@ -1568,7 +1568,7 @@ importers:
     dependencies:
       '@formkit/tempo':
         specifier: 'catalog:'
-        version: 1.1.0
+        version: 1.6.0
       '@slickgrid-universal/binding':
         specifier: workspace:*
         version: link:../binding
@@ -2756,11 +2756,6 @@ packages:
       '@types/react':
         optional: true
 
-  '@fluentui/react-icons@2.0.345':
-    resolution: {integrity: sha512-lU3TXTAknzs0n4luCR1dlir10ZJQkqSUPsfwCErEenZufZQp8P3Nj+agYVx7Dk2v76JSAPweA9CpQD/0AzeVFQ==}
-    peerDependencies:
-      react: '>=16.8.0 <20.0.0'
-
   '@fluentui/react-icons@2.0.347':
     resolution: {integrity: sha512-cu5VrxrdT6ccwhUy2TKOMpIKt0Sm0PRcv7E2Ez9ko4RgiGhveP5CKyZFFhauYz6lpl/BmNlnJepnWETxTFRhHQ==}
     peerDependencies:
@@ -3310,8 +3305,8 @@ packages:
   '@fnando/sparkline@0.3.10':
     resolution: {integrity: sha512-Rwz2swatdSU5F4sCOvYG8EOWdjtLgq5d8nmnqlZ3PXdWJI9Zq9BRUvJ/9ygjajJG8qOyNpMFX3GEVFjZIuB1Jg==}
 
-  '@formkit/tempo@1.1.0':
-    resolution: {integrity: sha512-LF36zxNFvNO+U2uS2RX5h0SJZuL4z/JpDHbMOgumhv+re6k/Jpt9S9mZuEMLaLUtpDZlRZZE3UkIiwSS+Forig==}
+  '@formkit/tempo@1.6.0':
+    resolution: {integrity: sha512-IoOPL8scO8bozUZNhhOsKgJN1tnN8es+JmF5ieR2YMqtqQyBWXocjxMo1ZyE2OmspULbUIxqNnmW3c2LSXdSOg==}
 
   '@gar/promise-retry@1.0.3':
     resolution: {integrity: sha512-GmzA9ckNokPypTg10pgpeHNQe7ph+iIKKmhKu3Ob9ANkswreCx7R3cKmY781K8QK3AqVL3xVh9A42JvIAbkkSA==}
@@ -9820,7 +9815,7 @@ snapshots:
     dependencies:
       '@fluentui/react-avatar': 9.11.8(@types/react-dom@19.3.0(@types/react@19.3.1))(@types/react@19.3.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(scheduler@0.28.0)
       '@fluentui/react-button': 9.11.1(@types/react@19.3.1)(react@19.3.1)
-      '@fluentui/react-icons': 2.0.345(react@19.3.1)
+      '@fluentui/react-icons': 2.0.347(react@19.3.1)
       '@fluentui/react-jsx-runtime': 9.4.6(@types/react@19.3.1)(react@19.3.1)
       '@fluentui/react-tabster': 9.26.18(@types/react@19.3.1)(react@19.3.1)
       '@fluentui/react-theme': 9.2.2
@@ -9884,7 +9879,7 @@ snapshots:
     dependencies:
       '@fluentui/react-badge': 9.5.6(@types/react@19.3.1)(react@19.3.1)
       '@fluentui/react-context-selector': 9.2.20(@types/react@19.3.1)(react@19.3.1)(scheduler@0.28.0)
-      '@fluentui/react-icons': 2.0.345(react@19.3.1)
+      '@fluentui/react-icons': 2.0.347(react@19.3.1)
       '@fluentui/react-jsx-runtime': 9.4.6(@types/react@19.3.1)(react@19.3.1)
       '@fluentui/react-popover': 9.14.9(@types/react-dom@19.3.0(@types/react@19.3.1))(@types/react@19.3.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(scheduler@0.28.0)
       '@fluentui/react-shared-contexts': 9.26.4(@types/react@19.3.1)(react@19.3.1)
@@ -9904,7 +9899,7 @@ snapshots:
 
   '@fluentui/react-badge@9.5.6(@types/react@19.3.1)(react@19.3.1)':
     dependencies:
-      '@fluentui/react-icons': 2.0.345(react@19.3.1)
+      '@fluentui/react-icons': 2.0.347(react@19.3.1)
       '@fluentui/react-jsx-runtime': 9.4.6(@types/react@19.3.1)(react@19.3.1)
       '@fluentui/react-shared-contexts': 9.26.4(@types/react@19.3.1)(react@19.3.1)
       '@fluentui/react-theme': 9.2.2
@@ -9948,7 +9943,7 @@ snapshots:
     dependencies:
       '@fluentui/keyboard-keys': 9.0.9
       '@fluentui/react-aria': 9.17.15(@types/react@19.3.1)(react@19.3.1)
-      '@fluentui/react-icons': 2.0.345(react@19.3.1)
+      '@fluentui/react-icons': 2.0.347(react@19.3.1)
       '@fluentui/react-jsx-runtime': 9.4.6(@types/react@19.3.1)(react@19.3.1)
       '@fluentui/react-shared-contexts': 9.26.4(@types/react@19.3.1)(react@19.3.1)
       '@fluentui/react-tabster': 9.26.18(@types/react@19.3.1)(react@19.3.1)
@@ -10228,12 +10223,6 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.3.1
 
-  '@fluentui/react-icons@2.0.345(react@19.3.1)':
-    dependencies:
-      '@griffel/react': 1.7.6(react@19.3.1)
-      react: 19.3.1
-      tslib: 2.9.1
-
   '@fluentui/react-icons@2.0.347(react@19.3.1)':
     dependencies:
       '@griffel/react': 1.7.6(react@19.3.1)
@@ -10254,7 +10243,7 @@ snapshots:
 
   '@fluentui/react-infobutton@9.0.1-beta.1(@types/react-dom@19.3.0(@types/react@19.3.1))(@types/react@19.3.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(scheduler@0.28.0)':
     dependencies:
-      '@fluentui/react-icons': 2.0.345(react@19.3.1)
+      '@fluentui/react-icons': 2.0.347(react@19.3.1)
       '@fluentui/react-jsx-runtime': 9.4.6(@types/react@19.3.1)(react@19.3.1)
       '@fluentui/react-label': 9.4.5(@types/react@19.3.1)(react@19.3.1)
       '@fluentui/react-popover': 9.14.9(@types/react-dom@19.3.0(@types/react@19.3.1))(@types/react@19.3.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(scheduler@0.28.0)
@@ -11127,7 +11116,7 @@ snapshots:
 
   '@fnando/sparkline@0.3.10': {}
 
-  '@formkit/tempo@1.1.0': {}
+  '@formkit/tempo@1.6.0': {}
 
   '@gar/promise-retry@1.0.3': {}
 
