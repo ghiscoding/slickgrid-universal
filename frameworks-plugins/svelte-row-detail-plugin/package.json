@@ -2,6 +2,11 @@
   "name": "@slickgrid-universal/svelte-row-detail-plugin",
   "version": "11.1.0",
   "description": "Svelte row detail plugin for Slickgrid-Svelte",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ghiscoding/slickgrid-universal.git",
+    "directory": "frameworks-plugins/svelte-row-detail-plugin"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
