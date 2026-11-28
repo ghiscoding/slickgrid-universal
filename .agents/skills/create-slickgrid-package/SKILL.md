@@ -15,6 +15,7 @@ Key points
 Quick checklist
 - Create package folder under `packages/your-package-name/`.
 - Add `package.json`, `tsconfig.json`, `src/` with an exported entry (e.g. `src/index.ts`).
+- For every publishable package, add a `repository` object to `package.json` with `type: "git"`, `url: "git+https://github.com/ghiscoding/slickgrid-universal.git"`, and `directory` set to the package's actual path relative to the repository root. Verify this metadata is present in the package manifest used for publishing; npm provenance validation requires the repository URL to match the source repository.
 - Implement an external resource (plugin) class (see example below).
 - Add unit tests (Vitest) under `__tests__` or `src/__tests__`.
 - Add the package to `pnpm-workspace.yaml` (if needed) and ensure the root `pnpm build` covers it.
@@ -66,6 +67,13 @@ Testing and demos
 - Add a demo or example usage in `demos/vanilla` or framework-specific demos to validate integration.
 
 Publishing (OIDC trusted publish)
+- Before the initial publish, initialize the trusted publisher setup for the new package, replacing the name with the actual npm package name:
+
+  ```sh
+  pnpm dlx setup-npm-trusted-publish @slickgrid-universal/your-package-name
+  ```
+
+  Complete the prompted npm and GitHub Actions configuration for the release workflow before publishing.
 - For the initial publish using a secure OIDC token, refer to [azu/setup-npm-trusted-publish](https://github.com/azu/setup-npm-trusted-publish).
 
 References
