@@ -9,6 +9,7 @@ import {
   getOffsetRelativeToParent,
   isDefined,
   titleCase,
+  windowScrollPosition,
 } from '@slickgrid-universal/utils';
 import { SlickEventHandler, type SlickEventData } from '../core/slickCore.js';
 import { type SlickGrid } from '../core/slickGrid.js';
@@ -36,6 +37,8 @@ import type { SharedService } from '../services/shared.service.js';
 import type { ExtensionUtility } from './extensionUtility.js';
 import { wireMenuKeyboardNavigation } from './keyboardNavigation.js';
 import { commandMatcher } from './menuUtils.js';
+
+const TOP_LAYER_HOST_SELECTOR = ':is(dialog:modal, :popover-open)';
 
 export type ExtractMenuType<A, T> = T extends 'command' ? A : A extends 'divider' ? A : never;
 export type MenuType = 'command';
@@ -115,6 +118,11 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
 
   get menuCssClass(): string {
     return this._menuPluginCssPrefix || this._menuCssPrefix;
+  }
+
+  protected get popupContainerElm(): HTMLElement {
+    const gridElm = this.grid.getContainerNode();
+    return gridElm.closest<HTMLElement>(TOP_LAYER_HOST_SELECTOR) ?? gridElm.ownerDocument.body;
   }
 
   get menuElement(): HTMLDivElement | null {
@@ -995,13 +1003,28 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
       }
 
       // ready to reposition the menu
-      menuElm.style.top = `${menuOffsetTop}px`;
-      menuElm.style.left = `${menuOffsetLeft}px`;
+      const { top, left } = this.toPopupContainerPosition(menuElm, menuOffsetTop, menuOffsetLeft);
+      menuElm.style.top = `${top}px`;
+      menuElm.style.left = `${left}px`;
 
       if (this.pluginName === 'GridMenu') {
         menuElm.style.opacity = '1';
         menuElm.style.display = 'block';
       }
     }
+  }
+
+  /** Menus are positioned with document coordinates, convert them when the menu is mounted in a modal dialog or open popover */
+  protected toPopupContainerPosition(menuElm: HTMLElement, top: number, left: number): { top: number; left: number } {
+    const parentElm = menuElm.parentElement;
+    if (!parentElm || parentElm === parentElm.ownerDocument.body || !parentElm.matches(TOP_LAYER_HOST_SELECTOR)) {
+      return { top, left };
+    }
+    const rect = parentElm.getBoundingClientRect();
+    const windowScroll = windowScrollPosition();
+    return {
+      top: top - rect.top - windowScroll.top - parentElm.clientTop + parentElm.scrollTop,
+      left: left - rect.left - windowScroll.left - parentElm.clientLeft + parentElm.scrollLeft,
+    };
   }
 }

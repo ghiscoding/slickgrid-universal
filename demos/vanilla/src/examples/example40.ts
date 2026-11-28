@@ -36,6 +36,8 @@ export default class Example40 {
   gridOptions: GridOption;
   dataset: ReportItem[];
   sgb: SlickVanillaGridBundle<ReportItem>;
+  modalSgb?: SlickVanillaGridBundle<ReportItem>;
+  popoverSgb?: SlickVanillaGridBundle<ReportItem>;
   subTitleStyle = 'display: block';
 
   constructor() {
@@ -52,6 +54,8 @@ export default class Example40 {
 
   dispose() {
     this.sgb?.dispose();
+    this.modalSgb?.dispose();
+    this.popoverSgb?.dispose();
     this._bindingEventService.unbindAll();
   }
 
@@ -660,6 +664,30 @@ export default class Example40 {
       lazyTotalsCalculation: true,
     } as Grouping);
     this.sgb?.slickGrid?.invalidate(); // invalidate all rows and re-render
+  }
+
+  openGridInModal() {
+    document.querySelector<HTMLDialogElement>('.grid40-dialog')?.showModal();
+    this.modalSgb ??= this.createSmallGrid('.grid40-modal');
+  }
+
+  handlePopoverToggle(event: ToggleEvent) {
+    if (event.newState === 'open') {
+      this.popoverSgb ??= this.createSmallGrid('.grid40-popover-grid');
+    }
+  }
+
+  createSmallGrid(selector: string) {
+    return new Slicker.GridBundle(
+      document.querySelector(selector) as HTMLDivElement,
+      this.columns,
+      { ...ExampleGridOptions, ...this.gridOptions, enableAutoResize: false, gridHeight: 400, gridWidth: 800, externalResources: [] },
+      this.loadData(50)
+    );
+  }
+
+  closeModal() {
+    document.querySelector<HTMLDialogElement>('.grid40-dialog')?.close();
   }
 
   loadData(count: number): ReportItem[] {

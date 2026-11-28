@@ -16,6 +16,7 @@ const gridStub = {
   getColumnIndex: vi.fn(),
   getColumns: vi.fn(),
   getColumnsInRenderedOrder: vi.fn(() => gridStub.getColumns()),
+  getContainerNode: () => document.body,
   getGridPosition: vi.fn(),
   getOptions: vi.fn(),
   getSelectedRows: vi.fn(),
