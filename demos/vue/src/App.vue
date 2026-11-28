@@ -54,7 +54,7 @@ onMounted(() => {
     <section id="panel-left" class="panel-wm-left">
       <ul class="well nav nav-pills nav-stacked">
         <li class="nav-item fw-bold nav-docs">
-          <a class="nav-link" href="https://ghiscoding.gitbook.io/slickgrid-vue/" target="_blank"> 📘 Documentation </a>
+          <a class="nav-link" href="https://ghiscoding.gitbook.io/slickgrid-vue/" target="_blank"> 📗 Documentation </a>
         </li>
         <li v-for="(route, index) in routes" :key="index" class="nav-item">
           <RouterLink v-if="route.name !== 'root' && route.name !== 'home'" class="nav-link" active-class="active" :to="route.path">{{

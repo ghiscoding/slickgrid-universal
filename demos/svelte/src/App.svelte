@@ -174,7 +174,7 @@
   <aside id="panel-left" class="panel-wm-left" aria-label="Examples">
     <ul class="nav nav-pills nav-stacked">
       <li class="nav-item fw-bold nav-docs">
-        <a class="nav-link" href="https://ghiscoding.gitbook.io/slickgrid-svelte/"> 📘 Documentation </a>
+        <a class="nav-link" href="https://ghiscoding.gitbook.io/slickgrid-svelte/"> 📙 Documentation </a>
       </li>
       {#each examples as example (example.id)}
         <li class="nav-item">
