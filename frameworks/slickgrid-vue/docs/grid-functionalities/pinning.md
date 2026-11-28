@@ -2,7 +2,6 @@
 - [Columns/Rows Pinning Basic](#columnsrows-pinning-basic)
 - [Rows Pinning starting from Bottom](#rows-pinning-starting-from-bottom)
 - [Change Pinning Dynamically](#change-pinning-dynamically)
-- [Popups inside Cells](#popups-inside-cells)
 - [Command labels and translation keys](#command-labels-and-translation-keys)
 - [Sticky Columns and Rows](sticky.md)
 
@@ -242,22 +241,3 @@ Pinning and sticky docking work in `rtl: true` grids. Band names follow reading 
 | `sticky: 'left'` / `'right'` | named edge | same logical band, mirrored |
 
 `getCellFromPoint(x, y)` still measures `x` from the grid's physical left edge. In an RTL grid it counts back from the last column and resolves points over pinned or sticky bands to the column rendered there.
-
-## Popups inside Cells
-
-Rows are positioned with `transform: translateY()` and the pinned column bands use `will-change: transform` with `overflow: hidden`, which keeps scrolling fast. A transformed element becomes the containing block of its `position: fixed` descendants, so a popup rendered inside a cell (e.g. an actions dropdown returned by a formatter or a framework component) is clipped to its row, or to the row's pinned band when the column is pinned.
-
-Render such popups outside of the grid instead and position them from the trigger element's `getBoundingClientRect()`. Use `grid.getPopupContainer()` as their parent: it returns the `popupContainer` grid option and defaults to `document.body`. The built-in Cell Menu, Context Menu, Grid Menu, Column Picker and Header Menu sub-menus are appended to the same element (the Header Menu root menu stays in the grid container).
-
-When the grid is inside a modal `<dialog>` opened with `showModal()`, popups appended to `document.body` render under the dialog's top layer and can't be clicked. Set `popupContainer` to the dialog. The option also accepts a function returning the element. Modal dialogs scroll their overflow by default, so you might also need `overflow: visible` on the dialog to avoid clipping the menus.
-
-```ts
-const dialogElm = document.querySelector('dialog') as HTMLDialogElement;
-this.gridOptions = {
-  enableCellMenu: true,
-  popupContainer: dialogElm, // or a function: () => dialogElm
-};
-
-// in your own cell popup integration
-grid.getPopupContainer().appendChild(myPopupElm);
-```
