@@ -11,8 +11,6 @@ This documentation covers the Svelte 5 wrapper and the shared SlickGrid Universa
 - [Custom Svelte components](column-functionalities/svelte-components.md) — build component-based editors and filters.
 - [Custom pagination](grid-functionalities/svelte-pagination.md) — supply a Svelte pagination component.
 - [Row Detail](grid-functionalities/svelte-row-detail.md) — render Svelte components in detail panels.
-- [Examples](examples.md) — browse the Svelte demo and source for all 58 examples.
+- [Examples](https://ghiscoding.github.io/slickgrid-svelte-demos) — explore the Svelte demos and their source code.
 
-Use the [table of contents](TOC.md) to browse all feature guides. Most feature guides are maintained with the shared documentation in [`docs/`](../../../docs); Svelte-specific setup and component integration are documented here.
-
-The runnable demo is in [`demos/svelte`](../../../demos/svelte). The package quick start is in the [framework README](../README.md).
+Use the [table of contents](TOC.md) to browse all feature guides. For a working application, visit the [Slickgrid-Svelte-Demos repository](https://github.com/ghiscoding/slickgrid-svelte-demos).

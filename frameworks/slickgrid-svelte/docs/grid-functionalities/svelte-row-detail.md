@@ -64,6 +64,6 @@ rowDetailView: {
 }
 ```
 
-The plugin also exposes `disposeViewByItem`, `disposeAllViewComponents`, `redrawAllViewComponents`, and `getAddonInstance()` for advanced lifecycle control. See the [Svelte Row Detail plugin README](../../../../frameworks-plugins/svelte-row-detail-plugin/README.md) and the complete [Example 45](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example45.svelte), [detail component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example45Detail.svelte), and [preload component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example45Preload.svelte).
+The plugin also exposes `disposeViewByItem`, `disposeAllViewComponents`, `redrawAllViewComponents`, and `getAddonInstance()` for advanced lifecycle control. See the [Svelte Row Detail plugin README](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks-plugins/svelte-row-detail-plugin#readme) and the complete [Example 45](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example45.svelte), [detail component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example45Detail.svelte), and [preload component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/svelte/src/Example45Preload.svelte).
 
 For the shared Row Detail options and events, see [Row Detail](row-detail.md).

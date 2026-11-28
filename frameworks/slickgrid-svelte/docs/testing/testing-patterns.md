@@ -1,32 +1,24 @@
 # Testing Patterns
 
-The Svelte demo has one Cypress end-to-end spec per example. Specs use Chrome and share page state (`testIsolation` is disabled), so keep each spec's commands in order and avoid assumptions that the page was reset between tests.
+### E2E (Cypress)
 
-## Run the demo
+You can test a Slickgrid-Svelte application with Cypress or another end-to-end testing framework such as Playwright. The library's own [Svelte Cypress tests](https://github.com/ghiscoding/slickgrid-universal/tree/master/demos/svelte/test/cypress/e2e) provide more examples of testing grid interactions.
 
-For interactive development, start the workspace demo and package watchers:
+For example, the following Cypress test checks the grid from the [Quick Start](../getting-started/quick-start.md), including the button that adds a row. It assumes the grid is on your application's root page; change the route and selectors to match your application. Start your application and configure Cypress to use its URL before running the test.
 
-```sh
-pnpm dev:svelte
+```ts
+describe('Tasks grid', () => {
+  it('displays the columns and adds a task', () => {
+    cy.visit('/');
+
+    cy.get('#grid1').find('.slick-header-column').should('contain', 'Title');
+    cy.get('#grid1').find('.slick-header-column').should('contain', 'Duration (days)');
+    cy.get('#grid1').contains('.slick-cell', 'Task 1').should('be.visible');
+
+    cy.contains('button', 'Add task').click();
+    cy.get('#grid1').contains('.slick-cell', 'Task 3').should('be.visible');
+  });
+});
 ```
 
-For a production-like local run, build the wrapper, plugin, and demo, then preview the built site:
-
-```sh
-pnpm svelte:build
-pnpm svelte:serve
-```
-
-## Run Cypress in Chrome
-
-From the demo directory, run the suite or a single spec with Chrome:
-
-```sh
-cd demos/svelte
-pnpm exec cypress run --config-file test/cypress.config.ts --browser chrome
-
-# Run one example while iterating
-pnpm exec cypress run --config-file test/cypress.config.ts --spec test/cypress/e2e/example26.cy.ts --browser chrome
-```
-
-Start the demo server on port `5100` before running Cypress. The Svelte Cypress config uses `http://localhost:5100/#` as its base URL. CI builds the demo, starts its preview server, and runs the specs in Chrome.
+Use a unique `gridId` to scope selectors to the right grid. SlickGrid virtualizes rows, so a row outside the visible viewport may not be present in the DOM until you scroll to it. For each test, set up the page and data it needs according to your test runner's isolation settings.

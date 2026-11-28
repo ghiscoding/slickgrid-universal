@@ -6,7 +6,6 @@
 
 * [Quick start](getting-started/quick-start.md)
 * [Svelte wrapper API](getting-started/wrapper-api.md)
-* [Svelte examples](examples.md)
 
 ## Styling
 
@@ -93,7 +92,6 @@
 
 * [Content Security Policy](developer-guides/csp-compliance.md)
 * [Large Dataset Performance](developer-guides/large-dataset-performance.md)
-* [Testing Patterns](testing/testing-patterns.md)
 
 ## Localization
 
@@ -113,7 +111,10 @@
   * [Sorting Schema](backend-services/graphql/GraphQL-Sorting.md)
 * [SQL](backend-services/sql-backend.md)
 
-## Migrations
+## Testing
+* [Testing Patterns](testing/testing-patterns.md)
+
+<!--## Migrations
 
 * [Migration Guide to 11.x](migrations/migration-to-11.x.md)
-  * [v11 AI Migration Skill](migrations/migration-to-11.x/SKILL.md)
+  * [v11 AI Migration Skill](migrations/migration-to-11.x/SKILL.md)-->
