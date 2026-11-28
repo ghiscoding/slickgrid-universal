@@ -164,9 +164,7 @@
     <ul class="navbar-nav">
       <li class="nav-item"><a class="nav-link" href="#/home" onclick={() => (menuOpen = false)}>Home</a></li>
       <li class="nav-item">
-        <a class="nav-link" href="https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-svelte#readme">
-          Documentation
-        </a>
+        <a class="nav-link" href="https://ghiscoding.gitbook.io/slickgrid-svelte/"> Documentation </a>
       </li>
     </ul>
   </div>
@@ -176,9 +174,7 @@
   <aside id="panel-left" class="panel-wm-left" aria-label="Examples">
     <ul class="nav nav-pills nav-stacked">
       <li class="nav-item fw-bold nav-docs">
-        <a class="nav-link" href="https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-svelte#readme">
-          📘 Documentation
-        </a>
+        <a class="nav-link" href="https://ghiscoding.gitbook.io/slickgrid-svelte/"> 📘 Documentation </a>
       </li>
       {#each examples as example (example.id)}
         <li class="nav-item">
