@@ -98,6 +98,12 @@ export function setPickerFocus(pickerElm: HTMLElement): void {
   });
 }
 
+const isoTimestampPrefix = /^\d{4}-\d{2}-\d{2}T/;
+
+export function isPickerIsoTimestamp(value: unknown): boolean {
+  return typeof value === 'string' && isoTimestampPrefix.test(value);
+}
+
 export function setPickerDates(
   colEditorOrFilter: ColumnEditor | ColumnFilter,
   dateInputElm: HTMLInputElement,
@@ -121,7 +127,8 @@ export function setPickerDates(
     const isoFormat = mapTempoDateFormatWithFieldType('dateIso') as string;
     const inputFormat = inputFieldType ? mapTempoDateFormatWithFieldType(inputFieldType) : undefined;
     for (const initialDate of newDates) {
-      const date = initialDate instanceof Date ? initialDate : tryParseDate(initialDate, inputFormat);
+      const date =
+        initialDate instanceof Date ? initialDate : tryParseDate(initialDate, isPickerIsoTimestamp(initialDate) ? 'ISO8601' : inputFormat);
       if (date) {
         pickerDates.push(date);
       }

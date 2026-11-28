@@ -1,7 +1,7 @@
 import { parse } from '@formkit/tempo';
 import { createDomElement, emptyElement, extend, setDeepValue } from '@slickgrid-universal/utils';
 import { Calendar, time, type FormatDateString, type Options } from 'vanilla-calendar-pro';
-import { resetDatePicker, setPickerDates, setPickerFocus } from '../commonEditorFilter/commonEditorFilterUtils.js';
+import { isPickerIsoTimestamp, resetDatePicker, setPickerDates, setPickerFocus } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import { Constants } from './../constants.js';
@@ -73,7 +73,7 @@ export class DateEditor extends BaseEditorClass implements Editor {
       if (outputFormat && (outputFormat === 'ISO8601' || outputFormat.toLowerCase().includes('h'))) {
         this.hasTimePicker = true;
       }
-      const pickerFormat = mapTempoDateFormatWithFieldType(this.hasTimePicker ? 'dateTimeIsoAM_PM' : 'dateIso');
+      const pickerFormat = mapTempoDateFormatWithFieldType('dateIso');
 
       const pickerOptions: Options = {
         extensions: [time],
@@ -347,7 +347,7 @@ export class DateEditor extends BaseEditorClass implements Editor {
       const inputFieldType = this.columnEditor.type || this.columnDef?.type || 'dateIso';
       const outputFieldType = this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || 'dateIso';
 
-      const formattedDate = formatDateByFieldType(value, inputFieldType, outputFieldType);
+      const formattedDate = formatDateByFieldType(value, isPickerIsoTimestamp(value) ? 'dateUtc' : inputFieldType, outputFieldType);
       this._originalDate = formattedDate !== '' ? value : '';
       this._inputElm.value = formattedDate;
     }

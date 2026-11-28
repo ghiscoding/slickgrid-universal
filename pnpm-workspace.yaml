@@ -18,7 +18,7 @@ catalog:
   '@angular-eslint/eslint-plugin': ^22.8.0
   '@faker-js/faker': ^10.6.0
   '@fnando/sparkline': ^0.3.10
-  '@formkit/tempo': ^1.1.0
+  '@formkit/tempo': ^1.6.0
   '@popperjs/core': ^2.11.8
   '@types/fnando__sparkline': ^0.3.7
   '@types/node': ^26.6.7
