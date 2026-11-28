@@ -36,6 +36,7 @@ export default class Example40 {
   gridOptions: GridOption;
   dataset: ReportItem[];
   sgb: SlickVanillaGridBundle<ReportItem>;
+  modalSgb?: SlickVanillaGridBundle<ReportItem>;
   subTitleStyle = 'display: block';
 
   constructor() {
@@ -52,6 +53,7 @@ export default class Example40 {
 
   dispose() {
     this.sgb?.dispose();
+    this.modalSgb?.dispose();
     this._bindingEventService.unbindAll();
   }
 
@@ -660,6 +662,20 @@ export default class Example40 {
       lazyTotalsCalculation: true,
     } as Grouping);
     this.sgb?.slickGrid?.invalidate(); // invalidate all rows and re-render
+  }
+
+  openGridInModal() {
+    document.querySelector<HTMLDialogElement>('.grid40-dialog')?.showModal();
+    this.modalSgb ??= new Slicker.GridBundle(
+      document.querySelector('.grid40-modal') as HTMLDivElement,
+      this.columns,
+      { ...ExampleGridOptions, ...this.gridOptions, enableAutoResize: false, gridHeight: 400, gridWidth: 800, externalResources: [] },
+      this.loadData(50)
+    );
+  }
+
+  closeModal() {
+    document.querySelector<HTMLDialogElement>('.grid40-dialog')?.close();
   }
 
   loadData(count: number): ReportItem[] {

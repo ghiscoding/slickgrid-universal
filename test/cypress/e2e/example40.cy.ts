@@ -423,4 +423,50 @@ describe('Example 40 - Menus with Slots', () => {
     cy.get('[data-row=1]').children('.slick-cell:nth(1)').should('contain', '100');
     cy.get('[data-row=2]').children('.slick-cell:nth(1)').should('contain', '100');
   });
+
+  describe('Grid inside a modal dialog', () => {
+    it('should open the grid in a modal dialog', () => {
+      cy.get('[data-test="open-modal-btn"]').click();
+      cy.get('[data-test="grid40-dialog"]').should('have.attr', 'open');
+      cy.get('.grid40-modal .slick-header-columns').children().should('have.length', fullTitles.length);
+    });
+
+    it('should open the Cell Menu inside the dialog, next to its cell and on top of the dialog', () => {
+      cy.get('.grid40-modal [data-row="1"] > .slick-cell:nth(6)').click();
+
+      cy.get('.slick-cell-menu').should('have.length', 1).parent().should('match', '[data-test="grid40-dialog"]');
+      cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-item:not(.slick-menu-item-divider)').each(($item) => {
+        const rect = $item[0].getBoundingClientRect();
+        const hitElm = $item[0].ownerDocument.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        expect(rect.height).to.be.greaterThan(0);
+        expect(hitElm?.closest('.slick-menu-item')).to.eq($item[0]);
+      });
+
+      cy.get('.grid40-modal [data-row="1"] > .slick-cell:nth(6)').then(($cell) => {
+        const cellRect = $cell[0].getBoundingClientRect();
+        cy.get('.slick-cell-menu').then(($menu) => {
+          const menuRect = $menu[0].getBoundingClientRect();
+          const isBelowOrAboveCell = Math.abs(menuRect.top - cellRect.bottom) < 10 || Math.abs(menuRect.bottom - cellRect.top) < 10;
+          const isAlignedWithCell =
+            Math.abs(menuRect.left - cellRect.left) < cellRect.width || Math.abs(menuRect.right - cellRect.right) < cellRect.width;
+          expect(isBelowOrAboveCell).to.eq(true);
+          expect(isAlignedWithCell).to.eq(true);
+        });
+      });
+    });
+
+    it('should click a Cell Menu command inside the dialog and expect its action to be executed', () => {
+      cy.window().then((win) => cy.stub(win, 'alert').as('alertStub'));
+
+      cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-item .menu-item').contains('Export Row').click();
+
+      cy.get('@alertStub').should('have.been.calledWith', 'Export row #1');
+      cy.get('.slick-cell-menu').should('not.exist');
+    });
+
+    it('should close the modal dialog', () => {
+      cy.get('[data-test="close-modal-btn"]').click();
+      cy.get('[data-test="grid40-dialog"]').should('not.have.attr', 'open');
+    });
+  });
 });

@@ -56,8 +56,14 @@
       <button class="button is-small" data-test="group-duration-sort-value-btn" onclick.trigger="groupByDuration()">
         Group by Duration
       </button>
+      <button class="button is-small" data-test="open-modal-btn" onclick.trigger="openGridInModal()">Open grid in a modal</button>
     </div>
   </section>
 
   <div class="grid40"></div>
+
+  <dialog class="grid40-dialog" data-test="grid40-dialog">
+    <button class="button is-small mb-2" data-test="close-modal-btn" onclick.trigger="closeModal()">Close</button>
+    <div class="grid40-modal"></div>
+  </dialog>
 </div>
