@@ -118,13 +118,13 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
     return this._menuPluginCssPrefix || this._menuCssPrefix;
   }
 
-  get menuElement(): HTMLDivElement | null {
-    return this._menuElm || this.popupContainerElm.querySelector(`.${this.menuCssClass}${this.gridUidSelector}`);
+  protected get popupContainerElm(): HTMLElement {
+    const gridElm = this.grid.getContainerNode();
+    return gridElm.closest<HTMLDialogElement>('dialog:modal') ?? gridElm.ownerDocument.body;
   }
 
-  /** Element where the menus are appended, which is the `popupContainer` grid option or `document.body` by default */
-  get popupContainerElm(): HTMLElement {
-    return this.grid?.getPopupContainer?.() ?? document.body;
+  get menuElement(): HTMLDivElement | null {
+    return this._menuElm || document.querySelector(`.${this.menuCssClass}${this.gridUidSelector}`);
   }
 
   /** Dispose (destroy) of the plugin */
@@ -147,13 +147,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
     // remove all parent menu listeners before removing them from the DOM
     this._bindEventService.unbindAll('parent-menu');
     this._bindEventService.unbindAll('keyboard-navigation'); // Clean up keyboard/mouse event bindings
-    const menuSelector = `.${this.menuCssClass}${this.gridUidSelector}`;
-    this.popupContainerElm.querySelectorAll(menuSelector).forEach((subElm) => subElm.remove());
-    // the Header Menu root is appended to the grid container, which might not be inside the popup container
-    this.grid
-      ?.getContainerNode?.()
-      ?.querySelectorAll(menuSelector)
-      .forEach((subElm) => subElm.remove());
+    document.querySelectorAll(`.${this.menuCssClass}${this.gridUidSelector}`).forEach((subElm) => subElm.remove());
 
     // Restore focus to the trigger element if it exists
     this._menuTriggerElement?.focus();
@@ -165,9 +159,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
    */
   disposeSubMenus(): void {
     this._bindEventService.unbindAll('sub-menu');
-    this.popupContainerElm
-      .querySelectorAll(`.${this.menuCssClass}.slick-submenu${this.gridUidSelector}`)
-      .forEach((subElm) => subElm.remove());
+    document.querySelectorAll(`.${this.menuCssClass}.slick-submenu${this.gridUidSelector}`).forEach((subElm) => subElm.remove());
   }
 
   setOptions(newOptions: M): void {
@@ -524,7 +516,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
           const keyStr = typeof key === 'string' ? key.replace(/\s/g, '') : String(key);
           if (keyStr) {
             const selector = `.slick-submenu[data-sub-menu-parent="${keyStr}"]`;
-            const subMenuElm = this.popupContainerElm.querySelector(selector) as HTMLElement;
+            const subMenuElm = document.body.querySelector(selector) as HTMLElement;
             if (subMenuElm && !subMenuElm.dataset.keyboardNavBound) {
               this.wireMenuKeyboardNavigation(subMenuElm, keyboardNavOptions);
             }
@@ -770,12 +762,12 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
           subMenuSelector = `.slick-submenu[data-sub-menu-parent="${cmdStr}"]`;
         }
         // Simulate mouseover/click to open sub-menu if not present
-        let subMenuElm = subMenuSelector ? (this.popupContainerElm.querySelector(subMenuSelector) as HTMLElement) : null;
+        let subMenuElm = subMenuSelector ? (document.body.querySelector(subMenuSelector) as HTMLElement) : null;
         if (!subMenuElm) {
           focusedItem.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, cancelable: true }));
           // Try again after event
           if (subMenuSelector) {
-            subMenuElm = this.popupContainerElm.querySelector(subMenuSelector) as HTMLElement;
+            subMenuElm = document.body.querySelector(subMenuSelector) as HTMLElement;
           }
         }
         // If sub-menu is now present, wire keyboard navigation and focus first item
@@ -794,10 +786,9 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
           // Remove the current sub-menu from the DOM
           currentSubMenu.remove();
           // Find the parent menu (the previous menu level)
-          const parentMenuSelector = `.slick-menu-level-${parseInt(currentSubMenu.className.match(/slick-menu-level-(\d+)/)?.[1] || '1', 10) - 1}`;
-          // the Header Menu root is appended to the grid container, which might not be inside the popup container
-          const parentMenu =
-            this.popupContainerElm.querySelector(parentMenuSelector) ?? this.grid?.getContainerNode?.()?.querySelector(parentMenuSelector);
+          const parentMenu = document.body.querySelector(
+            `.slick-menu-level-${parseInt(currentSubMenu.className.match(/slick-menu-level-(\d+)/)?.[1] || '1', 10) - 1}`
+          );
           // Find the submenu trigger in the parent menu that matches the data-sub-menu-parent
           let triggerSelector = '';
           const subMenuParentId = currentSubMenu.dataset.subMenuParent;
@@ -1021,27 +1012,17 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
     }
   }
 
-  /**
-   * Menus are positioned with document coordinates, convert them to the menu's containing block
-   * when it is appended to a custom `popupContainer` (e.g. a `<dialog>` element).
-   */
+  /** Menus are positioned with document coordinates, convert them when the menu is mounted in a modal dialog */
   protected toPopupContainerPosition(menuElm: HTMLElement, top: number, left: number): { top: number; left: number } {
-    const popupContainerElm = this.popupContainerElm;
-    if (popupContainerElm === document.body || menuElm.parentElement !== popupContainerElm) {
+    const parentElm = menuElm.parentElement;
+    if (!parentElm || parentElm === parentElm.ownerDocument.body || !parentElm.matches('dialog:modal')) {
       return { top, left };
     }
-    const offsetParent =
-      getComputedStyle(popupContainerElm).position !== 'static'
-        ? popupContainerElm
-        : (popupContainerElm.offsetParent as HTMLElement | null);
-    if (!offsetParent || offsetParent === document.body || offsetParent === document.documentElement) {
-      return { top, left };
-    }
-    const rect = offsetParent.getBoundingClientRect();
+    const rect = parentElm.getBoundingClientRect();
     const windowScroll = windowScrollPosition();
     return {
-      top: top - rect.top - windowScroll.top - offsetParent.clientTop + offsetParent.scrollTop,
-      left: left - rect.left - windowScroll.left - offsetParent.clientLeft + offsetParent.scrollLeft,
+      top: top - rect.top - windowScroll.top - parentElm.clientTop + parentElm.scrollTop,
+      left: left - rect.left - windowScroll.left - parentElm.clientLeft + parentElm.scrollLeft,
     };
   }
 }

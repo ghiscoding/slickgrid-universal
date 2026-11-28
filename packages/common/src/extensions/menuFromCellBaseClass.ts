@@ -139,7 +139,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     }
 
     const menuClasses = `${this.menuCssClass} slick-menu-level-${level} ${this.gridUid}`;
-    const bodyMenuElm = this.popupContainerElm.querySelector<HTMLDivElement>(
+    const bodyMenuElm = document.body.querySelector<HTMLDivElement>(
       `.${this.menuCssClass}.slick-menu-level-${level}${this.gridUidSelector}`
     );
 

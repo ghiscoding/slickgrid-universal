@@ -732,9 +732,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     const subMenuId = subMenuCommand ? subMenuCommand.replace(/\s/g, '') : '';
 
     const menuClasses = `${this.menuCssClass} slick-menu-level-${level} ${this.gridUid}`;
-    // the root menu is appended to the grid container while sub-menus are appended to the popup container
-    const menuParentElm = level === 0 ? this.grid.getContainerNode() : this.popupContainerElm;
-    const bodyMenuElm = menuParentElm.querySelector<HTMLDivElement>(
+    const bodyMenuElm = document.body.querySelector<HTMLDivElement>(
       `.${this.menuCssClass}.slick-menu-level-${level}${this.gridUidSelector}`
     );
 

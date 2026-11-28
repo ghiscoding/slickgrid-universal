@@ -764,13 +764,6 @@ export interface GridOption<C extends Column = Column> {
   topHeaderPanelWidth?: number | string;
 
   /**
-   * Defaults to `document.body`. Element (or a function returning it) where the built-in menus (Cell, Context, Grid, Column Picker and Header sub-menus) are appended.
-   * Set it to the parent `<dialog>` when the grid is in a modal (top layer), otherwise the menus would render under the dialog.
-   * Integrations can also render their own cell popups into it via `grid.getPopupContainer()` to escape the row and pinned column transforms.
-   */
-  popupContainer?: HTMLElement | (() => HTMLElement);
-
-  /**
    * Pre-parse all dataset items from date string to `Date` object which will improve Sort considerably
    * by parsing the dates only once and sort maybe as O(n2) instead of multiple times which is possibly O(log n2).
    * We can enable this option via a string prefix, (i.e. if we set the option to "__", it will parse a "start" date string and assign it as a `Date` object to "__start"),

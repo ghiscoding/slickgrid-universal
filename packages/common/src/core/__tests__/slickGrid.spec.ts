@@ -132,48 +132,6 @@ describe('SlickGrid core file', () => {
     expect(grid.getGridPosition()).toBeTruthy();
   });
 
-  describe('getPopupContainer()', () => {
-    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-
-    it('should return document.body when "popupContainer" is not provided', () => {
-      grid = new SlickGrid<any, Column>('#myGrid', [], columns, defaultOptions);
-
-      expect(grid.getPopupContainer()).toBe(document.body);
-    });
-
-    it('should return the "popupContainer" element when provided', () => {
-      const dialogElm = document.createElement('dialog');
-      document.body.appendChild(dialogElm);
-      grid = new SlickGrid<any, Column>('#myGrid', [], columns, { ...defaultOptions, popupContainer: dialogElm });
-
-      expect(grid.getPopupContainer()).toBe(dialogElm);
-    });
-
-    it('should return the element returned by a "popupContainer" function every time it is called', () => {
-      const firstElm = document.createElement('div');
-      const secondElm = document.createElement('div');
-      const popupContainerFn = vi.fn().mockReturnValueOnce(firstElm).mockReturnValueOnce(secondElm);
-      grid = new SlickGrid<any, Column>('#myGrid', [], columns, { ...defaultOptions, popupContainer: popupContainerFn });
-
-      expect(grid.getPopupContainer()).toBe(firstElm);
-      expect(grid.getPopupContainer()).toBe(secondElm);
-    });
-
-    it('should fallback to document.body when the "popupContainer" function returns nothing', () => {
-      grid = new SlickGrid<any, Column>('#myGrid', [], columns, { ...defaultOptions, popupContainer: () => undefined as any });
-
-      expect(grid.getPopupContainer()).toBe(document.body);
-    });
-
-    it('should use the new "popupContainer" after calling setOptions()', () => {
-      const dialogElm = document.createElement('dialog');
-      grid = new SlickGrid<any, Column>('#myGrid', [], columns, defaultOptions);
-      grid.setOptions({ popupContainer: dialogElm });
-
-      expect(grid.getPopupContainer()).toBe(dialogElm);
-    });
-  });
-
   it('should be able to instantiate SlickGrid without DataView and always show vertical scroll', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
     grid = new SlickGrid<any, Column>('#myGrid', [], columns, { ...defaultOptions, alwaysShowVerticalScroll: true });
