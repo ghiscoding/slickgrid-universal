@@ -2,7 +2,7 @@ import { format, parse } from '@formkit/tempo';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, extend, isDefined } from '@slickgrid-universal/utils';
 import { Calendar, months, time, type Options } from 'vanilla-calendar-pro';
-import { resetDatePicker, setPickerDates, setPickerFocus } from '../commonEditorFilter/commonEditorFilterUtils.js';
+import { isPickerIsoTimestamp, resetDatePicker, setPickerDates, setPickerFocus } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import type { SlickGrid } from '../core/slickGrid.js';
 import { type OperatorType, type SearchTerm } from '../enums/index.js';
 import type { Column, ColumnFilter, Filter, FilterArguments, FilterCallback, GridOption, OperatorDetail } from '../interfaces/index.js';
@@ -313,7 +313,7 @@ export class DateFilter implements Filter {
           }
 
           if (this.hasTimePicker && firstDate) {
-            const tempoDate = parse(firstDate, typeof firstDate === 'string' && firstDate.includes('T') ? 'ISO8601' : pickerFormat);
+            const tempoDate = parse(firstDate, isPickerIsoTimestamp(firstDate) ? 'ISO8601' : pickerFormat);
             tempoDate.setHours(+(self.context.selectedHours || 0));
             tempoDate.setMinutes(+(self.context.selectedMinutes || 0));
             self.context.inputElement.value = formatDateByFieldType(tempoDate, undefined, outputFieldType);
