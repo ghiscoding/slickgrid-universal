@@ -1,6 +1,6 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement } from '@slickgrid-universal/utils';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { SlickGrid } from '../../core/slickGrid.js';
 import type { GridMenu } from '../../interfaces/gridMenu.interface.js';
 import type { Column, GridMenuOption } from '../../interfaces/index.js';
@@ -433,29 +433,30 @@ describe('MenuBaseClass', () => {
     document.body.removeChild(parentMenu);
   });
 
-  describe('modal dialog host', () => {
+  describe('top layer host', () => {
+    const topLayerHostSelector = ':is(dialog:modal, :popover-open)';
+
+    afterEach(() => vi.restoreAllMocks());
+
     const createMenu = (gridContainerElm: HTMLElement) => {
       const service = new SharedService();
       service.slickGrid = { getOptions: () => ({}), getContainerNode: () => gridContainerElm } as unknown as SlickGrid;
       return new TestMenuBase(extensionUtility, pubSubServiceStub, service);
     };
-    const openAsModal = (dialogElm: HTMLDialogElement) => {
-      const matches = dialogElm.matches.bind(dialogElm);
-      vi.spyOn(dialogElm, 'matches').mockImplementation((selector) => selector === 'dialog:modal' || matches(selector));
+    const createOpenHost = (hostType: 'modal dialog' | 'open popover') => {
+      const hostElm = hostType === 'modal dialog' ? createDomElement('dialog', {}, document.body) : createDomElement('div', {}, document.body);
+      if (hostType === 'open popover') {
+        hostElm.setAttribute('popover', '');
+      }
+      const matches = hostElm.matches.bind(hostElm);
+      vi.spyOn(hostElm, 'matches').mockImplementation((selector) => selector === topLayerHostSelector || matches(selector));
+      return hostElm;
     };
 
-    it('should use the body when the grid is not inside a modal dialog', () => {
+    it('should use the body when the grid is not inside a modal dialog or an open popover', () => {
       const gridContainerElm = createDomElement('div', {}, document.body);
       expect(createMenu(gridContainerElm).testPopupContainer()).toBe(document.body);
       gridContainerElm.remove();
-    });
-
-    it('should use the closest modal dialog of the grid container', () => {
-      const dialogElm = createDomElement('dialog', {}, document.body);
-      const gridContainerElm = createDomElement('div', {}, dialogElm);
-      vi.spyOn(gridContainerElm, 'closest').mockReturnValue(dialogElm);
-      expect(createMenu(gridContainerElm).testPopupContainer()).toBe(dialogElm);
-      dialogElm.remove();
     });
 
     it('should keep document coordinates for a menu appended to the body', () => {
@@ -464,17 +465,34 @@ describe('MenuBaseClass', () => {
       menuElm.remove();
     });
 
-    it('should convert document coordinates to the modal dialog, including its border and scroll', () => {
-      const dialogElm = createDomElement('dialog', {}, document.body);
-      openAsModal(dialogElm);
-      vi.spyOn(dialogElm, 'getBoundingClientRect').mockReturnValue({ top: 50, left: 30 } as DOMRect);
-      Object.entries({ clientTop: 2, clientLeft: 3, scrollTop: 10, scrollLeft: 5 }).forEach(([prop, value]) =>
-        Object.defineProperty(dialogElm, prop, { configurable: true, value })
-      );
-      const menuElm = createDomElement('div', {}, dialogElm);
+    it.each(['modal dialog', 'open popover'] as const)('should use the closest %s of the grid container', (hostType) => {
+      const hostElm = createOpenHost(hostType);
+      const gridContainerElm = createDomElement('div', {}, hostElm);
+      const closestSpy = vi.spyOn(gridContainerElm, 'closest').mockReturnValue(hostElm);
 
-      expect(createMenu(document.body).testToPopupContainerPosition(menuElm, 120, 80)).toEqual({ top: 120 - 50 - 2 + 10, left: 80 - 30 - 3 + 5 });
-      dialogElm.remove();
+      expect(createMenu(gridContainerElm).testPopupContainer()).toBe(hostElm);
+      expect(closestSpy).toHaveBeenCalledWith(topLayerHostSelector);
+      hostElm.remove();
     });
+
+    it.each(['modal dialog', 'open popover'] as const)(
+      'should convert document coordinates to the %s, including its border, its scroll and the window scroll',
+      (hostType) => {
+        const hostElm = createOpenHost(hostType);
+        vi.spyOn(hostElm, 'getBoundingClientRect').mockReturnValue({ top: 50, left: 30 } as DOMRect);
+        Object.entries({ clientTop: 2, clientLeft: 3, scrollTop: 10, scrollLeft: 5 }).forEach(([prop, value]) =>
+          Object.defineProperty(hostElm, prop, { configurable: true, value })
+        );
+        vi.spyOn(window, 'pageYOffset', 'get').mockReturnValue(200);
+        vi.spyOn(window, 'pageXOffset', 'get').mockReturnValue(15);
+        const menuElm = createDomElement('div', {}, hostElm);
+
+        expect(createMenu(document.body).testToPopupContainerPosition(menuElm, 420, 180)).toEqual({
+          top: 420 - 50 - 200 - 2 + 10,
+          left: 180 - 30 - 15 - 3 + 5,
+        });
+        hostElm.remove();
+      }
+    );
   });
 });

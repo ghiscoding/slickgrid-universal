@@ -57,6 +57,7 @@
         Group by Duration
       </button>
       <button class="button is-small" data-test="open-modal-btn" onclick.trigger="openGridInModal()">Open grid in a modal</button>
+      <button class="button is-small" data-test="open-popover-btn" popovertarget="grid40-popover">Open grid in a popover</button>
     </div>
   </section>
 
@@ -66,4 +67,8 @@
     <button class="button is-small mb-2" data-test="close-modal-btn" onclick.trigger="closeModal()">Close</button>
     <div class="grid40-modal"></div>
   </dialog>
+
+  <div id="grid40-popover" popover data-test="grid40-popover" ontoggle.trigger="handlePopoverToggle(event)">
+    <div class="grid40-popover-grid"></div>
+  </div>
 </div>

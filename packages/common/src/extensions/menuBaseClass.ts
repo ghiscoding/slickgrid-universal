@@ -38,6 +38,8 @@ import type { ExtensionUtility } from './extensionUtility.js';
 import { wireMenuKeyboardNavigation } from './keyboardNavigation.js';
 import { commandMatcher } from './menuUtils.js';
 
+const TOP_LAYER_HOST_SELECTOR = ':is(dialog:modal, :popover-open)';
+
 export type ExtractMenuType<A, T> = T extends 'command' ? A : A extends 'divider' ? A : never;
 export type MenuType = 'command';
 export type ExtendableItemTypes = HeaderButtonItem | MenuCommandItem | 'divider';
@@ -120,7 +122,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
 
   protected get popupContainerElm(): HTMLElement {
     const gridElm = this.grid.getContainerNode();
-    return gridElm.closest<HTMLDialogElement>('dialog:modal') ?? gridElm.ownerDocument.body;
+    return gridElm.closest<HTMLElement>(TOP_LAYER_HOST_SELECTOR) ?? gridElm.ownerDocument.body;
   }
 
   get menuElement(): HTMLDivElement | null {
@@ -1012,10 +1014,10 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
     }
   }
 
-  /** Menus are positioned with document coordinates, convert them when the menu is mounted in a modal dialog */
+  /** Menus are positioned with document coordinates, convert them when the menu is mounted in a modal dialog or open popover */
   protected toPopupContainerPosition(menuElm: HTMLElement, top: number, left: number): { top: number; left: number } {
     const parentElm = menuElm.parentElement;
-    if (!parentElm || parentElm === parentElm.ownerDocument.body || !parentElm.matches('dialog:modal')) {
+    if (!parentElm || parentElm === parentElm.ownerDocument.body || !parentElm.matches(TOP_LAYER_HOST_SELECTOR)) {
       return { top, left };
     }
     const rect = parentElm.getBoundingClientRect();

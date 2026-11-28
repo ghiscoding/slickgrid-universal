@@ -3,6 +3,28 @@ import { format } from '@formkit/tempo';
 describe('Example 40 - Menus with Slots', () => {
   const fullTitles = ['Title', 'Duration', 'Start', 'Finish', 'Cost', '% Complete', 'Action'];
 
+  const expectCellMenuOnTopNextToCell = (cellSelector: string, hostSelector: string) => {
+    cy.get('.slick-cell-menu').should('have.length', 1).parent().should('match', hostSelector);
+    cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-item:not(.slick-menu-item-divider)').each(($item) => {
+      const rect = $item[0].getBoundingClientRect();
+      const hitElm = $item[0].ownerDocument.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+      expect(rect.height).to.be.greaterThan(0);
+      expect(hitElm?.closest('.slick-menu-item')).to.eq($item[0]);
+    });
+
+    cy.get(cellSelector).then(($cell) => {
+      const cellRect = $cell[0].getBoundingClientRect();
+      cy.get('.slick-cell-menu').then(($menu) => {
+        const menuRect = $menu[0].getBoundingClientRect();
+        const isBelowOrAboveCell = Math.abs(menuRect.top - cellRect.bottom) < 10 || Math.abs(menuRect.bottom - cellRect.top) < 10;
+        const isAlignedWithCell =
+          Math.abs(menuRect.left - cellRect.left) < cellRect.width || Math.abs(menuRect.right - cellRect.right) < cellRect.width;
+        expect(isBelowOrAboveCell).to.eq(true);
+        expect(isAlignedWithCell).to.eq(true);
+      });
+    });
+  };
+
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseUrl')}/example40`);
     cy.get('h3').should('contain', 'Example 40 - Menus with Slots');
@@ -433,26 +455,7 @@ describe('Example 40 - Menus with Slots', () => {
 
     it('should open the Cell Menu inside the dialog, next to its cell and on top of the dialog', () => {
       cy.get('.grid40-modal [data-row="1"] > .slick-cell:nth(6)').click();
-
-      cy.get('.slick-cell-menu').should('have.length', 1).parent().should('match', '[data-test="grid40-dialog"]');
-      cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-item:not(.slick-menu-item-divider)').each(($item) => {
-        const rect = $item[0].getBoundingClientRect();
-        const hitElm = $item[0].ownerDocument.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
-        expect(rect.height).to.be.greaterThan(0);
-        expect(hitElm?.closest('.slick-menu-item')).to.eq($item[0]);
-      });
-
-      cy.get('.grid40-modal [data-row="1"] > .slick-cell:nth(6)').then(($cell) => {
-        const cellRect = $cell[0].getBoundingClientRect();
-        cy.get('.slick-cell-menu').then(($menu) => {
-          const menuRect = $menu[0].getBoundingClientRect();
-          const isBelowOrAboveCell = Math.abs(menuRect.top - cellRect.bottom) < 10 || Math.abs(menuRect.bottom - cellRect.top) < 10;
-          const isAlignedWithCell =
-            Math.abs(menuRect.left - cellRect.left) < cellRect.width || Math.abs(menuRect.right - cellRect.right) < cellRect.width;
-          expect(isBelowOrAboveCell).to.eq(true);
-          expect(isAlignedWithCell).to.eq(true);
-        });
-      });
+      expectCellMenuOnTopNextToCell('.grid40-modal [data-row="1"] > .slick-cell:nth(6)', '[data-test="grid40-dialog"]');
     });
 
     it('should click a Cell Menu command inside the dialog and expect its action to be executed', () => {
@@ -467,6 +470,38 @@ describe('Example 40 - Menus with Slots', () => {
     it('should close the modal dialog', () => {
       cy.get('[data-test="close-modal-btn"]').click();
       cy.get('[data-test="grid40-dialog"]').should('not.have.attr', 'open');
+    });
+  });
+
+  describe('Grid inside an open popover', () => {
+    it('should open the grid in a popover and scroll the page', () => {
+      cy.get('[data-test="open-popover-btn"]').click();
+      cy.get('[data-test="grid40-popover"]').should('match', ':popover-open');
+      cy.get('.grid40-popover-grid .slick-header-columns').children().should('have.length', fullTitles.length);
+
+      cy.document().then((doc) => (doc.body.style.minHeight = '3000px'));
+      cy.window().then((win) => win.scrollTo(0, 150));
+      cy.window().its('scrollY').should('be.greaterThan', 0);
+    });
+
+    it('should open the Cell Menu inside the popover, next to its cell and on top of the popover', () => {
+      cy.get('.grid40-popover-grid [data-row="0"] > .slick-cell:nth(6)').click();
+      expectCellMenuOnTopNextToCell('.grid40-popover-grid [data-row="0"] > .slick-cell:nth(6)', '[data-test="grid40-popover"]');
+    });
+
+    it('should click a Cell Menu command inside the popover, run its action and keep the popover open', () => {
+      cy.window().then((win) => cy.stub(win, 'alert').as('alertStub'));
+
+      cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-item .menu-item').contains('Export Row').click();
+
+      cy.get('@alertStub').should('have.been.calledWith', 'Export row #0');
+      cy.get('.slick-cell-menu').should('not.exist');
+      cy.get('[data-test="grid40-popover"]').should('match', ':popover-open');
+    });
+
+    it('should close the popover', () => {
+      cy.get('[data-test="grid40-popover"]').then(($popover) => $popover[0].hidePopover());
+      cy.get('[data-test="grid40-popover"]').should('not.match', ':popover-open');
     });
   });
 });
