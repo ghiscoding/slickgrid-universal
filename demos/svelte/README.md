@@ -1,4 +1,4 @@
-# <a href="https://svelte.dev/docs/svelte/"><img src="./assets/svelte.svg" height="80" alt="Svelte"/></a> Slickgrid Svelte - Bootstrap 5 Demo with i18n
+# <a href="https://svelte.dev/docs/svelte/"><img src="./src/assets/svelte.svg" height="80" alt="Svelte"/></a> Slickgrid Svelte - Bootstrap 5 Demo with i18n
 
 ## Important Note
 Please note that some of the npm packages installed in these demos are **optional** and are installed **only** for demo purposes. If you don't need the feature then don't install it (remove it from your `package.json`) and you'll end up with a smaller production build.
