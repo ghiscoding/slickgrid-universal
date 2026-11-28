@@ -1,8 +1,44 @@
 # <a href="https://svelte.dev/docs/svelte/"><img src="./assets/svelte.svg" height="80" alt="Svelte"/></a> Slickgrid Svelte
 
-A Svelte 5 wrapper around SlickGrid Universal. Install `slickgrid-svelte`, `svelte`, and a Sass compiler, and import a SlickGrid theme in your application.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
+[![NPM downloads](https://img.shields.io/npm/dy/slickgrid-svelte)](https://npmjs.org/package/slickgrid-svelte)
+[![npm](https://img.shields.io/npm/v/slickgrid-svelte.svg?logo=npm&logoColor=fff&label=npm)](https://www.npmjs.com/package/slickgrid-svelte)
+[![Actions Status](https://github.com/ghiscoding/slickgrid-universal/actions/workflows/test-svelte.yml/badge.svg)](https://github.com/ghiscoding/slickgrid-universal/actions/workflows/test-svelte.yml)
 
-## Quick Start
+## Description
+SlickGrid-Svelte is a custom component created specifically for [Svelte](https://svelte.dev/) framework, it is a wrapper on top of Slickgrid-Universal library which contains the core functionalities. Slickgrid-Universal is written with TypeScript in browser native code, it is framework agnostic and is a monorepo that includes all Editors, Filters, Extensions and Services related to SlickGrid usage with also a few optional packages (like GraphQL, OData, Export to Excel, ...).
+
+## Documentation
+📘 [Documentation](https://ghiscoding.gitbook.io/slickgrid-svelte/getting-started/quick-start) website is powered by GitBook.
+
+## Installation
+
+You can also play with the live Stackbliz [Slickgrid-Svelte-Demos](https://github.com/ghiscoding/slickgrid-svelte-demos).
+Stackblitz is also the recommended way to provide a repro when opening a new bug or feature request.
+
+| Stackblitz | Description |
+| ---------- | ----------- |
+| [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-svelte-demos) | with I18N Translate |
+| [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-svelte-demos/tree/main/single-locale-without-i18n) | Single Locale (_without i18n_) |
+
+Visit the **[Docs - Quick Start](https://ghiscoding.gitbook.io/slickgrid-svelte/getting-started/quick-start)** and/or clone the [Slickgrid-Svelte-Demos](https://github.com/ghiscoding/slickgrid-svelte-demos) repository for a fully working local demo. Please make sure to read the documentation before opening any new issue and also consider asking installation and/or general questions on [Stack Overflow](https://stackoverflow.com/search?tab=newest&q=slickgrid) unless you think there's a bug with the library.
+
+```sh
+npm install slickgrid-svelte
+```
+Install any optional Slickgrid-Universal dependencies, for example Excel Export
+```sh
+npm install @slickgrid-universal/excel-export
+```
+
+### Requirements
+- Svelte >=5.0
+
+## License
+[MIT License](../../LICENSE)
+
+#### Basic Usage
 
 ```svelte
 <script lang="ts">
@@ -17,38 +53,21 @@ A Svelte 5 wrapper around SlickGrid Universal. Install `slickgrid-svelte`, `svel
 <SlickgridSvelte gridId="grid1" {columns} {options} {dataset} />
 ```
 
-Replace `dataset`, `datasetHierarchical`, `columns`, `options`, or `paginationOptions` with a new value to update the grid (use `$state.raw` for these, mutating them in place is not detected). Each grid needs a unique `gridId`; dataset items need unique IDs. Some options must be enabled at initialization.
+### Versions Compatibility
 
-Use `className` to add a CSS class to the grid container.
+> **Note** Please be aware that only the latest major version of Slickgrid-Svelte will be supported and receive bug fixes.
 
-Use `onSvelteGridCreated` or `bind:instances` to access the SlickGrid, DataView, and grid services. The `extensions` prop can also be bound. The component disposes the grid when it unmounts; call `instances.dispose()` to dispose it earlier. The `header` and `footer` snippets render content above and below the grid.
+| Slickgrid-Svelte | Svelte     | Migration Guide | Notes | Date |
+|:-------------:| ------- | --------------- | ----- | ---- |
+| 11.x          | >=5.0 | initial release | Pinning rewrite | 2026-11-09 |
 
-Pass typed event callbacks as component props (for example `onClick`) or in the `events` object using the same names as SlickGrid events. Handlers receive the original `CustomEvent` and can call `preventDefault()` or return `false` for cancellable events. Each event is subscribed once and always calls the latest handler, so handlers can be replaced without re-subscribing.
+### Like it? ⭐ it
+You like **Slickgrid-Svelte**? Be sure to upvote ⭐ the project, and perhaps support me with caffeine [☕](https://ko-fi.com/ghiscoding) or sponsor me on GitHub. Any contributions are also very welcome. Thanks
 
-```svelte
-<script lang="ts">
-  import { SlickgridSvelte, type SlickgridSvelteInstance } from 'slickgrid-svelte';
-  let instances = $state<SlickgridSvelteInstance>();
-  const events = {
-    onBeforeGridCreate: () => console.log('Creating grid'),
-    onGridStateChanged: (event: CustomEvent) => console.log(event.detail),
-  };
-</script>
+<a href='https://ko-fi.com/ghiscoding' target='_blank'><img height='36' width='140' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi3.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
-<SlickgridSvelte gridId="grid1" {columns} {options} {dataset} {events} bind:instances>
-  {#snippet header()}<div>My grid</div>{/snippet}
-</SlickgridSvelte>
-```
+## Latest News & Releases
+Check out the [Releases](https://github.com/ghiscoding/slickgrid-universal/releases) section for all latest News & Releases.
 
-## Integration
-
-- `customDataView` supplies an external DataView at grid creation. The wrapper does not populate it with the `dataset` prop on initialization.
-- Supply an i18next-compatible instance through `i18n`, `options.i18n`, or Svelte context under `i18next`. Alternatively, supply a SlickGrid `translater` service. The listener is removed on disposal.
-- Supply a Svelte component through `customPaginationComponent` or `options.customPaginationComponent`. Its props are `grid`, `paginationService`, `eventPubSubService`, and `translaterService`; it may export `init`, `renderPagination`, and `dispose` lifecycle methods.
-- Install `@slickgrid-universal/svelte-row-detail-plugin` and provide `SvelteRowDetailView` in `externalResources` when `enableRowDetailView` is enabled. Set `rowDetailView.process`, `panelRows`, and Svelte `preloadComponent` / `viewComponent` as needed. Components receive `model`, `addon`, `grid`, `dataView`, and `parentRef`.
-
-Event names and argument types are listed in `SvelteGridEventHandlers`. The Svelte demo includes examples 1 through 58 and a matching Cypress spec for each example.
-
-The [Svelte documentation](./docs/README.md) covers setup, the wrapper API, events, localization, custom Svelte components, pagination, Row Detail, and the shared feature guides. Browse the [documentation contents](./docs/TOC.md).
-
-Run the examples from the repository with `pnpm dev:svelte` after installing dependencies. Build them with `pnpm svelte:build:demo`.
+### Tested with [Cypress](https://www.cypress.io/) (E2E Tests)
+Slickgrid-Universal has **100%** Unit Test Coverage and all Slickgrid-Svelte Examples are tested with [Cypress](https://www.cypress.io/) for E2E testing and they are running on every new PR.
